@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎧 VIBES 95 - Digital Mixtape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              grunge: {
+                yellow: '#ffff00',
+                magenta: '#ff00ff',
+                cyan: '#00ffff',
+                lime: '#00ff00',
+                orange: '#ff8800',
+                purple: '#8000ff'
+              },
+              windows: {
+                gray: '#c0c0c0',
+                darkgray: '#808080',
+                blue: '#0000ff',
+                teal: '#008080'
+              }
+            },
+            fontFamily: {
+              'pixel': ['VT323', 'monospace'],
+              'terminal': ['Courier New', 'monospace'],
+              'impact': ['Impact', 'Arial Black', 'sans-serif']
+            },
+            animation: {
+              'blink': 'blink 1s linear infinite',
+              'slide-in': 'slide-in 0.5s ease-out',
+              'bounce-in': 'bounce-in 0.6s ease-out',
+              'glitch-90s': 'glitch-90s 0.2s ease-in-out'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(2deg); }
+            70% { transform: scale(0.9) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        @keyframes glitch-90s {
+            0%, 100% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-2px, -2px); filter: hue-rotate(180deg); }
+            60% { transform: translate(2px, 2px); filter: hue-rotate(270deg); }
+            80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
+        }
+        
+        .win95-button {
+            border: 2px outset #c0c0c0;
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080,
+                1px 1px 0px #000000;
+        }
+        
+        .win95-button:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+        
+        .win95-button:active {
+            border: 2px inset #c0c0c0;
+            box-shadow: 
+                inset -1px -1px 0px #ffffff,
+                inset 1px 1px 0px #808080;
+        }
+        
+        .win95-panel {
+            border: 2px inset #c0c0c0;
+            background: #c0c0c0;
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080;
+        }
+        
+        .grunge-bg {
+            background: 
+                radial-gradient(circle at 25% 25%, #ff00ff 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #00ffff 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #ffff00 0%, transparent 50%),
+                linear-gradient(45deg, #000000 0%, #1a1a1a 100%);
+        }
+        
+        .tv-static {
+            background-image: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 15px 15px;
+            animation: tv-static 0.1s linear infinite;
+        }
+        
+        @keyframes tv-static {
+            0% { background-position: 0 0; }
+            100% { background-position: 15px 15px; }
+        }
+        
+        .lcd-text {
+            background: #000;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            padding: 8px;
+            border: 2px inset #333;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .cassette-button {
+            background: linear-gradient(145deg, #ff6b6b, #ff5252);
+            border: 3px solid #333;
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: perspective(100px) rotateX(5deg);
+        }
+        
+        .cassette-button:hover {
+            transform: perspective(100px) rotateX(0deg) scale(1.05);
+        }
+        
+        .cd-shimmer {
+            background: 
+                radial-gradient(circle, 
+                    rgba(255,255,255,0.8) 0%, 
+                    rgba(255,0,255,0.4) 25%, 
+                    rgba(0,255,255,0.4) 50%, 
+                    rgba(255,255,0,0.4) 75%, 
+                    rgba(255,255,255,0.8) 100%
+                );
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .windows-titlebar {
+            background: linear-gradient(90deg, #008080 0%, #0000ff 100%);
+            color: white;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-black text-green-400 font-pixel overflow-hidden">
+    <div id="app" class="min-h-screen grunge-bg relative">
+        <!-- TV Static overlay -->
+        <div class="tv-static fixed inset-0 pointer-events-none opacity-5"></div>
+        
+        <!-- Windows 95 style taskbar -->
+        <div class="fixed bottom-0 left-0 right-0 win95-panel p-1 z-50 border-t-2">
+            <div class="flex items-center justify-between">
+                <button class="win95-button px-4 py-1 font-bold text-black text-sm">
+                    <i class="fas fa-compact-disc mr-2 text-blue-600"></i>Start
+                </button>
+                <div class="lcd-text text-xs">
+                    <span id="taskbar-time">00:00:00</span> | VIBES95.EXE | <span class="animate-blink">●</span> REC
+                </div>
+            </div>
+        </div>
+
+        <!-- Main window -->
+        <div class="win95-panel m-4 mb-16 h-[calc(100vh-6rem)] flex flex-col">
+            <!-- Title bar -->
+            <div class="windows-titlebar p-2 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-cassette-tape"></i>
+                    VIBES 95 - Digital Mixtape Creator v1.0
+                </div>
+                <div class="flex gap-1">
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">□</button>
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+                </div>
+            </div>
+
+            <!-- Menu bar -->
+            <div class="win95-panel p-1 border-b-2">
+                <div class="flex gap-4 text-black text-sm font-bold">
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">File</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Edit</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">View</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Tools</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Help</span>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="flex-1 flex bg-gray-200">
+                <!-- CD Player / Video area -->
+                <div class="flex-1 p-4 border-r-2 border-gray-400">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 text-center">
+                            <i class="fas fa-compact-disc mr-2"></i>CD Player Pro
+                        </div>
+                        
+                        <div class="flex-1 bg-black border-2 border-gray-400 relative" id="video-container">
+                            <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
+                                <div class="text-center animate-bounce-in">
+                                    <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
+                                        <div class="w-8 h-8 bg-black rounded-full"></div>
+                                    </div>
+                                    <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
+                                    <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CD Player controls -->
+                        <div class="mt-4 flex justify-center gap-2">
+                            <button onclick="playPrevious()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-backward"></i>
+                            </button>
+                            <button onclick="togglePlay()" class="cassette-button w-16 h-12 rounded text-white font-bold text-xl" id="play-btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="playNext()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                            <button onclick="stopPlayback()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Now playing display -->
+                        <div class="lcd-text mt-4 text-center" id="now-playing-lcd">
+                            READY - INSERT DISC TO PLAY
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Playlist sidebar -->
+                <div class="w-80 p-4">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-list mr-2"></i>Mixtape.m3u</span>
+                            <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
+                                Add Tracks
+                            </button>
+                        </div>
+                        
+                        <div class="lcd-text mb-4 text-center">
+                            TRACKS: <span id="track-count">2</span> | TIME: <span id="total-time">8:47</span>
+                        </div>
+                        
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto" id="playlist-container">
+                            <!-- Playlist items will go here -->
+                        </div>
+                        
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="shufflePlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-random mr-1"></i>Shuffle
+                            </button>
+                            <button onclick="clearPlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Track Dialog -->
+    <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" id="add-modal" style="display: none;">
+        <div class="win95-panel p-0 w-[600px] max-h-[80vh] animate-bounce-in">
+            <!-- Dialog title bar -->
+            <div class="windows-titlebar p-2 flex justify-between items-center">
+                <span><i class="fas fa-search mr-2"></i>Add Tracks - Music Database Search</span>
+                <button onclick="hideAddModal()" class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+            </div>
+            
+            <div class="p-4 bg-gray-200">
+                <div class="mb-4">
+                    <label class="block text-black font-bold mb-2 text-sm">Search Query:</label>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text"
+                            id="search-input"
+                            placeholder="Enter artist, song, or album name..."
+                            class="flex-1 px-3 py-2 border-2 border-gray-400 bg-white text-black font-terminal"
+                            onkeypress="if(event.key==='Enter') searchYouTube()"
+                        />
+                        <button 
+                            onclick="searchYouTube()"
+                            class="win95-button px-4 py-2 text-black font-bold text-sm"
+                            id="search-btn"
+                        >
+                            Search
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="win95-panel p-2 h-80 overflow-y-auto bg-white" id="search-results">
+                    <div class="text-center text-gray-500 py-8 font-terminal">
+                        <i class="fas fa-compact-disc text-4xl mb-4 text-gray-400"></i><br>
+                        Enter search terms to find music tracks
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let songs = [
+            {
+                id: '1',
+                title: 'Smells Like Teen Spirit',
+                artist: 'Nirvana',
+                duration: '5:01',
+                videoId: 'hTWKbfoikeg',
+                thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
+                addedBy: 'SYSTEM'
+            },
+            {
+                id: '2',
+                title: 'Loser',
+                artist: 'Beck',
+                duration: '3:46',
+                videoId: 'YgSPaXgAdzE',
+                thumbnail: 'https://img.youtube.com/vi/YgSPaXgAdzE/mqdefault.jpg',
+                addedBy: 'SYSTEM'
+            }
+        ]
+
+        let currentSongId = '1'
+        let isPlaying = false
+        let isSearching = false
+
+        // YouTube API Configuration
+        const YOUTUBE_API_KEY = 'AIzaSyDummyKeyReplaceWithReal' // Replace with your actual API key
+
+        function updateTime() {
+            const now = new Date()
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
+            document.getElementById('taskbar-time').textContent = timeStr
+        }
+
+        function getCurrentSong() {
+            return songs.find(s => s.id === currentSongId)
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-container')
+            const trackCount = document.getElementById('track-count')
+            const totalTime = document.getElementById('total-time')
+            
+            trackCount.textContent = songs.length
+            
+            // Calculate total time (simplified)
+            const totalMinutes = songs.reduce((acc, song) => {
+                const [min, sec] = song.duration.split(':').map(Number)
+                return acc + min + (sec / 60)
+            }, 0)
+            const hours = Math.floor(totalMinutes / 60)
+            const minutes = Math.floor(totalMinutes % 60)
+            totalTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`
+            
+            container.innerHTML = songs.map((song, index) => `
+                <div 
+                    class="flex items-center p-2 hover:bg-blue-200 cursor-pointer border-b border-gray-300 ${song.id === currentSongId ? 'bg-blue-600 text-white' : 'text-black'}"
+                    onclick="playSong('${song.id}')"
+                >
+                    <div class="w-8 text-center font-bold">${index + 1}</div>
+                    <img src="${song.thumbnail}" alt="${song.title}" class="w-8 h-6 object-cover border border-gray-400 mr-2">
+                    <div class="flex-1">
+                        <div class="font-bold text-sm font-terminal">${song.title}</div>
+                        <div class="text-xs opacity-75">${song.artist} - ${song.duration}</div>
+                    </div>
+                    <button 
+                        onclick="removeSong('${song.id}'); event.stopPropagation()"
+                        class="win95-button w-6 h-6 text-xs font-bold text-black hover:bg-red-200"
+                    >
+                        ×
+                    </button>
+                </div>
+            `).join('')
+        }
+
+        function updatePlayer() {
+            const videoContainer = document.getElementById('video-container')
+            const nowPlayingLCD = document.getElementById('now-playing-lcd')
+            const song = getCurrentSong()
+
+            if (song && isPlaying) {
+                videoContainer.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=1&rel=0"
+                        class="w-full h-full"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                    />
+                `
+                nowPlayingLCD.innerHTML = `
+                    <div class="animate-blink">♪</div>
+                    ${song.title.toUpperCase()} - ${song.artist.toUpperCase()}
+                `
+            } else if (song) {
+                videoContainer.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <img src="${song.thumbnail}" alt="${song.title}" class="w-32 h-24 object-cover border-4 border-grunge-yellow mx-auto mb-4">
+                            <p class="font-impact text-xl text-grunge-magenta">${song.title}</p>
+                            <p class="text-sm font-terminal text-grunge-cyan">${song.artist}</p>
+                        </div>
+                    </div>
+                `
+                nowPlayingLCD.textContent = `PAUSED - ${song.title.toUpperCase()}`
+            } else {
+                videoContainer.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
+                        <div class="text-center animate-bounce-in">
+                            <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
+                                <div class="w-8 h-8 bg-black rounded-full"></div>
+                            </div>
+                            <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
+                            <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
+                        </div>
+                    </div>
+                `
+                nowPlayingLCD.textContent = 'READY - INSERT DISC TO PLAY'
+            }
+        }
+
+        async function searchYouTube() {
+            const query = document.getElementById('search-input').value.trim()
+            const searchBtn = document.getElementById('search-btn')
+            const resultsContainer = document.getElementById('search-results')
+            
+            if (!query || isSearching) return
+            
+            isSearching = true
+            searchBtn.textContent = 'Searching...'
+            searchBtn.disabled = true
+            
+            resultsContainer.innerHTML = `
+                <div class="text-center text-blue-600 py-8 font-terminal animate-pulse">
+                    <i class="fas fa-search text-4xl mb-4 animate-spin"></i><br>
+                    Searching music database...
+                </div>
+            `
+
+            try {
+                // Try to use real YouTube API
+                if (YOUTUBE_API_KEY && YOUTUBE_API_KEY !== 'AIzaSyDummyKeyReplaceWithReal') {
+                    const response = await fetch(
+                        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query + ' music')}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`
+                    )
+                    
+                    if (response.ok) {
+                        const data = await response.json()
+                        
+                        if (data.items && data.items.length > 0) {
+                            displaySearchResults(data.items.map(item => ({
+                                videoId: item.id.videoId,
+                                title: item.snippet.title,
+                                artist: item.snippet.channelTitle,
+                                thumbnail: item.snippet.thumbnails.medium.url,
+                                description: item.snippet.description
+                            })))
+                        } else {
+                            throw new Error('No results found')
+                        }
+                    } else {
+                        throw new Error('API request failed')
+                    }
+                } else {
+                    throw new Error('No API key')
+                }
+            } catch (error) {
+                console.log('Using mock data:', error.message)
+                // Fallback to mock results
+                setTimeout(() => {
+                    const mockResults = [
+                        {
+                            videoId: 'dQw4w9WgXcQ',
+                            title: `${query} - Official Music Video`,
+                            artist: 'Various Artists',
+                            thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',
+                            description: 'Classic track from the archives'
+                        },
+                        {
+                            videoId: 'kJQP7kiw5Fk',
+                            title: `${query} - Live Performance`,
+                            artist: 'Live Music Archive',
+                            thumbnail: 'https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg',
+                            description: 'Live recording'
+                        },
+                        {
+                            videoId: 'hTWKbfoikeg',
+                            title: `${query} - Remastered`,
+                            artist: 'Music Classics',
+                            thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
+                            description: 'Digitally remastered version'
+                        }
+                    ]
+                    displaySearchResults(mockResults)
+                }, 1000)
+            }
+            
+            isSearching = false
+            searchBtn.textContent = 'Search'
+            searchBtn.disabled = false
+        }
+
+        function displaySearchResults(results) {
+            const resultsContainer = document.getElementById('search-results')
+            
+            resultsContainer.innerHTML = results.map(result => `
+                <div 
+                    class="flex items-center p-2 hover:bg-blue-200 cursor-pointer border-b border-gray-300"
+                    onclick="addSongFromSearch('${result.videoId}', '${result.title.replace(/'/g, "\\'")}', '${result.artist.replace(/'/g, "\\'")}')"
+                >
+                    <img 
+                        src="${result.thumbnail}" 
+                        alt="${result.title}"
+                        class="w-16 h-12 object-cover border border-gray-400 mr-3"
+                    />
+                    <div class="flex-1">
+                        <div class="font-bold text-sm font-terminal text-black">${result.title}</div>
+                        <div class="text-xs text-gray-600">${result.artist}</div>
+                        ${result.description ? `<div class="text-xs text-gray-500 mt-1">${result.description.substring(0, 60)}...</div>` : ''}
+                    </div>
+                    <div class="win95-button px-2 py-1 text-xs font-bold text-black">
+                        ADD
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function addSongFromSearch(videoId, title, artist) {
+            const newSong = {
+                id: Date.now().toString(),
+                title: title.length > 50 ? title.substring(0, 47) + '...' : title,
+                artist: artist.length > 30 ? artist.substring(0, 27) + '...' : artist,
+                duration: '0:00',
+                videoId: videoId,
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                addedBy: 'USER'
+            }
+            
+            songs.push(newSong)
+            renderPlaylist()
+            hideAddModal()
+            showNotification('Track added to mixtape!')
+        }
+
+        function showNotification(message) {
+            // Create Windows 95 style notification
+            const notification = document.createElement('div')
+            notification.className = 'fixed top-4 right-4 win95-panel p-3 z-50 animate-slide-in'
+            notification.innerHTML = `
+                <div class="windows-titlebar p-1 mb-2">
+                    <i class="fas fa-info-circle mr-2"></i>Vibes 95
+                </div>
+                <div class="text-black font-terminal text-sm">${message}</div>
+            `
+            
+            document.body.appendChild(notification)
+            
+            setTimeout(() => {
+                notification.style.animation = 'glitch-90s 0.3s ease-in-out'
+                setTimeout(() => notification.remove(), 300)
+            }, 3000)
+        }
+
+        function updatePlayButton() {
+            const playBtn = document.getElementById('play-btn')
+            playBtn.innerHTML = `<i class="fas fa-${isPlaying ? 'pause' : 'play'}"></i>`
+        }
+
+        function playSong(id) {
+            currentSongId = id
+            isPlaying = true
+            updatePlayer()
+            updatePlayButton()
+            renderPlaylist()
+        }
+
+        function togglePlay() {
+            if (!currentSongId && songs.length > 0) {
+                playSong(songs[0].id)
+            } else {
+                isPlaying = !isPlaying
+                updatePlayer()
+                updatePlayButton()
+            }
+        }
+
+        function playNext() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            const nextIndex = (currentIndex + 1) % songs.length
+            if (songs[nextIndex]) {
+                playSong(songs[nextIndex].id)
+            }
+        }
+
+        function playPrevious() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            const prevIndex = currentIndex === 0 ? songs.length - 1 : currentIndex - 1
+            if (songs[prevIndex]) {
+                playSong(songs[prevIndex].id)
+            }
+        }
+
+        function stopPlayback() {
+            isPlaying = false
+            currentSongId = null
+            updatePlayer()
+            updatePlayButton()
+            renderPlaylist()
+        }
+
+        function shufflePlaylist() {
+            songs = songs.sort(() => Math.random() - 0.5)
+            renderPlaylist()
+            showNotification('Mixtape shuffled!')
+        }
+
+        function clearPlaylist() {
+            if (confirm('Clear all tracks from mixtape?')) {
+                songs = []
+                currentSongId = null
+                isPlaying = false
+                renderPlaylist()
+                updatePlayer()
+                updatePlayButton()
+                showNotification('Mixtape cleared!')
+            }
+        }
+
+        function removeSong(id) {
+            songs = songs.filter(s => s.id !== id)
+            if (currentSongId === id) {
+                currentSongId = songs.length > 0 ? songs[0].id : null
+                if (!currentSongId) isPlaying = false
+                updatePlayer()
+                updatePlayButton()
+            }
+            renderPlaylist()
+        }
+
+        function showAddModal() {
+            document.getElementById('add-modal').style.display = 'flex'
+            setTimeout(() => document.getElementById('search-input').focus(), 100)
+        }
+
+        function hideAddModal() {
+            document.getElementById('add-modal').style.display = 'none'
+            document.getElementById('search-input').value = ''
+            document.getElementById('search-results').innerHTML = `
+                <div class="text-center text-gray-500 py-8 font-terminal">
+                    <i class="fas fa-compact-disc text-4xl mb-4 text-gray-400"></i><br>
+                    Enter search terms to find music tracks
+                </div>
+            `
+        }
+
+        // Initialize
+        renderPlaylist()
+        updatePlayer()
+        updatePlayButton()
+        updateTime()
+        setInterval(updateTime, 1000)
+        
+        console.log('%c🎧 VIBES 95 SYSTEM LOADED', 'color: #00ff00; font-family: monospace; font-size: 14px; font-weight: bold;')
+        console.log('%cReplace YOUTUBE_API_KEY with your real API key for live search!', 'color: #ffff00; font-family: monospace;')
+    </script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 VIBES '85 - Collaborative Playlist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              neon: {
+                pink: '#ff0080',
+                cyan: '#00ffff',
+                purple: '#8000ff',
+                green: '#00ff41',
+                yellow: '#ffff00'
+              },
+              retro: {
+                dark: '#0a0a0f',
+                darker: '#050508',
+                grid: '#1a1a2e'
+              }
+            },
+            fontFamily: {
+              'retro': ['Orbitron', 'monospace'],
+              'mono': ['Courier Prime', 'monospace']
+            },
+            animation: {
+              'neon-pulse': 'neon-pulse 2s ease-in-out infinite alternate',
+              'scan-line': 'scan-line 2s linear infinite',
+              'glitch': 'glitch 0.3s ease-in-out',
+              'float': 'float 3s ease-in-out infinite'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        @keyframes neon-pulse {
+            from { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor; }
+            to { text-shadow: 0 0 2px currentColor, 0 0 5px currentColor, 0 0 8px currentColor; }
+        }
+        
+        @keyframes scan-line {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .retro-grid {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .neon-border {
+            border: 2px solid #00ffff;
+            box-shadow: 
+                0 0 5px #00ffff,
+                inset 0 0 5px #00ffff,
+                0 0 10px #00ffff,
+                inset 0 0 10px #00ffff;
+        }
+        
+        .neon-text {
+            text-shadow: 
+                0 0 5px currentColor,
+                0 0 10px currentColor,
+                0 0 15px currentColor,
+                0 0 20px currentColor;
+        }
+        
+        .retro-button {
+            background: linear-gradient(45deg, #ff0080, #8000ff);
+            border: 2px solid #00ffff;
+            box-shadow: 
+                0 0 10px #ff0080,
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .retro-button:hover {
+            box-shadow: 
+                0 0 20px #ff0080,
+                0 0 30px #8000ff,
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            opacity: 0.7;
+            animation: scan-line 2s linear infinite;
+        }
+        
+        .vhs-static {
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.3) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="bg-retro-dark text-white font-retro overflow-hidden">
+    <div id="app" class="min-h-screen retro-grid relative">
+        <!-- Scan line effect -->
+        <div class="scan-line"></div>
+        
+        <!-- VHS Static overlay -->
+        <div class="vhs-static fixed inset-0 pointer-events-none opacity-20"></div>
+        
+        <!-- Header -->
+        <header class="bg-retro-darker/80 backdrop-blur-sm border-b-2 border-neon-cyan relative z-10">
+            <div class="max-w-screen-2xl mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 class="text-neon-cyan text-3xl font-black neon-text animate-neon-pulse font-retro">
+                    🎵 VIBES '85
+                </h1>
+                <div class="flex items-center gap-4">
+                    <div class="text-neon-green font-mono text-sm animate-float">
+                        <span class="block">SYSTEM ONLINE</span>
+                        <span class="block text-xs opacity-60" id="current-time"></span>
+                    </div>
+                    <button 
+                        onclick="showAddModal()"
+                        class="retro-button text-white px-6 py-3 rounded font-bold font-retro tracking-wider"
+                    >
+                        + ADD TRACK
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex h-[calc(100vh-90px)]">
+            <!-- Video Player -->
+            <div class="flex-1 bg-retro-darker/50 flex flex-col relative border-r-2 border-neon-cyan">
+                <div class="flex-1 relative neon-border m-4" id="video-container">
+                    <div class="absolute inset-0 flex items-center justify-center text-neon-cyan/70">
+                        <div class="text-center animate-float">
+                            <i class="fas fa-play-circle text-8xl mb-6 animate-neon-pulse"></i>
+                            <p class="text-xl font-retro neon-text">SELECT TRACK TO INITIALIZE</p>
+                            <p class="text-sm font-mono mt-2 opacity-60">AUDIO VISUAL SYSTEM READY</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-retro-darker/80 p-6 border-t-2 border-neon-pink" id="now-playing" style="display: none;">
+                    <h3 class="text-neon-pink font-bold text-xl mb-4 neon-text font-retro">NOW PLAYING</h3>
+                    <div class="flex items-center gap-6" id="now-playing-info">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playlist -->
+            <div class="w-[450px] bg-retro-darker/60 backdrop-blur-sm overflow-y-auto border-l-2 border-neon-purple">
+                <div class="p-6 border-b-2 border-neon-yellow/30">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-neon-yellow text-2xl font-black neon-text font-retro">PLAYLIST</h2>
+                        <span class="text-neon-green font-mono text-sm bg-retro-darker px-3 py-1 rounded neon-border" id="song-count">2 TRACKS</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 mb-6">
+                        <button 
+                            onclick="togglePlay()"
+                            class="retro-button w-14 h-14 rounded-full flex items-center justify-center text-white text-xl font-bold transition-all hover:animate-pulse"
+                            id="play-btn"
+                        >
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button 
+                            onclick="playNext()"
+                            class="bg-neon-cyan/20 border-2 border-neon-cyan w-14 h-14 rounded-full flex items-center justify-center text-neon-cyan text-xl hover:bg-neon-cyan hover:text-black transition-all"
+                        >
+                            <i class="fas fa-forward"></i>
+                        </button>
+                        <button 
+                            onclick="shufflePlaylist()"
+                            class="bg-neon-green/20 border-2 border-neon-green w-14 h-14 rounded-full flex items-center justify-center text-neon-green text-lg hover:bg-neon-green hover:text-black transition-all"
+                        >
+                            <i class="fas fa-random"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-4 space-y-3" id="songs-list">
+                    <!-- Songs will be rendered here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Song Modal -->
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50" id="add-modal" style="display: none;">
+        <div class="bg-retro-darker neon-border rounded-lg p-0 max-w-2xl w-[90%] overflow-hidden relative">
+            <!-- Retro terminal header -->
+            <div class="bg-retro-grid p-4 border-b-2 border-neon-cyan flex justify-between items-center">
+                <h3 class="text-2xl font-black text-neon-cyan neon-text font-retro">SEARCH MUSIC DATABASE</h3>
+                <button 
+                    onclick="hideAddModal()"
+                    class="w-10 h-10 rounded border-2 border-neon-pink hover:bg-neon-pink hover:text-black flex items-center justify-center text-neon-pink text-xl transition-all"
+                >
+                    ×
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <div class="mb-6">
+                    <input 
+                        type="text"
+                        id="search-input"
+                        placeholder="ENTER SEARCH QUERY..."
+                        class="w-full px-4 py-4 bg-retro-darker border-2 border-neon-green text-neon-green font-mono text-lg focus:outline-none focus:border-neon-yellow focus:text-neon-yellow focus:shadow-lg focus:shadow-neon-yellow/50 transition-all"
+                        onkeypress="if(event.key==='Enter') searchYouTube()"
+                    />
+                    <button 
+                        onclick="searchYouTube()"
+                        class="retro-button text-white px-8 py-4 font-bold font-retro tracking-wider mt-4 w-full"
+                        id="search-btn"
+                    >
+                        SEARCH DATABASE
+                    </button>
+                </div>
+                
+                <div class="max-h-96 overflow-y-auto space-y-3" id="search-results">
+                    <div class="text-center text-neon-cyan/60 py-8 font-mono">
+                        ENTER SEARCH TERMS TO ACCESS MUSIC DATABASE
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let songs = [
+            {
+                id: '1',
+                title: 'Bohemian Rhapsody',
+                artist: 'Queen',
+                duration: '5:55',
+                videoId: 'fJ9rUzIMcZQ',
+                thumbnail: 'https://img.youtube.com/vi/fJ9rUzIMcZQ/mqdefault.jpg',
+                addedBy: 'SYSTEM'
+            },
+            {
+                id: '2',
+                title: 'Take On Me',
+                artist: 'a-ha',
+                duration: '3:47',
+                videoId: 'djV11Xbc914',
+                thumbnail: 'https://img.youtube.com/vi/djV11Xbc914/mqdefault.jpg',
+                addedBy: 'SYSTEM'
+            }
+        ]
+
+        let currentSongId = '1'
+        let isPlaying = false
+        let isSearching = false
+
+        // YouTube API Key - You'll need to get your own from Google Cloud Console
+        const YOUTUBE_API_KEY = 'YOUR_API_KEY_HERE' // Replace with actual API key
+
+        function updateTime() {
+            const now = new Date()
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
+            document.getElementById('current-time').textContent = timeStr
+        }
+
+        function getCurrentSong() {
+            return songs.find(s => s.id === currentSongId)
+        }
+
+        function renderSongs() {
+            const container = document.getElementById('songs-list')
+            const songCount = document.getElementById('song-count')
+            
+            songCount.textContent = `${songs.length} TRACKS`
+            
+            container.innerHTML = songs.map((song, index) => `
+                <div 
+                    class="bg-retro-darker/80 border-l-4 ${song.id === currentSongId ? 'border-neon-pink bg-neon-pink/10' : 'border-neon-cyan/50'} p-4 cursor-pointer transition-all hover:border-neon-yellow hover:bg-neon-yellow/10 hover:transform hover:scale-105 relative overflow-hidden group"
+                    onclick="playSong('${song.id}')"
+                >
+                    <!-- Track number -->
+                    <div class="absolute top-2 right-2 text-neon-green font-mono text-xs bg-retro-darker px-2 py-1 rounded">
+                        ${String(index + 1).padStart(2, '0')}
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <img 
+                            src="${song.thumbnail}" 
+                            alt="${song.title}"
+                            class="w-16 h-12 rounded border-2 border-neon-cyan/50 object-cover"
+                        />
+                        
+                        <div class="flex-1">
+                            <div class="text-white font-bold text-lg font-retro ${song.id === currentSongId ? 'text-neon-pink neon-text animate-neon-pulse' : ''}">${song.title}</div>
+                            <div class="text-neon-cyan text-sm font-mono">${song.artist}</div>
+                            <div class="text-neon-green/60 text-xs font-mono mt-1">${song.duration} • ${song.addedBy}</div>
+                        </div>
+                        
+                        <button 
+                            onclick="removeSong('${song.id}'); event.stopPropagation()"
+                            class="w-8 h-8 rounded border-2 border-neon-pink/50 hover:border-neon-pink hover:bg-neon-pink hover:text-black text-neon-pink flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                        >
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function updateVideo() {
+            const videoContainer = document.getElementById('video-container')
+            const nowPlaying = document.getElementById('now-playing')
+            const nowPlayingInfo = document.getElementById('now-playing-info')
+            const song = getCurrentSong()
+
+            if (song) {
+                videoContainer.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=${isPlaying ? 1 : 0}"
+                        class="w-full h-full"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                    />
+                `
+                
+                nowPlayingInfo.innerHTML = `
+                    <img 
+                        src="${song.thumbnail}" 
+                        alt="${song.title}"
+                        class="w-20 h-15 rounded border-2 border-neon-pink object-cover animate-float"
+                    />
+                    <div>
+                        <div class="text-white font-black text-xl font-retro neon-text">${song.title}</div>
+                        <div class="text-neon-cyan text-lg font-mono">${song.artist}</div>
+                        <div class="text-neon-green/60 text-sm font-mono mt-1">DURATION: ${song.duration}</div>
+                    </div>
+                `
+                nowPlaying.style.display = 'block'
+            } else {
+                videoContainer.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center text-neon-cyan/70">
+                        <div class="text-center animate-float">
+                            <i class="fas fa-play-circle text-8xl mb-6 animate-neon-pulse"></i>
+                            <p class="text-xl font-retro neon-text">SELECT TRACK TO INITIALIZE</p>
+                            <p class="text-sm font-mono mt-2 opacity-60">AUDIO VISUAL SYSTEM READY</p>
+                        </div>
+                    </div>
+                `
+                nowPlaying.style.display = 'none'
+            }
+        }
+
+        async function searchYouTube() {
+            const query = document.getElementById('search-input').value.trim()
+            const searchBtn = document.getElementById('search-btn')
+            const resultsContainer = document.getElementById('search-results')
+            
+            if (!query || isSearching) return
+            
+            isSearching = true
+            searchBtn.innerHTML = 'SEARCHING DATABASE...'
+            searchBtn.disabled = true
+            
+            resultsContainer.innerHTML = `
+                <div class="text-center text-neon-yellow py-8 font-mono animate-pulse">
+                    <i class="fas fa-satellite-dish text-4xl mb-4 animate-spin"></i><br>
+                    ACCESSING MUSIC DATABASE...
+                </div>
+            `
+
+            try {
+                // If you have a YouTube API key, use this:
+                if (YOUTUBE_API_KEY !== 'YOUR_API_KEY_HERE') {
+                    const response = await fetch(
+                        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&key=${YOUTUBE_API_KEY}`
+                    )
+                    const data = await response.json()
+                    
+                    if (data.items) {
+                        displaySearchResults(data.items.map(item => ({
+                            videoId: item.id.videoId,
+                            title: item.snippet.title,
+                            artist: item.snippet.channelTitle,
+                            thumbnail: item.snippet.thumbnails.medium.url
+                        })))
+                    }
+                } else {
+                    // Mock results for demo
+                    setTimeout(() => {
+                        const mockResults = [
+                            {
+                                videoId: 'dQw4w9WgXcQ',
+                                title: `${query} - Original Mix`,
+                                artist: 'Various Artists',
+                                thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg'
+                            },
+                            {
+                                videoId: 'kJQP7kiw5Fk',
+                                title: `${query} - Extended Version`,
+                                artist: 'Music Archive',
+                                thumbnail: 'https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg'
+                            }
+                        ]
+                        displaySearchResults(mockResults)
+                    }, 1500)
+                }
+            } catch (error) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-neon-pink py-8 font-mono">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i><br>
+                        DATABASE CONNECTION ERROR<br>
+                        <span class="text-sm opacity-60">Please try again later</span>
+                    </div>
+                `
+            }
+            
+            isSearching = false
+            searchBtn.innerHTML = 'SEARCH DATABASE'
+            searchBtn.disabled = false
+        }
+
+        function displaySearchResults(results) {
+            const resultsContainer = document.getElementById('search-results')
+            
+            resultsContainer.innerHTML = results.map(result => `
+                <div 
+                    class="bg-retro-darker border-2 border-neon-green/30 p-4 cursor-pointer hover:border-neon-yellow hover:bg-neon-yellow/10 transition-all group"
+                    onclick="addSongFromSearch('${result.videoId}', '${result.title.replace(/'/g, "\\'")}', '${result.artist.replace(/'/g, "\\'")}')"
+                >
+                    <div class="flex items-center gap-4">
+                        <img 
+                            src="${result.thumbnail}" 
+                            alt="${result.title}"
+                            class="w-24 h-18 rounded border-2 border-neon-cyan/50 object-cover"
+                        />
+                        <div class="flex-1">
+                            <div class="text-white font-bold font-retro group-hover:text-neon-yellow transition-colors">${result.title}</div>
+                            <div class="text-neon-cyan text-sm font-mono">${result.artist}</div>
+                        </div>
+                        <div class="text-neon-green font-mono text-xs bg-retro-darker px-3 py-2 rounded border border-neon-green/50">
+                            ADD TRACK
+                        </div>
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function addSongFromSearch(videoId, title, artist) {
+            const newSong = {
+                id: Date.now().toString(),
+                title: title,
+                artist: artist,
+                duration: '0:00',
+                videoId: videoId,
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                addedBy: 'USER'
+            }
+            
+            songs.push(newSong)
+            renderSongs()
+            hideAddModal()
+            
+            // Show success message
+            showNotification('TRACK ADDED TO PLAYLIST', 'success')
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div')
+            const color = type === 'success' ? 'neon-green' : 'neon-cyan'
+            
+            notification.className = `fixed top-4 right-4 bg-retro-darker border-2 border-${color} text-${color} px-6 py-4 rounded font-mono z-50 animate-float`
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : 'info'}-circle mr-2"></i>
+                ${message}
+            `
+            
+            document.body.appendChild(notification)
+            
+            setTimeout(() => {
+                notification.style.animation = 'glitch 0.3s ease-in-out'
+                setTimeout(() => notification.remove(), 300)
+            }, 3000)
+        }
+
+        function updatePlayButton() {
+            const playBtn = document.getElementById('play-btn')
+            playBtn.innerHTML = `<i class="fas fa-${isPlaying ? 'pause' : 'play'}"></i>`
+        }
+
+        function playSong(id) {
+            currentSongId = id
+            isPlaying = true
+            updateVideo()
+            updatePlayButton()
+            renderSongs()
+            showNotification('NOW PLAYING', 'success')
+        }
+
+        function togglePlay() {
+            if (!currentSongId && songs.length > 0) {
+                playSong(songs[0].id)
+            } else {
+                isPlaying = !isPlaying
+                updateVideo()
+                updatePlayButton()
+            }
+        }
+
+        function playNext() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            const nextIndex = (currentIndex + 1) % songs.length
+            if (songs[nextIndex]) {
+                playSong(songs[nextIndex].id)
+            }
+        }
+
+        function shufflePlaylist() {
+            songs = songs.sort(() => Math.random() - 0.5)
+            renderSongs()
+            showNotification('PLAYLIST SHUFFLED', 'info')
+        }
+
+        function removeSong(id) {
+            songs = songs.filter(s => s.id !== id)
+            if (currentSongId === id) {
+                currentSongId = songs.length > 0 ? songs[0].id : null
+                updateVideo()
+            }
+            renderSongs()
+            showNotification('TRACK REMOVED', 'info')
+        }
+
+        function showAddModal() {
+            document.getElementById('add-modal').style.display = 'flex'
+            setTimeout(() => document.getElementById('search-input').focus(), 100)
+        }
+
+        function hideAddModal() {
+            document.getElementById('add-modal').style.display = 'none'
+            document.getElementById('search-input').value = ''
+            document.getElementById('search-results').innerHTML = `
+                <div class="text-center text-neon-cyan/60 py-8 font-mono">
+                    ENTER SEARCH TERMS TO ACCESS MUSIC DATABASE
+                </div>
+            `
+        }
+
+        // Initialize
+        renderSongs()
+        updateVideo()
+        updatePlayButton()
+        updateTime()
+        setInterval(updateTime, 1000)
+        
+        console.log('%c🎵 VIBES \'85 SYSTEM INITIALIZED', 'color: #00ffff; font-size: 16px; font-weight: bold;')
+    </script>
+</body>
+</html>

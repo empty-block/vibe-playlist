@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎧 VIBES 95 - Digital Mixtape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              grunge: {
+                yellow: '#ffff00',
+                magenta: '#ff00ff',
+                cyan: '#00ffff',
+                lime: '#00ff00',
+                orange: '#ff8800',
+                purple: '#8000ff'
+              },
+              windows: {
+                gray: '#c0c0c0',
+                darkgray: '#808080',
+                blue: '#0000ff',
+                teal: '#008080'
+              }
+            },
+            fontFamily: {
+              'pixel': ['VT323', 'monospace'],
+              'terminal': ['Courier New', 'monospace'],
+              'impact': ['Impact', 'Arial Black', 'sans-serif']
+            },
+            animation: {
+              'blink': 'blink 1s linear infinite',
+              'slide-in': 'slide-in 0.5s ease-out',
+              'bounce-in': 'bounce-in 0.6s ease-out',
+              'glitch-90s': 'glitch-90s 0.2s ease-in-out'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(2deg); }
+            70% { transform: scale(0.9) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        @keyframes glitch-90s {
+            0%, 100% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-2px, -2px); filter: hue-rotate(180deg); }
+            60% { transform: translate(2px, 2px); filter: hue-rotate(270deg); }
+            80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
+        }
+        
+        .win95-button {
+            border: 2px outset #c0c0c0;
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080,
+                1px 1px 0px #000000;
+        }
+        
+        .win95-button:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+        
+        .win95-button:active {
+            border: 2px inset #c0c0c0;
+            box-shadow: 
+                inset -1px -1px 0px #ffffff,
+                inset 1px 1px 0px #808080;
+        }
+        
+        .win95-panel {
+            border: 2px inset #c0c0c0;
+            background: #c0c0c0;
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080;
+        }
+        
+        .grunge-bg {
+            background: 
+                radial-gradient(circle at 25% 25%, #ff00ff 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #00ffff 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #ffff00 0%, transparent 50%),
+                linear-gradient(45deg, #000000 0%, #1a1a1a 100%);
+        }
+        
+        .tv-static {
+            background-image: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 15px 15px;
+            animation: tv-static 0.1s linear infinite;
+        }
+        
+        @keyframes tv-static {
+            0% { background-position: 0 0; }
+            100% { background-position: 15px 15px; }
+        }
+        
+        .lcd-text {
+            background: #000;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            padding: 8px;
+            border: 2px inset #333;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .cassette-button {
+            background: linear-gradient(145deg, #ff6b6b, #ff5252);
+            border: 3px solid #333;
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: perspective(100px) rotateX(5deg);
+        }
+        
+        .cassette-button:hover {
+            transform: perspective(100px) rotateX(0deg) scale(1.05);
+        }
+        
+        .cd-shimmer {
+            background: 
+                radial-gradient(circle, 
+                    rgba(255,255,255,0.8) 0%, 
+                    rgba(255,0,255,0.4) 25%, 
+                    rgba(0,255,255,0.4) 50%, 
+                    rgba(255,255,0,0.4) 75%, 
+                    rgba(255,255,255,0.8) 100%
+                );
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .windows-titlebar {
+            background: linear-gradient(90deg, #008080 0%, #0000ff 100%);
+            color: white;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        /* Windows 95 style scrollbar */
+        #playlist-container::-webkit-scrollbar {
+            width: 16px;
+        }
+        
+        #playlist-container::-webkit-scrollbar-track {
+            background: #c0c0c0;
+            border: 2px inset #c0c0c0;
+        }
+        
+        #playlist-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            border: 2px outset #c0c0c0;
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080;
+        }
+        
+        #playlist-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+        
+        #playlist-container::-webkit-scrollbar-button {
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            border: 2px outset #c0c0c0;
+            height: 16px;
+        }
+        
+        #playlist-container::-webkit-scrollbar-button:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+    </style>
+</head>
+<body class="bg-black text-green-400 font-pixel overflow-hidden">
+
+    <div id="app" class="min-h-screen grunge-bg relative">
+        <!-- TV Static overlay -->
+        <div class="tv-static fixed inset-0 pointer-events-none opacity-5"></div>
+        
+        <!-- Windows 95 style taskbar -->
+        <div class="fixed bottom-0 left-0 right-0 win95-panel p-1 z-50 border-t-2">
+            <div class="flex items-center justify-between">
+                <button class="win95-button px-4 py-1 font-bold text-black text-sm">
+                    <i class="fas fa-compact-disc mr-2 text-blue-600"></i>Start
+                </button>
+                <div class="lcd-text text-xs">
+                    <span id="taskbar-time">00:00:00</span> | VIBES95.EXE | <span class="animate-blink">●</span> REC
+                </div>
+            </div>
+        </div>
+
+        <!-- Main window -->
+        <div class="win95-panel m-4 mb-16 h-[calc(100vh-6rem)] flex flex-col">
+            <!-- Title bar -->
+            <div class="windows-titlebar p-2 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-cassette-tape"></i>
+                    VIBES 95 - Digital Mixtape Creator v1.0
+                </div>
+                <div class="flex gap-1">
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">□</button>
+                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+                </div>
+            </div>
+
+            <!-- Menu bar -->
+            <div class="win95-panel p-1 border-b-2">
+                <div class="flex gap-4 text-black text-sm font-bold">
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">File</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Edit</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">View</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Tools</span>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Help</span>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="flex-1 flex bg-gray-200">
+                <!-- AI Agent Chat Panel (LEFT SIDE) -->
+                <div class="w-[450px] p-4 border-r-2 border-gray-400" id="ai-panel">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-robot mr-2"></i>DJ Bot 95 - Music Assistant</span>
+                            <button onclick="toggleAIAgent()" class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+                        </div>
+                        
+                        <!-- AI Avatar & Status -->
+                        <div class="lcd-text mb-4 text-center">
+                            <div class="text-lg mb-1">🤖</div>
+                            <div class="text-xs">ONLINE • READY TO HELP</div>
+                        </div>
+                        
+                        <!-- Chat Messages -->
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto mb-4 p-2" id="chat-messages" style="max-height: 400px;">
+                            <div class="space-y-3" id="chat-content">
+                                <!-- Welcome message -->
+                                <div class="flex gap-2">
+                                    <div class="text-lg">🤖</div>
+                                    <div class="flex-1">
+                                        <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
+                                            <strong>DJ Bot 95:</strong> Hey there! I'm your AI music assistant. I can help you discover new tracks, analyze your playlist, or chat about 90s music. What would you like to do?
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-1">just now</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="mb-4">
+                            <div class="text-xs font-bold text-black mb-2">Quick Actions:</div>
+                            <div class="grid grid-cols-2 gap-1">
+                                <button onclick="aiQuickAction('recommend')" class="win95-button px-2 py-1 text-xs text-black">
+                                    🎯 Recommend
+                                </button>
+                                <button onclick="aiQuickAction('analyze')" class="win95-button px-2 py-1 text-xs text-black">
+                                    📊 Analyze
+                                </button>
+                                <button onclick="aiQuickAction('trivia')" class="win95-button px-2 py-1 text-xs text-black">
+                                    🎮 Trivia
+                                </button>
+                                <button onclick="aiQuickAction('mood')" class="win95-button px-2 py-1 text-xs text-black">
+                                    😎 Mood Mix
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="flex gap-2">
+                            <input 
+                                type="text"
+                                id="ai-input"
+                                placeholder="Ask DJ Bot 95 anything..."
+                                class="flex-1 px-2 py-2 border-2 border-gray-400 bg-white text-black font-terminal text-xs"
+                                onkeypress="if(event.key==='Enter') sendAIMessage()"
+                            />
+                            <button 
+                                onclick="sendAIMessage()"
+                                class="win95-button px-3 py-2 text-black font-bold text-xs"
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CD Player / Video area (CENTER) -->
+                <div class="flex-1 p-4 border-r-2 border-gray-400">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-compact-disc mr-2"></i>CD Player Pro</span>
+                            <button onclick="toggleAIAgent()" class="win95-button px-2 py-1 text-black text-xs font-bold" id="ai-toggle-btn">
+                                <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
+                            </button>
+                        </div>
+                        
+                        <div class="bg-black border-2 border-gray-400 relative overflow-hidden mb-4" id="video-container">
+                            <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
+                                <div class="text-center animate-bounce-in">
+                                    <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
+                                        <div class="w-8 h-8 bg-black rounded-full"></div>
+                                    </div>
+                                    <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
+                                    <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CD Player controls -->
+                        <div class="flex justify-center gap-2 mb-4">
+                            <button onclick="playPrevious()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-backward"></i>
+                            </button>
+                            <button onclick="togglePlay()" class="cassette-button w-16 h-12 rounded text-white font-bold text-xl" id="play-btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="playNext()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                            <button onclick="stopPlayback()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Now playing display -->
+                        <div class="lcd-text text-center" id="now-playing-lcd">
+                            READY - INSERT DISC TO PLAY
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Feed (RIGHT SIDE) -->
+                <div class="w-[450px] p-4">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-users mr-2"></i>Social Feed • Mixtape.m3u</span>
+                            <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
+                                🎵 Add Track
+                            </button>
+                        </div>
+                        
+                        <div class="lcd-text mb-4 text-center">
+                            TRACKS: <span id="track-count">2</span> | TIME: <span id="total-time">8:47</span>
+                        </div>
+                        
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto max-h-[700px]" id="playlist-container" style="scrollbar-width: thin; scrollbar-color: #808080 #c0c0c0;">
+                            <!-- Playlist items will go here -->
+                        </div>
+                        
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="shufflePlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-random mr-1"></i>Shuffle
+                            </button>
+                            <button onclick="clearPlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Track Dialog -->
+    <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" id="add-modal" style="display: none;">
+        <div class="win95-panel p-0 w-[700px] max-h-[80vh] animate-bounce-in">
+            <!-- Dialog title bar -->
+            <div class="windows-titlebar p-2 flex justify-between items-center">
+                <span><i class="fas fa-search mr-2"></i>Add Tracks - Music Database Search</span>
+                <button onclick="hideAddModal()" class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+            </div>
+            
+            <div class="p-4 bg-gray-200">
+                <div class="mb-4">
+                    <label class="block text-black font-bold mb-2 text-sm">Search Query:</label>
+                    <div class="flex gap-2">
+                        <input 
+                            type="text"
+                            id="search-input"
+                            placeholder="Enter artist, song, or album name..."
+                            class="flex-1 px-3 py-2 border-2 border-gray-400 bg-white text-black font-terminal"
+                            onkeypress="if(event.key==='Enter') searchYouTube()"
+                        />
+                        <button 
+                            onclick="searchYouTube()"
+                            class="win95-button px-4 py-2 text-black font-bold text-sm"
+                            id="search-btn"
+                        >
+                            Search
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-black font-bold mb-2 text-sm">Your Story (Optional):</label>
+                    <input 
+                        type="text"
+                        id="comment-input"
+                        placeholder="Why are you adding this track? Share your story..."
+                        class="w-full px-3 py-2 border-2 border-gray-400 bg-white text-black font-terminal text-sm"
+                        maxlength="150"
+                    />
+                    <div class="text-xs text-gray-500 mt-1">💡 Tell us why this song rocks!</div>
+                </div>
+                
+                <div class="win95-panel p-2 h-80 overflow-y-auto bg-white" id="search-results">
+                    <div class="text-center text-gray-500 py-8 font-terminal">
+                        <i class="fas fa-compact-disc text-4xl mb-4 text-gray-400"></i><br>
+                        Enter search terms to find music tracks
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themes = {
+            retro85: {
+                name: "VIBES '85",
+                colors: {
+                    bg: 'linear-gradient(135deg, #0f0f23 0%, #240046 50%, #3c096c 100%)',
+                    primary: '#ff0080',
+                    secondary: '#00ffff',
+                    accent: '#ffff00',
+                    text: '#ffffff',
+                    panel: 'rgba(0, 0, 0, 0.3)'
+                },
+                fonts: {
+                    main: 'Orbitron',
+                    mono: 'Courier Prime'
+                },
+                effects: {
+                    glow: '0 0 20px currentColor',
+                    border: '2px solid #00ffff',
+                    animation: 'neon-pulse 2s ease-in-out infinite alternate'
+                }
+            },
+            grunge90s: {
+                name: "VIBES '92",
+                colors: {
+                    bg: 'linear-gradient(45deg, #2d1b69 0%, #0f0f0f 50%, #8b0000 100%)',
+                    primary: '#ff6b35',
+                    secondary: '#f7931e',
+                    accent: '#ffec8b',
+                    text: '#ffffff',
+                    panel: 'rgba(139, 0, 0, 0.2)'
+                },
+                fonts: {
+                    main: 'Impact',
+                    mono: 'Courier New'
+                },
+                effects: {
+                    glow: '0 0 10px #ff6b35',
+                    border: '3px solid #f7931e',
+                    animation: 'none'
+                }
+            },
+            windows95: {
+                name: "VIBES '95",
+                colors: {
+                    bg: '#008080',
+                    primary: '#c0c0c0',
+                    secondary: '#0000ff',
+                    accent: '#ffff00',
+                    text: '#000000',
+                    panel: '#c0c0c0'
+                },
+                fonts: {
+                    main: 'VT323',
+                    mono: 'Courier New'
+                },
+                effects: {
+                    glow: 'none',
+                    border: '2px outset #c0c0c0',
+                    animation: 'none'
+                }
+            },
+            y2k: {
+                name: "VIBES 2000",
+                colors: {
+                    bg: 'linear-gradient(45deg, #000000 0%, #001100 50%, #003300 100%)',
+                    primary: '#00ff00',
+                    secondary: '#0099ff',
+                    accent: '#ff0099',
+                    text: '#00ff00',
+                    panel: 'rgba(0, 50, 0, 0.8)'
+                },
+                fonts: {
+                    main: 'Courier New',
+                    mono: 'Courier New'
+                },
+                effects: {
+                    glow: '0 0 15px #00ff00',
+                    border: '1px solid #00ff00',
+                    animation: 'matrix-rain 2s linear infinite'
+                }
+            },
+            ipod2005: {
+                name: "VIBES 2005",
+                colors: {
+                    bg: 'linear-gradient(145deg, #f0f0f0 0%, #ffffff 50%, #e0e0e0 100%)',
+                    primary: '#007aff',
+                    secondary: '#5856d6',
+                    accent: '#ff3b30',
+                    text: '#000000',
+                    panel: 'rgba(255, 255, 255, 0.9)'
+                },
+                fonts: {
+                    main: 'Helvetica Neue, Arial',
+                    mono: 'Monaco, Consolas'
+                },
+                effects: {
+                    glow: '0 2px 10px rgba(0, 122, 255, 0.3)',
+                    border: '1px solid #007aff',
+                    animation: 'none'
+                }
+            },
+            myspace2007: {
+                name: "VIBES 2007",
+                colors: {
+                    bg: 'linear-gradient(45deg, #ff1493 0%, #00bfff 50%, #ffd700 100%)',
+                    primary: '#ff69b4',
+                    secondary: '#00bfff',
+                    accent: '#ffd700',
+                    text: '#ffffff',
+                    panel: 'rgba(255, 20, 147, 0.2)'
+                },
+                fonts: {
+                    main: 'Fredoka One',
+                    mono: 'Courier New'
+                },
+                effects: {
+                    glow: '0 0 20px #ff69b4, 0 0 30px #00bfff',
+                    border: '3px solid #ffd700',
+                    animation: 'rainbow-pulse 3s ease-in-out infinite'
+                }
+            },
+            skeuomorphic: {
+                name: "VIBES 2012",
+                colors: {
+                    bg: 'linear-gradient(145deg, #2c3e50 0%, #3498db 100%)',
+                    primary: '#3498db',
+                    secondary: '#2ecc71',
+                    accent: '#e74c3c',
+                    text: '#ffffff',
+                    panel: 'rgba(52, 73, 94, 0.9)'
+                },
+                fonts: {
+                    main: 'Righteous',
+                    mono: 'Monaco'
+                },
+                effects: {
+                    glow: '0 4px 15px rgba(52, 152, 219, 0.4)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    animation: 'subtle-glow 4s ease-in-out infinite'
+                }
+            }
+        }
+
+        // YouTube API Configuration
+        const YOUTUBE_API_KEY = 'AIzaSyDummyKeyReplaceWithReal' // Replace with your actual API key
+        let songs = [
+            {
+                id: '1',
+                title: 'Smells Like Teen Spirit',
+                artist: 'Nirvana',
+                duration: '5:01',
+                videoId: 'hTWKbfoikeg',
+                thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
+                addedBy: 'grunge_kid_92',
+                userAvatar: '🎸',
+                timestamp: '2 min ago',
+                comment: 'This song changed everything for me in high school. Peak 90s energy! 🔥',
+                reactions: { fire: 12, heart: 8, nostalgia: 5 }
+            },
+            {
+                id: '2',
+                title: 'Loser',
+                artist: 'Beck',
+                duration: '3:54',
+                videoId: 'YgSPaXgAdzE',
+                thumbnail: 'https://img.youtube.com/vi/YgSPaXgAdzE/mqdefault.jpg',
+                addedBy: 'alt_rock_alice',
+                userAvatar: '🎭',
+                timestamp: '5 min ago',
+                comment: 'Perfect slacker anthem. Beck was so ahead of his time.',
+                reactions: { fire: 7, heart: 4, cool: 9 }
+            },
+            {
+                id: '3',
+                title: 'Creep',
+                artist: 'Radiohead',
+                duration: '3:58',
+                videoId: 'XFkzRNyygfk',
+                thumbnail: 'https://img.youtube.com/vi/XFkzRNyygfk/mqdefault.jpg',
+                addedBy: 'radiohead_stan',
+                userAvatar: '👁️',
+                timestamp: '8 min ago',
+                comment: 'Before OK Computer, there was this masterpiece. Still hits different.',
+                reactions: { heart: 15, melancholy: 8, fire: 6 }
+            },
+            {
+                id: '4',
+                title: 'Black',
+                artist: 'Pearl Jam',
+                duration: '5:43',
+                videoId: 'cs-XZ_dN4Hc',
+                thumbnail: 'https://img.youtube.com/vi/cs-XZ_dN4Hc/mqdefault.jpg',
+                addedBy: 'seattle_sound',
+                userAvatar: '🌧️',
+                timestamp: '12 min ago',
+                comment: 'Eddie Vedder\'s voice on this track... pure emotion. Seattle forever.',
+                reactions: { heart: 18, fire: 11, nostalgia: 7 }
+            },
+            {
+                id: '5',
+                title: 'Zombie',
+                artist: 'The Cranberries',
+                duration: '5:06',
+                videoId: '6Ejga4kJUts',
+                thumbnail: 'https://img.youtube.com/vi/6Ejga4kJUts/mqdefault.jpg',
+                addedBy: 'irish_dreamer',
+                userAvatar: '🍀',
+                timestamp: '15 min ago',
+                comment: 'Dolores O\'Riordan had such a unique voice. RIP to a legend.',
+                reactions: { heart: 22, respect: 14, fire: 9 }
+            },
+            {
+                id: '6',
+                title: 'Under the Bridge',
+                artist: 'Red Hot Chili Peppers',
+                duration: '4:24',
+                videoId: 'lwlogyj7nFE',
+                thumbnail: 'https://img.youtube.com/vi/lwlogyj7nFE/mqdefault.jpg',
+                addedBy: 'funk_rock_fan',
+                userAvatar: '🌶️',
+                timestamp: '18 min ago',
+                comment: 'LA vibes forever. This song captures the city perfectly.',
+                reactions: { fire: 16, heart: 12, chill: 8 }
+            },
+            {
+                id: '7',
+                title: 'Man in the Box',
+                artist: 'Alice in Chains',
+                duration: '4:46',
+                videoId: 'TAqZb52sgpU',
+                thumbnail: 'https://img.youtube.com/vi/TAqZb52sgpU/mqdefault.jpg',
+                addedBy: 'heavy_metal_mike',
+                userAvatar: '⛓️',
+                timestamp: '22 min ago',
+                comment: 'Layne Staley\'s voice was unmatched. This riff is iconic.',
+                reactions: { fire: 13, metal: 10, respect: 6 }
+            },
+            {
+                id: '8',
+                title: 'Touch Me I\'m Sick',
+                artist: 'Mudhoney',
+                duration: '2:33',
+                videoId: 'HD7ClvlL36E',
+                thumbnail: 'https://img.youtube.com/vi/HD7ClvlL36E/mqdefault.jpg',
+                addedBy: 'underground_hero',
+                userAvatar: '🎪',
+                timestamp: '25 min ago',
+                comment: 'Deep cut from the Seattle scene. Mudhoney doesn\'t get enough love!',
+                reactions: { fire: 8, underground: 12, cool: 5 }
+            },
+            {
+                id: '9',
+                title: 'Plush',
+                artist: 'Stone Temple Pilots',
+                duration: '5:13',
+                videoId: 'V5UOC0C0x8Q',
+                thumbnail: 'https://img.youtube.com/vi/V5UOC0C0x8Q/mqdefault.jpg',
+                addedBy: 'stp_collector',
+                userAvatar: '🗿',
+                timestamp: '28 min ago',
+                comment: 'Scott Weiland was such a showman. This video is pure 90s aesthetic.',
+                reactions: { fire: 11, heart: 7, aesthetic: 9 }
+            },
+            {
+                id: '10',
+                title: 'Everlong',
+                artist: 'Foo Fighters',
+                duration: '4:10',
+                videoId: 'eBG7P-K-r1Y',
+                thumbnail: 'https://img.youtube.com/vi/eBG7P-K-r1Y/mqdefault.jpg',
+                addedBy: 'dave_grohl_fan',
+                userAvatar: '🥁',
+                timestamp: '32 min ago',
+                comment: 'Dave Grohl is a musical genius. From Nirvana to this masterpiece.',
+                reactions: { fire: 20, heart: 14, rock: 11 }
+            },
+            {
+                id: '11',
+                title: 'Hunger Strike',
+                artist: 'Temple of the Dog',
+                duration: '4:03',
+                videoId: 'VUb450Alpps',
+                thumbnail: 'https://img.youtube.com/vi/VUb450Alpps/mqdefault.jpg',
+                addedBy: 'cornell_tribute',
+                userAvatar: '🎤',
+                timestamp: '35 min ago',
+                comment: 'Chris Cornell and Eddie Vedder together. Doesn\'t get better than this.',
+                reactions: { heart: 25, respect: 18, fire: 12 }
+            },
+            {
+                id: '12',
+                title: 'Glycerine',
+                artist: 'Bush',
+                duration: '4:27',
+                videoId: 'hOllF3TgAsM',
+                thumbnail: 'https://img.youtube.com/vi/hOllF3TgAsM/mqdefault.jpg',
+                addedBy: 'brit_grunge_lover',
+                userAvatar: '🇬🇧',
+                timestamp: '38 min ago',
+                comment: 'British grunge was different but equally amazing. Gavin Rossdale had it.',
+                reactions: { fire: 9, heart: 11, chill: 7 }
+            },
+            {
+                id: '13',
+                title: 'Spin the Black Circle',
+                artist: 'Pearl Jam',
+                duration: '2:48',
+                videoId: 'HuTBNWkf6Y4',
+                thumbnail: 'https://img.youtube.com/vi/HuTBNWkf6Y4/mqdefault.jpg',
+                addedBy: 'vinyl_collector',
+                userAvatar: '💿',
+                timestamp: '42 min ago',
+                comment: 'A song about vinyl records! Meta and amazing. Vitalogy era PJ was peak.',
+                reactions: { fire: 8, vinyl: 15, nostalgia: 6 }
+            },
+            {
+                id: '14',
+                title: 'Sabotage',
+                artist: 'Beastie Boys',
+                duration: '2:58',
+                videoId: 'z5rRZdiu1UE',
+                thumbnail: 'https://img.youtube.com/vi/z5rRZdiu1UE/mqdefault.jpg',
+                addedBy: 'hip_hop_head',
+                userAvatar: '🎯',
+                timestamp: '45 min ago',
+                comment: 'The 70s cop show video is legendary. Beasties were way ahead of their time.',
+                reactions: { fire: 14, cool: 12, retro: 8 }
+            },
+            {
+                id: '15',
+                title: 'Killing in the Name',
+                artist: 'Rage Against the Machine',
+                duration: '5:14',
+                videoId: 'bWXazVhlyxQ',
+                thumbnail: 'https://img.youtube.com/vi/bWXazVhlyxQ/mqdefault.jpg',
+                addedBy: 'rebel_with_cause',
+                userAvatar: '✊',
+                timestamp: '48 min ago',
+                comment: 'Still relevant today. Some things never change. F*** you I won\'t do what you tell me!',
+                reactions: { fire: 28, rebel: 22, power: 15 }
+            },
+            {
+                id: '16',
+                title: 'Basket Case',
+                artist: 'Green Day',
+                duration: '3:01',
+                videoId: 'NUTGr5t3MoY',
+                thumbnail: 'https://img.youtube.com/vi/NUTGr5t3MoY/mqdefault.jpg',
+                addedBy: 'punk_princess',
+                userAvatar: '💚',
+                timestamp: '52 min ago',
+                comment: 'Dookie was my introduction to punk. Billie Joe\'s anxiety became our anthem.',
+                reactions: { fire: 17, heart: 13, punk: 10 }
+            },
+            {
+                id: '17',
+                title: 'Interstate Love Song',
+                artist: 'Stone Temple Pilots',
+                duration: '3:15',
+                videoId: 'yjJL9DGU7Gg',
+                thumbnail: 'https://img.youtube.com/vi/yjJL9DGU7Gg/mqdefault.jpg',
+                addedBy: 'highway_dreamer',
+                userAvatar: '🛣️',
+                timestamp: '55 min ago',
+                comment: 'Perfect road trip song. The guitar work on this is underrated.',
+                reactions: { fire: 10, chill: 14, road: 8 }
+            },
+            {
+                id: '18',
+                title: 'Today',
+                artist: 'The Smashing Pumpkins',
+                duration: '3:20',
+                videoId: 'xmUZ6nCFNoU',
+                thumbnail: 'https://img.youtube.com/vi/xmUZ6nCFNoU/mqdefault.jpg',
+                addedBy: 'billy_corgan_fan',
+                userAvatar: '🎃',
+                timestamp: '58 min ago',
+                comment: 'Today is the greatest day I\'ve ever known... Billy\'s lyrics hit different.',
+                reactions: { heart: 19, fire: 12, deep: 9 }
+            },
+            {
+                id: '19',
+                title: 'Alive',
+                artist: 'Pearl Jam',
+                duration: '5:40',
+                videoId: 'wGiTPgvKktM',
+                thumbnail: 'https://img.youtube.com/vi/wGiTPgvKktM/mqdefault.jpg',
+                addedBy: 'ten_album_stan',
+                userAvatar: '🔟',
+                timestamp: '1 hr ago',
+                comment: 'The song that started it all for PJ. That guitar solo still gives me chills.',
+                reactions: { fire: 24, heart: 16, classic: 12 }
+            },
+            {
+                id: '20',
+                title: 'Touch Me',
+                artist: 'The Doors',
+                duration: '3:12',
+                videoId: '9X5XxnbsEjc',
+                thumbnail: 'https://img.youtube.com/vi/9X5XxnbsEjc/mqdefault.jpg',
+                addedBy: 'doors_disciple',
+                userAvatar: '🚪',
+                timestamp: '1 hr ago',
+                comment: 'Throwing in some classic rock vibes. Jim Morrison was pure poetry.',
+                reactions: { fire: 13, classic: 18, poetry: 7 }
+            }
+        ]
+
+        let currentSongId = '1'
+        let isPlaying = false
+        let isSearching = false
+
+        function updateTime() {
+            const now = new Date()
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
+            document.getElementById('taskbar-time').textContent = timeStr
+        }
+
+        function toggleThemeSelector() {
+            const selector = document.getElementById('theme-selector')
+            selector.classList.toggle('hidden')
+        }
+
+        function updateTime() {
+            const now = new Date()
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            })
+            document.getElementById('current-time').textContent = timeStr
+        }
+
+        function getCurrentSong() {
+            return songs.find(s => s.id === currentSongId)
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-container')
+            const trackCount = document.getElementById('track-count')
+            const totalTime = document.getElementById('total-time')
+            
+            trackCount.textContent = songs.length
+            
+            // Calculate total time (simplified)
+            const totalMinutes = songs.reduce((acc, song) => {
+                const [min, sec] = song.duration.split(':').map(Number)
+                return acc + min + (sec / 60)
+            }, 0)
+            const hours = Math.floor(totalMinutes / 60)
+            const minutes = Math.floor(totalMinutes % 60)
+            totalTime.textContent = `${hours}:${minutes.toString().padStart(2, '0')}`
+            
+            container.innerHTML = songs.map((song, index) => `
+                <div 
+                    class="border-b border-gray-300 p-4 hover:bg-gray-100 cursor-pointer ${song.id === currentSongId ? 'bg-blue-100 border-blue-400' : ''}"
+                    onclick="playSong('${song.id}')"
+                >
+                    <!-- User info header -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-lg">${song.userAvatar}</span>
+                        <span class="font-bold text-sm font-terminal text-black">${song.addedBy}</span>
+                        <span class="text-xs text-gray-500">• ${song.timestamp}</span>
+                        <div class="ml-auto text-xs font-bold text-gray-600">#${index + 1}</div>
+                    </div>
+                    
+                    <!-- Song info -->
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="${song.thumbnail}" alt="${song.title}" class="w-12 h-9 object-cover border border-gray-400 rounded">
+                        <div class="flex-1">
+                            <div class="font-bold text-sm font-terminal text-black ${song.id === currentSongId ? 'text-blue-600' : ''}">${song.title}</div>
+                            <div class="text-xs text-gray-600 mt-1">${song.artist} • ${song.duration}</div>
+                        </div>
+                        <button 
+                            onclick="removeSong('${song.id}'); event.stopPropagation()"
+                            class="win95-button w-6 h-6 text-xs font-bold text-black hover:bg-red-200 opacity-50 hover:opacity-100"
+                        >
+                            ×
+                        </button>
+                    </div>
+                    
+                    <!-- User comment -->
+                    <div class="text-xs text-gray-700 mb-3 font-terminal italic leading-relaxed">
+                        "${song.comment}"
+                    </div>
+                    
+                    <!-- Reactions -->
+                    <div class="flex items-center gap-3 text-xs">
+                        ${Object.entries(song.reactions).map(([reaction, count]) => 
+                            `<span class="flex items-center gap-1 text-gray-500 hover:text-blue-600 cursor-pointer">
+                                ${getReactionEmoji(reaction)} ${count}
+                            </span>`
+                        ).join('')}
+                        <span class="ml-auto text-gray-400 hover:text-blue-600 cursor-pointer">💬 Reply</span>
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function getReactionEmoji(reaction) {
+            const emojis = {
+                fire: '🔥',
+                heart: '❤️', 
+                cool: '😎',
+                nostalgia: '🌅',
+                melancholy: '😢',
+                respect: '🙏',
+                chill: '😌',
+                metal: '🤘',
+                underground: '🎪',
+                aesthetic: '✨',
+                rock: '🎸',
+                classic: '👑',
+                rebel: '✊',
+                power: '💪',
+                punk: '🔥',
+                road: '🛣️',
+                deep: '🤔',
+                vinyl: '💿',
+                retro: '📺',
+                poetry: '📝'
+            }
+            return emojis[reaction] || '👍'
+        }
+
+        function updatePlayer() {
+            const videoContainer = document.getElementById('video-container')
+            const nowPlayingLCD = document.getElementById('now-playing-lcd')
+            const song = getCurrentSong()
+
+            if (song && isPlaying) {
+                videoContainer.innerHTML = `
+                    <iframe 
+                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=1&rel=0&modestbranding=1"
+                        class="w-full"
+                        style="height: 500px;"
+                        frameborder="0"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                    ></iframe>
+                `
+                nowPlayingLCD.innerHTML = `
+                    <div class="animate-blink">♪</div>
+                    ${song.title.toUpperCase()} - ${song.artist.toUpperCase()}
+                `
+            } else if (song) {
+                videoContainer.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-center">
+                            <img src="${song.thumbnail}" alt="${song.title}" class="w-32 h-24 object-cover border-4 border-grunge-yellow mx-auto mb-4">
+                            <p class="font-impact text-xl text-grunge-magenta">${song.title}</p>
+                            <p class="text-sm font-terminal text-grunge-cyan">${song.artist}</p>
+                        </div>
+                    </div>
+                `
+                nowPlayingLCD.textContent = `PAUSED - ${song.title.toUpperCase()}`
+            } else {
+                videoContainer.innerHTML = `
+                    <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
+                        <div class="text-center animate-bounce-in">
+                            <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
+                                <div class="w-8 h-8 bg-black rounded-full"></div>
+                            </div>
+                            <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
+                            <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
+                        </div>
+                    </div>
+                `
+                nowPlayingLCD.textContent = 'READY - INSERT DISC TO PLAY'
+            }
+        }
+
+        async function searchYouTube() {
+            const query = document.getElementById('search-input').value.trim()
+            const searchBtn = document.getElementById('search-btn')
+            const resultsContainer = document.getElementById('search-results')
+            
+            if (!query || isSearching) return
+            
+            isSearching = true
+            searchBtn.textContent = 'SEARCHING...'
+            searchBtn.disabled = true
+            
+            resultsContainer.innerHTML = `
+                <div class="text-center py-8 animate-pulse">
+                    <i class="fas fa-search text-4xl mb-4 animate-spin opacity-50"></i><br>
+                    Searching music database...
+                </div>
+            `
+
+            // Mock results for demo
+            setTimeout(() => {
+                const mockResults = [
+                    {
+                        videoId: 'dQw4w9WgXcQ',
+                        title: `${query} - Official Music Video`,
+                        artist: 'Various Artists',
+                        thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg'
+                    },
+                    {
+                        videoId: 'kJQP7kiw5Fk',
+                        title: `${query} - Live Performance`,
+                        artist: 'Live Archive',
+                        thumbnail: 'https://img.youtube.com/vi/kJQP7kiw5Fk/mqdefault.jpg'
+                    }
+                ]
+                displaySearchResults(mockResults)
+            }, 1000)
+            
+            isSearching = false
+            searchBtn.textContent = 'SEARCH DATABASE'
+            searchBtn.disabled = false
+        }
+
+        function displaySearchResults(results) {
+            const resultsContainer = document.getElementById('search-results')
+            
+            resultsContainer.innerHTML = results.map(result => `
+                <div 
+                    class="flex items-center p-2 hover:bg-blue-200 cursor-pointer border-b border-gray-300"
+                    onclick="addSongFromSearch('${result.videoId}', '${result.title.replace(/'/g, "\\'")}', '${result.artist.replace(/'/g, "\\'")}')"
+                >
+                    <img 
+                        src="${result.thumbnail}" 
+                        alt="${result.title}"
+                        class="w-16 h-12 object-cover border border-gray-400 mr-3"
+                    />
+                    <div class="flex-1">
+                        <div class="font-bold text-sm font-terminal text-black">${result.title}</div>
+                        <div class="text-xs text-gray-600">${result.artist}</div>
+                        ${result.description ? `<div class="text-xs text-gray-500 mt-1">${result.description.substring(0, 60)}...</div>` : ''}
+                    </div>
+                    <div class="win95-button px-2 py-1 text-xs font-bold text-black">
+                        ADD
+                    </div>
+                </div>
+            `).join('')
+        }
+
+        function addSongFromSearch(videoId, title, artist) {
+            const userComment = document.getElementById('comment-input').value.trim() || getRandomComment()
+            const usernames = ['music_lover_95', 'grunge_enthusiast', 'vinyl_digger', 'indie_explorer', 'rock_collector', 'beat_hunter']
+            const avatars = ['🎵', '🎸', '🎤', '🥁', '🎹', '🎺', '🎻', '🎶', '🔥', '⭐']
+            
+            const newSong = {
+                id: Date.now().toString(),
+                title: title.length > 50 ? title.substring(0, 47) + '...' : title,
+                artist: artist.length > 30 ? artist.substring(0, 27) + '...' : artist,
+                duration: '0:00',
+                videoId: videoId,
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                addedBy: usernames[Math.floor(Math.random() * usernames.length)],
+                userAvatar: avatars[Math.floor(Math.random() * avatars.length)],
+                timestamp: 'just now',
+                comment: userComment,
+                reactions: generateRandomReactions()
+            }
+            
+            songs.unshift(newSong) // Add to top of feed
+            renderPlaylist()
+            hideAddModal()
+            showNotification('Track added to social feed!')
+        }
+
+        function getRandomComment() {
+            const comments = [
+                'This track hits different! 🔥',
+                'Found this gem and had to share it',
+                'Perfect vibes for today',
+                'This song never gets old',
+                'Adding some fire to the playlist',
+                'Such an underrated track',
+                'This brings back memories',
+                'Discovered this and obsessed!',
+                'Peak music right here',
+                'Adding some variety to the mix'
+            ]
+            return comments[Math.floor(Math.random() * comments.length)]
+        }
+
+        function generateRandomReactions() {
+            const reactionTypes = ['fire', 'heart', 'cool', 'rock']
+            const reactions = {}
+            
+            // Add 1-3 random reaction types
+            const numReactions = Math.floor(Math.random() * 3) + 1
+            for (let i = 0; i < numReactions; i++) {
+                const reaction = reactionTypes[Math.floor(Math.random() * reactionTypes.length)]
+                if (!reactions[reaction]) {
+                    reactions[reaction] = Math.floor(Math.random() * 5) + 1
+                }
+            }
+            
+            return reactions
+        }
+
+        function showNotification(message) {
+            // Create Windows 95 style notification
+            const notification = document.createElement('div')
+            notification.className = 'fixed top-4 right-4 win95-panel p-3 z-50 animate-slide-in'
+            notification.innerHTML = `
+                <div class="windows-titlebar p-1 mb-2">
+                    <i class="fas fa-info-circle mr-2"></i>Vibes 95
+                </div>
+                <div class="text-black font-terminal text-sm">${message}</div>
+            `
+            
+            document.body.appendChild(notification)
+            
+            setTimeout(() => {
+                notification.style.animation = 'glitch-90s 0.3s ease-in-out'
+                setTimeout(() => notification.remove(), 300)
+            }, 3000)
+        }
+
+        function updatePlayButton() {
+            const playBtn = document.getElementById('play-btn')
+            playBtn.innerHTML = `<i class="fas fa-${isPlaying ? 'pause' : 'play'}"></i>`
+        }
+
+        function playSong(id) {
+            currentSongId = id
+            isPlaying = true
+            updatePlayer()
+            updatePlayButton()
+            renderPlaylist()
+        }
+
+        function togglePlay() {
+            if (!currentSongId && songs.length > 0) {
+                playSong(songs[0].id)
+            } else {
+                isPlaying = !isPlaying
+                updatePlayer()
+                updatePlayButton()
+            }
+        }
+
+        function playNext() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            const nextIndex = (currentIndex + 1) % songs.length
+            if (songs[nextIndex]) {
+                playSong(songs[nextIndex].id)
+            }
+        }
+
+        function playPrevious() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            const prevIndex = currentIndex === 0 ? songs.length - 1 : currentIndex - 1
+            if (songs[prevIndex]) {
+                playSong(songs[prevIndex].id)
+            }
+        }
+
+        function shufflePlaylist() {
+            songs = songs.sort(() => Math.random() - 0.5)
+            renderPlaylist()
+            showNotification('Mixtape shuffled!')
+        }
+
+        function clearPlaylist() {
+            if (confirm('Clear all tracks from mixtape?')) {
+                songs = []
+                currentSongId = null
+                isPlaying = false
+                renderPlaylist()
+                updatePlayer()
+                updatePlayButton()
+                showNotification('Mixtape cleared!')
+            }
+        }
+
+        function stopPlayback() {
+            isPlaying = false
+            currentSongId = null
+            updatePlayer()
+            updatePlayButton()
+            renderPlaylist()
+        }
+
+        function removeSong(id) {
+            songs = songs.filter(s => s.id !== id)
+            if (currentSongId === id) {
+                currentSongId = songs.length > 0 ? songs[0].id : null
+                if (!currentSongId) isPlaying = false
+                updatePlayer()
+                updatePlayButton()
+            }
+            renderPlaylist()
+        }
+
+        function showAddModal() {
+            document.getElementById('add-modal').style.display = 'flex'
+            setTimeout(() => document.getElementById('search-input').focus(), 100)
+        }
+
+        function hideAddModal() {
+            document.getElementById('add-modal').style.display = 'none'
+            document.getElementById('search-input').value = ''
+            document.getElementById('comment-input').value = ''
+            document.getElementById('search-results').innerHTML = `
+                <div class="text-center text-gray-500 py-8 font-terminal">
+                    <i class="fas fa-compact-disc text-4xl mb-4 text-gray-400"></i><br>
+                    Enter search terms to find music tracks
+                </div>
+            `
+        }
+
+        // AI Agent Functions
+        function toggleAIAgent() {
+            const aiPanel = document.getElementById('ai-panel')
+            const toggleBtn = document.getElementById('ai-toggle-btn')
+            
+            if (aiPanel.style.display === 'none') {
+                aiPanel.style.display = 'block'
+                aiPanel.style.animation = 'slide-in 0.3s ease-out'
+                toggleBtn.innerHTML = '<i class="fas fa-robot mr-1"></i>🤖 Hide DJ Bot'
+            } else {
+                aiPanel.style.display = 'none'
+                toggleBtn.innerHTML = '<i class="fas fa-robot mr-1"></i>🤖 DJ Bot'
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input')
+            const message = input.value.trim()
+            if (!message) return
+
+            // Add user message
+            addChatMessage('user', message)
+            input.value = ''
+
+            // Simulate AI thinking
+            setTimeout(() => {
+                const response = generateAIResponse(message)
+                addChatMessage('ai', response)
+            }, 1000 + Math.random() * 1000)
+        }
+
+        function aiQuickAction(action) {
+            const responses = {
+                recommend: "Based on your grunge playlist, I'd suggest adding some Soundgarden, Mad Season, or early Foo Fighters! Want me to find specific tracks?",
+                analyze: "Your playlist is 90% grunge/alternative with strong Seattle influence. You have great variety from Nirvana to Temple of the Dog. The energy flow is excellent!",
+                trivia: "Fun fact: Did you know 'Smells Like Teen Spirit' was inspired by deodorant? Kurt Cobain didn't realize 'Teen Spirit' was a brand name!",
+                mood: "I'm detecting some serious angst and rebellion in your playlist! Perfect for late-night coding or rainy day vibes. Want me to add some matching tracks?"
+            }
+            addChatMessage('ai', responses[action])
+        }
+
+        function addChatMessage(sender, message) {
+            const chatContent = document.getElementById('chat-content')
+            const timestamp = new Date().toLocaleTimeString('en-US', { 
+                hour12: false, hour: '2-digit', minute: '2-digit' 
+            })
+
+            const messageElement = document.createElement('div')
+            messageElement.className = 'flex gap-2'
+            
+            if (sender === 'ai') {
+                messageElement.innerHTML = `
+                    <div class="text-lg">🤖</div>
+                    <div class="flex-1">
+                        <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
+                            <strong>DJ Bot 95:</strong> ${message}
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">${timestamp}</div>
+                    </div>
+                `
+            } else {
+                messageElement.innerHTML = `
+                    <div class="flex-1 flex justify-end">
+                        <div>
+                            <div class="bg-blue-500 text-white rounded p-2 text-xs font-terminal">
+                                ${message}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1 text-right">${timestamp}</div>
+                        </div>
+                    </div>
+                    <div class="text-lg">👤</div>
+                `
+            }
+
+            chatContent.appendChild(messageElement)
+            
+            // Scroll to bottom
+            const chatMessages = document.getElementById('chat-messages')
+            chatMessages.scrollTop = chatMessages.scrollHeight
+        }
+
+        function generateAIResponse(userMessage) {
+            const responses = [
+                `Interesting! I can hear that ${userMessage.toLowerCase()} vibe in your playlist. The 90s were such an amazing time for music discovery!`,
+                `Great question about ${userMessage}! As a music AI from 1995, I've got tons of recommendations. What genre are you feeling?`,
+                `I love talking about ${userMessage}! Your current playlist has some real gems. Want me to suggest similar artists?`,
+                `${userMessage} reminds me of the underground scene back in '95. Those were the days of discovering music through word of mouth!`,
+                `Nice topic! ${userMessage} connects well with your grunge collection. I'm processing some perfect recommendations...`
+            ]
+            return responses[Math.floor(Math.random() * responses.length)]
+        }
+
+        // Initialize
+        renderPlaylist()
+        updatePlayer()
+        updatePlayButton()
+        updateTime()
+        setInterval(updateTime, 1000)
+        
+        // Set initial AI toggle button text
+        document.getElementById('ai-toggle-btn').innerHTML = '<i class="fas fa-robot mr-1"></i>🤖 Hide DJ Bot'
+        
+        console.log('%c🎧 VIBES 95 SYSTEM LOADED', 'color: #00ff00; font-family: monospace; font-size: 14px; font-weight: bold;')
+        console.log('%c🤖 DJ Bot 95 AI Assistant Ready!', 'color: #00ffff; font-family: monospace;')
+        console.log('%cReplace YOUTUBE_API_KEY with your real API key for live search!', 'color: #ffff00; font-family: monospace;')
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibes - Collaborative Playlist</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-music"></i> Vibes</h1>
+                <div class="users-online">
+                    <span class="users-count">0 online</span>
+                    <div class="users-list" id="usersList"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="content-wrapper">
+                <div class="video-section">
+                    <div class="video-player" id="videoPlayer">
+                        <div id="youtubePlayer"></div>
+                        <div class="no-video" id="noVideo">
+                            <i class="fas fa-play-circle"></i>
+                            <p>Select a song to start playing</p>
+                        </div>
+                    </div>
+                    <div class="now-playing" id="nowPlaying">
+                        <h3>Now Playing</h3>
+                        <div class="now-playing-info" id="nowPlayingInfo">
+                            <p>Nothing playing yet</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="playlist-section">
+                    <div class="playlist-header">
+                        <h2 id="playlistName">Loading...</h2>
+                        <button class="add-song-btn" id="addSongBtn">
+                            <i class="fas fa-plus"></i> Add Song
+                        </button>
+                    </div>
+
+            <div class="search-section" id="searchSection" style="display: none;">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search for songs..." class="search-input">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+                    <div class="playlist">
+                        <div class="playlist-controls">
+                            <button class="play-btn" id="playBtn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="skip-btn" id="skipBtn">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                            <span class="song-count" id="songCount">0 songs</span>
+                        </div>
+                        
+                        <div class="songs-list" id="songsList">
+                            <div class="loading">Loading playlist...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="cursors" id="cursors"></div>
+    </div>
+
+    <!-- Add Song Modal -->
+    <div class="modal" id="addSongModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h3>Search YouTube</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="youtube-search">
+                    <input type="text" id="youtubeSearchInput" placeholder="Search for songs on YouTube..." class="input">
+                    <button id="youtubeSearchBtn" class="btn btn-primary">Search</button>
+                </div>
+                <div class="youtube-results" id="youtubeResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Username Modal -->
+    <div class="modal active" id="usernameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Join the Vibes</h3>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="usernameInput" placeholder="Enter your name" class="input" maxlength="20">
+                <button id="joinBtn" class="btn btn-primary">Join Playlist</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
+</body>
+</html>
