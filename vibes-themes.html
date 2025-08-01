@@ -240,6 +240,35 @@
                 </div>
             </div>
 
+            <!-- Playlist Header Bar -->
+            <div class="win95-panel p-3 border-b-2 bg-gray-200">
+                <div class="flex items-center justify-between">
+                    <!-- Current Playlist Info -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="text-2xl" id="current-playlist-icon">🎸</div>
+                            <div>
+                                <div class="text-black font-bold font-terminal text-lg" id="current-playlist-display">90s Hits</div>
+                                <div class="text-xs text-gray-600" id="current-playlist-desc">The best grunge, alternative, and pop hits from the decade that changed music</div>
+                            </div>
+                        </div>
+                        <div class="w-4 h-4 rounded-full" id="current-playlist-color" style="background-color: #ff6b6b"></div>
+                    </div>
+                    
+                    <!-- Quick Playlist Switcher -->
+                    <div class="flex items-center gap-2">
+                        <div class="text-xs font-bold text-black mr-2">Quick Switch:</div>
+                        <button onclick="switchPlaylist('90s_hits')" class="win95-button px-2 py-1 text-xs text-black" id="btn-90s_hits" title="90s Hits">🎸</button>
+                        <button onclick="switchPlaylist('80s_synthwave')" class="win95-button px-2 py-1 text-xs text-black" id="btn-80s_synthwave" title="80s Synthwave">🌈</button>
+                        <button onclick="switchPlaylist('chill_vibes')" class="win95-button px-2 py-1 text-xs text-black" id="btn-chill_vibes" title="Chill Vibes">🌙</button>
+                        <button onclick="switchPlaylist('party_bangers')" class="win95-button px-2 py-1 text-xs text-black" id="btn-party_bangers" title="Party Bangers">🎉</button>
+                        <button onclick="switchPlaylist('indie_gems')" class="win95-button px-2 py-1 text-xs text-black" id="btn-indie_gems" title="Indie Gems">💎</button>
+                        <button onclick="switchPlaylist('hip_hop_classics')" class="win95-button px-2 py-1 text-xs text-black" id="btn-hip_hop_classics" title="Hip-Hop Classics">🎤</button>
+                        <button onclick="showPlaylistSelector()" class="win95-button px-3 py-1 text-xs font-bold text-black ml-2">📁 All Playlists</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Main content -->
             <div class="flex-1 flex bg-gray-200">
                 <!-- AI Agent Chat Panel (LEFT SIDE) -->
@@ -359,10 +388,15 @@
                 <div class="w-[450px] p-4">
                     <div class="win95-panel p-4 h-full flex flex-col">
                         <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
-                            <span><i class="fas fa-users mr-2"></i>Social Feed • Mixtape.m3u</span>
-                            <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
-                                🎵 Add Track
-                            </button>
+                            <span><i class="fas fa-users mr-2"></i>Social Feed • <span id="current-playlist-name">90s Hits</span></span>
+                            <div class="flex gap-1">
+                                <button onclick="showPlaylistSelector()" class="win95-button px-2 py-1 text-black text-xs font-bold">
+                                    📁 Playlists
+                                </button>
+                                <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
+                                    🎵 Add Track
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="lcd-text mb-4 text-center">
@@ -434,6 +468,34 @@
                         <i class="fas fa-compact-disc text-4xl mb-4 text-gray-400"></i><br>
                         Enter search terms to find music tracks
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Playlist Selector Dialog -->
+    <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" id="playlist-modal" style="display: none;">
+        <div class="win95-panel p-0 w-[600px] max-h-[80vh] animate-bounce-in">
+            <!-- Dialog title bar -->
+            <div class="windows-titlebar p-2 flex justify-between items-center">
+                <span><i class="fas fa-folder-open mr-2"></i>Select Playlist - Music Collections</span>
+                <button onclick="hidePlaylistSelector()" class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+            </div>
+            
+            <div class="p-4 bg-gray-200">
+                <div class="mb-4">
+                    <div class="text-sm font-bold text-black mb-2">Available Playlists:</div>
+                    <div class="text-xs text-gray-600 mb-4">Choose a themed playlist to explore different music vibes</div>
+                </div>
+                
+                <div class="win95-panel p-2 h-96 overflow-y-auto bg-white" id="playlist-options">
+                    <!-- Playlist options will be rendered here -->
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <button onclick="hidePlaylistSelector()" class="win95-button px-6 py-2 text-black font-bold text-sm">
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
@@ -585,7 +647,61 @@
 
         // YouTube API Configuration
         const YOUTUBE_API_KEY = 'AIzaSyDummyKeyReplaceWithReal' // Replace with your actual API key
-        let songs = [
+        
+        // Themed Playlists System
+        const playlists = {
+            '90s_hits': {
+                id: '90s_hits',
+                name: '90s Hits',
+                description: 'The best grunge, alternative, and pop hits from the decade that changed music',
+                icon: '🎸',
+                color: '#ff6b6b',
+                trackCount: 5
+            },
+            '80s_synthwave': {
+                id: '80s_synthwave',
+                name: '80s Synthwave',
+                description: 'Neon-soaked synth beats and electric dreams from the decade of excess',
+                icon: '🌈',
+                color: '#ff0080',
+                trackCount: 4
+            },
+            'chill_vibes': {
+                id: 'chill_vibes',
+                name: 'Chill Vibes',
+                description: 'Laid-back tracks for studying, relaxing, or just vibing',
+                icon: '🌙',
+                color: '#4ecdc4',
+                trackCount: 3
+            },
+            'party_bangers': {
+                id: 'party_bangers',
+                name: 'Party Bangers',
+                description: 'High-energy tracks to get the party started and keep it going',
+                icon: '🎉',
+                color: '#ff6b35',
+                trackCount: 3
+            },
+            'indie_gems': {
+                id: 'indie_gems',
+                name: 'Indie Gems',
+                description: 'Hidden treasures and underground favorites from independent artists',
+                icon: '💎',
+                color: '#a8e6cf',
+                trackCount: 3
+            },
+            'hip_hop_classics': {
+                id: 'hip_hop_classics',
+                name: 'Hip-Hop Classics',
+                description: 'Essential tracks that defined the culture and shaped the genre',
+                icon: '🎤',
+                color: '#ffd93d',
+                trackCount: 3
+            }
+        }
+
+        const playlistSongs = {
+            '90s_hits': [
             {
                 id: '1',
                 title: 'Smells Like Teen Spirit',
@@ -846,8 +962,229 @@
                 comment: 'Throwing in some classic rock vibes. Jim Morrison was pure poetry.',
                 reactions: { fire: 13, classic: 18, poetry: 7 }
             }
-        ]
+            ],
+            '80s_synthwave': [
+                {
+                    id: '21',
+                    title: 'Take On Me',
+                    artist: 'a-ha',
+                    duration: '3:47',
+                    videoId: 'djV11Xbc914',
+                    thumbnail: 'https://img.youtube.com/vi/djV11Xbc914/mqdefault.jpg',
+                    addedBy: 'synth_lover_85',
+                    userAvatar: '🎹',
+                    timestamp: '10 min ago',
+                    comment: 'That music video was mind-blowing! The pencil sketch effect was revolutionary.',
+                    reactions: { fire: 18, revolution: 12, nostalgia: 15 }
+                },
+                {
+                    id: '22',
+                    title: 'Sweet Dreams',
+                    artist: 'Eurythmics',
+                    duration: '3:36',
+                    videoId: 'qeMFqkcPYcg',
+                    thumbnail: 'https://img.youtube.com/vi/qeMFqkcPYcg/mqdefault.jpg',
+                    addedBy: 'annie_lennox_stan',
+                    userAvatar: '👩‍🎤',
+                    timestamp: '15 min ago',
+                    comment: 'Annie Lennox was so ahead of her time. This song gives me chills every time.',
+                    reactions: { fire: 16, chills: 11, ahead: 9 }
+                },
+                {
+                    id: '23',
+                    title: 'Blue Monday',
+                    artist: 'New Order',
+                    duration: '7:30',
+                    videoId: 'FYH8DsU2WCk',
+                    thumbnail: 'https://img.youtube.com/vi/FYH8DsU2WCk/mqdefault.jpg',
+                    addedBy: 'new_wave_warrior',
+                    userAvatar: '💙',
+                    timestamp: '20 min ago',
+                    comment: 'This track defined electronic music. Those synths still sound futuristic today.',
+                    reactions: { fire: 14, futuristic: 19, electronic: 13 }
+                },
+                {
+                    id: '24',
+                    title: 'Don\'t You Forget About Me',
+                    artist: 'Simple Minds',
+                    duration: '4:20',
+                    videoId: 'CdqoNKCCt7A',
+                    thumbnail: 'https://img.youtube.com/vi/CdqoNKCCt7A/mqdefault.jpg',
+                    addedBy: 'breakfast_club_fan',
+                    userAvatar: '🥞',
+                    timestamp: '25 min ago',
+                    comment: 'The Breakfast Club made this song immortal. Pure 80s perfection!',
+                    reactions: { fire: 22, movie: 16, immortal: 8 }
+                }
+            ],
+            'chill_vibes': [
+                {
+                    id: '31',
+                    title: 'Mad World',
+                    artist: 'Gary Jules',
+                    duration: '3:07',
+                    videoId: 'hW93CV6m-JU',
+                    thumbnail: 'https://img.youtube.com/vi/hW93CV6m-JU/mqdefault.jpg',
+                    addedBy: 'donnie_darko_fan',
+                    userAvatar: '🐰',
+                    timestamp: '5 min ago',
+                    comment: 'This cover is hauntingly beautiful. Perfect for late night contemplation.',
+                    reactions: { heart: 24, haunting: 16, beautiful: 12 }
+                },
+                {
+                    id: '32',
+                    title: 'Breathe Me',
+                    artist: 'Sia',
+                    duration: '4:31',
+                    videoId: 'ghPcYqn0p4Y',
+                    thumbnail: 'https://img.youtube.com/vi/ghPcYqn0p4Y/mqdefault.jpg',
+                    addedBy: 'emotional_sia',
+                    userAvatar: '😌',
+                    timestamp: '12 min ago',
+                    comment: 'Before she was hiding her face, Sia was making us cry with pure emotion.',
+                    reactions: { heart: 19, emotional: 14, cry: 8 }
+                },
+                {
+                    id: '33',
+                    title: 'Skinny Love',
+                    artist: 'Bon Iver',
+                    duration: '3:58',
+                    videoId: 'ssdgFoHLwnk',
+                    thumbnail: 'https://img.youtube.com/vi/ssdgFoHLwnk/mqdefault.jpg',
+                    addedBy: 'indie_forest',
+                    userAvatar: '🌲',
+                    timestamp: '20 min ago',
+                    comment: 'Recorded in a cabin in the woods. You can feel the isolation and beauty.',
+                    reactions: { heart: 17, woods: 13, isolation: 9 }
+                }
+            ],
+            'party_bangers': [
+                {
+                    id: '41',
+                    title: 'Mr. Brightside',
+                    artist: 'The Killers',
+                    duration: '3:42',
+                    videoId: 'gGdGFtwCNBE',
+                    thumbnail: 'https://img.youtube.com/vi/gGdGFtwCNBE/mqdefault.jpg',
+                    addedBy: 'party_starter',
+                    userAvatar: '⚡',
+                    timestamp: '3 min ago',
+                    comment: 'This song NEVER fails to get everyone singing along. Ultimate party anthem!',
+                    reactions: { fire: 25, party: 20, energy: 18 }
+                },
+                {
+                    id: '42',
+                    title: 'I Gotta Feeling',
+                    artist: 'Black Eyed Peas',
+                    duration: '4:49',
+                    videoId: 'uSD4vsh1zDA',
+                    thumbnail: 'https://img.youtube.com/vi/uSD4vsh1zDA/mqdefault.jpg',
+                    addedBy: 'dance_machine',
+                    userAvatar: '🕺',
+                    timestamp: '8 min ago',
+                    comment: 'Tonight\'s gonna be a good night! This song is pure hype energy.',
+                    reactions: { fire: 23, dance: 19, hype: 15 }
+                },
+                {
+                    id: '43',
+                    title: 'Hey Ya!',
+                    artist: 'OutKast',
+                    duration: '3:55',
+                    videoId: 'PWgvGjAhvIw',
+                    thumbnail: 'https://img.youtube.com/vi/PWgvGjAhvIw/mqdefault.jpg',
+                    addedBy: 'outkast_forever',
+                    userAvatar: '🎤',
+                    timestamp: '15 min ago',
+                    comment: 'Shake it like a Polaroid picture! Andre 3000 is a genius.',
+                    reactions: { fire: 21, genius: 14, shake: 17 }
+                }
+            ],
+            'indie_gems': [
+                {
+                    id: '51',
+                    title: 'Such Great Heights',
+                    artist: 'The Postal Service',
+                    duration: '4:26',
+                    videoId: '0wrsZog8qXg',
+                    thumbnail: 'https://img.youtube.com/vi/0wrsZog8qXg/mqdefault.jpg',
+                    addedBy: 'indie_explorer',
+                    userAvatar: '📮',
+                    timestamp: '7 min ago',
+                    comment: 'Ben Gibbard\'s voice + electronic beats = perfection. This song is a masterpiece.',
+                    reactions: { heart: 18, masterpiece: 12, electronic: 9 }
+                },
+                {
+                    id: '52',
+                    title: 'Young Folks',
+                    artist: 'Peter Bjorn and John',
+                    duration: '4:38',
+                    videoId: 'OIRE6iw-ws4',
+                    thumbnail: 'https://img.youtube.com/vi/OIRE6iw-ws4/mqdefault.jpg',
+                    addedBy: 'whistling_wanderer',
+                    userAvatar: '🎵',
+                    timestamp: '18 min ago',
+                    comment: 'That whistle hook is so catchy! Swedish indie at its finest.',
+                    reactions: { fire: 15, catchy: 16, swedish: 7 }
+                },
+                {
+                    id: '53',
+                    title: 'Time to Dance',
+                    artist: 'The Sounds',
+                    duration: '3:12',
+                    videoId: 'vkKOx8hJA_k',
+                    thumbnail: 'https://img.youtube.com/vi/vkKOx8hJA_k/mqdefault.jpg',
+                    addedBy: 'garage_rock_girl',
+                    userAvatar: '🎸',
+                    timestamp: '25 min ago',
+                    comment: 'Swedish garage rock with attitude! Maja Ivarsson is a rock goddess.',
+                    reactions: { fire: 13, attitude: 11, goddess: 8 }
+                }
+            ],
+            'hip_hop_classics': [
+                {
+                    id: '61',
+                    title: 'Juicy',
+                    artist: 'The Notorious B.I.G.',
+                    duration: '5:02',
+                    videoId: '_JZom_gVfuw',
+                    thumbnail: 'https://img.youtube.com/vi/_JZom_gVfuw/mqdefault.jpg',
+                    addedBy: 'biggie_fan_4life',
+                    userAvatar: '👑',
+                    timestamp: '4 min ago',
+                    comment: 'From ashy to classy! Biggie told his story like no one else. RIP to the king.',
+                    reactions: { fire: 28, king: 22, rip: 15 }
+                },
+                {
+                    id: '62',
+                    title: 'California Love',
+                    artist: '2Pac ft. Dr. Dre',
+                    duration: '4:16',
+                    videoId: '5wBTdfAkqGU',
+                    thumbnail: 'https://img.youtube.com/vi/5wBTdfAkqGU/mqdefault.jpg',
+                    addedBy: 'west_coast_rider',
+                    userAvatar: '☀️',
+                    timestamp: '11 min ago',
+                    comment: 'West Coast anthem! Pac and Dre together was pure magic.',
+                    reactions: { fire: 26, west: 19, magic: 13 }
+                },
+                {
+                    id: '63',
+                    title: 'Lose Yourself',
+                    artist: 'Eminem',
+                    duration: '5:26',
+                    videoId: '_Yhyp-_hX2s',
+                    thumbnail: 'https://img.youtube.com/vi/_Yhyp-_hX2s/mqdefault.jpg',
+                    addedBy: 'slim_shady_stan',
+                    userAvatar: '🎬',
+                    timestamp: '19 min ago',
+                    comment: 'You only get one shot! This song is pure motivation and lyrical genius.',
+                    reactions: { fire: 24, motivation: 20, genius: 16 }
+                }
+            ]
+        }
 
+        let currentPlaylistId = '90s_hits'
+        let songs = playlistSongs[currentPlaylistId]
         let currentSongId = '1'
         let isPlaying = false
         let isSearching = false
@@ -1242,6 +1579,80 @@
             setTimeout(() => document.getElementById('search-input').focus(), 100)
         }
 
+        // Playlist Selection Functions
+        function showPlaylistSelector() {
+            renderPlaylistOptions()
+            document.getElementById('playlist-modal').style.display = 'flex'
+        }
+
+        function hidePlaylistSelector() {
+            document.getElementById('playlist-modal').style.display = 'none'
+        }
+
+        function renderPlaylistOptions() {
+            const container = document.getElementById('playlist-options')
+            
+            container.innerHTML = Object.values(playlists).map(playlist => `
+                <div 
+                    class="flex items-center p-3 hover:bg-blue-200 cursor-pointer border-b border-gray-300 ${playlist.id === currentPlaylistId ? 'bg-blue-600 text-white' : 'text-black'}"
+                    onclick="switchPlaylist('${playlist.id}')"
+                >
+                    <div class="text-2xl mr-4">${playlist.icon}</div>
+                    <div class="flex-1">
+                        <div class="font-bold text-sm font-terminal">${playlist.name}</div>
+                        <div class="text-xs opacity-75 mt-1">${playlist.description}</div>
+                        <div class="text-xs mt-1 opacity-60">${playlist.trackCount} tracks</div>
+                    </div>
+                    <div class="w-4 h-4 rounded-full" style="background-color: ${playlist.color}"></div>
+                    ${playlist.id === currentPlaylistId ? '<div class="ml-2 text-sm">✓</div>' : ''}
+                </div>
+            `).join('')
+        }
+
+        function updateQuickSwitchButtons() {
+            // Reset all buttons to normal state
+            Object.keys(playlists).forEach(id => {
+                const btn = document.getElementById(`btn-${id}`)
+                if (btn) {
+                    btn.className = 'win95-button px-2 py-1 text-xs text-black'
+                }
+            })
+            
+            // Highlight current playlist button
+            const activeBtn = document.getElementById(`btn-${currentPlaylistId}`)
+            if (activeBtn) {
+                activeBtn.className = 'win95-button px-2 py-1 text-xs text-white bg-blue-600'
+            }
+        }
+
+        function switchPlaylist(playlistId) {
+            if (playlistId === currentPlaylistId) {
+                hidePlaylistSelector()
+                return
+            }
+            
+            currentPlaylistId = playlistId
+            songs = playlistSongs[currentPlaylistId]
+            
+            // Reset current song to first song of new playlist
+            currentSongId = songs.length > 0 ? songs[0].id : null
+            isPlaying = false
+            
+            // Update UI
+            document.getElementById('current-playlist-name').textContent = playlists[currentPlaylistId].name
+            document.getElementById('current-playlist-display').textContent = playlists[currentPlaylistId].name
+            document.getElementById('current-playlist-desc').textContent = playlists[currentPlaylistId].description
+            document.getElementById('current-playlist-icon').textContent = playlists[currentPlaylistId].icon
+            document.getElementById('current-playlist-color').style.backgroundColor = playlists[currentPlaylistId].color
+            updateQuickSwitchButtons()
+            updatePlayer()
+            updatePlayButton()
+            renderPlaylist()
+            
+            hidePlaylistSelector()
+            showNotification(`Switched to ${playlists[currentPlaylistId].name}!`, 'success')
+        }
+
         function hideAddModal() {
             document.getElementById('add-modal').style.display = 'none'
             document.getElementById('search-input').value = ''
@@ -1350,6 +1761,7 @@
         renderPlaylist()
         updatePlayer()
         updatePlayButton()
+        updateQuickSwitchButtons()
         updateTime()
         setInterval(updateTime, 1000)
         
