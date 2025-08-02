@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎧 VIBES 95 - Digital Mixtape</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
     <script>
@@ -202,20 +203,9 @@
         <!-- TV Static overlay -->
         <div class="tv-static fixed inset-0 pointer-events-none opacity-5"></div>
         
-        <!-- Windows 95 style taskbar -->
-        <div class="fixed bottom-0 left-0 right-0 win95-panel p-1 z-50 border-t-2">
-            <div class="flex items-center justify-between">
-                <button class="win95-button px-4 py-1 font-bold text-black text-sm">
-                    <i class="fas fa-compact-disc mr-2 text-blue-600"></i>Start
-                </button>
-                <div class="lcd-text text-xs">
-                    <span id="taskbar-time">00:00:00</span> | VIBES95.EXE | <span class="animate-blink">●</span> REC
-                </div>
-            </div>
-        </div>
 
         <!-- Main window -->
-        <div class="win95-panel m-4 mb-16 h-[calc(100vh-6rem)] flex flex-col">
+        <div class="win95-panel m-4 h-[calc(100vh-2rem)] flex flex-col">
             <!-- Title bar -->
             <div class="windows-titlebar p-2 flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -240,6 +230,9 @@
                     </a>
                     <a href="#trending" class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer" data-page="trending">
                         <i class="fas fa-fire mr-1"></i>Trending
+                    </a>
+                    <a href="#profile" class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer" data-page="profile">
+                        <i class="fas fa-user mr-1"></i>Profile
                     </a>
                     <div class="flex-1"></div>
                     <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Settings</span>
@@ -272,7 +265,6 @@
                         <button onclick="switchPlaylist('indie_gems')" class="win95-button px-3 py-2 text-sm text-black" id="btn-indie_gems" title="Indie Gems">💎</button>
                         <button onclick="switchPlaylist('hip_hop_classics')" class="win95-button px-3 py-2 text-sm text-black" id="btn-hip_hop_classics" title="Hip-Hop Classics">🎤</button>
                         <button onclick="showPlaylistSelector()" class="win95-button px-4 py-2 text-sm font-bold text-black ml-3">📁 All Playlists</button>
-                        <button onclick="toggleAutoAdvance()" class="win95-button px-3 py-2 text-sm text-black ml-2" id="auto-advance-btn" title="Toggle Auto-Advance">🔄 Auto</button>
                     </div>
                 </div>
             </div>
@@ -296,7 +288,7 @@
                         </div>
                         
                         <!-- Chat Messages -->
-                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto mb-4 p-2" id="chat-messages" style="max-height: 400px;">
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto mb-4 p-2" id="chat-messages" style="max-height: 250px; padding-bottom: 8px;">
                             <div class="space-y-3" id="chat-content">
                                 <!-- Welcome message -->
                                 <div class="flex gap-2">
@@ -400,9 +392,6 @@
                         <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
                             <span><i class="fas fa-users mr-2"></i>Social Feed • <span id="current-playlist-name">90s Hits</span></span>
                             <div class="flex gap-1">
-                                <button onclick="showPlaylistSelector()" class="win95-button px-2 py-1 text-black text-xs font-bold">
-                                    📁 Playlists
-                                </button>
                                 <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
                                     🎵 Add Track
                                 </button>
@@ -413,7 +402,7 @@
                             TRACKS: <span id="track-count">2</span> | TIME: <span id="total-time">8:47</span>
                         </div>
                         
-                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto max-h-[700px]" id="playlist-container" style="scrollbar-width: thin; scrollbar-color: #808080 #c0c0c0;">
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto" id="playlist-container" style="scrollbar-width: thin; scrollbar-color: #808080 #c0c0c0; max-height: 400px; padding-bottom: 8px;">
                             <!-- Playlist items will go here -->
                         </div>
                         
@@ -499,6 +488,43 @@
                         <!-- Trending playlists -->
                         <div class="grid grid-cols-2 gap-6" id="trending-playlists">
                             <!-- Trending playlists will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile Page -->
+                <div id="profile-page" class="page-content h-full" style="display: none;">
+                    <div class="p-8">
+                        <div class="win95-panel p-6 mb-6">
+                            <div class="flex items-center gap-6">
+                                <div class="text-6xl" id="profile-avatar">👤</div>
+                                <div>
+                                    <h2 class="text-3xl font-bold text-black mb-2" id="profile-username">Username</h2>
+                                    <p class="text-gray-600 mb-4" id="profile-bio">Music enthusiast • Playlist curator</p>
+                                    <div class="flex gap-6">
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-black" id="profile-songs-count">0</div>
+                                            <div class="text-sm text-gray-600">Songs Added</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-black" id="profile-total-plays">0</div>
+                                            <div class="text-sm text-gray-600">Total Plays</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-black" id="profile-join-date">Oct 2024</div>
+                                            <div class="text-sm text-gray-600">Member Since</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- User's Songs -->
+                        <div class="win95-panel p-6">
+                            <h3 class="text-xl font-bold text-black mb-4">Songs Added by <span id="profile-songs-by">User</span></h3>
+                            <div id="profile-songs-list" class="space-y-3">
+                                <!-- User's songs will be populated here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1046,11 +1072,37 @@
                 timestamp: '1 hr ago',
                 comment: 'Throwing in some classic rock vibes. Jim Morrison was pure poetry.',
                 reactions: { fire: 13, classic: 18, poetry: 7 }
+            },
+            {
+                id: '21',
+                title: 'Come As You Are',
+                artist: 'Nirvana',
+                duration: '3:39',
+                videoId: 'vabnZ9-ex7o',
+                thumbnail: 'https://img.youtube.com/vi/vabnZ9-ex7o/mqdefault.jpg',
+                addedBy: 'VibesCurator',
+                userAvatar: '🎵',
+                timestamp: '15 min ago',
+                comment: 'Classic grunge masterpiece. The guitar riff is absolutely iconic.',
+                reactions: { fire: 25, heart: 18, nostalgia: 10 }
+            },
+            {
+                id: '22',
+                title: 'Touch Me I\'m Sick',
+                artist: 'Mudhoney',
+                duration: '2:34',
+                videoId: 'jAZ6Lem5RYs',
+                thumbnail: 'https://img.youtube.com/vi/jAZ6Lem5RYs/mqdefault.jpg',
+                addedBy: 'VibesCurator',
+                userAvatar: '🎵',
+                timestamp: '20 min ago',
+                comment: 'Underground grunge gem! Sub Pop Records at its finest.',
+                reactions: { fire: 15, punk: 8, deep: 5 }
             }
             ],
             '80s_synthwave': [
                 {
-                    id: '21',
+                    id: '23',
                     title: 'Take On Me',
                     artist: 'a-ha',
                     duration: '3:47',
@@ -1063,7 +1115,7 @@
                     reactions: { fire: 18, revolution: 12, nostalgia: 15 }
                 },
                 {
-                    id: '22',
+                    id: '24',
                     title: 'Sweet Dreams',
                     artist: 'Eurythmics',
                     duration: '3:36',
@@ -1076,7 +1128,7 @@
                     reactions: { fire: 16, chills: 11, ahead: 9 }
                 },
                 {
-                    id: '23',
+                    id: '25',
                     title: 'Blue Monday',
                     artist: 'New Order',
                     duration: '7:30',
@@ -1089,7 +1141,7 @@
                     reactions: { fire: 14, futuristic: 19, electronic: 13 }
                 },
                 {
-                    id: '24',
+                    id: '26',
                     title: 'Don\'t You Forget About Me',
                     artist: 'Simple Minds',
                     duration: '4:20',
@@ -1100,6 +1152,19 @@
                     timestamp: '25 min ago',
                     comment: 'The Breakfast Club made this song immortal. Pure 80s perfection!',
                     reactions: { fire: 22, movie: 16, immortal: 8 }
+                },
+                {
+                    id: '27',
+                    title: 'Flashdance... What A Feeling',
+                    artist: 'Irene Cara',
+                    duration: '3:56',
+                    videoId: 'ILnHzQiMrXk',
+                    thumbnail: 'https://img.youtube.com/vi/ILnHzQiMrXk/mqdefault.jpg',
+                    addedBy: 'VibesCurator',
+                    userAvatar: '🎵',
+                    timestamp: '30 min ago',
+                    comment: '80s anthem! The energy in this track is absolutely infectious.',
+                    reactions: { fire: 20, energy: 15, dance: 12 }
                 }
             ],
             'chill_vibes': [
@@ -1330,7 +1395,7 @@
                     <!-- User info header -->
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-lg">${song.userAvatar}</span>
-                        <span class="font-bold text-sm font-terminal text-black">${song.addedBy}</span>
+                        <span class="font-bold text-sm font-terminal text-black hover:text-blue-600 cursor-pointer" onclick="event.stopPropagation(); showUserProfile('${song.addedBy}')">${song.addedBy}</span>
                         <span class="text-xs text-gray-500">• ${song.timestamp}</span>
                         <div class="ml-auto text-xs font-bold text-gray-600">#${index + 1}</div>
                     </div>
@@ -1401,19 +1466,11 @@
 
             if (song && isPlaying) {
                 videoContainer.innerHTML = `
-                    <iframe 
-                        id="youtube-player"
-                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1"
-                        class="w-full"
-                        style="height: 400px;"
-                        frameborder="0"
-                        allow="autoplay; encrypted-media"
-                        allowfullscreen
-                    ></iframe>
+                    <div id="youtube-player" style="height: 400px; width: 100%;"></div>
                 `
                 
-                // Set up auto-advance monitoring
-                setupAutoAdvance()
+                // Set up YouTube player with API
+                setTimeout(() => setupYouTubePlayer(), 100)
                 nowPlayingLCD.innerHTML = `
                     <div class="animate-blink">♪</div>
                     ${song.title.toUpperCase()} - ${song.artist.toUpperCase()}
@@ -1445,95 +1502,87 @@
             }
         }
 
-        // Auto-advance functionality
-        function setupAutoAdvance() {
-            // Remove any existing event listener
-            window.removeEventListener('message', handleYouTubeMessage)
-            
-            // Add event listener for YouTube iframe messages
-            window.addEventListener('message', handleYouTubeMessage)
-            
-            // Also set up a backup timer-based check (since YouTube API can be unreliable)
-            setTimeout(checkSongProgress, 5000) // Start checking after 5 seconds
+        // YouTube API variables
+        let youtubePlayer = null
+        let isYouTubeAPIReady = false
+        
+        // YouTube API ready callback (called automatically by YouTube API)
+        window.onYouTubeIframeAPIReady = function() {
+            console.log('YouTube iframe API ready')
+            isYouTubeAPIReady = true
         }
-
-        function handleYouTubeMessage(event) {
-            // Only handle messages from YouTube
-            if (event.origin !== 'https://www.youtube.com') return
+        
+        function setupYouTubePlayer() {
+            if (!autoAdvanceEnabled || !isYouTubeAPIReady) return
             
-            try {
-                const data = JSON.parse(event.data)
-                
-                // YouTube player state: 0 = ended, 1 = playing, 2 = paused
-                if (data.info && data.info.playerState === 0) {
-                    // Video ended, advance to next song
-                    if (autoAdvanceEnabled && isPlaying) {
-                        setTimeout(() => autoAdvanceToNext(), 1000) // Small delay for smooth transition
-                    }
+            const song = getCurrentSong()
+            if (!song) return
+            
+            console.log('Setting up YouTube player with API for:', song.title)
+            
+            // Destroy existing player if any
+            if (youtubePlayer) {
+                youtubePlayer.destroy()
+            }
+            
+            // Create new player
+            youtubePlayer = new YT.Player('youtube-player', {
+                height: '400',
+                width: '100%',
+                videoId: song.videoId,
+                playerVars: {
+                    autoplay: isPlaying ? 1 : 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    enablejsapi: 1
+                },
+                events: {
+                    onStateChange: onPlayerStateChange
                 }
-            } catch (e) {
-                // Ignore parsing errors from other messages
+            })
+        }
+        
+        function onPlayerStateChange(event) {
+            console.log('YouTube player state changed:', event.data)
+            
+            switch(event.data) {
+                case YT.PlayerState.ENDED:
+                    console.log('Video ended - auto advancing')
+                    if (autoAdvanceEnabled) {
+                        autoAdvanceToNext()
+                    }
+                    break
+                case YT.PlayerState.PLAYING:
+                    console.log('Video playing')
+                    break
+                case YT.PlayerState.PAUSED:
+                    console.log('Video paused')
+                    break
             }
         }
 
         function autoAdvanceToNext() {
+            console.log('autoAdvanceToNext called')
             const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            console.log(`Current song index: ${currentIndex}, total songs: ${songs.length}`)
             
             if (currentIndex < songs.length - 1) {
                 // Play next song in playlist
                 const nextSong = songs[currentIndex + 1]
+                console.log(`Advancing to next song: ${nextSong.title}`)
                 playSong(nextSong.id)
                 showNotification(`Auto-playing: ${nextSong.title}`, 'info')
             } else {
                 // End of playlist - could loop back to first song or stop
+                console.log('Reached end of playlist, looping to first song')
                 const firstSong = songs[0]
                 playSong(firstSong.id)
                 showNotification(`Playlist complete! Restarting with: ${firstSong.title}`, 'info')
             }
         }
 
-        // Backup method using estimated song duration
-        function checkSongProgress() {
-            if (!isPlaying || !getCurrentSong()) return
-            
-            const song = getCurrentSong()
-            const [minutes, seconds] = song.duration.split(':').map(Number)
-            const totalSeconds = minutes * 60 + seconds
-            
-            // Check again near the end of the song (with 10 second buffer)
-            const checkTime = Math.max(totalSeconds - 10, 10) * 1000
-            
-            setTimeout(() => {
-                if (isPlaying && getCurrentSong()?.id === song.id) {
-                    // Song is still playing and hasn't changed, likely near the end
-                    setTimeout(() => {
-                        if (isPlaying && getCurrentSong()?.id === song.id) {
-                            // If still the same song after another few seconds, auto-advance
-                            autoAdvanceToNext()
-                        }
-                    }, 8000)
-                }
-            }, checkTime)
-        }
 
-        function toggleAutoAdvance() {
-            autoAdvanceEnabled = !autoAdvanceEnabled
-            updateAutoAdvanceButton()
-            
-            const status = autoAdvanceEnabled ? 'enabled' : 'disabled'
-            showNotification(`Auto-advance ${status}!`, autoAdvanceEnabled ? 'success' : 'info')
-        }
-
-        function updateAutoAdvanceButton() {
-            const btn = document.getElementById('auto-advance-btn')
-            if (autoAdvanceEnabled) {
-                btn.className = 'win95-button px-3 py-2 text-sm text-white bg-green-600 ml-2'
-                btn.innerHTML = '🔄 Auto'
-            } else {
-                btn.className = 'win95-button px-3 py-2 text-sm text-black ml-2'
-                btn.innerHTML = '⏸️ Manual'
-            }
-        }
+        
 
         async function searchYouTube() {
             const query = document.getElementById('search-input').value.trim()
@@ -1696,6 +1745,16 @@
                 playSong(songs[0].id)
             } else {
                 isPlaying = !isPlaying
+                
+                // Control YouTube player directly
+                if (youtubePlayer) {
+                    if (isPlaying) {
+                        youtubePlayer.playVideo()
+                    } else {
+                        youtubePlayer.pauseVideo()
+                    }
+                }
+                
                 updatePlayer()
                 updatePlayButton()
             }
@@ -1972,6 +2031,8 @@
                     loadDiscoverPage()
                 } else if (page === 'trending') {
                     loadTrendingPage()
+                } else if (page === 'profile') {
+                    loadProfilePage()
                 }
             }
             
@@ -1986,6 +2047,12 @@
                 link.addEventListener('click', (e) => {
                     e.preventDefault()
                     const page = link.dataset.page
+                    
+                    // Reset profile user when clicking Profile tab directly
+                    if (page === 'profile') {
+                        currentProfileUser = null
+                    }
+                    
                     navigateTo(page)
                 })
             })
@@ -2140,6 +2207,162 @@
             }, 100)
         }
         
+        // Profile functionality
+        let currentProfileUser = null
+        const currentUser = 'VibesCurator' // This would be the logged-in user
+        
+        // Mock user data
+        const userData = {
+            'DJ_Mike92': {
+                avatar: '🎧',
+                bio: 'Grunge enthusiast • 90s music curator',
+                joinDate: 'Sept 2024',
+                totalPlays: 1247
+            },
+            'VibesCurator': {
+                avatar: '🎵',
+                bio: 'Playlist architect • Music enthusiast',
+                joinDate: 'Aug 2024',
+                totalPlays: 2100
+            },
+            'RetroQueen': {
+                avatar: '👑',
+                bio: '80s synthwave lover • Retro revival',
+                joinDate: 'Oct 2024',
+                totalPlays: 856
+            },
+            'System': {
+                avatar: '🤖',
+                bio: 'AI Music Assistant • Default curator',
+                joinDate: 'July 2024',
+                totalPlays: 5000
+            },
+            'Discovery': {
+                avatar: '🔍',
+                bio: 'Music discovery engine • Recommendation bot',
+                joinDate: 'July 2024',
+                totalPlays: 3200
+            },
+            'You': {
+                avatar: '😎',
+                bio: 'Music lover • Active contributor',
+                joinDate: 'Nov 2024',
+                totalPlays: 420
+            }
+        }
+        
+        // Show user profile
+        window.showUserProfile = function(username) {
+            currentProfileUser = username
+            window.location.hash = 'profile'
+        }
+        
+        // Load Profile Page content
+        function loadProfilePage() {
+            // If no specific user profile requested, show current user
+            if (!currentProfileUser) {
+                currentProfileUser = currentUser
+            }
+            
+            const user = userData[currentProfileUser] || {
+                avatar: '👤',
+                bio: 'Music enthusiast',
+                joinDate: 'Nov 2024',
+                totalPlays: 0
+            }
+            
+            // Update profile info
+            document.getElementById('profile-avatar').textContent = user.avatar
+            document.getElementById('profile-username').textContent = currentProfileUser
+            document.getElementById('profile-bio').textContent = user.bio
+            document.getElementById('profile-join-date').textContent = user.joinDate
+            document.getElementById('profile-total-plays').textContent = user.totalPlays.toLocaleString()
+            document.getElementById('profile-songs-by').textContent = currentProfileUser
+            
+            // Get user's songs from all playlists
+            const userSongs = []
+            Object.keys(playlists).forEach(playlistId => {
+                const playlist = playlists[playlistId]
+                const playlistSongsArray = playlistSongs[playlistId] || []
+                playlistSongsArray.forEach(song => {
+                    if (song.addedBy === currentProfileUser) {
+                        userSongs.push({
+                            ...song,
+                            playlistName: playlist.name,
+                            playlistIcon: playlist.icon
+                        })
+                    }
+                })
+            })
+            
+            // Also check current playlist songs
+            songs.forEach(song => {
+                if (song.addedBy === currentProfileUser && !userSongs.find(s => s.id === song.id)) {
+                    userSongs.push({
+                        ...song,
+                        playlistName: 'Current Playlist',
+                        playlistIcon: '🎵'
+                    })
+                }
+            })
+            
+            document.getElementById('profile-songs-count').textContent = userSongs.length
+            
+            // Render user's songs
+            const container = document.getElementById('profile-songs-list')
+            if (userSongs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">🎵</div>
+                        <p>No songs added yet</p>
+                    </div>
+                `
+            } else {
+                container.innerHTML = userSongs.map(song => `
+                    <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
+                        <div class="flex items-center gap-4">
+                            <img src="https://img.youtube.com/vi/${song.videoId || 'dQw4w9WgXcQ'}/mqdefault.jpg" 
+                                 class="w-16 h-12 object-cover rounded" />
+                            <div class="flex-1">
+                                <h4 class="font-bold text-black">${song.title}</h4>
+                                <p class="text-sm text-gray-600">${song.artist}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-xs text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
+                                    <span class="text-xs text-gray-500">• ${song.duration}</span>
+                                    ${song.playCount ? `<span class="text-xs text-gray-500">• ${song.playCount} plays</span>` : ''}
+                                </div>
+                            </div>
+                            <button class="win95-button px-3 py-2" onclick="event.stopPropagation(); playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
+                                <i class="fas fa-play mr-1"></i>Play
+                            </button>
+                        </div>
+                    </div>
+                `).join('')
+            }
+        }
+        
+        // Play song from user profile
+        window.playUserSong = function(title, artist, videoId) {
+            // Check if song exists in current playlist
+            const existingSong = songs.find(s => s.title === title && s.artist === artist)
+            
+            if (existingSong) {
+                // Navigate to home and play existing song
+                window.location.hash = 'home'
+                setTimeout(() => {
+                    currentSongId = existingSong.id
+                    isPlaying = true
+                    updatePlayer()
+                    updatePlayButton()
+                    renderPlaylist()
+                    showNotification(`Now playing "${title}"!`)
+                }, 100)
+            } else {
+                // Add to current playlist and play
+                addTrackFromRecommendation(title, artist, videoId)
+            }
+        }
+        
         // Show notification
         function showNotification(message) {
             const notification = document.createElement('div')
@@ -2213,7 +2436,6 @@
         updatePlayer()
         updatePlayButton()
         updateQuickSwitchButtons()
-        updateAutoAdvanceButton()
         updateTime()
         setInterval(updateTime, 1000)
         
