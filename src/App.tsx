@@ -35,6 +35,8 @@ const App: Component = () => {
   const [currentSongId, setCurrentSongId] = createSignal<string | null>('1')
   const [isPlaying, setIsPlaying] = createSignal(false)
   const [showAddModal, setShowAddModal] = createSignal(false)
+  const [playlistWidth, setPlaylistWidth] = createSignal(320)
+  const [isDragging, setIsDragging] = createSignal(false)
 
   const currentSong = () => songs().find(s => s.id === currentSongId())
 
@@ -66,6 +68,32 @@ const App: Component = () => {
     setCurrentSongId(songs()[nextIndex]?.id || null)
   }
 
+  const handleMouseDown = (e: MouseEvent) => {
+    setIsDragging(true)
+    e.preventDefault()
+  }
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging()) return
+    
+    const containerWidth = window.innerWidth
+    const newWidth = containerWidth - e.clientX
+    const minWidth = 250
+    const maxWidth = 600
+    
+    if (newWidth >= minWidth && newWidth <= maxWidth) {
+      setPlaylistWidth(newWidth)
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  // Add global mouse event listeners
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', handleMouseUp)
+
   return (
     <div class="min-h-screen bg-gradient-to-br from-purple-600 to-purple-800">
       {/* Header */}
@@ -85,9 +113,9 @@ const App: Component = () => {
         </div>
       </header>
 
-      <main class="flex h-[calc(100vh-70px)]">
+      <main class="flex h-[calc(100vh-70px)] relative">
         {/* Video Player */}
-        <div class="flex-1 bg-black flex flex-col">
+        <div class="bg-black flex flex-col" style={{ width: `calc(100% - ${playlistWidth()}px)` }}>
           <div class="flex-1 relative">
             <Show 
               when={currentSong()}
@@ -127,8 +155,14 @@ const App: Component = () => {
           </Show>
         </div>
 
+        {/* Resize Handle */}
+        <div 
+          class={`w-1 bg-white/20 hover:bg-white/40 cursor-col-resize transition-colors ${isDragging() ? 'bg-white/60' : ''}`}
+          onMouseDown={handleMouseDown}
+        ></div>
+
         {/* Playlist */}
-        <div class="w-[400px] bg-white/10 backdrop-blur-md p-6 overflow-y-auto">
+        <div class="bg-white/10 backdrop-blur-md p-6 overflow-y-auto" style={{ width: `${playlistWidth()}px` }}>
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-white text-xl font-bold">Vibes Playlist</h2>
             <span class="text-white/60 text-sm">

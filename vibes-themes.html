@@ -229,50 +229,60 @@
                 </div>
             </div>
 
-            <!-- Menu bar -->
+            <!-- Navigation bar -->
             <div class="win95-panel p-1 border-b-2">
                 <div class="flex gap-4 text-black text-sm font-bold">
-                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">File</span>
-                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Edit</span>
-                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">View</span>
-                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Tools</span>
+                    <a href="#home" class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer" data-page="home">
+                        <i class="fas fa-home mr-1"></i>Home
+                    </a>
+                    <a href="#discover" class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer" data-page="discover">
+                        <i class="fas fa-compass mr-1"></i>Discover
+                    </a>
+                    <a href="#trending" class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer" data-page="trending">
+                        <i class="fas fa-fire mr-1"></i>Trending
+                    </a>
+                    <div class="flex-1"></div>
+                    <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Settings</span>
                     <span class="px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer">Help</span>
                 </div>
             </div>
 
             <!-- Playlist Header Bar -->
-            <div class="win95-panel p-3 border-b-2 bg-gray-200">
+            <div class="win95-panel p-6 border-b-2 bg-gray-200" id="playlist-header">
                 <div class="flex items-center justify-between">
                     <!-- Current Playlist Info -->
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <div class="text-2xl" id="current-playlist-icon">🎸</div>
+                    <div class="flex items-center gap-6">
+                        <div class="flex items-center gap-4">
+                            <div class="text-4xl" id="current-playlist-icon">🎸</div>
                             <div>
-                                <div class="text-black font-bold font-terminal text-lg" id="current-playlist-display">90s Hits</div>
-                                <div class="text-xs text-gray-600" id="current-playlist-desc">The best grunge, alternative, and pop hits from the decade that changed music</div>
+                                <div class="text-black font-bold font-terminal text-xl" id="current-playlist-display">90s Hits</div>
+                                <div class="text-sm text-gray-600 mt-1" id="current-playlist-desc">The best grunge, alternative, and pop hits from the decade that changed music</div>
                             </div>
                         </div>
-                        <div class="w-4 h-4 rounded-full" id="current-playlist-color" style="background-color: #ff6b6b"></div>
+                        <div class="w-6 h-6 rounded-full border-2 border-gray-400" id="current-playlist-color" style="background-color: #ff6b6b"></div>
                     </div>
                     
                     <!-- Quick Playlist Switcher -->
-                    <div class="flex items-center gap-2">
-                        <div class="text-xs font-bold text-black mr-2">Quick Switch:</div>
-                        <button onclick="switchPlaylist('90s_hits')" class="win95-button px-2 py-1 text-xs text-black" id="btn-90s_hits" title="90s Hits">🎸</button>
-                        <button onclick="switchPlaylist('80s_synthwave')" class="win95-button px-2 py-1 text-xs text-black" id="btn-80s_synthwave" title="80s Synthwave">🌈</button>
-                        <button onclick="switchPlaylist('chill_vibes')" class="win95-button px-2 py-1 text-xs text-black" id="btn-chill_vibes" title="Chill Vibes">🌙</button>
-                        <button onclick="switchPlaylist('party_bangers')" class="win95-button px-2 py-1 text-xs text-black" id="btn-party_bangers" title="Party Bangers">🎉</button>
-                        <button onclick="switchPlaylist('indie_gems')" class="win95-button px-2 py-1 text-xs text-black" id="btn-indie_gems" title="Indie Gems">💎</button>
-                        <button onclick="switchPlaylist('hip_hop_classics')" class="win95-button px-2 py-1 text-xs text-black" id="btn-hip_hop_classics" title="Hip-Hop Classics">🎤</button>
-                        <button onclick="showPlaylistSelector()" class="win95-button px-3 py-1 text-xs font-bold text-black ml-2">📁 All Playlists</button>
+                    <div class="flex items-center gap-3">
+                        <div class="text-sm font-bold text-black mr-3">Quick Switch:</div>
+                        <button onclick="switchPlaylist('90s_hits')" class="win95-button px-3 py-2 text-sm text-black" id="btn-90s_hits" title="90s Hits">🎸</button>
+                        <button onclick="switchPlaylist('80s_synthwave')" class="win95-button px-3 py-2 text-sm text-black" id="btn-80s_synthwave" title="80s Synthwave">🌈</button>
+                        <button onclick="switchPlaylist('chill_vibes')" class="win95-button px-3 py-2 text-sm text-black" id="btn-chill_vibes" title="Chill Vibes">🌙</button>
+                        <button onclick="switchPlaylist('party_bangers')" class="win95-button px-3 py-2 text-sm text-black" id="btn-party_bangers" title="Party Bangers">🎉</button>
+                        <button onclick="switchPlaylist('indie_gems')" class="win95-button px-3 py-2 text-sm text-black" id="btn-indie_gems" title="Indie Gems">💎</button>
+                        <button onclick="switchPlaylist('hip_hop_classics')" class="win95-button px-3 py-2 text-sm text-black" id="btn-hip_hop_classics" title="Hip-Hop Classics">🎤</button>
+                        <button onclick="showPlaylistSelector()" class="win95-button px-4 py-2 text-sm font-bold text-black ml-3">📁 All Playlists</button>
+                        <button onclick="toggleAutoAdvance()" class="win95-button px-3 py-2 text-sm text-black ml-2" id="auto-advance-btn" title="Toggle Auto-Advance">🔄 Auto</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Main content -->
-            <div class="flex-1 flex bg-gray-200">
+            <!-- Page Container -->
+            <div class="flex-1 bg-gray-200">
+                <!-- Home Page -->
+                <div id="home-page" class="page-content h-full flex">
                 <!-- AI Agent Chat Panel (LEFT SIDE) -->
-                <div class="w-[450px] p-4 border-r-2 border-gray-400" id="ai-panel">
+                <div class="p-4 border-r-2 border-gray-400" id="ai-panel" style="width: 380px;">
                     <div class="win95-panel p-4 h-full flex flex-col">
                         <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
                             <span><i class="fas fa-robot mr-2"></i>DJ Bot 95 - Music Assistant</span>
@@ -385,7 +395,7 @@
                 </div>
 
                 <!-- Social Feed (RIGHT SIDE) -->
-                <div class="w-[450px] p-4">
+                <div class="p-4" id="social-feed-panel" style="width: 380px;">
                     <div class="win95-panel p-4 h-full flex flex-col">
                         <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
                             <span><i class="fas fa-users mr-2"></i>Social Feed • <span id="current-playlist-name">90s Hits</span></span>
@@ -414,6 +424,81 @@
                             <button onclick="clearPlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
                                 <i class="fas fa-trash mr-1"></i>Clear
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                </div>
+                
+                <!-- Discover Page -->
+                <div id="discover-page" class="page-content h-full" style="display: none;">
+                    <div class="p-8">
+                        <div class="win95-panel p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-black mb-4">
+                                <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
+                            </h2>
+                            <p class="text-gray-700">AI-powered recommendations based on your listening habits</p>
+                        </div>
+                        
+                        <!-- Mood-based Discovery -->
+                        <div class="grid grid-cols-3 gap-6 mb-8">
+                            <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="switchToMoodPlaylist('chill_vibes')">
+                                <div class="text-4xl mb-2">😌</div>
+                                <h3 class="font-bold text-black">Chill & Relax</h3>
+                                <p class="text-sm text-gray-600">Laid-back vibes for your downtime</p>
+                                <button class="win95-button px-3 py-1 text-xs mt-3 w-full" onclick="event.stopPropagation(); switchToMoodPlaylist('chill_vibes')">
+                                    <i class="fas fa-play mr-1"></i>Switch to Chill Vibes
+                                </button>
+                            </div>
+                            <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="switchToMoodPlaylist('party_bangers')">
+                                <div class="text-4xl mb-2">🔥</div>
+                                <h3 class="font-bold text-black">High Energy</h3>
+                                <p class="text-sm text-gray-600">Pump up your day with energetic beats</p>
+                                <button class="win95-button px-3 py-1 text-xs mt-3 w-full" onclick="event.stopPropagation(); switchToMoodPlaylist('party_bangers')">
+                                    <i class="fas fa-play mr-1"></i>Switch to Party Bangers
+                                </button>
+                            </div>
+                            <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="switchToMoodPlaylist('80s_synthwave')">
+                                <div class="text-4xl mb-2">🌙</div>
+                                <h3 class="font-bold text-black">Late Night</h3>
+                                <p class="text-sm text-gray-600">Perfect for after midnight sessions</p>
+                                <button class="win95-button px-3 py-1 text-xs mt-3 w-full" onclick="event.stopPropagation(); switchToMoodPlaylist('80s_synthwave')">
+                                    <i class="fas fa-play mr-1"></i>Switch to 80s Synthwave
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Recommendations -->
+                        <div class="win95-panel p-6">
+                            <h3 class="text-xl font-bold text-black mb-4">Because you liked "Smells Like Teen Spirit"</h3>
+                            <div class="grid grid-cols-2 gap-4" id="discover-recommendations">
+                                <!-- Recommendations will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trending Page -->
+                <div id="trending-page" class="page-content h-full" style="display: none;">
+                    <div class="p-8">
+                        <div class="win95-panel p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-black mb-4">
+                                <i class="fas fa-fire text-red-500 mr-2"></i>Trending Playlists
+                            </h2>
+                            <p class="text-gray-700">The most popular playlists this week</p>
+                        </div>
+                        
+                        <!-- Time filters -->
+                        <div class="flex gap-2 mb-6">
+                            <button class="win95-button px-4 py-2 text-black font-bold">Today</button>
+                            <button class="win95-button px-4 py-2 text-black">This Week</button>
+                            <button class="win95-button px-4 py-2 text-black">This Month</button>
+                            <button class="win95-button px-4 py-2 text-black">All Time</button>
+                        </div>
+                        
+                        <!-- Trending playlists -->
+                        <div class="grid grid-cols-2 gap-6" id="trending-playlists">
+                            <!-- Trending playlists will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -1188,6 +1273,7 @@
         let currentSongId = '1'
         let isPlaying = false
         let isSearching = false
+        let autoAdvanceEnabled = true
 
         function updateTime() {
             const now = new Date()
@@ -1316,14 +1402,18 @@
             if (song && isPlaying) {
                 videoContainer.innerHTML = `
                     <iframe 
-                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=1&rel=0&modestbranding=1"
+                        id="youtube-player"
+                        src="https://www.youtube.com/embed/${song.videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1"
                         class="w-full"
-                        style="height: 500px;"
+                        style="height: 400px;"
                         frameborder="0"
                         allow="autoplay; encrypted-media"
                         allowfullscreen
                     ></iframe>
                 `
+                
+                // Set up auto-advance monitoring
+                setupAutoAdvance()
                 nowPlayingLCD.innerHTML = `
                     <div class="animate-blink">♪</div>
                     ${song.title.toUpperCase()} - ${song.artist.toUpperCase()}
@@ -1352,6 +1442,96 @@
                     </div>
                 `
                 nowPlayingLCD.textContent = 'READY - INSERT DISC TO PLAY'
+            }
+        }
+
+        // Auto-advance functionality
+        function setupAutoAdvance() {
+            // Remove any existing event listener
+            window.removeEventListener('message', handleYouTubeMessage)
+            
+            // Add event listener for YouTube iframe messages
+            window.addEventListener('message', handleYouTubeMessage)
+            
+            // Also set up a backup timer-based check (since YouTube API can be unreliable)
+            setTimeout(checkSongProgress, 5000) // Start checking after 5 seconds
+        }
+
+        function handleYouTubeMessage(event) {
+            // Only handle messages from YouTube
+            if (event.origin !== 'https://www.youtube.com') return
+            
+            try {
+                const data = JSON.parse(event.data)
+                
+                // YouTube player state: 0 = ended, 1 = playing, 2 = paused
+                if (data.info && data.info.playerState === 0) {
+                    // Video ended, advance to next song
+                    if (autoAdvanceEnabled && isPlaying) {
+                        setTimeout(() => autoAdvanceToNext(), 1000) // Small delay for smooth transition
+                    }
+                }
+            } catch (e) {
+                // Ignore parsing errors from other messages
+            }
+        }
+
+        function autoAdvanceToNext() {
+            const currentIndex = songs.findIndex(s => s.id === currentSongId)
+            
+            if (currentIndex < songs.length - 1) {
+                // Play next song in playlist
+                const nextSong = songs[currentIndex + 1]
+                playSong(nextSong.id)
+                showNotification(`Auto-playing: ${nextSong.title}`, 'info')
+            } else {
+                // End of playlist - could loop back to first song or stop
+                const firstSong = songs[0]
+                playSong(firstSong.id)
+                showNotification(`Playlist complete! Restarting with: ${firstSong.title}`, 'info')
+            }
+        }
+
+        // Backup method using estimated song duration
+        function checkSongProgress() {
+            if (!isPlaying || !getCurrentSong()) return
+            
+            const song = getCurrentSong()
+            const [minutes, seconds] = song.duration.split(':').map(Number)
+            const totalSeconds = minutes * 60 + seconds
+            
+            // Check again near the end of the song (with 10 second buffer)
+            const checkTime = Math.max(totalSeconds - 10, 10) * 1000
+            
+            setTimeout(() => {
+                if (isPlaying && getCurrentSong()?.id === song.id) {
+                    // Song is still playing and hasn't changed, likely near the end
+                    setTimeout(() => {
+                        if (isPlaying && getCurrentSong()?.id === song.id) {
+                            // If still the same song after another few seconds, auto-advance
+                            autoAdvanceToNext()
+                        }
+                    }, 8000)
+                }
+            }, checkTime)
+        }
+
+        function toggleAutoAdvance() {
+            autoAdvanceEnabled = !autoAdvanceEnabled
+            updateAutoAdvanceButton()
+            
+            const status = autoAdvanceEnabled ? 'enabled' : 'disabled'
+            showNotification(`Auto-advance ${status}!`, autoAdvanceEnabled ? 'success' : 'info')
+        }
+
+        function updateAutoAdvanceButton() {
+            const btn = document.getElementById('auto-advance-btn')
+            if (autoAdvanceEnabled) {
+                btn.className = 'win95-button px-3 py-2 text-sm text-white bg-green-600 ml-2'
+                btn.innerHTML = '🔄 Auto'
+            } else {
+                btn.className = 'win95-button px-3 py-2 text-sm text-black ml-2'
+                btn.innerHTML = '⏸️ Manual'
             }
         }
 
@@ -1614,14 +1794,14 @@
             Object.keys(playlists).forEach(id => {
                 const btn = document.getElementById(`btn-${id}`)
                 if (btn) {
-                    btn.className = 'win95-button px-2 py-1 text-xs text-black'
+                    btn.className = 'win95-button px-3 py-2 text-sm text-black'
                 }
             })
             
             // Highlight current playlist button
             const activeBtn = document.getElementById(`btn-${currentPlaylistId}`)
             if (activeBtn) {
-                activeBtn.className = 'win95-button px-2 py-1 text-xs text-white bg-blue-600'
+                activeBtn.className = 'win95-button px-3 py-2 text-sm text-white bg-blue-600'
             }
         }
 
@@ -1757,11 +1937,283 @@
             return responses[Math.floor(Math.random() * responses.length)]
         }
 
+        // Simple Router
+        function initRouter() {
+            // Handle navigation
+            function navigateTo(page) {
+                // Hide all pages
+                document.querySelectorAll('.page-content').forEach(p => p.style.display = 'none')
+                
+                // Show selected page
+                const pageElement = document.getElementById(page + '-page')
+                if (pageElement) {
+                    pageElement.style.display = page === 'home' ? 'flex' : 'block'
+                }
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('bg-blue-600', 'text-white')
+                    if (link.dataset.page === page) {
+                        link.classList.add('bg-blue-600', 'text-white')
+                    }
+                })
+                
+                // Update URL
+                window.location.hash = page
+                
+                // Show/hide playlist header (only show on home page)
+                const playlistHeader = document.getElementById('playlist-header')
+                if (playlistHeader) {
+                    playlistHeader.style.display = page === 'home' ? 'block' : 'none'
+                }
+                
+                // Load page-specific content
+                if (page === 'discover') {
+                    loadDiscoverPage()
+                } else if (page === 'trending') {
+                    loadTrendingPage()
+                }
+            }
+            
+            // Handle hash changes
+            window.addEventListener('hashchange', () => {
+                const page = window.location.hash.slice(1) || 'home'
+                navigateTo(page)
+            })
+            
+            // Handle nav clicks
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    const page = link.dataset.page
+                    navigateTo(page)
+                })
+            })
+            
+            // Navigate to initial page
+            const initialPage = window.location.hash.slice(1) || 'home'
+            navigateTo(initialPage)
+        }
+        
+        // Load Discover Page content
+        function loadDiscoverPage() {
+            const recommendations = [
+                { title: "Black Hole Sun", artist: "Soundgarden", videoId: "3mbBbFH9fAg" },
+                { title: "Interstate Love Song", artist: "Stone Temple Pilots", videoId: "yjJL9DGU7Gg" },
+                { title: "Plush", artist: "Stone Temple Pilots", videoId: "tXhmwMdUKfA" },
+                { title: "Man in the Box", artist: "Alice in Chains", videoId: "TAqZb52sgpU" }
+            ]
+            
+            const container = document.getElementById('discover-recommendations')
+            container.innerHTML = recommendations.map(song => `
+                <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="addTrackFromRecommendation('${song.title}', '${song.artist}', '${song.videoId}')">
+                    <div class="flex items-center gap-3">
+                        <img src="https://img.youtube.com/vi/${song.videoId}/mqdefault.jpg" 
+                             class="w-20 h-15 object-cover rounded" />
+                        <div>
+                            <h4 class="font-bold text-black">${song.title}</h4>
+                            <p class="text-sm text-gray-600">${song.artist}</p>
+                        </div>
+                        <button class="ml-auto win95-button px-3 py-1 text-xs">
+                            <i class="fas fa-play mr-1"></i>Play
+                        </button>
+                    </div>
+                </div>
+            `).join('')
+        }
+        
+        // Load Trending Page content
+        function loadTrendingPage() {
+            const trendingPlaylists = [
+                { 
+                    rank: 1, 
+                    name: "90s Hits", 
+                    icon: "🎸", 
+                    change: "up", 
+                    plays: "24.5K", 
+                    description: "The best grunge, alternative, and pop hits from the decade that changed music",
+                    color: "#ff6b6b",
+                    id: "90s_hits"
+                },
+                { 
+                    rank: 2, 
+                    name: "80s Synthwave", 
+                    icon: "🌈", 
+                    change: "same", 
+                    plays: "18.2K", 
+                    description: "Neon-soaked synthesizer dreams and retro-futuristic beats",
+                    color: "#4ecdc4",
+                    id: "80s_synthwave"
+                },
+                { 
+                    rank: 3, 
+                    name: "Chill Vibes", 
+                    icon: "🌙", 
+                    change: "up", 
+                    plays: "15.7K", 
+                    description: "Mellow tracks for relaxation and late-night contemplation",
+                    color: "#45b7d1",
+                    id: "chill_vibes"
+                },
+                { 
+                    rank: 4, 
+                    name: "Party Bangers", 
+                    icon: "🎉", 
+                    change: "down", 
+                    plays: "12.9K", 
+                    description: "High-energy anthems that get the crowd moving",
+                    color: "#f39c12",
+                    id: "party_bangers"
+                },
+                { 
+                    rank: 5, 
+                    name: "Indie Gems", 
+                    icon: "💎", 
+                    change: "up", 
+                    plays: "11.4K", 
+                    description: "Hidden treasures from independent artists and underground scenes",
+                    color: "#9b59b6",
+                    id: "indie_gems"
+                },
+                { 
+                    rank: 6, 
+                    name: "Hip-Hop Classics", 
+                    icon: "🎤", 
+                    change: "same", 
+                    plays: "10.8K", 
+                    description: "Essential tracks that defined hip-hop culture",
+                    color: "#e74c3c",
+                    id: "hip_hop_classics"
+                }
+            ]
+            
+            const container = document.getElementById('trending-playlists')
+            container.innerHTML = trendingPlaylists.map(playlist => `
+                <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer mb-4" onclick="switchToTrendingPlaylist('${playlist.id}')">
+                    <div class="flex items-start gap-4">
+                        <div class="text-5xl">${playlist.icon}</div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-2xl font-bold text-gray-500">#${playlist.rank}</span>
+                                <div class="${playlist.change === 'up' ? 'text-green-500' : playlist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                    ${playlist.change === 'up' ? '▲' : playlist.change === 'down' ? '▼' : '●'}
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-black mb-2">${playlist.name}</h3>
+                            <p class="text-sm text-gray-600 mb-3">${playlist.description}</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-4 h-4 rounded-full border-2 border-gray-400" style="background-color: ${playlist.color}"></div>
+                                    <span class="text-sm font-bold text-black">${playlist.plays} plays</span>
+                                </div>
+                                <button class="win95-button px-4 py-2 text-xs font-bold" onclick="event.stopPropagation(); switchToTrendingPlaylist('${playlist.id}')">
+                                    <i class="fas fa-play mr-1"></i>Switch & Play
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')
+        }
+        
+        // Helper function to switch to trending playlist
+        window.switchToTrendingPlaylist = function(playlistId) {
+            // Navigate to home
+            window.location.hash = 'home'
+            
+            // Switch to the playlist after a short delay
+            setTimeout(() => {
+                switchPlaylist(playlistId)
+                showNotification(`Switched to "${playlists[playlistId]?.name}" playlist!`)
+            }, 100)
+        }
+        
+        // Helper function to switch to mood-based playlist
+        window.switchToMoodPlaylist = function(playlistId) {
+            // Navigate to home
+            window.location.hash = 'home'
+            
+            // Switch to the playlist after a short delay
+            setTimeout(() => {
+                switchPlaylist(playlistId)
+                showNotification(`Switched to "${playlists[playlistId]?.name}" playlist!`)
+            }, 100)
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div')
+            notification.className = 'fixed bottom-20 right-4 win95-panel p-4 animate-slide-in z-50'
+            notification.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                    <span class="text-black font-bold">${message}</span>
+                </div>
+            `
+            document.body.appendChild(notification)
+            
+            setTimeout(() => {
+                notification.remove()
+            }, 3000)
+        }
+        
+        // Helper function to add tracks from recommendations
+        window.addTrackFromRecommendation = function(title, artist, videoId) {
+            const newSong = {
+                id: Date.now().toString(),
+                title: title,
+                artist: artist,
+                duration: '3:30',
+                videoId: videoId,
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                addedBy: 'Discovery',
+                reactions: {},
+                playCount: 0
+            }
+            songs.push(newSong)
+            
+            // Navigate to home and play the song
+            window.location.hash = 'home'
+            
+            // Play the new song after a short delay to ensure page has switched
+            setTimeout(() => {
+                currentSongId = newSong.id
+                isPlaying = true
+                renderPlaylist()
+                updatePlayer()
+                updatePlayButton()
+                showNotification(`Now playing "${title}" by ${artist}"!`)
+            }, 100)
+        }
+        
+        // Helper function to play trending songs
+        window.playTrendingSong = function(title, artist, videoId = 'dQw4w9WgXcQ') {
+            
+            const existingSong = songs.find(s => s.title === title && s.artist === artist)
+            
+            if (existingSong) {
+                // Song already in playlist, just play it
+                window.location.hash = 'home'
+                setTimeout(() => {
+                    currentSongId = existingSong.id
+                    isPlaying = true
+                    updatePlayer()
+                    updatePlayButton()
+                    showNotification(`Now playing "${title}"!`)
+                }, 100)
+            } else {
+                // Add and play
+                addTrackFromRecommendation(title, artist, videoId)
+            }
+        }
+
         // Initialize
+        initRouter()
         renderPlaylist()
         updatePlayer()
         updatePlayButton()
         updateQuickSwitchButtons()
+        updateAutoAdvanceButton()
         updateTime()
         setInterval(updateTime, 1000)
         
@@ -1771,6 +2223,7 @@
         console.log('%c🎧 VIBES 95 SYSTEM LOADED', 'color: #00ff00; font-family: monospace; font-size: 14px; font-weight: bold;')
         console.log('%c🤖 DJ Bot 95 AI Assistant Ready!', 'color: #00ffff; font-family: monospace;')
         console.log('%cReplace YOUTUBE_API_KEY with your real API key for live search!', 'color: #ffff00; font-family: monospace;')
+        
     </script>
 </body>
 </html>

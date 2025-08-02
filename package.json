@@ -4,8 +4,9 @@
   "description": "Real-time collaborative playlist app with Bun + Solid.js",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch server.tsx",
-    "start": "bun run server.tsx",
+    "dev": "bun run --watch super-simple-server.ts",
+    "start": "bun run super-simple-server.ts",
+    "dev:old": "bun run --watch server.tsx",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
