@@ -209,7 +209,9 @@
                 userAvatar: '🎸',
                 timestamp: '2 min ago',
                 comment: 'This song changed everything for me in high school. Peak 90s energy! 🔥',
-                reactions: { fire: 12, heart: 8, nostalgia: 5 }
+                likes: 25,
+                replies: 8,
+                recasts: 12
             },
             {
                 id: '2',
@@ -222,7 +224,9 @@
                 userAvatar: '🎭',
                 timestamp: '5 min ago',
                 comment: 'Perfect slacker anthem. Beck was so ahead of his time.',
-                reactions: { fire: 7, heart: 4, cool: 9 }
+                likes: 20,
+                replies: 4,
+                recasts: 9
             },
             {
                 id: '3',
@@ -235,7 +239,9 @@
                 userAvatar: '👁️',
                 timestamp: '8 min ago',
                 comment: 'Before OK Computer, there was this masterpiece. Still hits different.',
-                reactions: { heart: 15, melancholy: 8, fire: 6 }
+                likes: 29,
+                replies: 12,
+                recasts: 15
             },
             {
                 id: '4',
@@ -248,7 +254,9 @@
                 userAvatar: '🌧️',
                 timestamp: '12 min ago',
                 comment: 'Eddie Vedder\'s voice on this track... pure emotion. Seattle forever.',
-                reactions: { heart: 18, fire: 11, nostalgia: 7 }
+                likes: 36,
+                replies: 11,
+                recasts: 18
             },
             {
                 id: '5',
@@ -261,7 +269,9 @@
                 userAvatar: '🍀',
                 timestamp: '15 min ago',
                 comment: 'Dolores O\'Riordan had such a unique voice. RIP to a legend.',
-                reactions: { heart: 22, respect: 14, fire: 9 }
+                likes: 45,
+                replies: 14,
+                recasts: 22
             },
             {
                 id: '6',
@@ -274,7 +284,9 @@
                 userAvatar: '🌶️',
                 timestamp: '18 min ago',
                 comment: 'LA vibes forever. This song captures the city perfectly.',
-                reactions: { fire: 16, heart: 12, chill: 8 }
+                likes: 36,
+                replies: 8,
+                recasts: 16
             },
             {
                 id: '7',
@@ -287,7 +299,9 @@
                 userAvatar: '⛓️',
                 timestamp: '22 min ago',
                 comment: 'Layne Staley\'s voice was unmatched. This riff is iconic.',
-                reactions: { fire: 13, metal: 10, respect: 6 }
+                likes: 29,
+                replies: 6,
+                recasts: 13
             },
             {
                 id: '8',
@@ -300,7 +314,9 @@
                 userAvatar: '🎪',
                 timestamp: '25 min ago',
                 comment: 'Deep cut from the Seattle scene. Mudhoney doesn\'t get enough love!',
-                reactions: { fire: 8, underground: 12, cool: 5 }
+                likes: 25,
+                replies: 9,
+                recasts: 8
             },
             {
                 id: '9',
@@ -313,7 +329,9 @@
                 userAvatar: '🗿',
                 timestamp: '28 min ago',
                 comment: 'Scott Weiland was such a showman. This video is pure 90s aesthetic.',
-                reactions: { fire: 11, heart: 7, aesthetic: 9 }
+                likes: 27,
+                replies: 7,
+                recasts: 11
             },
             {
                 id: '10',
@@ -326,7 +344,9 @@
                 userAvatar: '🥁',
                 timestamp: '32 min ago',
                 comment: 'Dave Grohl is a musical genius. From Nirvana to this masterpiece.',
-                reactions: { fire: 20, heart: 14, rock: 11 }
+                likes: 45,
+                replies: 14,
+                recasts: 20
             },
             {
                 id: '11',
@@ -339,7 +359,9 @@
                 userAvatar: '🎤',
                 timestamp: '35 min ago',
                 comment: 'Chris Cornell and Eddie Vedder together. Doesn\'t get better than this.',
-                reactions: { heart: 25, respect: 18, fire: 12 }
+                likes: 55,
+                replies: 18,
+                recasts: 25
             },
             {
                 id: '12',
@@ -352,7 +374,9 @@
                 userAvatar: '🇬🇧',
                 timestamp: '38 min ago',
                 comment: 'British grunge was different but equally amazing. Gavin Rossdale had it.',
-                reactions: { fire: 9, heart: 11, chill: 7 }
+                likes: 27,
+                replies: 7,
+                recasts: 11
             },
             {
                 id: '13',
@@ -497,7 +521,9 @@
                     userAvatar: '🎹',
                     timestamp: '10 min ago',
                     comment: 'That music video was mind-blowing! The pencil sketch effect was revolutionary.',
-                    reactions: { fire: 18, revolution: 12, nostalgia: 15 }
+                    likes: 45,
+                    replies: 12,
+                    recasts: 18
                 },
                 {
                     id: '24',
@@ -510,7 +536,9 @@
                     userAvatar: '👩‍🎤',
                     timestamp: '15 min ago',
                     comment: 'Annie Lennox was so ahead of her time. This song gives me chills every time.',
-                    reactions: { fire: 16, chills: 11, ahead: 9 }
+                    likes: 36,
+                    replies: 11,
+                    recasts: 16
                 },
                 {
                     id: '25',
@@ -523,7 +551,9 @@
                     userAvatar: '💙',
                     timestamp: '20 min ago',
                     comment: 'This track defined electronic music. Those synths still sound futuristic today.',
-                    reactions: { fire: 14, futuristic: 19, electronic: 13 }
+                    likes: 46,
+                    replies: 13,
+                    recasts: 19
                 },
                 {
                     id: '26',
@@ -536,7 +566,9 @@
                     userAvatar: '🥞',
                     timestamp: '25 min ago',
                     comment: 'The Breakfast Club made this song immortal. Pure 80s perfection!',
-                    reactions: { fire: 22, movie: 16, immortal: 8 }
+                    likes: 46,
+                    replies: 16,
+                    recasts: 22
                 },
                 {
                     id: '27',
@@ -724,6 +756,9 @@
         let isPlaying = false
         let isSearching = false
         let autoAdvanceEnabled = true
+        let isViewingReplies = false
+        let currentReplyThreadId = null
+        let currentSortOrder = 'recent'
 
         function updateTime() {
             const now = new Date()
@@ -780,39 +815,36 @@
                     <!-- User info header -->
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-lg">${song.userAvatar}</span>
-                        <span class="font-bold text-sm font-terminal text-black hover:text-blue-600 cursor-pointer" onclick="event.stopPropagation(); showUserProfile('${song.addedBy}')">${song.addedBy}</span>
-                        <span class="text-xs text-gray-500">• ${song.timestamp}</span>
-                        <div class="ml-auto text-xs font-bold text-gray-600">#${index + 1}</div>
+                        <span class="font-bold text-base font-terminal text-black hover:text-blue-600 cursor-pointer" onclick="event.stopPropagation(); showUserProfile('${song.addedBy}')">${song.addedBy}</span>
+                        <span class="text-sm text-gray-500">• ${song.timestamp}</span>
                     </div>
                     
                     <!-- Song info -->
                     <div class="flex items-center gap-3 mb-3">
+                        <div class="text-sm font-bold text-gray-600 min-w-[2rem]">#${index + 1}</div>
                         <img src="${song.thumbnail}" alt="${song.title}" class="w-12 h-9 object-cover border border-gray-400 rounded">
                         <div class="flex-1">
-                            <div class="font-bold text-sm font-terminal text-black ${song.id === currentSongId ? 'text-blue-600' : ''}">${song.title}</div>
-                            <div class="text-xs text-gray-600 mt-1">${song.artist} • ${song.duration}</div>
+                            <div class="font-bold text-base font-terminal text-black ${song.id === currentSongId ? 'text-blue-600' : ''}">${song.title}</div>
+                            <div class="text-sm text-gray-600 mt-1">${song.artist} • ${song.duration}</div>
                         </div>
-                        <button 
-                            onclick="removeSong('${song.id}'); event.stopPropagation()"
-                            class="win95-button w-6 h-6 text-xs font-bold text-black hover:bg-red-200 opacity-50 hover:opacity-100"
-                        >
-                            ×
-                        </button>
                     </div>
                     
                     <!-- User comment -->
-                    <div class="text-xs text-gray-700 mb-3 font-terminal italic leading-relaxed">
-                        "${song.comment}"
+                    <div class="text-sm text-gray-700 mb-3 font-terminal italic leading-relaxed">
+                        ${song.comment}
                     </div>
                     
                     <!-- Reactions -->
-                    <div class="flex items-center gap-3 text-xs">
-                        ${Object.entries(song.reactions).map(([reaction, count]) => 
-                            `<span class="flex items-center gap-1 text-gray-500 hover:text-blue-600 cursor-pointer">
-                                ${getReactionEmoji(reaction)} ${count}
-                            </span>`
-                        ).join('')}
-                        <span class="ml-auto text-gray-400 hover:text-blue-600 cursor-pointer">💬 Reply</span>
+                    <div class="flex items-center gap-4 text-sm">
+                        <span class="flex items-center gap-1 text-gray-500 hover:text-blue-600 cursor-pointer">
+                            👍 ${song.likes || Math.floor(Math.random() * 30) + 5}
+                        </span>
+                        <span class="flex items-center gap-1 text-gray-500 hover:text-blue-600 cursor-pointer">
+                            🔄 ${song.recasts || Math.floor(Math.random() * 15) + 2}
+                        </span>
+                        <span class="flex items-center gap-1 text-gray-500 hover:text-blue-600 cursor-pointer" onclick="showReplies('${song.id}'); event.stopPropagation()">
+                            💬 ${song.replies || Math.floor(Math.random() * 10) + 1} ${(song.replies || Math.floor(Math.random() * 10) + 1) === 1 ? 'reply' : 'replies'}
+                        </span>
                     </div>
                 </div>
             `).join('')
@@ -1025,11 +1057,11 @@
                         class="w-16 h-12 object-cover border border-gray-400 mr-3"
                     />
                     <div class="flex-1">
-                        <div class="font-bold text-sm font-terminal text-black">${result.title}</div>
-                        <div class="text-xs text-gray-600">${result.artist}</div>
-                        ${result.description ? `<div class="text-xs text-gray-500 mt-1">${result.description.substring(0, 60)}...</div>` : ''}
+                        <div class="font-bold text-base font-terminal text-black">${result.title}</div>
+                        <div class="text-sm text-gray-600">${result.artist}</div>
+                        ${result.description ? `<div class="text-sm text-gray-500 mt-1">${result.description.substring(0, 60)}...</div>` : ''}
                     </div>
-                    <div class="win95-button px-2 py-1 text-xs font-bold text-black">
+                    <div class="win95-button px-3 py-2 text-base font-bold text-black">
                         ADD
                     </div>
                 </div>
@@ -1078,19 +1110,11 @@
         }
 
         function generateRandomReactions() {
-            const reactionTypes = ['fire', 'heart', 'cool', 'rock']
-            const reactions = {}
-            
-            // Add 1-3 random reaction types
-            const numReactions = Math.floor(Math.random() * 3) + 1
-            for (let i = 0; i < numReactions; i++) {
-                const reaction = reactionTypes[Math.floor(Math.random() * reactionTypes.length)]
-                if (!reactions[reaction]) {
-                    reactions[reaction] = Math.floor(Math.random() * 5) + 1
-                }
+            return {
+                likes: Math.floor(Math.random() * 30) + 5,
+                recasts: Math.floor(Math.random() * 15) + 2,
+                replies: Math.floor(Math.random() * 10) + 1
             }
-            
-            return reactions
         }
 
         function showNotification(message) {
@@ -1163,8 +1187,60 @@
 
         function shufflePlaylist() {
             songs = songs.sort(() => Math.random() - 0.5)
+            currentSortOrder = 'random'
+            updateSortButtons()
             renderPlaylist()
             showNotification('Mixtape shuffled!')
+        }
+
+        function sortPlaylist(sortType) {
+            currentSortOrder = sortType
+            
+            switch(sortType) {
+                case 'recent':
+                    // Sort by timestamp (most recent first)
+                    songs = songs.sort((a, b) => {
+                        const timeA = parseTimestamp(a.timestamp)
+                        const timeB = parseTimestamp(b.timestamp)
+                        return timeA - timeB // Most recent first
+                    })
+                    break
+                    
+                case 'likes':
+                    // Sort by likes (highest first)
+                    songs = songs.sort((a, b) => (b.likes || 0) - (a.likes || 0))
+                    break
+                    
+                case 'replies':
+                    // Sort by replies (highest first)
+                    songs = songs.sort((a, b) => (b.replies || 0) - (a.replies || 0))
+                    break
+            }
+            
+            updateSortButtons()
+            renderPlaylist()
+            showNotification(`Sorted by ${sortType}!`)
+        }
+
+        function parseTimestamp(timestamp) {
+            // Convert timestamp to minutes for sorting
+            if (timestamp.includes('just now')) return 0
+            if (timestamp.includes('min ago')) return parseInt(timestamp)
+            if (timestamp.includes('hr ago')) return parseInt(timestamp) * 60
+            return 9999 // Default for older timestamps
+        }
+
+        function updateSortButtons() {
+            // Reset all buttons
+            document.querySelectorAll('[id^="sort-"]').forEach(btn => {
+                btn.className = 'win95-button px-2 py-1 text-xs text-black'
+            })
+            
+            // Highlight active button
+            const activeBtn = document.getElementById(`sort-${currentSortOrder}`)
+            if (activeBtn) {
+                activeBtn.className = 'win95-button px-2 py-1 text-xs text-white bg-blue-600'
+            }
         }
 
         function clearPlaylist() {
@@ -1198,6 +1274,164 @@
             renderPlaylist()
         }
 
+        // Reply Thread Functions
+        function generateMockReplies(songId) {
+            const song = songs.find(s => s.id === songId)
+            if (!song) return []
+            
+            const replyTemplates = [
+                { user: 'music_nerd_99', avatar: '🤓', text: 'This song never gets old! Been listening since day one.' },
+                { user: 'vinyl_collector', avatar: '💿', text: 'I have the original pressing on vinyl. Sounds even better analog!' },
+                { user: 'genre_police', avatar: '👮', text: 'Actually, this is more post-grunge than pure grunge...' },
+                { user: 'nostalgic_soul', avatar: '🌅', text: 'Takes me back to high school. Those were the days!' },
+                { user: 'bass_player_87', avatar: '🎸', text: 'That bass line though... *chef\'s kiss*' },
+                { user: 'concert_junkie', avatar: '🎤', text: 'Saw them live in \'95. Best show of my life!' },
+                { user: 'indie_kid_2000', avatar: '🎧', text: 'Their B-sides are even better than the singles IMO' },
+                { user: 'music_historian', avatar: '📚', text: 'Fun fact: This was recorded in just 3 takes!' }
+            ]
+            
+            const numReplies = Math.min(song.replies || 3, replyTemplates.length)
+            const shuffled = replyTemplates.sort(() => Math.random() - 0.5)
+            
+            return shuffled.slice(0, numReplies).map((reply, index) => ({
+                ...reply,
+                timestamp: `${Math.floor(Math.random() * 59) + 1} min ago`,
+                likes: Math.floor(Math.random() * 15) + 1
+            }))
+        }
+
+        function showReplies(songId) {
+            const song = songs.find(s => s.id === songId)
+            if (!song) return
+            
+            isViewingReplies = true
+            currentReplyThreadId = songId
+            
+            const container = document.getElementById('playlist-container')
+            const replies = generateMockReplies(songId)
+            
+            container.innerHTML = `
+                <!-- Reply Thread Header -->
+                <div class="windows-titlebar p-2 mb-4 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <button onclick="closeReplies()" class="win95-button px-3 py-2 text-base">
+                            ← Back
+                        </button>
+                        <span class="text-white font-bold">Reply Thread</span>
+                    </div>
+                    <button onclick="closeReplies()" class="text-white hover:bg-blue-700 px-2 py-1 rounded">
+                        ✕
+                    </button>
+                </div>
+                
+                <!-- Original Post -->
+                <div class="border-b border-gray-300 p-4 bg-gray-50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-lg">${song.userAvatar}</span>
+                        <span class="font-bold text-base font-terminal text-black">${song.addedBy}</span>
+                        <span class="text-sm text-gray-500">• ${song.timestamp}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 mb-3">
+                        <img src="${song.thumbnail}" alt="${song.title}" class="w-12 h-9 object-cover border border-gray-400 rounded">
+                        <div>
+                            <div class="font-bold text-base font-terminal text-black">${song.title}</div>
+                            <div class="text-sm text-gray-600">${song.artist}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-700 mb-3 font-terminal italic leading-relaxed">
+                        ${song.comment}
+                    </div>
+                    
+                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                        <span>👍 ${song.likes || 0}</span>
+                        <span>🔄 ${song.recasts || 0}</span>
+                        <span class="text-blue-600">💬 ${replies.length} replies</span>
+                    </div>
+                </div>
+                
+                <!-- Reply Input -->
+                <div class="border-b border-gray-300 p-4">
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            placeholder="Write a reply..." 
+                            class="flex-1 p-2 text-sm font-terminal border-2 border-gray-400"
+                            onkeypress="if(event.key === 'Enter') addReply('${songId}')"
+                            id="reply-input"
+                        >
+                        <button onclick="addReply('${songId}')" class="win95-button px-4 py-2 text-base">
+                            Reply
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Replies -->
+                <div id="replies-container">
+                    ${replies.map(reply => `
+                        <div class="border-b border-gray-300 p-4 hover:bg-gray-50">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-sm">${reply.avatar}</span>
+                                <span class="font-bold text-sm font-terminal text-black">${reply.user}</span>
+                                <span class="text-sm text-gray-500">• ${reply.timestamp}</span>
+                            </div>
+                            <div class="text-sm text-gray-700 mb-2 font-terminal pl-6">
+                                ${reply.text}
+                            </div>
+                            <div class="pl-6 text-sm text-gray-500">
+                                <span class="hover:text-blue-600 cursor-pointer">👍 ${reply.likes}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `
+            
+            // Focus reply input
+            setTimeout(() => {
+                const input = document.getElementById('reply-input')
+                if (input) input.focus()
+            }, 100)
+        }
+
+        function closeReplies() {
+            isViewingReplies = false
+            currentReplyThreadId = null
+            renderPlaylist()
+        }
+
+        function addReply(songId) {
+            const input = document.getElementById('reply-input')
+            const text = input.value.trim()
+            if (!text) return
+            
+            const repliesContainer = document.getElementById('replies-container')
+            const newReply = `
+                <div class="border-b border-gray-300 p-4 hover:bg-gray-50 animate-slide-in">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-sm">😎</span>
+                        <span class="font-bold text-sm font-terminal text-black">You</span>
+                        <span class="text-sm text-gray-500">• just now</span>
+                    </div>
+                    <div class="text-sm text-gray-700 mb-2 font-terminal pl-6">
+                        ${text}
+                    </div>
+                    <div class="pl-6 text-sm text-gray-500">
+                        <span class="hover:text-blue-600 cursor-pointer">👍 0</span>
+                    </div>
+                </div>
+            `
+            
+            repliesContainer.insertAdjacentHTML('afterbegin', newReply)
+            input.value = ''
+            
+            // Update reply count
+            const song = songs.find(s => s.id === songId)
+            if (song) {
+                song.replies = (song.replies || 0) + 1
+            }
+        }
+
         function showAddModal() {
             document.getElementById('add-modal').style.display = 'flex'
             setTimeout(() => document.getElementById('search-input').focus(), 100)
@@ -1224,8 +1458,8 @@
                     <div class="text-2xl mr-4">${playlist.icon}</div>
                     <div class="flex-1">
                         <div class="font-bold text-sm font-terminal">${playlist.name}</div>
-                        <div class="text-xs opacity-75 mt-1">${playlist.description}</div>
-                        <div class="text-xs mt-1 opacity-60">${playlist.trackCount} tracks</div>
+                        <div class="text-sm opacity-75 mt-1">${playlist.description}</div>
+                        <div class="text-sm mt-1 opacity-60">${playlist.trackCount} tracks</div>
                     </div>
                     <div class="w-4 h-4 rounded-full" style="background-color: ${playlist.color}"></div>
                     ${playlist.id === currentPlaylistId ? '<div class="ml-2 text-sm">✓</div>' : ''}
@@ -1233,21 +1467,6 @@
             `).join('')
         }
 
-        function updateQuickSwitchButtons() {
-            // Reset all buttons to normal state
-            Object.keys(playlists).forEach(id => {
-                const btn = document.getElementById(`btn-${id}`)
-                if (btn) {
-                    btn.className = 'win95-button px-3 py-2 text-sm text-black'
-                }
-            })
-            
-            // Highlight current playlist button
-            const activeBtn = document.getElementById(`btn-${currentPlaylistId}`)
-            if (activeBtn) {
-                activeBtn.className = 'win95-button px-3 py-2 text-sm text-white bg-blue-600'
-            }
-        }
 
         function switchPlaylist(playlistId) {
             if (playlistId === currentPlaylistId) {
@@ -1268,7 +1487,6 @@
             document.getElementById('current-playlist-desc').textContent = playlists[currentPlaylistId].description
             document.getElementById('current-playlist-icon').textContent = playlists[currentPlaylistId].icon
             document.getElementById('current-playlist-color').style.backgroundColor = playlists[currentPlaylistId].color
-            updateQuickSwitchButtons()
             updatePlayer()
             updatePlayButton()
             renderPlaylist()
@@ -1343,20 +1561,20 @@
                 messageElement.innerHTML = `
                     <div class="text-lg">🤖</div>
                     <div class="flex-1">
-                        <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
+                        <div class="bg-gray-200 rounded p-2 text-sm font-terminal">
                             <strong>DJ Bot 95:</strong> ${message}
                         </div>
-                        <div class="text-xs text-gray-500 mt-1">${timestamp}</div>
+                        <div class="text-sm text-gray-500 mt-1">${timestamp}</div>
                     </div>
                 `
             } else {
                 messageElement.innerHTML = `
                     <div class="flex-1 flex justify-end">
                         <div>
-                            <div class="bg-blue-500 text-white rounded p-2 text-xs font-terminal">
+                            <div class="bg-blue-500 text-white rounded p-2 text-sm font-terminal">
                                 ${message}
                             </div>
-                            <div class="text-xs text-gray-500 mt-1 text-right">${timestamp}</div>
+                            <div class="text-sm text-gray-500 mt-1 text-right">${timestamp}</div>
                         </div>
                     </div>
                     <div class="text-lg">👤</div>
@@ -1466,7 +1684,7 @@
                             <h4 class="font-bold text-black">${song.title}</h4>
                             <p class="text-sm text-gray-600">${song.artist}</p>
                         </div>
-                        <button class="ml-auto win95-button px-3 py-1 text-xs">
+                        <button class="ml-auto win95-button px-3 py-1 text-sm">
                             <i class="fas fa-play mr-1"></i>Play
                         </button>
                     </div>
@@ -1558,7 +1776,7 @@
                                     <div class="w-4 h-4 rounded-full border-2 border-gray-400" style="background-color: ${playlist.color}"></div>
                                     <span class="text-sm font-bold text-black">${playlist.plays} plays</span>
                                 </div>
-                                <button class="win95-button px-4 py-2 text-xs font-bold" onclick="event.stopPropagation(); switchToTrendingPlaylist('${playlist.id}')">
+                                <button class="win95-button px-4 py-2 text-sm font-bold" onclick="event.stopPropagation(); switchToTrendingPlaylist('${playlist.id}')">
                                     <i class="fas fa-play mr-1"></i>Switch & Play
                                 </button>
                             </div>
@@ -1712,9 +1930,9 @@
                                 <h4 class="font-bold text-black">${song.title}</h4>
                                 <p class="text-sm text-gray-600">${song.artist}</p>
                                 <div class="flex items-center gap-2 mt-1">
-                                    <span class="text-xs text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
-                                    <span class="text-xs text-gray-500">• ${song.duration}</span>
-                                    ${song.playCount ? `<span class="text-xs text-gray-500">• ${song.playCount} plays</span>` : ''}
+                                    <span class="text-sm text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
+                                    <span class="text-sm text-gray-500">• ${song.duration}</span>
+                                    ${song.playCount ? `<span class="text-sm text-gray-500">• ${song.playCount} plays</span>` : ''}
                                 </div>
                             </div>
                             <button class="win95-button px-3 py-2" onclick="event.stopPropagation(); playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
@@ -1725,6 +1943,11 @@
                 `).join('')
             }
         }
+        
+        // Make reply functions globally accessible
+        window.showReplies = showReplies
+        window.closeReplies = closeReplies
+        window.addReply = addReply
         
         // Play song from user profile
         window.playUserSong = function(title, artist, videoId) {
@@ -1775,7 +1998,12 @@
                 videoId: videoId,
                 thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
                 addedBy: 'Discovery',
-                reactions: {},
+                userAvatar: '🔍',
+                timestamp: 'just now',
+                comment: 'Discovered through recommendations',
+                likes: Math.floor(Math.random() * 20) + 3,
+                recasts: Math.floor(Math.random() * 10) + 1,
+                replies: Math.floor(Math.random() * 5) + 1,
                 playCount: 0
             }
             songs.push(newSong)
@@ -1820,12 +2048,12 @@
         renderPlaylist()
         updatePlayer()
         updatePlayButton()
-        updateQuickSwitchButtons()
+        updateSortButtons()
         updateTime()
         setInterval(updateTime, 1000)
         
-        // Set initial AI toggle button text
-        document.getElementById('ai-toggle-btn').innerHTML = '<i class="fas fa-robot mr-1"></i>🤖 Hide DJ Bot'
+        // Set initial AI toggle button text (hidden by default)
+        document.getElementById('ai-toggle-btn').innerHTML = '<i class="fas fa-robot mr-1"></i>🤖 DJ Bot'
         
         console.log('%c🎧 VIBES 95 SYSTEM LOADED', 'color: #00ff00; font-family: monospace; font-size: 14px; font-weight: bold;')
         console.log('%c🤖 DJ Bot 95 AI Assistant Ready!', 'color: #00ffff; font-family: monospace;')

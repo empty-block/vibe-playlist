@@ -211,6 +211,10 @@
                 <div class="flex items-center justify-between">
                     <!-- Current Playlist Info -->
                     <div class="flex items-center gap-6">
+                        <!-- Now Playing Indicator -->
+                        <div class="lcd-text px-4 py-2 text-sm font-bold">
+                            NOW PLAYING
+                        </div>
                         <div class="flex items-center gap-4">
                             <div class="text-4xl" id="current-playlist-icon">🎸</div>
                             <div>
@@ -221,16 +225,9 @@
                         <div class="w-6 h-6 rounded-full border-2 border-gray-400" id="current-playlist-color" style="background-color: #ff6b6b"></div>
                     </div>
                     
-                    <!-- Quick Playlist Switcher -->
+                    <!-- Playlist Controls -->
                     <div class="flex items-center gap-3">
-                        <div class="text-sm font-bold text-black mr-3">Quick Switch:</div>
-                        <button onclick="switchPlaylist('90s_hits')" class="win95-button px-3 py-2 text-sm text-black" id="btn-90s_hits" title="90s Hits">🎸</button>
-                        <button onclick="switchPlaylist('80s_synthwave')" class="win95-button px-3 py-2 text-sm text-black" id="btn-80s_synthwave" title="80s Synthwave">🌈</button>
-                        <button onclick="switchPlaylist('chill_vibes')" class="win95-button px-3 py-2 text-sm text-black" id="btn-chill_vibes" title="Chill Vibes">🌙</button>
-                        <button onclick="switchPlaylist('party_bangers')" class="win95-button px-3 py-2 text-sm text-black" id="btn-party_bangers" title="Party Bangers">🎉</button>
-                        <button onclick="switchPlaylist('indie_gems')" class="win95-button px-3 py-2 text-sm text-black" id="btn-indie_gems" title="Indie Gems">💎</button>
-                        <button onclick="switchPlaylist('hip_hop_classics')" class="win95-button px-3 py-2 text-sm text-black" id="btn-hip_hop_classics" title="Hip-Hop Classics">🎤</button>
-                        <button onclick="showPlaylistSelector()" class="win95-button px-4 py-2 text-sm font-bold text-black ml-3">📁 All Playlists</button>
+                        <button onclick="showPlaylistSelector()" class="win95-button px-4 py-2 text-sm font-bold text-black">📁 Change Playlist</button>
                     </div>
                 </div>
             </div>
@@ -239,8 +236,100 @@
             <div class="flex-1 bg-gray-200">
                 <!-- Home Page -->
                 <div id="home-page" class="page-content h-full flex">
-                <!-- AI Agent Chat Panel (LEFT SIDE) -->
-                <div class="p-4 border-r-2 border-gray-400" id="ai-panel" style="width: 380px;">
+                <!-- Social Feed (LEFT SIDE) -->
+                <div class="p-4 border-r-2 border-gray-400" style="width: 35%;">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-users mr-2"></i>Social Feed • <span id="current-playlist-name">90s Hits</span></span>
+                            <div class="flex gap-1">
+                                <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
+                                    🎵 Add Track
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="lcd-text mb-4 text-center">
+                            TRACKS: <span id="track-count">2</span> | TIME: <span id="total-time">8:47</span>
+                        </div>
+                        
+                        <!-- Sort Options -->
+                        <div class="mb-4 flex items-center justify-between">
+                            <div class="text-sm font-bold text-black">Sort by:</div>
+                            <div class="flex gap-1">
+                                <button onclick="sortPlaylist('recent')" class="win95-button px-2 py-1 text-xs text-black" id="sort-recent">
+                                    📅 Recent
+                                </button>
+                                <button onclick="sortPlaylist('likes')" class="win95-button px-2 py-1 text-xs text-black" id="sort-likes">
+                                    👍 Likes
+                                </button>
+                                <button onclick="sortPlaylist('replies')" class="win95-button px-2 py-1 text-xs text-black" id="sort-replies">
+                                    💬 Replies
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto" id="playlist-container" style="scrollbar-width: thin; scrollbar-color: #808080 #c0c0c0; max-height: 400px; padding-bottom: 8px;">
+                            <!-- Playlist items will go here -->
+                        </div>
+                        
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="shufflePlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-random mr-1"></i>Shuffle
+                            </button>
+                            <button onclick="clearPlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
+                                <i class="fas fa-trash mr-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CD Player / Video area (CENTER) -->
+                <div class="flex-1 p-4 border-r-2 border-gray-400">
+                    <div class="win95-panel p-4 h-full flex flex-col">
+                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
+                            <span><i class="fas fa-compact-disc mr-2"></i>CD Player Pro</span>
+                            <button onclick="toggleAIAgent()" class="win95-button px-2 py-1 text-black text-xs font-bold" id="ai-toggle-btn">
+                                <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
+                            </button>
+                        </div>
+                        
+                        <div class="bg-black border-2 border-gray-400 relative overflow-hidden mb-4" id="video-container">
+                            <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
+                                <div class="text-center animate-bounce-in">
+                                    <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
+                                        <div class="w-8 h-8 bg-black rounded-full"></div>
+                                    </div>
+                                    <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
+                                    <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CD Player controls -->
+                        <div class="flex justify-center gap-2 mb-4">
+                            <button onclick="playPrevious()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-backward"></i>
+                            </button>
+                            <button onclick="togglePlay()" class="cassette-button w-16 h-12 rounded text-white font-bold text-xl" id="play-btn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button onclick="playNext()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-forward"></i>
+                            </button>
+                            <button onclick="stopPlayback()" class="cassette-button w-12 h-12 rounded text-white font-bold">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Now playing display -->
+                        <div class="lcd-text text-center" id="now-playing-lcd">
+                            READY - INSERT DISC TO PLAY
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Agent Chat Panel (RIGHT SIDE) -->
+                <div class="p-4" id="ai-panel" style="width: 25%; display: none;">
                     <div class="win95-panel p-4 h-full flex flex-col">
                         <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
                             <span><i class="fas fa-robot mr-2"></i>DJ Bot 95 - Music Assistant</span>
@@ -302,82 +391,6 @@
                                 class="win95-button px-3 py-2 text-black font-bold text-xs"
                             >
                                 Send
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CD Player / Video area (CENTER) -->
-                <div class="flex-1 p-4 border-r-2 border-gray-400">
-                    <div class="win95-panel p-4 h-full flex flex-col">
-                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
-                            <span><i class="fas fa-compact-disc mr-2"></i>CD Player Pro</span>
-                            <button onclick="toggleAIAgent()" class="win95-button px-2 py-1 text-black text-xs font-bold" id="ai-toggle-btn">
-                                <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
-                            </button>
-                        </div>
-                        
-                        <div class="bg-black border-2 border-gray-400 relative overflow-hidden mb-4" id="video-container">
-                            <div class="absolute inset-0 flex items-center justify-center text-grunge-lime">
-                                <div class="text-center animate-bounce-in">
-                                    <div class="cd-shimmer w-24 h-24 rounded-full border-4 border-gray-400 mx-auto mb-4 flex items-center justify-center">
-                                        <div class="w-8 h-8 bg-black rounded-full"></div>
-                                    </div>
-                                    <p class="font-impact text-xl text-grunge-yellow">NO DISC INSERTED</p>
-                                    <p class="text-sm font-terminal text-grunge-cyan mt-2">Select a track to begin playback</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- CD Player controls -->
-                        <div class="flex justify-center gap-2 mb-4">
-                            <button onclick="playPrevious()" class="cassette-button w-12 h-12 rounded text-white font-bold">
-                                <i class="fas fa-backward"></i>
-                            </button>
-                            <button onclick="togglePlay()" class="cassette-button w-16 h-12 rounded text-white font-bold text-xl" id="play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button onclick="playNext()" class="cassette-button w-12 h-12 rounded text-white font-bold">
-                                <i class="fas fa-forward"></i>
-                            </button>
-                            <button onclick="stopPlayback()" class="cassette-button w-12 h-12 rounded text-white font-bold">
-                                <i class="fas fa-stop"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Now playing display -->
-                        <div class="lcd-text text-center" id="now-playing-lcd">
-                            READY - INSERT DISC TO PLAY
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Social Feed (RIGHT SIDE) -->
-                <div class="p-4" id="social-feed-panel" style="width: 380px;">
-                    <div class="win95-panel p-4 h-full flex flex-col">
-                        <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
-                            <span><i class="fas fa-users mr-2"></i>Social Feed • <span id="current-playlist-name">90s Hits</span></span>
-                            <div class="flex gap-1">
-                                <button onclick="showAddModal()" class="win95-button px-2 py-1 text-black text-xs font-bold">
-                                    🎵 Add Track
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="lcd-text mb-4 text-center">
-                            TRACKS: <span id="track-count">2</span> | TIME: <span id="total-time">8:47</span>
-                        </div>
-                        
-                        <div class="flex-1 bg-white border-2 border-gray-400 overflow-y-auto" id="playlist-container" style="scrollbar-width: thin; scrollbar-color: #808080 #c0c0c0; max-height: 400px; padding-bottom: 8px;">
-                            <!-- Playlist items will go here -->
-                        </div>
-                        
-                        <div class="mt-4 flex gap-2">
-                            <button onclick="shufflePlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
-                                <i class="fas fa-random mr-1"></i>Shuffle
-                            </button>
-                            <button onclick="clearPlaylist()" class="win95-button px-3 py-2 text-black text-xs font-bold flex-1">
-                                <i class="fas fa-trash mr-1"></i>Clear
                             </button>
                         </div>
                     </div>
