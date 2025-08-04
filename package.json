@@ -1,29 +1,15 @@
 {
   "name": "vibes-playlist",
   "version": "2.0.0",
-  "description": "Real-time collaborative playlist app with Bun + Solid.js",
+  "description": "Retro-themed music playlist SPA with vanilla JS and Bun server",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch super-simple-server.ts",
-    "start": "bun run super-simple-server.ts",
-    "dev:old": "bun run --watch server.tsx",
+    "dev": "bun run --watch server.ts",
+    "start": "bun run server.ts",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@hono/node-ws": "^1.0.4",
-    "@solidjs/router": "^0.10.5",
-    "hono": "^3.11.7",
-    "solid-js": "^1.8.7",
-    "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2",
-    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/bun": "^1.0.0",
-    "@unocss/reset": "^0.58.0",
-    "typescript": "^5.3.3",
-    "unocss": "^0.58.0",
-    "vite": "^5.0.10",
-    "vite-plugin-solid": "^2.8.0"
+    "typescript": "^5.3.3"
   }
 }
