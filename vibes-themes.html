@@ -703,8 +703,8 @@
                 </div>
                 
                 <!-- Profile Page -->
-                <div id="profile-page" class="page-content h-full" style="display: none;">
-                    <div class="p-8">
+                <div id="profile-page" class="page-content h-full overflow-y-auto" style="display: none;">
+                    <div class="p-8 pb-20">
                         <div class="win95-panel p-6 mb-6">
                             <div class="flex items-center gap-6">
                                 <div class="text-6xl" id="profile-avatar">👤</div>
@@ -717,10 +717,6 @@
                                             <div class="text-sm text-gray-600">Songs Added</div>
                                         </div>
                                         <div class="text-center">
-                                            <div class="text-2xl font-bold text-black" id="profile-total-plays">0</div>
-                                            <div class="text-sm text-gray-600">Total Plays</div>
-                                        </div>
-                                        <div class="text-center">
                                             <div class="text-2xl font-bold text-black" id="profile-join-date">Oct 2024</div>
                                             <div class="text-sm text-gray-600">Member Since</div>
                                         </div>
@@ -729,11 +725,53 @@
                             </div>
                         </div>
                         
-                        <!-- User's Songs -->
+                        <!-- Top Artists Preview -->
+                        <div class="win95-panel p-6 mb-6">
+                            <h3 class="text-xl font-bold text-black mb-4">Top Artists</h3>
+                            <div id="profile-top-artists" class="flex gap-4">
+                                <!-- Top artists will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Profile Tabs -->
+                        <div class="win95-panel p-0 mb-6">
+                            <div class="flex border-b-2 border-gray-400">
+                                <button id="tab-shared" class="profile-tab active px-4 py-2 bg-gray-200 border-r border-gray-400 text-black font-bold">
+                                    Songs Shared
+                                </button>
+                                <button id="tab-liked" class="profile-tab px-4 py-2 hover:bg-gray-100 border-r border-gray-400 text-black">
+                                    Liked Tracks
+                                </button>
+                                <button id="tab-replied" class="profile-tab px-4 py-2 hover:bg-gray-100 text-black">
+                                    Replied To
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content -->
                         <div class="win95-panel p-6">
-                            <h3 class="text-xl font-bold text-black mb-4">Songs Added by <span id="profile-songs-by">User</span></h3>
-                            <div id="profile-songs-list" class="space-y-3">
-                                <!-- User's songs will be populated here -->
+                            <!-- Shared Songs Tab -->
+                            <div id="tab-content-shared" class="tab-content">
+                                <h3 class="text-xl font-bold text-black mb-4">Songs Added by <span id="profile-songs-by">User</span></h3>
+                                <div id="profile-songs-list" class="space-y-3">
+                                    <!-- User's songs will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Liked Songs Tab -->
+                            <div id="tab-content-liked" class="tab-content" style="display: none;">
+                                <h3 class="text-xl font-bold text-black mb-4">Tracks Liked by <span id="profile-liked-by">User</span></h3>
+                                <div id="profile-liked-list" class="space-y-3">
+                                    <!-- User's liked songs will be populated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Replied Songs Tab -->
+                            <div id="tab-content-replied" class="tab-content" style="display: none;">
+                                <h3 class="text-xl font-bold text-black mb-4">Tracks Replied to by <span id="profile-replied-by">User</span></h3>
+                                <div id="profile-replied-list" class="space-y-3">
+                                    <!-- User's replied songs will be populated here -->
+                                </div>
                             </div>
                         </div>
                     </div>

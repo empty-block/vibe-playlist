@@ -1762,7 +1762,7 @@
                     name: "90s Hits", 
                     icon: "🎸", 
                     change: "up", 
-                    plays: "24.5K", 
+ 
                     description: "The best grunge, alternative, and pop hits from the decade that changed music",
                     color: "#ff6b6b",
                     id: "90s_hits"
@@ -1772,7 +1772,6 @@
                     name: "80s Synthwave", 
                     icon: "🌈", 
                     change: "same", 
-                    plays: "18.2K", 
                     description: "Neon-soaked synthesizer dreams and retro-futuristic beats",
                     color: "#4ecdc4",
                     id: "80s_synthwave"
@@ -1782,7 +1781,6 @@
                     name: "Chill Vibes", 
                     icon: "🌙", 
                     change: "up", 
-                    plays: "15.7K", 
                     description: "Mellow tracks for relaxation and late-night contemplation",
                     color: "#45b7d1",
                     id: "chill_vibes"
@@ -1792,7 +1790,6 @@
                     name: "Party Bangers", 
                     icon: "🎉", 
                     change: "down", 
-                    plays: "12.9K", 
                     description: "High-energy anthems that get the crowd moving",
                     color: "#f39c12",
                     id: "party_bangers"
@@ -1802,7 +1799,6 @@
                     name: "Indie Gems", 
                     icon: "💎", 
                     change: "up", 
-                    plays: "11.4K", 
                     description: "Hidden treasures from independent artists and underground scenes",
                     color: "#9b59b6",
                     id: "indie_gems"
@@ -1813,7 +1809,6 @@
                     rank: 1,
                     title: "Smells Like Teen Spirit",
                     artist: "Nirvana",
-                    plays: "892K",
                     change: "up",
                     videoId: "hTWKbfoikeg",
                     addedBy: "grunge_kid_92",
@@ -1823,7 +1818,6 @@
                     rank: 2,
                     title: "Blue Monday", 
                     artist: "New Order",
-                    plays: "743K",
                     change: "same",
                     videoId: "FYH8DsU2WCk",
                     addedBy: "synth_lover_85",
@@ -1833,7 +1827,6 @@
                     rank: 3,
                     title: "Mr. Brightside",
                     artist: "The Killers", 
-                    plays: "621K",
                     change: "up",
                     videoId: "gGdGFtwCNBE",
                     addedBy: "party_starter",
@@ -1843,7 +1836,6 @@
                     rank: 4,
                     title: "Black Hole Sun",
                     artist: "Soundgarden",
-                    plays: "587K", 
                     change: "down",
                     videoId: "3mbBbFH9fAg",
                     addedBy: "grunge_master_93",
@@ -1853,7 +1845,6 @@
                     rank: 5,
                     title: "Such Great Heights",
                     artist: "The Postal Service",
-                    plays: "445K",
                     change: "up",
                     videoId: "0wrsZog8qXg",
                     addedBy: "indie_explorer",
@@ -1865,7 +1856,6 @@
                     rank: 1,
                     name: "Nirvana",
                     genre: "Grunge",
-                    plays: "2.1M",
                     change: "same",
                     followers: "45.2K",
                     description: "Pioneers of the grunge movement"
@@ -1874,7 +1864,6 @@
                     rank: 2,
                     name: "New Order",
                     genre: "Synthwave",
-                    plays: "1.8M",
                     change: "up",
                     followers: "32.7K",
                     description: "Electronic music innovators"
@@ -1883,7 +1872,6 @@
                     rank: 3,
                     name: "Pearl Jam",
                     genre: "Alternative Rock",
-                    plays: "1.6M",
                     change: "up",
                     followers: "38.1K",
                     description: "Seattle grunge legends"
@@ -1892,7 +1880,6 @@
                     rank: 4,
                     name: "The Postal Service",
                     genre: "Indie Electronic",
-                    plays: "987K",
                     change: "down",
                     followers: "24.8K",
                     description: "Indie electronic pioneers"
@@ -1901,7 +1888,6 @@
                     rank: 5,
                     name: "Soundgarden",
                     genre: "Grunge",
-                    plays: "892K",
                     change: "same",
                     followers: "29.3K",
                     description: "Heavy grunge innovators"
@@ -2028,7 +2014,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="flex items-center gap-2">
                                         <div class="w-4 h-4 rounded-full border-2 border-gray-400" style="background-color: ${playlist.color}"></div>
-                                        <span class="text-sm font-bold text-black">${playlist.plays} plays</span>
+                                        <span class="text-sm font-bold text-black">Popular playlist</span>
                                     </div>
                                 </div>
                             </div>
@@ -2050,7 +2036,7 @@
                                 </div>
                                 <p class="text-sm text-gray-600 mb-2">${song.artist}</p>
                                 <div class="flex items-center gap-4 text-sm text-gray-500">
-                                    <span>🎵 ${song.plays} plays</span>
+                                    <span>🎵 Trending</span>
                                     <span>Added by ${song.addedBy}</span>
                                     <span>${song.timestamp}</span>
                                 </div>
@@ -2073,7 +2059,7 @@
                                 </div>
                                 <p class="text-sm text-gray-600 mb-2">${artist.genre} • ${artist.description}</p>
                                 <div class="flex items-center gap-4 text-sm text-gray-500">
-                                    <span>🎵 ${artist.plays} total plays</span>
+                                    <span>🎵 Popular artist</span>
                                     <span>👥 ${artist.followers} followers</span>
                                 </div>
                             </div>
@@ -2164,37 +2150,74 @@
                 avatar: '🎧',
                 bio: 'Grunge enthusiast • 90s music curator',
                 joinDate: 'Sept 2024',
-                totalPlays: 1247
+                topArtists: ['Nirvana', 'Pearl Jam', 'Soundgarden'],
+                likedTracks: [
+                    { title: 'Black', artist: 'Pearl Jam', videoId: 'cs-XZ_dN4Hc', playlistName: '90s Grunge', playlistIcon: '🎸' },
+                    { title: 'Would?', artist: 'Alice in Chains', videoId: 'JB_fNVOPzyM', playlistName: '90s Grunge', playlistIcon: '🎸' },
+                    { title: 'Outshined', artist: 'Soundgarden', videoId: 'sC3e2F1-fKs', playlistName: '90s Alternative', playlistIcon: '🔥' }
+                ],
+                repliedTracks: [
+                    { title: 'Smells Like Teen Spirit', artist: 'Nirvana', videoId: 'hTWKbfoikeg', playlistName: '90s Grunge', playlistIcon: '🎸' },
+                    { title: 'Alive', artist: 'Pearl Jam', videoId: 'wGiTPgvKktM', playlistName: '90s Grunge', playlistIcon: '🎸' }
+                ]
             },
             'VibesCurator': {
                 avatar: '🎵',
                 bio: 'Playlist architect • Music enthusiast',
                 joinDate: 'Aug 2024',
-                totalPlays: 2100
+                topArtists: ['Radiohead', 'Pink Floyd', 'The Beatles'],
+                likedTracks: [
+                    { title: 'Creep', artist: 'Radiohead', videoId: 'XFkzRNyygfk', playlistName: 'Alternative Rock', playlistIcon: '🎵' },
+                    { title: 'Bohemian Rhapsody', artist: 'Queen', videoId: 'fJ9rUzIMcZQ', playlistName: 'Classic Rock', playlistIcon: '👑' },
+                    { title: 'Stairway to Heaven', artist: 'Led Zeppelin', videoId: 'QkF3oxziUI4', playlistName: 'Classic Rock', playlistIcon: '👑' }
+                ],
+                repliedTracks: [
+                    { title: 'Paranoid Android', artist: 'Radiohead', videoId: 'fHiGbolFFGw', playlistName: 'Alternative Rock', playlistIcon: '🎵' },
+                    { title: 'Wish You Were Here', artist: 'Pink Floyd', videoId: 'IXdNnw99-Ic', playlistName: 'Progressive Rock', playlistIcon: '🌙' }
+                ]
             },
             'RetroQueen': {
                 avatar: '👑',
                 bio: '80s synthwave lover • Retro revival',
                 joinDate: 'Oct 2024',
-                totalPlays: 856
+                topArtists: ['Depeche Mode', 'New Order', 'Duran Duran'],
+                likedTracks: [
+                    { title: 'Blue Monday', artist: 'New Order', videoId: 'FYH8DsU2WCk', playlistName: '80s Synthwave', playlistIcon: '🌈' },
+                    { title: 'Personal Jesus', artist: 'Depeche Mode', videoId: 'u1xrNaTO1bI', playlistName: '80s Synthwave', playlistIcon: '🌈' },
+                    { title: 'Rio', artist: 'Duran Duran', videoId: 'e3W6yf6c-FA', playlistName: '80s Pop', playlistIcon: '💫' }
+                ],
+                repliedTracks: [
+                    { title: 'Sweet Dreams', artist: 'Eurythmics', videoId: 'qeMFqkcPYcg', playlistName: '80s Synthwave', playlistIcon: '🌈' }
+                ]
             },
             'System': {
                 avatar: '🤖',
                 bio: 'AI Music Assistant • Default curator',
                 joinDate: 'July 2024',
-                totalPlays: 5000
+                topArtists: ['Various Artists', 'Compilation', 'Soundtrack'],
+                likedTracks: [],
+                repliedTracks: []
             },
             'Discovery': {
                 avatar: '🔍',
                 bio: 'Music discovery engine • Recommendation bot',
                 joinDate: 'July 2024',
-                totalPlays: 3200
+                topArtists: ['Algorithm', 'AI Generated', 'Discovery'],
+                likedTracks: [],
+                repliedTracks: []
             },
             'You': {
                 avatar: '😎',
                 bio: 'Music lover • Active contributor',
                 joinDate: 'Nov 2024',
-                totalPlays: 420
+                topArtists: ['The Strokes', 'Arctic Monkeys', 'Interpol'],
+                likedTracks: [
+                    { title: 'Last Nite', artist: 'The Strokes', videoId: 'TOypSnKFHrE', playlistName: 'Indie Rock', playlistIcon: '🎸' },
+                    { title: 'Do I Wanna Know?', artist: 'Arctic Monkeys', videoId: 'bpOSxM0rNPM', playlistName: 'Alternative Rock', playlistIcon: '🎵' }
+                ],
+                repliedTracks: [
+                    { title: 'Hard to Explain', artist: 'The Strokes', videoId: 'BXkm6h6uq0k', playlistName: 'Indie Rock', playlistIcon: '🎸' }
+                ]
             },
             'grunge_master_93': {
                 avatar: '🎸',
@@ -2251,7 +2274,9 @@
                 avatar: '👤',
                 bio: 'Music enthusiast',
                 joinDate: 'Nov 2024',
-                totalPlays: 0
+                topArtists: [],
+                likedTracks: [],
+                repliedTracks: []
             }
             
             // Update profile info
@@ -2259,8 +2284,12 @@
             document.getElementById('profile-username').textContent = currentProfileUser
             document.getElementById('profile-bio').textContent = user.bio
             document.getElementById('profile-join-date').textContent = user.joinDate
-            document.getElementById('profile-total-plays').textContent = user.totalPlays.toLocaleString()
             document.getElementById('profile-songs-by').textContent = currentProfileUser
+            document.getElementById('profile-liked-by').textContent = currentProfileUser
+            document.getElementById('profile-replied-by').textContent = currentProfileUser
+            
+            // Render top artists
+            renderTopArtists(user.topArtists || [])
             
             // Get user's songs from all playlists
             const userSongs = []
@@ -2291,7 +2320,67 @@
             
             document.getElementById('profile-songs-count').textContent = userSongs.length
             
-            // Render user's songs
+            // Initialize tabs
+            setupProfileTabs()
+            
+            // Render all tab content
+            renderSharedSongs(userSongs)
+            renderLikedTracks(user.likedTracks || [])
+            renderRepliedTracks(user.repliedTracks || [])
+        }
+        
+        // Setup profile tabs functionality
+        function setupProfileTabs() {
+            const tabs = document.querySelectorAll('.profile-tab')
+            const contents = document.querySelectorAll('.tab-content')
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => {
+                        t.classList.remove('active', 'bg-gray-200', 'font-bold')
+                        t.classList.add('hover:bg-gray-100')
+                    })
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active', 'bg-gray-200', 'font-bold')
+                    tab.classList.remove('hover:bg-gray-100')
+                    
+                    // Hide all content
+                    contents.forEach(content => {
+                        content.style.display = 'none'
+                    })
+                    
+                    // Show corresponding content
+                    const tabId = tab.id.replace('tab-', 'tab-content-')
+                    const targetContent = document.getElementById(tabId)
+                    if (targetContent) {
+                        targetContent.style.display = 'block'
+                    }
+                })
+            })
+        }
+        
+        // Render top artists
+        function renderTopArtists(artists) {
+            const container = document.getElementById('profile-top-artists')
+            if (artists.length === 0) {
+                container.innerHTML = `<div class="text-gray-500">No top artists data available</div>`
+                return
+            }
+            
+            const medals = ['🥇', '🥈', '🥉']
+            
+            container.innerHTML = artists.slice(0, 3).map((artist, index) => `
+                <div class="flex-1 win95-panel p-4 text-center">
+                    <div class="text-2xl mb-2">${medals[index] || '🎤'}</div>
+                    <div class="font-bold text-black text-sm">${artist}</div>
+                </div>
+            `).join('')
+        }
+        
+        // Render shared songs
+        function renderSharedSongs(userSongs) {
             const container = document.getElementById('profile-songs-list')
             if (userSongs.length === 0) {
                 container.innerHTML = `
@@ -2311,13 +2400,69 @@
                                 <p class="text-sm text-gray-600">${song.artist}</p>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="text-sm text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
-                                    <span class="text-sm text-gray-500">• ${song.duration}</span>
-                                    ${song.playCount ? `<span class="text-sm text-gray-500">• ${song.playCount} plays</span>` : ''}
+                                    <span class="text-sm text-gray-500">• ${song.duration || '3:45'}</span>
                                 </div>
                             </div>
-                            <button class="win95-button px-3 py-2" onclick="event.stopPropagation(); playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
-                                <i class="fas fa-play mr-1"></i>Play
-                            </button>
+                        </div>
+                    </div>
+                `).join('')
+            }
+        }
+        
+        // Render liked tracks
+        function renderLikedTracks(likedTracks) {
+            const container = document.getElementById('profile-liked-list')
+            if (likedTracks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">❤️</div>
+                        <p>No liked tracks yet</p>
+                    </div>
+                `
+            } else {
+                container.innerHTML = likedTracks.map(song => `
+                    <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
+                        <div class="flex items-center gap-4">
+                            <img src="https://img.youtube.com/vi/${song.videoId || 'dQw4w9WgXcQ'}/mqdefault.jpg" 
+                                 class="w-16 h-12 object-cover rounded" />
+                            <div class="flex-1">
+                                <h4 class="font-bold text-black">${song.title}</h4>
+                                <p class="text-sm text-gray-600">${song.artist}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-sm text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
+                                    <span class="text-sm text-gray-500">• ❤️ Liked</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')
+            }
+        }
+        
+        // Render replied tracks
+        function renderRepliedTracks(repliedTracks) {
+            const container = document.getElementById('profile-replied-list')
+            if (repliedTracks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-2">💬</div>
+                        <p>No replied tracks yet</p>
+                    </div>
+                `
+            } else {
+                container.innerHTML = repliedTracks.map(song => `
+                    <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onclick="playUserSong('${song.title}', '${song.artist}', '${song.videoId || 'dQw4w9WgXcQ'}')">
+                        <div class="flex items-center gap-4">
+                            <img src="https://img.youtube.com/vi/${song.videoId || 'dQw4w9WgXcQ'}/mqdefault.jpg" 
+                                 class="w-16 h-12 object-cover rounded" />
+                            <div class="flex-1">
+                                <h4 class="font-bold text-black">${song.title}</h4>
+                                <p class="text-sm text-gray-600">${song.artist}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-sm text-gray-500">${song.playlistIcon} ${song.playlistName}</span>
+                                    <span class="text-sm text-gray-500">• 💬 Replied</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `).join('')
@@ -2384,7 +2529,6 @@
                 likes: Math.floor(Math.random() * 20) + 3,
                 recasts: Math.floor(Math.random() * 10) + 1,
                 replies: Math.floor(Math.random() * 5) + 1,
-                playCount: 0
             }
             songs.push(newSong)
             
