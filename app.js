@@ -1474,6 +1474,8 @@
                 return
             }
             
+            console.log(`Switching to playlist: ${playlistId}`)
+            
             currentPlaylistId = playlistId
             songs = playlistSongs[currentPlaylistId]
             
@@ -1481,12 +1483,72 @@
             currentSongId = songs.length > 0 ? songs[0].id : null
             isPlaying = false
             
-            // Update UI
-            document.getElementById('current-playlist-name').textContent = playlists[currentPlaylistId].name
-            document.getElementById('current-playlist-display').textContent = playlists[currentPlaylistId].name
-            document.getElementById('current-playlist-desc').textContent = playlists[currentPlaylistId].description
-            document.getElementById('current-playlist-icon').textContent = playlists[currentPlaylistId].icon
-            document.getElementById('current-playlist-color').style.backgroundColor = playlists[currentPlaylistId].color
+            // Force UI update with multiple attempts to ensure elements are available
+            const updateUI = () => {
+                console.log('Updating UI elements...', playlists[currentPlaylistId].name)
+                
+                const nameElement = document.getElementById('current-playlist-name')
+                if (nameElement) {
+                    nameElement.textContent = playlists[currentPlaylistId].name
+                    nameElement.innerHTML = playlists[currentPlaylistId].name
+                    console.log('Updated current-playlist-name')
+                }
+                
+                const nameFeedElement = document.getElementById('current-playlist-name-feed')
+                if (nameFeedElement) {
+                    nameFeedElement.textContent = playlists[currentPlaylistId].name
+                    nameFeedElement.innerHTML = playlists[currentPlaylistId].name
+                    // Force a style update
+                    nameFeedElement.style.display = 'none'
+                    setTimeout(() => {
+                        nameFeedElement.style.display = 'inline'
+                    }, 1)
+                    console.log('Updated current-playlist-name-feed to:', playlists[currentPlaylistId].name)
+                }
+                
+                const displayElement = document.getElementById('current-playlist-display')
+                if (displayElement) {
+                    displayElement.textContent = playlists[currentPlaylistId].name
+                    displayElement.innerHTML = playlists[currentPlaylistId].name
+                    console.log('Updated current-playlist-display')
+                }
+                
+                const descElement = document.getElementById('current-playlist-desc')
+                if (descElement) {
+                    descElement.textContent = playlists[currentPlaylistId].description
+                    descElement.innerHTML = playlists[currentPlaylistId].description
+                    console.log('Updated current-playlist-desc')
+                }
+                
+                const iconElement = document.getElementById('current-playlist-icon')
+                if (iconElement) {
+                    iconElement.textContent = playlists[currentPlaylistId].icon
+                    iconElement.innerHTML = playlists[currentPlaylistId].icon
+                    console.log('Updated current-playlist-icon')
+                }
+                
+                const colorElement = document.getElementById('current-playlist-color')
+                if (colorElement) {
+                    colorElement.style.backgroundColor = playlists[currentPlaylistId].color
+                    console.log('Updated current-playlist-color')
+                }
+                
+                // Force a complete DOM refresh
+                const allElements = document.querySelectorAll('#current-playlist-name-feed')
+                console.log('Found elements with current-playlist-name-feed:', allElements.length)
+                allElements.forEach((el, index) => {
+                    console.log(`Element ${index}:`, el.textContent, '-> updating to:', playlists[currentPlaylistId].name)
+                    el.textContent = playlists[currentPlaylistId].name
+                    el.innerHTML = playlists[currentPlaylistId].name
+                })
+            }
+            
+            // Try updating immediately
+            updateUI()
+            
+            // Try again after a short delay to ensure DOM is ready
+            setTimeout(updateUI, 50)
+            
             updatePlayer()
             updatePlayButton()
             renderPlaylist()
@@ -1788,26 +1850,44 @@
         
         // Helper function to switch to trending playlist
         window.switchToTrendingPlaylist = function(playlistId) {
+            console.log(`switchToTrendingPlaylist called with: ${playlistId}`)
+            
             // Navigate to home
             window.location.hash = 'home'
             
-            // Switch to the playlist after a short delay
+            // Switch to the playlist after multiple delays to ensure DOM is ready
             setTimeout(() => {
+                console.log('First attempt at switching playlist...')
+                switchPlaylist(playlistId)
+            }, 100)
+            
+            // Try again with a longer delay
+            setTimeout(() => {
+                console.log('Second attempt at switching playlist...')
                 switchPlaylist(playlistId)
                 showNotification(`Switched to "${playlists[playlistId]?.name}" playlist!`)
-            }, 100)
+            }, 300)
         }
         
         // Helper function to switch to mood-based playlist
         window.switchToMoodPlaylist = function(playlistId) {
+            console.log(`switchToMoodPlaylist called with: ${playlistId}`)
+            
             // Navigate to home
             window.location.hash = 'home'
             
-            // Switch to the playlist after a short delay
+            // Switch to the playlist after multiple delays to ensure DOM is ready
             setTimeout(() => {
+                console.log('First attempt at switching playlist...')
+                switchPlaylist(playlistId)
+            }, 100)
+            
+            // Try again with a longer delay
+            setTimeout(() => {
+                console.log('Second attempt at switching playlist...')
                 switchPlaylist(playlistId)
                 showNotification(`Switched to "${playlists[playlistId]?.name}" playlist!`)
-            }, 100)
+            }, 300)
         }
         
         // Profile functionality
@@ -1851,6 +1931,42 @@
                 bio: 'Music lover • Active contributor',
                 joinDate: 'Nov 2024',
                 totalPlays: 420
+            },
+            'grunge_master_93': {
+                avatar: '🎸',
+                bio: 'Seattle sound specialist • Deep cuts and hidden gems from the grunge era',
+                joinDate: 'March 2024',
+                totalPlays: 8750,
+                followers: 2300,
+                tracksShared: 156,
+                curatorLevel: 'Elite'
+            },
+            'vinyl_archaeologist': {
+                avatar: '💿',
+                bio: 'Digging up rare pressings and forgotten classics • Vinyl-first approach to curation',
+                joinDate: 'January 2024',
+                totalPlays: 15200,
+                followers: 4100,
+                tracksShared: 287,
+                curatorLevel: 'Master'
+            },
+            'synth_prophet_85': {
+                avatar: '🌈',
+                bio: '80s synthwave evangelist • Neon dreams and electronic nostalgia curator',
+                joinDate: 'February 2024',
+                totalPlays: 6900,
+                followers: 1800,
+                tracksShared: 203,
+                curatorLevel: 'Elite'
+            },
+            'underground_oracle': {
+                avatar: '🔮',
+                bio: 'Your guide to the musical underground • Discovering tomorrow\'s classics today',
+                joinDate: 'December 2023',
+                totalPlays: 18500,
+                followers: 3700,
+                tracksShared: 412,
+                curatorLevel: 'Master'
             }
         }
         
@@ -2043,6 +2159,98 @@
             }
         }
 
+        // Discovery Features Functions
+        
+        // Follow user functionality
+        window.followUser = function(username) {
+            showNotification(`Now following ${username}! You'll see their latest additions in your feed.`)
+        }
+        
+        
+        // Play Hidden Gem
+        window.playHiddenGem = function(title, artist, videoId) {
+            const newSong = {
+                id: Date.now().toString(),
+                title: title,
+                artist: artist,
+                duration: '3:45',
+                videoId: videoId,
+                thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+                addedBy: 'Discovery',
+                userAvatar: '💎',
+                timestamp: 'just now',
+                comment: 'Hidden gem discovered! This is a rare find.',
+                likes: Math.floor(Math.random() * 15) + 8,
+                recasts: Math.floor(Math.random() * 8) + 2,
+                replies: Math.floor(Math.random() * 5) + 1
+            }
+            
+            songs.unshift(newSong)
+            
+            // Navigate to home and play
+            window.location.hash = 'home'
+            setTimeout(() => {
+                currentSongId = newSong.id
+                isPlaying = true
+                renderPlaylist()
+                updatePlayer()
+                updatePlayButton()
+                showNotification(`Now playing hidden gem: "${title}"!`)
+            }, 100)
+        }
+        
+        // Explore Genre Blending
+        window.exploreGenreBlend = function(blend) {
+            const blendData = {
+                'grunge-hiphop': {
+                    songs: [
+                        { title: "Killing in the Name", artist: "Rage Against the Machine", videoId: "bWXazVhlyxQ" },
+                        { title: "Sabotage", artist: "Beastie Boys", videoId: "z5rRZdiu1UE" },
+                        { title: "Even Flow", artist: "Pearl Jam", videoId: "tkbgtVFlyCQ" }
+                    ],
+                    message: "Grunge × Hip-Hop blend discovered!"
+                },
+                'synthwave-indie': {
+                    songs: [
+                        { title: "Such Great Heights", artist: "The Postal Service", videoId: "0wrsZog8qXg" },
+                        { title: "Blue Monday", artist: "New Order", videoId: "FYH8DsU2WCk" },
+                        { title: "Young Folks", artist: "Peter Bjorn and John", videoId: "OIRE6iw-ws4" }
+                    ],
+                    message: "Synthwave × Indie fusion ready!"
+                }
+            }
+            
+            const blendPlaylist = blendData[blend]
+            if (blendPlaylist) {
+                // Add blended songs
+                blendPlaylist.songs.forEach(song => {
+                    const newSong = {
+                        id: Date.now().toString() + Math.random(),
+                        title: song.title,
+                        artist: song.artist,
+                        duration: '3:30',
+                        videoId: song.videoId,
+                        thumbnail: `https://img.youtube.com/vi/${song.videoId}/mqdefault.jpg`,
+                        addedBy: 'Discovery',
+                        userAvatar: '🎭',
+                        timestamp: 'just now',
+                        comment: `Genre-blended discovery: ${blend.replace('-', ' × ')}`,
+                        likes: Math.floor(Math.random() * 20) + 8,
+                        recasts: Math.floor(Math.random() * 12) + 3,
+                        replies: Math.floor(Math.random() * 6) + 2
+                    }
+                    songs.unshift(newSong)
+                })
+                
+                // Navigate to home and show results
+                window.location.hash = 'home'
+                setTimeout(() => {
+                    renderPlaylist()
+                    showNotification(blendPlaylist.message)
+                }, 100)
+            }
+        }
+
         // Initialize
         initRouter()
         renderPlaylist()
@@ -2057,5 +2265,6 @@
         
         console.log('%c🎧 VIBES 95 SYSTEM LOADED', 'color: #00ff00; font-family: monospace; font-size: 14px; font-weight: bold;')
         console.log('%c🤖 DJ Bot 95 AI Assistant Ready!', 'color: #00ffff; font-family: monospace;')
+        console.log('%c🔍 Enhanced Discovery System Online!', 'color: #ff00ff; font-family: monospace;')
         console.log('%cReplace YOUTUBE_API_KEY with your real API key for live search!', 'color: #ffff00; font-family: monospace;')
         
