@@ -1754,9 +1754,9 @@
             `).join('')
         }
         
-        // Load Trending Page content
-        function loadTrendingPage() {
-            const trendingPlaylists = [
+        // Trending data
+        const trendingData = {
+            playlists: [
                 { 
                     rank: 1, 
                     name: "90s Hits", 
@@ -1806,46 +1806,310 @@
                     description: "Hidden treasures from independent artists and underground scenes",
                     color: "#9b59b6",
                     id: "indie_gems"
+                }
+            ],
+            songs: [
+                {
+                    rank: 1,
+                    title: "Smells Like Teen Spirit",
+                    artist: "Nirvana",
+                    plays: "892K",
+                    change: "up",
+                    videoId: "hTWKbfoikeg",
+                    addedBy: "grunge_kid_92",
+                    timestamp: "2 hours ago"
                 },
-                { 
-                    rank: 6, 
-                    name: "Hip-Hop Classics", 
-                    icon: "🎤", 
-                    change: "same", 
-                    plays: "10.8K", 
-                    description: "Essential tracks that defined hip-hop culture",
-                    color: "#e74c3c",
-                    id: "hip_hop_classics"
+                {
+                    rank: 2,
+                    title: "Blue Monday", 
+                    artist: "New Order",
+                    plays: "743K",
+                    change: "same",
+                    videoId: "FYH8DsU2WCk",
+                    addedBy: "synth_lover_85",
+                    timestamp: "5 hours ago"
+                },
+                {
+                    rank: 3,
+                    title: "Mr. Brightside",
+                    artist: "The Killers", 
+                    plays: "621K",
+                    change: "up",
+                    videoId: "gGdGFtwCNBE",
+                    addedBy: "party_starter",
+                    timestamp: "1 day ago"
+                },
+                {
+                    rank: 4,
+                    title: "Black Hole Sun",
+                    artist: "Soundgarden",
+                    plays: "587K", 
+                    change: "down",
+                    videoId: "3mbBbFH9fAg",
+                    addedBy: "grunge_master_93",
+                    timestamp: "3 hours ago"
+                },
+                {
+                    rank: 5,
+                    title: "Such Great Heights",
+                    artist: "The Postal Service",
+                    plays: "445K",
+                    change: "up",
+                    videoId: "0wrsZog8qXg",
+                    addedBy: "indie_explorer",
+                    timestamp: "6 hours ago"
+                }
+            ],
+            artists: [
+                {
+                    rank: 1,
+                    name: "Nirvana",
+                    genre: "Grunge",
+                    plays: "2.1M",
+                    change: "same",
+                    followers: "45.2K",
+                    description: "Pioneers of the grunge movement"
+                },
+                {
+                    rank: 2,
+                    name: "New Order",
+                    genre: "Synthwave",
+                    plays: "1.8M",
+                    change: "up",
+                    followers: "32.7K",
+                    description: "Electronic music innovators"
+                },
+                {
+                    rank: 3,
+                    name: "Pearl Jam",
+                    genre: "Alternative Rock",
+                    plays: "1.6M",
+                    change: "up",
+                    followers: "38.1K",
+                    description: "Seattle grunge legends"
+                },
+                {
+                    rank: 4,
+                    name: "The Postal Service",
+                    genre: "Indie Electronic",
+                    plays: "987K",
+                    change: "down",
+                    followers: "24.8K",
+                    description: "Indie electronic pioneers"
+                },
+                {
+                    rank: 5,
+                    name: "Soundgarden",
+                    genre: "Grunge",
+                    plays: "892K",
+                    change: "same",
+                    followers: "29.3K",
+                    description: "Heavy grunge innovators"
+                }
+            ],
+            users: [
+                {
+                    rank: 1,
+                    username: "grunge_master_93",
+                    avatar: "🎸",
+                    followers: "2.3K",
+                    change: "up",
+                    tracksShared: 156,
+                    speciality: "Grunge & Alternative",
+                    level: "Elite Curator"
+                },
+                {
+                    rank: 2,
+                    username: "vinyl_archaeologist",
+                    avatar: "💿",
+                    followers: "4.1K",
+                    change: "same",
+                    tracksShared: 287,
+                    speciality: "Rare Pressings",
+                    level: "Master Curator"
+                },
+                {
+                    rank: 3,
+                    username: "synth_prophet_85",
+                    avatar: "🌈",
+                    followers: "1.8K",
+                    change: "up",
+                    tracksShared: 203,
+                    speciality: "80s Synthwave",
+                    level: "Elite Curator"
+                },
+                {
+                    rank: 4,
+                    username: "underground_oracle",
+                    avatar: "🔮",
+                    followers: "3.7K",
+                    change: "down",
+                    tracksShared: 412,
+                    speciality: "Underground Music",
+                    level: "Master Curator"
+                },
+                {
+                    rank: 5,
+                    username: "indie_explorer",
+                    avatar: "📮",
+                    followers: "1.2K",
+                    change: "up",
+                    tracksShared: 89,
+                    speciality: "Indie Discoveries",
+                    level: "Rising Curator"
                 }
             ]
+        }
+
+        // Current trending state
+        let currentTrendingCategory = 'playlists'
+        let currentTrendingTime = 'today'
+
+        // Load Trending Page content
+        function loadTrendingPage() {
+            showTrendingCategory('playlists')
+        }
+
+        // Show trending category
+        window.showTrendingCategory = function(category) {
+            currentTrendingCategory = category
             
-            const container = document.getElementById('trending-playlists')
-            container.innerHTML = trendingPlaylists.map(playlist => `
-                <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer mb-4" onclick="switchToTrendingPlaylist('${playlist.id}')">
-                    <div class="flex items-start gap-4">
-                        <div class="text-5xl">${playlist.icon}</div>
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-2xl font-bold text-gray-500">#${playlist.rank}</span>
-                                <div class="${playlist.change === 'up' ? 'text-green-500' : playlist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
-                                    ${playlist.change === 'up' ? '▲' : playlist.change === 'down' ? '▼' : '●'}
+            // Hide all sections
+            document.querySelectorAll('.trending-section').forEach(section => {
+                section.style.display = 'none'
+            })
+            
+            // Show selected section
+            document.getElementById(`trending-${category}-section`).style.display = 'block'
+            
+            // Update button states
+            document.querySelectorAll('[id^="trending-"][id$="-btn"]').forEach(btn => {
+                btn.className = 'win95-button px-4 py-2 text-black'
+            })
+            document.getElementById(`trending-${category}-btn`).className = 'win95-button px-4 py-2 text-black font-bold'
+            
+            // Load content for category
+            loadTrendingCategory(category)
+        }
+
+        // Show trending time filter
+        window.showTrendingTime = function(time) {
+            currentTrendingTime = time
+            
+            // Update button states
+            document.querySelectorAll('[id^="time-"]').forEach(btn => {
+                btn.className = 'win95-button px-3 py-1 text-black text-sm'
+            })
+            document.getElementById(`time-${time}`).className = 'win95-button px-3 py-1 text-black text-sm font-bold'
+            
+            // Reload current category with new time filter
+            loadTrendingCategory(currentTrendingCategory)
+        }
+
+        // Load content for specific trending category
+        function loadTrendingCategory(category) {
+            const container = document.getElementById(`trending-${category}`)
+            const data = trendingData[category]
+            
+            if (category === 'playlists') {
+                container.innerHTML = data.map(playlist => `
+                    <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer" onclick="switchToTrendingPlaylist('${playlist.id}')">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl font-bold text-gray-500 min-w-[3rem]">#${playlist.rank}</div>
+                            <div class="text-4xl">${playlist.icon}</div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <h3 class="text-xl font-bold text-black">${playlist.name}</h3>
+                                    <div class="${playlist.change === 'up' ? 'text-green-500' : playlist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                        ${playlist.change === 'up' ? '▲' : playlist.change === 'down' ? '▼' : '●'}
+                                    </div>
                                 </div>
-                            </div>
-                            <h3 class="text-xl font-bold text-black mb-2">${playlist.name}</h3>
-                            <p class="text-sm text-gray-600 mb-3">${playlist.description}</p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-4 h-4 rounded-full border-2 border-gray-400" style="background-color: ${playlist.color}"></div>
-                                    <span class="text-sm font-bold text-black">${playlist.plays} plays</span>
+                                <p class="text-sm text-gray-600 mb-3">${playlist.description}</p>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-4 h-4 rounded-full border-2 border-gray-400" style="background-color: ${playlist.color}"></div>
+                                        <span class="text-sm font-bold text-black">${playlist.plays} plays</span>
+                                    </div>
                                 </div>
-                                <button class="win95-button px-4 py-2 text-sm font-bold" onclick="event.stopPropagation(); switchToTrendingPlaylist('${playlist.id}')">
-                                    <i class="fas fa-play mr-1"></i>Switch & Play
-                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('')
+                `).join('')
+            } else if (category === 'songs') {
+                container.innerHTML = data.map(song => `
+                    <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer" onclick="playTrendingSong('${song.title}', '${song.artist}', '${song.videoId}')">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl font-bold text-gray-500 min-w-[3rem]">#${song.rank}</div>
+                            <img src="https://img.youtube.com/vi/${song.videoId}/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="text-lg font-bold text-black">${song.title}</h4>
+                                    <div class="${song.change === 'up' ? 'text-green-500' : song.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                        ${song.change === 'up' ? '▲' : song.change === 'down' ? '▼' : '●'}
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">${song.artist}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span>🎵 ${song.plays} plays</span>
+                                    <span>Added by ${song.addedBy}</span>
+                                    <span>${song.timestamp}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')
+            } else if (category === 'artists') {
+                container.innerHTML = data.map(artist => `
+                    <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl font-bold text-gray-500 min-w-[3rem]">#${artist.rank}</div>
+                            <div class="text-4xl">🎤</div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="text-lg font-bold text-black">${artist.name}</h4>
+                                    <div class="${artist.change === 'up' ? 'text-green-500' : artist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                        ${artist.change === 'up' ? '▲' : artist.change === 'down' ? '▼' : '●'}
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">${artist.genre} • ${artist.description}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span>🎵 ${artist.plays} total plays</span>
+                                    <span>👥 ${artist.followers} followers</span>
+                                </div>
+                            </div>
+                            <button class="win95-button px-4 py-2 text-sm font-bold">
+                                <i class="fas fa-search mr-1"></i>Explore
+                            </button>
+                        </div>
+                    </div>
+                `).join('')
+            } else if (category === 'users') {
+                container.innerHTML = data.map(user => `
+                    <div class="win95-panel p-6 hover:bg-gray-100 cursor-pointer" onclick="showUserProfile('${user.username}')">
+                        <div class="flex items-center gap-4">
+                            <div class="text-3xl font-bold text-gray-500 min-w-[3rem]">#${user.rank}</div>
+                            <div class="text-4xl">${user.avatar}</div>
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="text-lg font-bold text-black">${user.username}</h4>
+                                    <div class="${user.change === 'up' ? 'text-green-500' : user.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                        ${user.change === 'up' ? '▲' : user.change === 'down' ? '▼' : '●'}
+                                    </div>
+                                    <span class="text-sm px-2 py-1 bg-yellow-200 text-yellow-800 rounded">${user.level}</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">${user.speciality}</p>
+                                <div class="flex items-center gap-4 text-sm text-gray-500">
+                                    <span>👥 ${user.followers} followers</span>
+                                    <span>🎵 ${user.tracksShared} tracks shared</span>
+                                </div>
+                            </div>
+                            <button class="win95-button px-4 py-2 text-sm font-bold" onclick="event.stopPropagation(); followUser('${user.username}')">
+                                <i class="fas fa-user-plus mr-1"></i>Follow
+                            </button>
+                        </div>
+                    </div>
+                `).join('')
+            }
         }
         
         // Helper function to switch to trending playlist

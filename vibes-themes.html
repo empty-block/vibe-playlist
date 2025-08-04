@@ -643,26 +643,61 @@
                 </div>
                 
                 <!-- Trending Page -->
-                <div id="trending-page" class="page-content h-full" style="display: none;">
+                <div id="trending-page" class="page-content h-full overflow-y-auto" style="display: none;">
                     <div class="p-8">
                         <div class="win95-panel p-6 mb-6">
                             <h2 class="text-2xl font-bold text-black mb-4">
-                                <i class="fas fa-fire text-red-500 mr-2"></i>Trending Playlists
+                                <i class="fas fa-fire text-red-500 mr-2"></i>What's Trending
                             </h2>
-                            <p class="text-gray-700">The most popular playlists this week</p>
+                            <p class="text-gray-700">The hottest music, artists, and curators right now</p>
                         </div>
                         
-                        <!-- Time filters -->
-                        <div class="flex gap-2 mb-6">
-                            <button class="win95-button px-4 py-2 text-black font-bold">Today</button>
-                            <button class="win95-button px-4 py-2 text-black">This Week</button>
-                            <button class="win95-button px-4 py-2 text-black">This Month</button>
-                            <button class="win95-button px-4 py-2 text-black">All Time</button>
+                        <!-- Filters -->
+                        <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                            <!-- Category filters -->
+                            <div class="flex gap-2">
+                                <button class="win95-button px-4 py-2 text-black font-bold" id="trending-playlists-btn" onclick="showTrendingCategory('playlists')">🎵 Playlists</button>
+                                <button class="win95-button px-4 py-2 text-black" id="trending-songs-btn" onclick="showTrendingCategory('songs')">🎵 Songs</button>
+                                <button class="win95-button px-4 py-2 text-black" id="trending-artists-btn" onclick="showTrendingCategory('artists')">🎤 Artists</button>
+                                <button class="win95-button px-4 py-2 text-black" id="trending-users-btn" onclick="showTrendingCategory('users')">👥 Users</button>
+                            </div>
+                            
+                            <!-- Time filters -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold text-gray-600">Timeframe:</span>
+                                <button class="win95-button px-3 py-1 text-black text-sm font-bold" id="time-today" onclick="showTrendingTime('today')">Today</button>
+                                <button class="win95-button px-3 py-1 text-black text-sm" id="time-week" onclick="showTrendingTime('week')">This Week</button>
+                                <button class="win95-button px-3 py-1 text-black text-sm" id="time-month" onclick="showTrendingTime('month')">This Month</button>
+                                <button class="win95-button px-3 py-1 text-black text-sm" id="time-all" onclick="showTrendingTime('all')">All Time</button>
+                            </div>
                         </div>
                         
-                        <!-- Trending playlists -->
-                        <div class="grid grid-cols-2 gap-6" id="trending-playlists">
-                            <!-- Trending playlists will be populated here -->
+                        <!-- Trending Playlists -->
+                        <div id="trending-playlists-section" class="trending-section">
+                            <div class="flex flex-col gap-4" id="trending-playlists">
+                                <!-- Trending playlists will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Trending Songs -->
+                        <div id="trending-songs-section" class="trending-section" style="display: none;">
+                            <div class="flex flex-col gap-4" id="trending-songs">
+                                <!-- Trending songs will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Trending Artists -->
+                        <div id="trending-artists-section" class="trending-section" style="display: none;">
+                            <div class="flex flex-col gap-4" id="trending-artists">
+                                <!-- Trending artists will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Trending Users -->
+                        <div id="trending-users-section" class="trending-section" style="display: none;">
+                            <div class="flex flex-col gap-4" id="trending-users">
+                                <!-- Trending users will be populated here -->
+                            </div>
                         </div>
                     </div>
                 </div>
