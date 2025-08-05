@@ -1,12 +1,15 @@
 import { createSignal } from 'solid-js';
 import { createStore } from 'solid-js/store';
 
+export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
+
 export interface Track {
   id: string;
   title: string;
   artist: string;
   duration: string;
-  videoId: string;
+  source: TrackSource;
+  sourceId: string; // videoId for YouTube, track ID for Spotify, etc.
   thumbnail: string;
   addedBy: string;
   userAvatar: string;
@@ -15,6 +18,8 @@ export interface Track {
   likes: number;
   replies: number;
   recasts: number;
+  // Keep videoId for backward compatibility during transition
+  videoId?: string;
 }
 
 export interface Playlist {
@@ -84,7 +89,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Smells Like Teen Spirit',
       artist: 'Nirvana',
       duration: '5:01',
-      videoId: 'hTWKbfoikeg',
+      source: 'youtube',
+      sourceId: 'hTWKbfoikeg',
+      videoId: 'hTWKbfoikeg', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
       addedBy: 'grunge_kid_92',
       userAvatar: '🎸',
@@ -96,10 +103,28 @@ const playlistSongs: Record<string, Track[]> = {
     },
     {
       id: '2',
+      title: 'Come As You Are',
+      artist: 'Nirvana',
+      duration: '3:39',
+      source: 'spotify',
+      sourceId: '2RsAajgo0g7bMCHxwH3Sk0', // Example Spotify track ID
+      thumbnail: 'https://i.scdn.co/image/ab67616d0000b273e175a19e530c898d167d39bf',
+      addedBy: 'spotify_user_93',
+      userAvatar: '🎵',
+      timestamp: '4 min ago',
+      comment: 'Spotify exclusive! Love having the full album here.',
+      likes: 18,
+      replies: 6,
+      recasts: 8
+    },
+    {
+      id: '3',
       title: 'Loser',
       artist: 'Beck',
       duration: '3:54',
-      videoId: 'YgSPaXgAdzE',
+      source: 'youtube',
+      sourceId: 'YgSPaXgAdzE',
+      videoId: 'YgSPaXgAdzE', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/YgSPaXgAdzE/mqdefault.jpg',
       addedBy: 'alt_rock_alice',
       userAvatar: '🎭',
@@ -110,11 +135,13 @@ const playlistSongs: Record<string, Track[]> = {
       recasts: 9
     },
     {
-      id: '3',
+      id: '4',
       title: 'Creep',
       artist: 'Radiohead',
       duration: '3:58',
-      videoId: 'XFkzRNyygfk',
+      source: 'youtube',
+      sourceId: 'XFkzRNyygfk',
+      videoId: 'XFkzRNyygfk', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/XFkzRNyygfk/mqdefault.jpg',
       addedBy: 'radiohead_stan',
       userAvatar: '👁️',
@@ -125,11 +152,13 @@ const playlistSongs: Record<string, Track[]> = {
       recasts: 15
     },
     {
-      id: '4',
+      id: '5',
       title: 'Black',
       artist: 'Pearl Jam',
       duration: '5:43',
-      videoId: 'cs-XZ_dN4Hc',
+      source: 'youtube',
+      sourceId: 'cs-XZ_dN4Hc',
+      videoId: 'cs-XZ_dN4Hc', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/cs-XZ_dN4Hc/mqdefault.jpg',
       addedBy: 'seattle_sound',
       userAvatar: '🌧️',
@@ -140,11 +169,13 @@ const playlistSongs: Record<string, Track[]> = {
       recasts: 18
     },
     {
-      id: '5',
+      id: '6',
       title: 'Zombie',
       artist: 'The Cranberries',
       duration: '5:06',
-      videoId: '6Ejga4kJUts',
+      source: 'youtube',
+      sourceId: '6Ejga4kJUts',
+      videoId: '6Ejga4kJUts', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/6Ejga4kJUts/mqdefault.jpg',
       addedBy: 'irish_dreamer',
       userAvatar: '🍀',
@@ -161,7 +192,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Blue Monday',
       artist: 'New Order',
       duration: '7:29',
-      videoId: 'FYH8DsU2WCk',
+      source: 'youtube',
+      sourceId: 'FYH8DsU2WCk',
+      videoId: 'FYH8DsU2WCk', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/FYH8DsU2WCk/mqdefault.jpg',
       addedBy: 'synth_master',
       userAvatar: '🎹',
@@ -176,7 +209,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Take On Me',
       artist: 'a-ha',
       duration: '3:48',
-      videoId: 'djV11Xbc914',
+      source: 'youtube',
+      sourceId: 'djV11Xbc914',
+      videoId: 'djV11Xbc914', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/djV11Xbc914/mqdefault.jpg',
       addedBy: 'retro_lover',
       userAvatar: '📼',
@@ -191,7 +226,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Everybody Wants to Rule the World',
       artist: 'Tears for Fears',
       duration: '4:11',
-      videoId: 'aGCdLKXNF3w',
+      source: 'youtube',
+      sourceId: 'aGCdLKXNF3w',
+      videoId: 'aGCdLKXNF3w', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/aGCdLKXNF3w/mqdefault.jpg',
       addedBy: 'new_wave_fan',
       userAvatar: '🌊',
@@ -208,7 +245,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Midnight City',
       artist: 'M83',
       duration: '4:03',
-      videoId: 'dX3k_QDnzHE',
+      source: 'youtube',
+      sourceId: 'dX3k_QDnzHE',
+      videoId: 'dX3k_QDnzHE', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/dX3k_QDnzHE/mqdefault.jpg',
       addedBy: 'night_owl',
       userAvatar: '🌃',
@@ -223,7 +262,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Breathe',
       artist: 'Télépopmusik',
       duration: '3:40',
-      videoId: 'vyut3GyQtn0',
+      source: 'youtube',
+      sourceId: 'vyut3GyQtn0',
+      videoId: 'vyut3GyQtn0', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/vyut3GyQtn0/mqdefault.jpg',
       addedBy: 'chill_seeker',
       userAvatar: '😌',
@@ -240,7 +281,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Mr. Brightside',
       artist: 'The Killers',
       duration: '3:42',
-      videoId: 'gGdGFtwCNBE',
+      source: 'youtube',
+      sourceId: 'gGdGFtwCNBE',
+      videoId: 'gGdGFtwCNBE', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/gGdGFtwCNBE/mqdefault.jpg',
       addedBy: 'party_starter',
       userAvatar: '🎉',
@@ -255,7 +298,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Pump It',
       artist: 'The Black Eyed Peas',
       duration: '3:35',
-      videoId: 'ZaI2IlHwmgQ',
+      source: 'youtube',
+      sourceId: 'ZaI2IlHwmgQ',
+      videoId: 'ZaI2IlHwmgQ', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/ZaI2IlHwmgQ/mqdefault.jpg',
       addedBy: 'dance_machine',
       userAvatar: '🕺',
@@ -272,7 +317,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Electric Feel',
       artist: 'MGMT',
       duration: '3:49',
-      videoId: 'MmZexg8sxyk',
+      source: 'youtube',
+      sourceId: 'MmZexg8sxyk',
+      videoId: 'MmZexg8sxyk', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/MmZexg8sxyk/mqdefault.jpg',
       addedBy: 'indie_kid',
       userAvatar: '🎨',
@@ -289,7 +336,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Juicy',
       artist: 'The Notorious B.I.G.',
       duration: '5:01',
-      videoId: '_JZom_gVfuw',
+      source: 'youtube',
+      sourceId: '_JZom_gVfuw',
+      videoId: '_JZom_gVfuw', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/_JZom_gVfuw/mqdefault.jpg',
       addedBy: 'hip_hop_head',
       userAvatar: '👑',
@@ -304,7 +353,9 @@ const playlistSongs: Record<string, Track[]> = {
       title: 'Ms. Jackson',
       artist: 'OutKast',
       duration: '4:30',
-      videoId: 'MYxAiK6VnXw',
+      source: 'youtube',
+      sourceId: 'MYxAiK6VnXw',
+      videoId: 'MYxAiK6VnXw', // Backward compatibility
       thumbnail: 'https://img.youtube.com/vi/MYxAiK6VnXw/mqdefault.jpg',
       addedBy: 'atl_finest',
       userAvatar: '🍑',
@@ -323,6 +374,24 @@ export const [playlistTracks, setPlaylistTracks] = createStore<Record<string, Tr
 export const [currentTrack, setCurrentTrack] = createSignal<Track | null>(null);
 export const [isPlaying, setIsPlaying] = createSignal(false);
 
+// Temporary migration function to add missing source fields
+const addMissingSourceFields = (track: any): Track => {
+  if (!track.source && track.videoId) {
+    console.log('Migrating track:', track.title, 'from videoId:', track.videoId);
+    return {
+      ...track,
+      source: 'youtube' as TrackSource,
+      sourceId: track.videoId
+    };
+  }
+  console.log('Track already has source:', track.title, track.source);
+  return track as Track;
+};
+
 export const getCurrentPlaylistTracks = () => {
-  return playlistTracks[currentPlaylistId()] || [];
+  const tracks = playlistTracks[currentPlaylistId()] || [];
+  console.log('getCurrentPlaylistTracks called, raw tracks:', tracks.length);
+  const migratedTracks = tracks.map(addMissingSourceFields);
+  console.log('After migration:', migratedTracks.map(t => ({ title: t.title, source: t.source })));
+  return migratedTracks;
 };

@@ -10,42 +10,43 @@ declare global {
 
 const YouTubePlayer: Component = () => {
   let player: any;
-  let playerContainer: HTMLDivElement;
+  let playerContainer: HTMLDivElement | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   
   onMount(() => {
     console.log('YouTubePlayer onMount called');
     
-    // Wait a bit longer for the ref to be set
-    setTimeout(() => {
-      console.log('Checking for container after mount delay...', { 
+    // Wait for the ref to be set and check for YouTube API
+    const checkAndInit = () => {
+      console.log('Checking for container and YouTube API...', { 
         hasContainer: !!playerContainer,
-        containerInDOM: playerContainer ? document.contains(playerContainer) : false 
+        containerInDOM: playerContainer ? document.contains(playerContainer) : false,
+        hasYT: !!window.YT,
+        hasYTPlayer: !!(window.YT && window.YT.Player)
       });
       
-      // Check if YouTube API is already loaded
-      if (window.YT && window.YT.Player) {
-        console.log('YouTube API already loaded, initializing player');
+      // Make sure we have both the container and the API
+      if (playerContainer && window.YT && window.YT.Player) {
+        console.log('Both container and YouTube API ready, initializing player');
         initPlayer();
       } else {
-        console.log('Loading YouTube API...');
-        // Load YouTube IFrame API if not already loaded
-        if (!document.querySelector('script[src*="iframe_api"]')) {
-          const tag = document.createElement('script');
-          tag.src = 'https://www.youtube.com/iframe_api';
-          tag.async = true;
-          const firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-          console.log('YouTube API script added to DOM');
-        }
-        
-        // Set up the callback - this will be called when API is ready
-        window.onYouTubeIframeAPIReady = () => {
-          console.log('YouTube API ready callback fired');
-          initPlayer();
-        };
+        console.log('Still waiting for container or YouTube API...');
+        // Keep checking until both are ready
+        setTimeout(checkAndInit, 500);
       }
-    }, 500); // Longer delay to ensure DOM and refs are ready
+    };
+    
+    // Set up the global callback in case it hasn't fired yet
+    if (!window.onYouTubeIframeAPIReady) {
+      window.onYouTubeIframeAPIReady = () => {
+        console.log('YouTube API ready callback fired');
+        // Small delay to ensure DOM is ready
+        setTimeout(checkAndInit, 100);
+      };
+    }
+    
+    // Start checking after mount with longer delay to ensure ref is set
+    setTimeout(checkAndInit, 1000);
   });
   
   const initPlayer = () => {
@@ -126,21 +127,26 @@ const YouTubePlayer: Component = () => {
     const track = currentTrack();
     console.log('createEffect triggered:', { 
       track: track?.title, 
-      videoId: track?.videoId, 
+      source: track?.source,
+      sourceId: track?.sourceId,
+      videoId: track?.videoId, // Backward compatibility
       playerReady: playerReady(), 
       hasPlayer: !!player 
     });
     
-    if (track && player && playerReady() && track.videoId) {
-      console.log('Loading video:', track.title, track.videoId);
+    // Only handle YouTube tracks in this player
+    if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
+      console.log('Loading YouTube video:', track.title, track.sourceId);
       try {
         player.loadVideoById({
-          videoId: track.videoId,
+          videoId: track.sourceId,
           startSeconds: 0
         });
       } catch (error) {
         console.error('Error loading video:', error);
       }
+    } else if (track && track.source !== 'youtube') {
+      console.log('Non-YouTube track selected, YouTube player will not load');
     }
   });
   
@@ -182,13 +188,22 @@ const YouTubePlayer: Component = () => {
         </div>
         
         <div class="flex-1 p-4 flex flex-col">
+          {/* YouTube Player */}
+          <div class="win95-panel p-2 mb-4">
+            <div class="bg-black rounded">
+              <div 
+                ref={(el) => {
+                  playerContainer = el;
+                  console.log('YouTube container ref set:', !!el);
+                }} 
+                class="w-full h-48"
+                id="youtube-player-container"
+              ></div>
+            </div>
+          </div>
+          
           {/* Track Info */}
           <div class="mb-4">
-            <img 
-              src={currentTrack()?.thumbnail} 
-              alt={currentTrack()?.title}
-              class="w-full h-48 object-cover rounded mb-3"
-            />
             <h3 class="font-bold text-black text-lg mb-1 leading-tight">
               {currentTrack()?.title}
             </h3>
@@ -218,13 +233,6 @@ const YouTubePlayer: Component = () => {
                   '⏳ LOADING...'
                 }
               </div>
-            </div>
-          </div>
-          
-          {/* YouTube Player (Compact) */}
-          <div class="win95-panel p-2 mb-4">
-            <div class="bg-black rounded">
-              <div ref={playerContainer!} class="w-full"></div>
             </div>
           </div>
           

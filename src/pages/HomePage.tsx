@@ -1,6 +1,7 @@
 import { Component, For, createSignal, createMemo } from 'solid-js';
 import { playlists, currentPlaylistId, setCurrentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
+import SpotifyConnectButton from '../components/SpotifyConnectButton';
 
 const HomePage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
@@ -78,6 +79,9 @@ const HomePage: Component = () => {
               {playlists[currentPlaylistId()].description}
             </p>
           </div>
+          
+          {/* Spotify Connect */}
+          <SpotifyConnectButton />
           
           {/* Playlist tracks */}
           <div class="flex-1 overflow-y-auto space-y-3" id="playlist-container">

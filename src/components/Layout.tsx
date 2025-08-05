@@ -3,6 +3,8 @@ import WindowsFrame from './WindowsFrame';
 import Navigation from './Navigation';
 import Terminal from './Terminal';
 import YouTubePlayer from './YouTubePlayer';
+import SpotifyPlayer from './SpotifyPlayer';
+import { currentTrack } from '../stores/playlistStore';
 
 interface LayoutProps {
   children: JSX.Element;
@@ -29,8 +31,13 @@ const Layout: Component<LayoutProps> = (props) => {
             {props.children}
           </div>
           
-          {/* YouTube Player Sidebar */}
-          <YouTubePlayer />
+          {/* Player Sidebar - Show appropriate player based on track source */}
+          <Show 
+            when={currentTrack()?.source === 'spotify'} 
+            fallback={<YouTubePlayer />}
+          >
+            <SpotifyPlayer />
+          </Show>
         </div>
       </WindowsFrame>
       

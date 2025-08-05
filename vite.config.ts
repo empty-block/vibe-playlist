@@ -4,6 +4,7 @@ import solidPlugin from 'vite-plugin-solid';
 export default defineConfig({
   plugins: [solidPlugin()],
   server: {
+    host: 'localhost', // Back to localhost since Cloudflare tunnel will handle external access
     port: 3001,
     proxy: {
       '/api': {
