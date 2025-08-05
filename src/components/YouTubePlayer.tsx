@@ -91,7 +91,8 @@ const YouTubePlayer: Component = () => {
           cc_load_policy: 0,
           iv_load_policy: 3,
           autohide: 0,
-          origin: window.location.origin
+          origin: window.location.origin,
+          enablejsapi: 1
         },
         events: {
           onReady: onPlayerReady,
