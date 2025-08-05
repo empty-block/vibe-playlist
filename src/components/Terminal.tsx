@@ -85,7 +85,7 @@ const Terminal: Component<TerminalProps> = (props) => {
   
   return (
     <div 
-      class="fixed inset-0 bg-black text-green-400 font-mono p-4 z-50 overflow-auto"
+      class="fixed inset-0 bg-black font-mono p-4 z-50 overflow-auto" style="color: #a855f7;"
       onClick={() => inputRef?.focus()}
     >
       <div class="max-w-4xl mx-auto">
@@ -99,7 +99,7 @@ const Terminal: Component<TerminalProps> = (props) => {
           </button>
         </div>
         
-        <div class="border border-green-400 p-4 min-h-[400px]">
+        <div class="p-4 min-h-[400px]" style="border: 1px solid #a855f7;">
           {terminalLines().map(line => (
             <div class="whitespace-pre-wrap">{line}</div>
           ))}

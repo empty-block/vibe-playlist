@@ -14,30 +14,72 @@ const YouTubePlayer: Component = () => {
   const [playerReady, setPlayerReady] = createSignal(false);
   
   onMount(() => {
-    // Check if YouTube API is already loaded
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      // Load YouTube IFrame API if not already loaded
-      if (!document.querySelector('script[src*="iframe_api"]')) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-      }
+    console.log('YouTubePlayer onMount called');
+    
+    // Wait a bit longer for the ref to be set
+    setTimeout(() => {
+      console.log('Checking for container after mount delay...', { 
+        hasContainer: !!playerContainer,
+        containerInDOM: playerContainer ? document.contains(playerContainer) : false 
+      });
       
-      window.onYouTubeIframeAPIReady = () => {
+      // Check if YouTube API is already loaded
+      if (window.YT && window.YT.Player) {
+        console.log('YouTube API already loaded, initializing player');
         initPlayer();
-      };
-    }
+      } else {
+        console.log('Loading YouTube API...');
+        // Load YouTube IFrame API if not already loaded
+        if (!document.querySelector('script[src*="iframe_api"]')) {
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          tag.async = true;
+          const firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+          console.log('YouTube API script added to DOM');
+        }
+        
+        // Set up the callback - this will be called when API is ready
+        window.onYouTubeIframeAPIReady = () => {
+          console.log('YouTube API ready callback fired');
+          initPlayer();
+        };
+      }
+    }, 500); // Longer delay to ensure DOM and refs are ready
   });
   
   const initPlayer = () => {
-    if (playerContainer && !player) {
+    console.log('initPlayer called', { 
+      hasContainer: !!playerContainer, 
+      containerInDOM: document.contains(playerContainer),
+      hasPlayer: !!player, 
+      hasYT: !!window.YT,
+      hasYTPlayer: !!(window.YT && window.YT.Player),
+      YTState: window.YT ? window.YT.PlayerState : 'YT not loaded'
+    });
+    
+    if (!playerContainer) {
+      console.error('No player container found');
+      return;
+    }
+    
+    if (player) {
+      console.log('Player already exists, skipping initialization');
+      return;
+    }
+    
+    if (!window.YT || !window.YT.Player) {
+      console.error('YouTube API not loaded');
+      return;
+    }
+    
+    console.log('All conditions met, creating YouTube player...');
+    try {
+      // YouTube API can accept a DOM element directly
       player = new window.YT.Player(playerContainer, {
         height: '240',
         width: '320',
-        videoId: '',
+        videoId: 'hTWKbfoikeg', // Start with a default video
         playerVars: {
           autoplay: 0,
           controls: 1,
@@ -47,14 +89,23 @@ const YouTubePlayer: Component = () => {
           fs: 1,
           cc_load_policy: 0,
           iv_load_policy: 3,
-          autohide: 0
+          autohide: 0,
+          origin: window.location.origin
         },
         events: {
           onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
+          onStateChange: onPlayerStateChange,
+          onError: onPlayerError
         }
       });
+      console.log('YouTube player instance created successfully');
+    } catch (error) {
+      console.error('Error creating YouTube player:', error);
     }
+  };
+  
+  const onPlayerError = (event: any) => {
+    console.error('YouTube player error:', event.data);
   };
   
   const onPlayerReady = (event: any) => {
@@ -73,19 +124,48 @@ const YouTubePlayer: Component = () => {
   
   createEffect(() => {
     const track = currentTrack();
+    console.log('createEffect triggered:', { 
+      track: track?.title, 
+      videoId: track?.videoId, 
+      playerReady: playerReady(), 
+      hasPlayer: !!player 
+    });
+    
     if (track && player && playerReady() && track.videoId) {
       console.log('Loading video:', track.title, track.videoId);
-      player.loadVideoById(track.videoId);
+      try {
+        player.loadVideoById({
+          videoId: track.videoId,
+          startSeconds: 0
+        });
+      } catch (error) {
+        console.error('Error loading video:', error);
+      }
     }
   });
   
   const togglePlay = () => {
-    if (!player || !playerReady()) return;
+    console.log('togglePlay called:', { 
+      hasPlayer: !!player, 
+      playerReady: playerReady(), 
+      isPlaying: isPlaying() 
+    });
     
-    if (isPlaying()) {
-      player.pauseVideo();
-    } else {
-      player.playVideo();
+    if (!player || !playerReady()) {
+      console.log('Player not ready or not available');
+      return;
+    }
+    
+    try {
+      if (isPlaying()) {
+        console.log('Pausing video');
+        player.pauseVideo();
+      } else {
+        console.log('Playing video');
+        player.playVideo();
+      }
+    } catch (error) {
+      console.error('Error toggling play:', error);
     }
   };
   
@@ -144,7 +224,7 @@ const YouTubePlayer: Component = () => {
           {/* YouTube Player (Compact) */}
           <div class="win95-panel p-2 mb-4">
             <div class="bg-black rounded">
-              <div ref={playerContainer!} id="youtube-player" class="w-full"></div>
+              <div ref={playerContainer!} class="w-full"></div>
             </div>
           </div>
           
@@ -158,6 +238,13 @@ const YouTubePlayer: Component = () => {
             </button>
             <button class="win95-button w-full py-2 text-sm">
               <i class="fas fa-share mr-2"></i>Share Track
+            </button>
+            {/* Debug button - remove in production */}
+            <button 
+              class="win95-button w-full py-1 text-xs bg-yellow-200"
+              onClick={() => console.log('Debug - Current track:', currentTrack(), 'Player ready:', playerReady(), 'Player:', !!player)}
+            >
+              Debug Player
             </button>
           </div>
           

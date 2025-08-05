@@ -10,6 +10,13 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
     <script src="tailwind-config.js"></script>
     <style>
+        :root {
+            --primary-color: #a855f7;   /* bright neon purple */
+            --secondary-color: #ec4899;  /* hot pink accent */
+            --success-color: #10b981;    /* green for success states */
+            --error-color: #ef4444;      /* red for errors */
+        }
+        
         @keyframes blink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0; }
@@ -123,7 +130,7 @@
         }
     </style>
 </head>
-<body class="bg-black text-green-400 font-pixel overflow-hidden">
+<body class="bg-black font-pixel overflow-hidden" style="color: #a855f7;">
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
 </body>

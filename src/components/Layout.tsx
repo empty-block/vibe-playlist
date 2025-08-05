@@ -25,7 +25,7 @@ const Layout: Component<LayoutProps> = (props) => {
         
         <div class="flex flex-1 overflow-hidden">
           {/* Main Content */}
-          <div class="flex-1 overflow-hidden">
+          <div class="flex-1 overflow-y-auto">
             {props.children}
           </div>
           

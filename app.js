@@ -2027,7 +2027,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
                                     <h3 class="text-xl font-bold text-black">${playlist.name}</h3>
-                                    <div class="${playlist.change === 'up' ? 'text-green-500' : playlist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                    <div class="${playlist.change === 'up' ? 'text-purple-700' : playlist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
                                         ${playlist.change === 'up' ? '▲' : playlist.change === 'down' ? '▼' : '●'}
                                     </div>
                                 </div>
@@ -2051,7 +2051,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     <h4 class="text-lg font-bold text-black">${song.title}</h4>
-                                    <div class="${song.change === 'up' ? 'text-green-500' : song.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                    <div class="${song.change === 'up' ? 'text-purple-700' : song.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
                                         ${song.change === 'up' ? '▲' : song.change === 'down' ? '▼' : '●'}
                                     </div>
                                 </div>
@@ -2074,7 +2074,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     <h4 class="text-lg font-bold text-black">${artist.name}</h4>
-                                    <div class="${artist.change === 'up' ? 'text-green-500' : artist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                    <div class="${artist.change === 'up' ? 'text-purple-700' : artist.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
                                         ${artist.change === 'up' ? '▲' : artist.change === 'down' ? '▼' : '●'}
                                     </div>
                                 </div>
@@ -2099,7 +2099,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-1">
                                     <h4 class="text-lg font-bold text-black">${user.username}</h4>
-                                    <div class="${user.change === 'up' ? 'text-green-500' : user.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
+                                    <div class="${user.change === 'up' ? 'text-purple-700' : user.change === 'down' ? 'text-red-500' : 'text-gray-500'}">
                                         ${user.change === 'up' ? '▲' : user.change === 'down' ? '▼' : '●'}
                                     </div>
                                     <span class="text-sm px-2 py-1 bg-yellow-200 text-yellow-800 rounded">${user.level}</span>
@@ -2523,7 +2523,7 @@
             notification.className = 'fixed bottom-20 right-4 win95-panel p-4 animate-slide-in z-50'
             notification.innerHTML = `
                 <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-green-600"></i>
+                    <i class="fas fa-check-circle text-purple-700"></i>
                     <span class="text-black font-bold">${message}</span>
                 </div>
             `

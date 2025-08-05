@@ -131,50 +131,53 @@ const ProfilePage: Component = () => {
 
   return (
     <div class="p-8 pb-20">
-      {/* Profile Header */}
+      {/* Profile Header with Top Artists */}
       <div class="win95-panel p-6 mb-6">
-        <div class="flex items-center gap-6">
-          <div class="text-6xl">{userProfile.avatar}</div>
-          <div class="flex-1">
-            <h2 class="text-3xl font-bold text-black mb-2">{userProfile.username}</h2>
-            <p class="text-gray-600 mb-4">{userProfile.bio}</p>
-            <div class="flex gap-6">
-              <div class="text-center">
-                <div class="text-2xl font-bold text-black">{userProfile.songsCount}</div>
-                <div class="text-sm text-gray-600">Songs Added</div>
+        <div class="flex items-start gap-8">
+          {/* Profile Info */}
+          <div class="flex items-center gap-6 flex-1">
+            <div class="text-6xl">{userProfile.avatar}</div>
+            <div class="flex-1">
+              <h2 class="text-3xl font-bold text-black mb-2">{userProfile.username}</h2>
+              <p class="text-gray-600 mb-4">{userProfile.bio}</p>
+              <div class="flex gap-6">
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-black">{userProfile.songsCount}</div>
+                  <div class="text-sm text-gray-600">Songs Added</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-black">{userProfile.joinDate}</div>
+                  <div class="text-sm text-gray-600">Member Since</div>
+                </div>
               </div>
-              <div class="text-center">
-                <div class="text-2xl font-bold text-black">{userProfile.joinDate}</div>
-                <div class="text-sm text-gray-600">Member Since</div>
+              <div class="flex gap-2 mt-4">
+                <button class="win95-button px-4 py-2 font-bold">
+                  <i class="fas fa-user-plus mr-2"></i>Follow
+                </button>
+                <button class="win95-button px-4 py-2">
+                  <i class="fas fa-share mr-2"></i>Share
+                </button>
               </div>
             </div>
           </div>
-          <div class="flex gap-2">
-            <button class="win95-button px-4 py-2 font-bold">
-              <i class="fas fa-user-plus mr-2"></i>Follow
-            </button>
-            <button class="win95-button px-4 py-2">
-              <i class="fas fa-share mr-2"></i>Share
-            </button>
+          
+          {/* Top Artists */}
+          <div class="min-w-0 flex-shrink-0">
+            <h3 class="text-lg font-bold text-black mb-3 flex items-center">
+              <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
+            </h3>
+            <div class="flex gap-3">
+              <For each={userProfile.topArtists}>
+                {(artist) => (
+                  <div class="win95-button p-3 text-center cursor-pointer hover:bg-gray-100 min-w-[120px]">
+                    <div class="text-2xl mb-2">{artist.medal}</div>
+                    <h4 class="font-bold text-black text-sm">{artist.name}</h4>
+                    <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
+                  </div>
+                )}
+              </For>
+            </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Top Artists */}
-      <div class="win95-panel p-6 mb-6">
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
-        </h3>
-        <div class="flex gap-6">
-          <For each={userProfile.topArtists}>
-            {(artist) => (
-              <div class="win95-button p-4 text-center cursor-pointer hover:bg-gray-100">
-                <div class="text-2xl mb-2">{artist.medal}</div>
-                <h4 class="font-bold text-black">{artist.name}</h4>
-                <p class="text-sm text-gray-600">{artist.plays.toLocaleString()} plays</p>
-              </div>
-            )}
-          </For>
         </div>
       </div>
       
