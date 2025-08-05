@@ -4,12 +4,23 @@
   "description": "Retro-themed music playlist SPA with vanilla JS and Bun server",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch server.ts",
+    "dev": "bun --bun vite",
+    "dev:server": "bun run --watch server.ts",
+    "build": "bun --bun vite build",
+    "preview": "bun --bun vite preview",
     "start": "bun run server.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@rollup/rollup-darwin-x64": "^4.46.2",
     "@types/bun": "^1.0.0",
-    "typescript": "^5.3.3"
+    "babel-preset-solid": "^1.9.6",
+    "typescript": "^5.3.3",
+    "vite": "^7.0.6",
+    "vite-plugin-solid": "^2.11.8"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.15.3",
+    "solid-js": "^1.9.7"
   }
 }

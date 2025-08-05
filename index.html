@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎧 VIBES 95 - Digital Mixtape</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
+    <script src="tailwind-config.js"></script>
+    <style>
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.05) rotate(2deg); }
+            70% { transform: scale(0.9) rotate(-1deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        @keyframes glitch-90s {
+            0%, 100% { transform: translate(0); filter: hue-rotate(0deg); }
+            20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+            40% { transform: translate(-2px, -2px); filter: hue-rotate(180deg); }
+            60% { transform: translate(2px, 2px); filter: hue-rotate(270deg); }
+            80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
+        }
+        
+        .win95-button {
+            border: 2px outset #c0c0c0;
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080,
+                1px 1px 0px #000000;
+        }
+        
+        .win95-button:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+        
+        .win95-button:active {
+            border: 2px inset #c0c0c0;
+            box-shadow: 
+                inset -1px -1px 0px #ffffff,
+                inset 1px 1px 0px #808080;
+        }
+        
+        .win95-panel {
+            border: 2px inset #c0c0c0;
+            background: #c0c0c0;
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080;
+        }
+        
+        .grunge-bg {
+            background: 
+                radial-gradient(circle at 25% 25%, #ff00ff 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #00ffff 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #ffff00 0%, transparent 50%),
+                linear-gradient(45deg, #000000 0%, #1a1a1a 100%);
+        }
+        
+        .tv-static {
+            background-image: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 15px 15px;
+            animation: tv-static 0.1s linear infinite;
+        }
+        
+        @keyframes tv-static {
+            0% { background-position: 0 0; }
+            100% { background-position: 15px 15px; }
+        }
+        
+        .lcd-text {
+            background: #000;
+            color: #00ff00;
+            font-family: 'VT323', monospace;
+            padding: 8px;
+            border: 2px inset #333;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        /* Windows 95 style scrollbar */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #c0c0c0;
+            border: 2px inset #c0c0c0;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
+            border: 2px outset #c0c0c0;
+            box-shadow: 
+                inset 1px 1px 0px #ffffff,
+                inset -1px -1px 0px #808080;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+        }
+        
+        .windows-titlebar {
+            background: linear-gradient(90deg, #008080 0%, #0000ff 100%);
+            color: white;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-black text-green-400 font-pixel overflow-hidden">
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+</body>
+</html>
