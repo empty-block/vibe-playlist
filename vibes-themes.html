@@ -181,7 +181,7 @@
                 <div class="flex gap-1">
                     <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>
                     <button class="win95-button w-6 h-4 text-xs font-bold text-black">□</button>
-                    <button class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+                    <button onclick="showTerminal()" class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
                 </div>
             </div>
 
@@ -856,6 +856,23 @@
                         Cancel
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Screen -->
+    <div id="terminal-screen" class="fixed inset-0 bg-black text-green-400 font-mono text-sm z-50" style="display: none;">
+        <div class="p-4 h-full overflow-y-auto">
+            <div id="terminal-output" class="whitespace-pre-wrap mb-2">
+VIBES TERMINAL v1.0.0
+Copyright (c) 2024 Vibes Music Platform
+Type 'help' for available commands.
+
+            </div>
+            <div class="flex items-center">
+                <span class="text-green-400">vibes@terminal:~$ </span>
+                <input id="terminal-input" type="text" class="bg-transparent text-green-400 outline-none flex-1 caret-green-400" autocomplete="off" spellcheck="false">
+                <span id="terminal-cursor" class="text-green-400 animate-pulse">_</span>
             </div>
         </div>
     </div>

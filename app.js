@@ -1,3 +1,24 @@
+        // Terminal function - defined early for HTML onclick access
+        function showTerminal() {
+            console.log('Terminal activated!') // Debug log
+            const terminal = document.getElementById('terminal-screen')
+            if (terminal) {
+                terminal.style.display = 'block'
+                const input = document.getElementById('terminal-input')
+                if (input) {
+                    setTimeout(() => input.focus(), 100) // Small delay to ensure element is visible
+                }
+                if (window.addTerminalLine) {
+                    window.addTerminalLine('System exited. Terminal mode activated.')
+                }
+            } else {
+                console.error('Terminal screen element not found!')
+            }
+        }
+        
+        // Make it globally accessible
+        window.showTerminal = showTerminal
+        
         const themes = {
             retro85: {
                 name: "VIBES '85",
@@ -2675,4 +2696,141 @@
         console.log('%c🤖 DJ Bot 95 AI Assistant Ready!', 'color: #00ffff; font-family: monospace;')
         console.log('%c🔍 Enhanced Discovery System Online!', 'color: #ff00ff; font-family: monospace;')
         console.log('%cReplace YOUTUBE_API_KEY with your real API key for live search!', 'color: #ffff00; font-family: monospace;')
+        
+        // Terminal functionality (moved to global scope)
+        window.terminalHistory = []
+        window.historyIndex = -1
+        
+        // Terminal commands
+        window.terminalCommands = {
+            help: () => {
+                return `Available commands:
+  help     - Show this help message
+  clear    - Clear the terminal screen
+  vibes    - Return to the main application
+  about    - About this terminal
+  time     - Show current time
+  whoami   - Show current user
+  ls       - List available features
+  exit     - Return to main app (alias for vibes)
+  
+Type any command followed by Enter.`
+            },
+            clear: () => {
+                document.getElementById('terminal-output').textContent = ''
+                return ''
+            },
+            vibes: () => {
+                window.hideTerminal()
+                return 'Returning to VIBES music platform...'
+            },
+            exit: () => {
+                window.hideTerminal()
+                return 'Returning to VIBES music platform...'
+            },
+            about: () => {
+                return `VIBES TERMINAL v1.0.0
+A retro-style command interface for the VIBES music platform.
+Built with love for music and nostalgia.
+
+Easter egg discovered! 🎉`
+            },
+            time: () => {
+                return new Date().toLocaleString()
+            },
+            whoami: () => {
+                return 'vibes-user (Music enthusiast and vinyl archaeologist)'
+            },
+            ls: () => {
+                return `Available features:
+  📀 playlists/     - Music collections
+  🎵 player/        - Audio playback system  
+  👤 profiles/      - User profiles
+  🤖 ai-assistant/  - DJ Bot AI
+  🔍 discovery/     - Music discovery engine
+  💬 social/        - Comments and replies`
+            }
+        }
+        
+        
+        // Hide terminal
+        window.hideTerminal = function() {
+            document.getElementById('terminal-screen').style.display = 'none'
+        }
+        
+        // Add line to terminal output
+        window.addTerminalLine = function(text, isCommand = false) {
+            const output = document.getElementById('terminal-output')
+            if (isCommand) {
+                output.textContent += `vibes@terminal:~$ ${text}\n`
+            } else {
+                output.textContent += `${text}\n`
+            }
+            // Auto-scroll to bottom
+            output.parentElement.scrollTop = output.parentElement.scrollHeight
+        }
+        
+        // Handle terminal input
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminalInput = document.getElementById('terminal-input')
+            
+            if (terminalInput) {
+                terminalInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        const command = this.value.trim().toLowerCase()
+                        
+                        // Add command to output
+                        window.addTerminalLine(this.value, true)
+                        
+                        // Add to history
+                        if (command && window.terminalHistory[window.terminalHistory.length - 1] !== command) {
+                            window.terminalHistory.push(command)
+                        }
+                        window.historyIndex = window.terminalHistory.length
+                        
+                        // Execute command
+                        if (command === '') {
+                            // Empty command
+                        } else if (window.terminalCommands[command]) {
+                            const result = window.terminalCommands[command]()
+                            if (result) {
+                                window.addTerminalLine(result)
+                            }
+                        } else {
+                            window.addTerminalLine(`Command not found: ${command}. Type 'help' for available commands.`)
+                        }
+                        
+                        // Clear input
+                        this.value = ''
+                    } else if (e.key === 'ArrowUp') {
+                        // Navigate history up
+                        e.preventDefault()
+                        if (window.historyIndex > 0) {
+                            window.historyIndex--
+                            this.value = window.terminalHistory[window.historyIndex]
+                        }
+                    } else if (e.key === 'ArrowDown') {
+                        // Navigate history down
+                        e.preventDefault()
+                        if (window.historyIndex < window.terminalHistory.length - 1) {
+                            window.historyIndex++
+                            this.value = window.terminalHistory[window.historyIndex]
+                        } else {
+                            window.historyIndex = window.terminalHistory.length
+                            this.value = ''
+                        }
+                    } else if (e.key === 'Tab') {
+                        // Tab completion
+                        e.preventDefault()
+                        const partial = this.value.toLowerCase()
+                        const matches = Object.keys(window.terminalCommands).filter(cmd => cmd.startsWith(partial))
+                        if (matches.length === 1) {
+                            this.value = matches[0]
+                        } else if (matches.length > 1) {
+                            window.addTerminalLine(`Possible completions: ${matches.join(', ')}`)
+                        }
+                    }
+                })
+            }
+        })
         
