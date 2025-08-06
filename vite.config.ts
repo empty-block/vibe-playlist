@@ -1,20 +1,19 @@
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 
-export default defineConfig(({ mode }) => {
-  // Load env file based on `mode` in the current working directory.
-  const env = loadEnv(mode, process.cwd(), '');
+export default defineConfig(() => {
+  console.log('Build-time environment check:');
+  console.log('VITE_SPOTIFY_CLIENT_ID:', process.env.VITE_SPOTIFY_CLIENT_ID);
+  console.log('VITE_SPOTIFY_REDIRECT_URI:', process.env.VITE_SPOTIFY_REDIRECT_URI);
   
   return {
     plugins: [solidPlugin()],
     define: {
-      // Explicitly define env vars if they exist in process.env (for Cloudflare)
-      ...(process.env.VITE_SPOTIFY_CLIENT_ID && {
-        'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID)
-      }),
-      ...(process.env.VITE_SPOTIFY_REDIRECT_URI && {
-        'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI)
-      }),
+      // Force Vite to use process.env variables (what Cloudflare provides during build)
+      'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id'),
+      'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback'),
+      'import.meta.env.MODE': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'import.meta.env.PROD': JSON.stringify(process.env.NODE_ENV === 'production'),
     },
   server: {
     host: 'localhost', // For local development

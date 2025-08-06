@@ -1,18 +1,14 @@
-// Spotify Web API configuration
-// Build timestamp to verify deployment
-console.log('Build timestamp:', new Date().toISOString());
-console.log('Environment variables:', {
-  VITE_SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-  VITE_SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
+// Spotify Web API configuration  
+console.log('Spotify config loaded with:', {
+  CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
   MODE: import.meta.env.MODE,
-  PROD: import.meta.env.PROD,
-  ALL_ENV: import.meta.env
+  PROD: import.meta.env.PROD
 });
 
 export const SPOTIFY_CONFIG = {
-  CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id',
-  // Ensure redirect URI doesn't have trailing slash and matches exactly what's in Spotify dashboard
-  REDIRECT_URI: (import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback').replace(/\/$/, ''),
+  CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI.replace(/\/$/, ''),
   SCOPES: [
     'streaming',
     'user-read-email',
