@@ -7,17 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Define the callback before loading Spotify SDK - this is REQUIRED
+        // Define the callback BEFORE loading the SDK
         window.onSpotifyWebPlaybackSDKReady = function() {
-            console.log('Spotify SDK ready - callback defined');
-            // Flag that SDK is ready
+            console.log('Spotify SDK ready - callback fired');
             window.spotifySDKReady = true;
-            // Dispatch a custom event that components can listen for
             window.dispatchEvent(new Event('spotify-sdk-ready'));
         };
-        console.log('onSpotifyWebPlaybackSDKReady callback defined');
+        
+        // Log that callback is defined
+        console.log('onSpotifyWebPlaybackSDKReady defined:', typeof window.onSpotifyWebPlaybackSDKReady);
+        
+        // Dynamically load the SDK after callback is defined
+        setTimeout(() => {
+            console.log('Loading Spotify SDK after delay...');
+            const script = document.createElement('script');
+            script.src = 'https://sdk.scdn.co/spotify-player.js';
+            script.async = false; // Load synchronously to ensure order
+            script.onerror = (e) => console.error('Failed to load Spotify SDK:', e);
+            script.onload = () => console.log('Spotify SDK script loaded');
+            document.head.appendChild(script);
+        }, 100); // Small delay to ensure callback is definitely set
     </script>
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
     <script src="tailwind-config.js"></script>
