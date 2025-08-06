@@ -1,4 +1,4 @@
-import { Component, Show, createEffect, createSignal, onMount } from 'solid-js';
+import { Component, Show, createEffect, createSignal, onMount, onCleanup } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying } from '../stores/playlistStore';
 import { spotifyAccessToken } from '../stores/authStore';
 
@@ -6,6 +6,7 @@ declare global {
   interface Window {
     Spotify: any;
     onSpotifyWebPlaybackSDKReady: () => void;
+    spotifySDKReady: boolean;
   }
 }
 
@@ -17,24 +18,26 @@ const SpotifyPlayer: Component = () => {
   onMount(() => {
     console.log('SpotifyPlayer onMount called');
     
-    // Store the original callback
-    const originalCallback = window.onSpotifyWebPlaybackSDKReady;
-    
-    // Override the global callback for when Spotify SDK is ready
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      console.log('Spotify SDK ready - initializing player');
+    // Listen for the custom event
+    const handleSDKReady = () => {
+      console.log('Spotify SDK ready event received');
       initializeSpotifyPlayer();
     };
     
-    // If SDK is already loaded and ready, initialize immediately
-    if (window.Spotify) {
-      console.log('Spotify SDK already loaded');
+    // If SDK is already ready, initialize immediately
+    if (window.spotifySDKReady && window.Spotify) {
+      console.log('Spotify SDK already loaded and ready');
       initializeSpotifyPlayer();
-    } else if (originalCallback) {
-      // If the SDK already called the callback before we mounted, call it now
-      console.log('Calling original SDK callback');
-      window.onSpotifyWebPlaybackSDKReady();
+    } else {
+      // Otherwise, wait for the SDK to be ready
+      console.log('Waiting for Spotify SDK to be ready...');
+      window.addEventListener('spotify-sdk-ready', handleSDKReady);
     }
+    
+    // Cleanup
+    onCleanup(() => {
+      window.removeEventListener('spotify-sdk-ready', handleSDKReady);
+    });
   });
   
   const initializeSpotifyPlayer = () => {
