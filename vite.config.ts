@@ -11,7 +11,6 @@ export default defineConfig(() => {
     define: {
       // Force Vite to use process.env variables (what Cloudflare provides during build)
       'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id'),
-      'import.meta.env.VITE_SPOTIFY_CLIENT_SECRET': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_SECRET || 'your-spotify-client-secret'),
       'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback'),
       'import.meta.env.MODE': JSON.stringify(process.env.NODE_ENV || 'development'),
       'import.meta.env.PROD': JSON.stringify(process.env.NODE_ENV === 'production'),

@@ -8,7 +8,6 @@ console.log('Spotify config loaded with:', {
 
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-  CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET,
   REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI.replace(/\/$/, ''),
   SCOPES: [
     'streaming',
@@ -44,8 +43,14 @@ export const generateCodeVerifier = (): string => {
     .replace(/=+$/, '');
 };
 
-// Generate Spotify authorization URL using traditional OAuth flow
-export const getSpotifyAuthURL = (): string => {
+// Generate Spotify authorization URL using PKCE flow (recommended for browser apps)
+export const getSpotifyAuthURL = async (): Promise<string> => {
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  
+  // Store verifier for token exchange
+  localStorage.setItem('spotify_code_verifier', codeVerifier);
+  
   console.log('Spotify Config:', {
     CLIENT_ID: SPOTIFY_CONFIG.CLIENT_ID,
     REDIRECT_URI: SPOTIFY_CONFIG.REDIRECT_URI,
@@ -57,12 +62,13 @@ export const getSpotifyAuthURL = (): string => {
     client_id: SPOTIFY_CONFIG.CLIENT_ID,
     scope: SPOTIFY_CONFIG.SCOPES,
     redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
-    state: generateRandomString(16)
-    // No PKCE parameters for traditional OAuth
+    state: generateRandomString(16),
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge
   });
 
   const authURL = `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/authorize?${params.toString()}`;
-  console.log('Generated auth URL:', authURL);
+  console.log('Generated PKCE auth URL:', authURL);
   
   return authURL;
 };
