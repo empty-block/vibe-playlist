@@ -1,4 +1,11 @@
 // Spotify Web API configuration
+console.log('Environment variables:', {
+  VITE_SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+  VITE_SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
+  MODE: import.meta.env.MODE,
+  PROD: import.meta.env.PROD
+});
+
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id',
   // Ensure redirect URI doesn't have trailing slash and matches exactly what's in Spotify dashboard
