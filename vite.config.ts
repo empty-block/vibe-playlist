@@ -2,10 +2,6 @@ import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig(() => {
-  console.log('Build-time environment check:');
-  console.log('VITE_SPOTIFY_CLIENT_ID:', process.env.VITE_SPOTIFY_CLIENT_ID);
-  console.log('VITE_SPOTIFY_REDIRECT_URI:', process.env.VITE_SPOTIFY_REDIRECT_URI);
-  
   return {
     plugins: [solidPlugin()],
     define: {

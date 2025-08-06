@@ -33,8 +33,6 @@ export const canPlayTrack = (source: string): boolean => {
 
 // Spotify authentication functions
 export const initiateSpotifyAuth = async () => {
-  console.log('Initiating Spotify authentication...');
-  
   // Clean up any stale auth data before starting new auth flow
   localStorage.removeItem('spotify_auth_initiated');
   localStorage.removeItem('spotify_code_verifier');
@@ -44,14 +42,12 @@ export const initiateSpotifyAuth = async () => {
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
   
-  console.log('Redirecting to Spotify auth URL...');
   // Redirect to Spotify authorization
   window.location.href = authURL;
 };
 
 // Exchange authorization code for access token using PKCE
 export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
-  console.log('handleSpotifyCallback called with code:', code);
   setSpotifyAuthLoading(true);
   
   try {
@@ -67,14 +63,8 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
       code: code,
       redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
       client_id: SPOTIFY_CONFIG.CLIENT_ID,
-      code_verifier: codeVerifier  // PKCE verifier, NO client_secret
+      code_verifier: codeVerifier
     };
-    
-    console.log('Token exchange params:', {
-      ...tokenParams,
-      code_verifier: 'HIDDEN',
-      code: code.substring(0, 10) + '...'
-    });
 
     const response = await fetch(`${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`, {
       method: 'POST',
@@ -86,19 +76,7 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('Token exchange failed:', errorData);
-      console.error('Request details:', {
-        url: `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`,
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-      console.error('Full request that failed:', {
-        method: 'POST',
-        url: `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(tokenParams).toString()
-      });
+      console.error('Spotify token exchange failed:', errorData);
       throw new Error(`Token exchange failed: ${errorData.error} - ${errorData.error_description}`);
     }
 
@@ -117,11 +95,9 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     setIsSpotifyAuthenticated(true);
     localStorage.removeItem('spotify_auth_initiated');
     localStorage.removeItem('spotify_code_verifier');
-    console.log('Spotify authentication successful!');
     
     // Load Spotify SDK now that we're authenticated
     if (window.loadSpotifySDK) {
-      console.log('Loading Spotify SDK after successful auth');
       window.loadSpotifySDK().catch(console.error);
     }
     

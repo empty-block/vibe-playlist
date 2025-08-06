@@ -1,18 +1,4 @@
-// Spotify Web API configuration  
-console.log('Spotify config loaded with:', {
-  CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
-  MODE: import.meta.env.MODE,
-  PROD: import.meta.env.PROD
-});
-
-// Validation
-if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID || import.meta.env.VITE_SPOTIFY_CLIENT_ID === 'your-spotify-client-id') {
-  console.error('CRITICAL: Spotify Client ID not properly set!');
-}
-if (!import.meta.env.VITE_SPOTIFY_REDIRECT_URI || import.meta.env.VITE_SPOTIFY_REDIRECT_URI === 'http://localhost:3000/callback') {
-  console.error('CRITICAL: Spotify Redirect URI not properly set!');
-}
+// Spotify Web API configuration
 
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
@@ -59,12 +45,6 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   // Store verifier for token exchange
   localStorage.setItem('spotify_code_verifier', codeVerifier);
   
-  console.log('Spotify Config:', {
-    CLIENT_ID: SPOTIFY_CONFIG.CLIENT_ID,
-    REDIRECT_URI: SPOTIFY_CONFIG.REDIRECT_URI,
-    SCOPES: SPOTIFY_CONFIG.SCOPES
-  });
-
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: SPOTIFY_CONFIG.CLIENT_ID,
@@ -76,7 +56,6 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   });
 
   const authURL = `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/authorize?${params.toString()}`;
-  console.log('Generated PKCE auth URL:', authURL);
   
   return authURL;
 };
