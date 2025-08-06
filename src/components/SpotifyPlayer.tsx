@@ -7,6 +7,7 @@ declare global {
     Spotify: any;
     onSpotifyWebPlaybackSDKReady: () => void;
     spotifySDKReady: boolean;
+    loadSpotifySDK: () => Promise<void>;
   }
 }
 
@@ -23,6 +24,15 @@ const SpotifyPlayer: Component = () => {
       console.log('Spotify SDK ready event received');
       initializeSpotifyPlayer();
     };
+    
+    // Check if we should load the SDK (when user is authenticated)
+    createEffect(() => {
+      const token = spotifyAccessToken();
+      if (token && !window.Spotify && !window.spotifySDKReady) {
+        console.log('Loading Spotify SDK for authenticated user...');
+        window.loadSpotifySDK().catch(console.error);
+      }
+    });
     
     // If SDK is already ready, initialize immediately
     if (window.spotifySDKReady && window.Spotify) {

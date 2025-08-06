@@ -99,7 +99,12 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Token exchange failed:', errorData);
-      throw new Error('Failed to exchange code for token');
+      console.error('Request details:', {
+        url: `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`,
+        status: response.status,
+        statusText: response.statusText
+      });
+      throw new Error(`Failed to exchange code for token: ${errorData.error} - ${errorData.error_description}`);
     }
 
     const data = await response.json();
@@ -119,10 +124,10 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     localStorage.removeItem('spotify_code_verifier');
     console.log('Spotify authentication successful!');
     
-    // Trigger Spotify player initialization if SDK is ready
-    if (window.Spotify && window.onSpotifyWebPlaybackSDKReady) {
-      console.log('Triggering Spotify player initialization after auth');
-      setTimeout(() => window.onSpotifyWebPlaybackSDKReady(), 100);
+    // Load Spotify SDK now that we're authenticated
+    if (window.loadSpotifySDK) {
+      console.log('Loading Spotify SDK after successful auth');
+      window.loadSpotifySDK().catch(console.error);
     }
     
     return true;
