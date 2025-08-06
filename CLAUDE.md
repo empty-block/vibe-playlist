@@ -1,5 +1,25 @@
 # VIBES 95 - Development Documentation
 
+## 🎵 Core Design Philosophy
+
+### "Everything is a Playlist" Architecture
+VIBES 95 treats **playlists as the fundamental organizational unit** for all music content:
+
+- **User Profiles = Personal Playlists**: Every user's profile acts as their personal "Username's Jams" playlist
+- **Social Sharing = Playlist Creation**: When users share songs, they're creating playlist entries/contributions
+- **All Content Lives in Playlists**: No standalone tracks - everything belongs to some playlist context
+- **Playlist Types**:
+  - **Personal**: User's individual feed/profile (e.g., "My Jams")
+  - **Collaborative**: Group playlists where multiple users contribute
+  - **AI Curated**: Algorithm-generated playlists based on taste graphs/network theory
+
+This unified model simplifies the mental model - users always think "where should this song go?" rather than complex sharing/posting concepts.
+
+### Built on Farcaster Social Infrastructure
+- **Backend**: Leverages existing Farcaster protocol for user profiles, social interactions, posting
+- **Frontend Focus**: UI/UX layer that presents Farcaster content through playlist metaphor
+- **No Custom Social Features**: Authentication, messaging, user management handled by Farcaster
+
 ## 🏗 Tech Stack Notes
 
 - **Bun**: All commands use `bun` not `npm` (`bun run dev`, `bun add`, etc.)
@@ -149,7 +169,67 @@ VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:3001  # For dev without YouTube
 - YouTube embedding should work normally with proper domain
 - Consider rate limiting and API key security for production Spotify integration
 
+## 🎨 UI/UX Features & Design Patterns
+
+### HomePage (Main Feed)
+- **Playlist Selection**: Dropdown to switch between different playlist feeds
+- **Search & Sort**: Users can search tracks and sort by Recent/Likes/Comments
+- **Sort Implementation**: 
+  - Recent: Parses "X min ago" timestamps 
+  - Likes: Sorts by `track.likes` descending
+  - Comments: Sorts by `track.replies` descending
+- **ChatBot Integration**: Collapsible AI assistant sidebar
+
+### Create Page (Song Addition)
+**Core Concept**: Users "create" playlist entries rather than "share" content
+
+**Scalable Playlist Selection**:
+- **Quick Access**: Buttons for frequently used playlists (default + popular)
+- **Search**: Find playlists by name/description
+- **Filter by Type**: Personal/Collaborative/AI Curated
+- **Sort Options**: Recent, Popular (by member count), Alphabetical
+- **Results Counter**: "X of Y playlists" with clear filters button
+- **Scrollable List**: Handles large playlist collections gracefully
+
+**Form Design**:
+- **Song URL Input**: Accepts any platform (YouTube, Spotify, SoundCloud, etc.)
+- **Optional Comment**: User's take/reaction to the song
+- **Playlist Creation**: Inline creation without navigation
+
+**Visual Hierarchy**:
+- **Input Fields**: White background with gray borders for clear interactivity
+- **Containers**: Gray `win95-panel` backgrounds for structure
+- **Consistency**: All panels use same styling system
+
+### Win95 Design System
+- **Panels**: `win95-panel` class for consistent container styling
+- **Buttons**: `win95-button` class with hover states
+- **Navigation**: Tab-style navigation with active state indicators
+- **Typography**: Bold, high-contrast text optimized for retro aesthetic
+
+### Responsive Considerations
+- **Grid Layouts**: Mobile-first approach with `grid-cols-1 md:grid-cols-3`
+- **Flexible Containers**: `flex-wrap` for adaptive button groups
+- **Scrollable Areas**: `overflow-y-auto` with `max-height` for contained scrolling
+
+## 🔄 State Management Patterns
+
+### Playlist Store (`playlistStore.ts`)
+- **Track Interface**: Multi-source support with backward compatibility
+- **Migration Logic**: Automatic conversion of legacy `videoId` to `sourceId`
+- **Reactive Updates**: SolidJS signals for real-time UI updates
+
+### Search & Filter State
+- **Computed Memos**: Efficient filtering/sorting with `createMemo()`
+- **Multiple Criteria**: Chainable search + filter + sort operations
+- **Performance**: Only recomputes when dependencies change
+
+### Player State Management
+- **Multi-source**: Separate state for YouTube and Spotify players
+- **Visibility Control**: CSS-based switching rather than mounting/unmounting
+- **Track Continuity**: Seamless transitions between different audio sources
+
 ---
 
-*Last updated: $(date)*
-*This file should be updated whenever new development quirks are discovered.*
+*Last updated: December 2024*
+*This file should be updated whenever new development quirks or features are discovered.*

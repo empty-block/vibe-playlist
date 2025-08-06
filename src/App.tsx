@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
 import DiscoverPage from './pages/DiscoverPage';
 import TrendingPage from './pages/TrendingPage';
+import SharePage from './pages/SharePage';
 import ProfilePage from './pages/ProfilePage';
 import { initializeAuth, handleSpotifyCallback } from './stores/authStore';
 
@@ -38,6 +39,7 @@ const App: Component = () => {
       <Route path="/home" component={HomePage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />
+      <Route path="/share" component={SharePage} />
       <Route path="/profile" component={ProfilePage} />
     </Router>
   );
