@@ -90,9 +90,16 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
       console.error('Request details:', {
         url: `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`,
         status: response.status,
-        statusText: response.statusText
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries())
       });
-      throw new Error(`Failed to exchange code for token: ${errorData.error} - ${errorData.error_description}`);
+      console.error('Full request that failed:', {
+        method: 'POST',
+        url: `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(tokenParams).toString()
+      });
+      throw new Error(`Token exchange failed: ${errorData.error} - ${errorData.error_description}`);
     }
 
     const data = await response.json();

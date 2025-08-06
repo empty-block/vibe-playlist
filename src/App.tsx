@@ -19,7 +19,7 @@ const App: Component = () => {
     const state = urlParams.get('state');
 
     console.log('URL params:', { 
-      code: code ? 'Present' : 'Not present', 
+      code: code ? `Present (${code.substring(0, 10)}...)` : 'Not present', 
       error: error || 'None',
       state: state || 'None'
     });

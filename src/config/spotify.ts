@@ -6,6 +6,14 @@ console.log('Spotify config loaded with:', {
   PROD: import.meta.env.PROD
 });
 
+// Validation
+if (!import.meta.env.VITE_SPOTIFY_CLIENT_ID || import.meta.env.VITE_SPOTIFY_CLIENT_ID === 'your-spotify-client-id') {
+  console.error('CRITICAL: Spotify Client ID not properly set!');
+}
+if (!import.meta.env.VITE_SPOTIFY_REDIRECT_URI || import.meta.env.VITE_SPOTIFY_REDIRECT_URI === 'http://localhost:3000/callback') {
+  console.error('CRITICAL: Spotify Redirect URI not properly set!');
+}
+
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
   REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI.replace(/\/$/, ''),
