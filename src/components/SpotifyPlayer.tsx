@@ -17,15 +17,23 @@ const SpotifyPlayer: Component = () => {
   onMount(() => {
     console.log('SpotifyPlayer onMount called');
     
-    // Set up the global callback for when Spotify SDK is ready
+    // Store the original callback
+    const originalCallback = window.onSpotifyWebPlaybackSDKReady;
+    
+    // Override the global callback for when Spotify SDK is ready
     window.onSpotifyWebPlaybackSDKReady = () => {
-      console.log('Spotify SDK ready');
+      console.log('Spotify SDK ready - initializing player');
       initializeSpotifyPlayer();
     };
     
-    // If SDK is already loaded, initialize immediately
+    // If SDK is already loaded and ready, initialize immediately
     if (window.Spotify) {
+      console.log('Spotify SDK already loaded');
       initializeSpotifyPlayer();
+    } else if (originalCallback) {
+      // If the SDK already called the callback before we mounted, call it now
+      console.log('Calling original SDK callback');
+      window.onSpotifyWebPlaybackSDKReady();
     }
   });
   

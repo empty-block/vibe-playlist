@@ -120,7 +120,8 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     console.log('Spotify authentication successful!');
     
     // Trigger Spotify player initialization if SDK is ready
-    if (window.onSpotifyWebPlaybackSDKReady) {
+    if (window.Spotify && window.onSpotifyWebPlaybackSDKReady) {
+      console.log('Triggering Spotify player initialization after auth');
       setTimeout(() => window.onSpotifyWebPlaybackSDKReady(), 100);
     }
     

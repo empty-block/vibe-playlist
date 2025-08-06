@@ -6,6 +6,13 @@
     <title>🎧 VIBES 95 - Digital Mixtape</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // Define the callback before loading Spotify SDK
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            console.log('Spotify SDK ready - callback will be handled by SpotifyPlayer component');
+            // The actual initialization will happen in the SpotifyPlayer component
+        };
+    </script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
