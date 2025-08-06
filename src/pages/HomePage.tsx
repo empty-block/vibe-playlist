@@ -4,9 +4,12 @@ import TrackItem from '../components/TrackItem';
 import SpotifyConnectButton from '../components/SpotifyConnectButton';
 import ChatBot from '../components/ChatBot';
 
+export type SortOption = 'recent' | 'likes' | 'comments';
+
 const HomePage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
   const [showChatBot, setShowChatBot] = createSignal(true);
+  const [sortBy, setSortBy] = createSignal<SortOption>('recent');
   
   const handlePlaylistSelect = (playlistId: string) => {
     setCurrentPlaylistId(playlistId);
@@ -14,15 +17,49 @@ const HomePage: Component = () => {
   };
   
   const filteredTracks = createMemo(() => {
-    const query = searchQuery().toLowerCase();
-    if (!query) return getCurrentPlaylistTracks();
+    let tracks = getCurrentPlaylistTracks();
     
-    return getCurrentPlaylistTracks().filter(track => 
-      track.title.toLowerCase().includes(query) ||
-      track.artist.toLowerCase().includes(query) ||
-      track.comment.toLowerCase().includes(query) ||
-      track.addedBy.toLowerCase().includes(query)
-    );
+    // Filter by search query
+    const query = searchQuery().toLowerCase();
+    if (query) {
+      tracks = tracks.filter(track => 
+        track.title.toLowerCase().includes(query) ||
+        track.artist.toLowerCase().includes(query) ||
+        track.comment.toLowerCase().includes(query) ||
+        track.addedBy.toLowerCase().includes(query)
+      );
+    }
+    
+    // Sort tracks
+    const sortOption = sortBy();
+    const sortedTracks = [...tracks].sort((a, b) => {
+      switch (sortOption) {
+        case 'recent':
+          // Parse timestamp for sorting (assuming "X min ago" format)
+          const getTimestamp = (timestamp: string) => {
+            const match = timestamp.match(/(\d+)\s*(min|hour|day)/);
+            if (!match) return 0;
+            const value = parseInt(match[1]);
+            const unit = match[2];
+            if (unit === 'min') return value;
+            if (unit === 'hour') return value * 60;
+            if (unit === 'day') return value * 1440;
+            return 0;
+          };
+          return getTimestamp(a.timestamp) - getTimestamp(b.timestamp);
+        
+        case 'likes':
+          return b.likes - a.likes;
+        
+        case 'comments':
+          return b.replies - a.replies;
+        
+        default:
+          return 0;
+      }
+    });
+    
+    return sortedTracks;
   });
   
   return (
@@ -85,6 +122,23 @@ const HomePage: Component = () => {
           
           {/* Spotify Connect */}
           <SpotifyConnectButton />
+          
+          {/* Sort Options */}
+          <div class="mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-black">Sort by:</span>
+              <select
+                value={sortBy()}
+                onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
+                class="win95-panel px-2 py-1 text-sm font-bold text-black"
+                title="Sort tracks"
+              >
+                <option value="recent">📅 Most Recent</option>
+                <option value="likes">❤️ Most Liked</option>
+                <option value="comments">💬 Most Comments</option>
+              </select>
+            </div>
+          </div>
           
           {/* Playlist tracks */}
           <div class="flex-1 overflow-y-auto overflow-x-hidden space-y-4" id="playlist-container">
