@@ -16,7 +16,7 @@ if (!import.meta.env.VITE_SPOTIFY_REDIRECT_URI || import.meta.env.VITE_SPOTIFY_R
 
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
-  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI.replace(/\/$/, ''),
+  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
   SCOPES: [
     'streaming',
     'user-read-email',
