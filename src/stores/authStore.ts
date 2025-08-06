@@ -34,38 +34,66 @@ export const canPlayTrack = (source: string): boolean => {
 // Spotify authentication functions
 export const initiateSpotifyAuth = async () => {
   console.log('Initiating Spotify authentication...');
+  
+  // Clean up any stale auth data before starting new auth flow
+  localStorage.removeItem('spotify_code_verifier');
+  localStorage.removeItem('spotify_auth_initiated');
+  
   const authURL = await getSpotifyAuthURL();
   
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
   
+  console.log('Redirecting to Spotify auth URL...');
   // Redirect to Spotify authorization
   window.location.href = authURL;
 };
 
 // Exchange authorization code for access token using PKCE
 export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
+  console.log('handleSpotifyCallback called with code:', code);
   setSpotifyAuthLoading(true);
   
   try {
-    // Get the code verifier from session storage
-    const codeVerifier = sessionStorage.getItem('spotify_code_verifier');
+    // Get the code verifier from localStorage (changed from sessionStorage)
+    let codeVerifier = localStorage.getItem('spotify_code_verifier');
+    console.log('Retrieved code verifier:', codeVerifier ? 'Found' : 'Not found');
+    
     if (!codeVerifier) {
+      console.error('Code verifier not found in localStorage');
+      // Check if we're in the middle of an auth flow
+      const authInitiated = localStorage.getItem('spotify_auth_initiated');
+      if (authInitiated) {
+        console.error('Auth was initiated but verifier is missing - auth flow may have been interrupted');
+        // Clean up and suggest retry
+        localStorage.removeItem('spotify_auth_initiated');
+        alert('Spotify authentication was interrupted. Please try connecting again.');
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return false;
+      }
       throw new Error('Code verifier not found');
     }
+
+    const tokenParams = {
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
+      client_id: SPOTIFY_CONFIG.CLIENT_ID,
+      code_verifier: codeVerifier, // PKCE verifier
+    };
+    
+    console.log('Token exchange params:', {
+      ...tokenParams,
+      code_verifier: 'HIDDEN',
+      code: code.substring(0, 10) + '...'
+    });
 
     const response = await fetch(`${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/api/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
-        client_id: SPOTIFY_CONFIG.CLIENT_ID,
-        code_verifier: codeVerifier, // PKCE verifier
-      }),
+      body: new URLSearchParams(tokenParams),
     });
 
     if (!response.ok) {
@@ -88,7 +116,8 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     
     setIsSpotifyAuthenticated(true);
     localStorage.removeItem('spotify_auth_initiated');
-    sessionStorage.removeItem('spotify_code_verifier');
+    localStorage.removeItem('spotify_code_verifier');
+    console.log('Spotify authentication successful!');
     
     // Trigger Spotify player initialization if SDK is ready
     if (window.onSpotifyWebPlaybackSDKReady) {
@@ -98,6 +127,9 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Spotify auth error:', error);
+    // Clean up on error
+    localStorage.removeItem('spotify_code_verifier');
+    localStorage.removeItem('spotify_auth_initiated');
     return false;
   } finally {
     setSpotifyAuthLoading(false);

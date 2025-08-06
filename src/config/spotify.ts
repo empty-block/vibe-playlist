@@ -1,7 +1,8 @@
 // Spotify Web API configuration
 export const SPOTIFY_CONFIG = {
   CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id',
-  REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback',
+  // Ensure redirect URI doesn't have trailing slash and matches exactly what's in Spotify dashboard
+  REDIRECT_URI: (import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback').replace(/\/$/, ''),
   SCOPES: [
     'streaming',
     'user-read-email',
@@ -41,8 +42,8 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
   
-  // Store verifier for token exchange
-  sessionStorage.setItem('spotify_code_verifier', codeVerifier);
+  // Store verifier for token exchange (use localStorage to persist across redirect)
+  localStorage.setItem('spotify_code_verifier', codeVerifier);
   
   console.log('Spotify Config:', {
     CLIENT_ID: SPOTIFY_CONFIG.CLIENT_ID,
@@ -62,6 +63,8 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
 
   const authURL = `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/authorize?${params.toString()}`;
   console.log('Generated auth URL:', authURL);
+  console.log('Code verifier stored:', codeVerifier);
+  console.log('Redirect URI:', SPOTIFY_CONFIG.REDIRECT_URI);
   
   return authURL;
 };

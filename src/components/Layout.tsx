@@ -7,7 +7,7 @@ import SpotifyPlayer from './SpotifyPlayer';
 import { currentTrack } from '../stores/playlistStore';
 
 interface LayoutProps {
-  children: JSX.Element;
+  children?: JSX.Element;
 }
 
 const Layout: Component<LayoutProps> = (props) => {
