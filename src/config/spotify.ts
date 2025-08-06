@@ -1,9 +1,12 @@
 // Spotify Web API configuration
+// Build timestamp to verify deployment
+console.log('Build timestamp:', new Date().toISOString());
 console.log('Environment variables:', {
   VITE_SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID,
   VITE_SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI,
   MODE: import.meta.env.MODE,
-  PROD: import.meta.env.PROD
+  PROD: import.meta.env.PROD,
+  ALL_ENV: import.meta.env
 });
 
 export const SPOTIFY_CONFIG = {
