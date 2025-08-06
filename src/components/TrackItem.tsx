@@ -57,73 +57,92 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   
   return (
     <div 
-      class={`win95-button p-4 transition-all ${
+      class={`win95-button p-4 transition-all duration-200 ${
         isPlayable() 
-          ? 'cursor-pointer hover:bg-gray-200' 
+          ? 'cursor-pointer hover:bg-gray-200 hover:shadow-lg transform hover:scale-[1.01]' 
           : 'cursor-not-allowed opacity-60'
-      } ${isCurrentTrack() ? 'bg-blue-100' : ''}`}
+      } ${isCurrentTrack() ? 'bg-blue-100 ring-2 ring-blue-400 ring-opacity-60' : ''}`}
       onClick={handleClick}
     >
-      <div class="flex items-start gap-4">
-        <img 
-          src={props.track.thumbnail} 
-          alt={props.track.title}
-          class="w-20 h-20 object-cover rounded"
-        />
-        
-        <div class="flex-1">
-          <div class="flex justify-between items-start mb-2">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <h3 class="font-bold text-black">{props.track.title}</h3>
-                {!isPlayable() && (
-                  <i class="fas fa-lock text-gray-400 text-sm" title="Requires authentication"></i>
-                )}
-              </div>
-              <div class="flex items-center gap-2">
-                <p class="text-sm text-gray-600">{props.track.artist} • {props.track.duration}</p>
-                <span 
-                  class={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs text-white font-medium ${sourceInfo.color}`}
-                  title={`Source: ${sourceInfo.label}`}
-                >
-                  {sourceInfo.icon} {sourceInfo.label}
-                </span>
-              </div>
-            </div>
-            {isCurrentTrack() && (
-              <span class="text-blue-600 animate-pulse">
-                <i class="fas fa-play-circle text-2xl"></i>
-              </span>
-            )}
-          </div>
-          
-          <div class="flex items-center gap-3 text-xs text-gray-500 mb-2">
-            <span class="flex items-center gap-1">
-              <span class="text-lg">{props.track.userAvatar}</span>
-              {props.track.addedBy}
-            </span>
-            <span>•</span>
-            <span>{props.track.timestamp}</span>
-          </div>
-          
-          <p class="text-sm text-gray-700 mb-3">{props.track.comment}</p>
-          
-          <div class="flex gap-4 text-sm">
+      <div class="flex gap-4 min-w-0">
+        <div class="flex-1 min-w-0">
+          {/* User info at top */}
+          <div class="flex items-center justify-between mb-2">
             <button 
-              class={`flex items-center gap-1 hover:text-blue-600 ${hasLiked() ? 'text-red-500' : ''}`}
+              class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                // TODO: Navigate to user profile
+                console.log('Navigate to profile:', props.track.addedBy);
+              }}
+              title={`View ${props.track.addedBy}'s profile`}
+            >
+              <span class="text-xl">{props.track.userAvatar}</span>
+              <span class="text-base text-black hover:text-blue-700">{props.track.addedBy}</span>
+            </button>
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+              <span>{props.track.timestamp}</span>
+              {isCurrentTrack() && (
+                <span class="text-blue-600 animate-pulse">
+                  <i class="fas fa-play-circle text-2xl drop-shadow-lg"></i>
+                </span>
+              )}
+            </div>
+          </div>
+          
+          {/* Song info and thumbnail row */}
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0">
+              <img 
+                src={props.track.thumbnail} 
+                alt={props.track.title}
+                class="w-24 h-24 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-lg transition-shadow duration-200"
+              />
+            </div>
+            
+            <div class="flex-1 min-w-0">
+              {/* Song info */}
+              <div class="mb-2">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-black leading-tight">{props.track.title}</h3>
+              {!isPlayable() && (
+                <i class="fas fa-lock text-gray-400 text-sm" title="Requires authentication"></i>
+              )}
+            </div>
+            <div class="flex items-center gap-2">
+              <p class="text-sm text-gray-600 font-medium">{props.track.artist} • {props.track.duration}</p>
+              <span 
+                class="text-lg"
+                title={`Source: ${sourceInfo.label}`}
+              >
+                {sourceInfo.icon}
+              </span>
+            </div>
+          </div>
+          
+              <p class="text-sm text-gray-700 mb-3 leading-relaxed">{props.track.comment}</p>
+              
+              <div class="flex gap-4 text-sm">
+            <button 
+              class={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 hover:bg-gray-100 ${hasLiked() ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:text-red-500'}`}
               onClick={handleLike}
             >
               <i class={`fas fa-heart ${hasLiked() ? 'fas' : 'far'}`}></i>
-              <span>{likes()}</span>
+              <span class="font-medium">{likes()}</span>
+              <span class="text-xs">likes</span>
             </button>
-            <button class="flex items-center gap-1 hover:text-blue-600">
-              <i class="fas fa-comment"></i>
-              <span>{props.track.replies}</span>
-            </button>
-            <button class="flex items-center gap-1 hover:text-blue-600">
+            <button class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-green-600 hover:bg-green-50">
               <i class="fas fa-retweet"></i>
-              <span>{props.track.recasts}</span>
+              <span class="font-medium">{props.track.recasts}</span>
+              <span class="text-xs">recasts</span>
             </button>
+            <button class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+              <i class="fas fa-comment"></i>
+              <span class="font-medium">{props.track.replies}</span>
+              <span class="text-xs">replies</span>
+            </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

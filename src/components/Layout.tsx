@@ -17,7 +17,7 @@ const Layout: Component<LayoutProps> = (props) => {
   (window as any).showTerminal = () => setShowTerminal(true);
 
   return (
-    <div class="min-h-screen grunge-bg relative">
+    <div class="h-screen grunge-bg relative overflow-hidden">
       {/* TV Static overlay */}
       <div class="tv-static fixed inset-0 pointer-events-none opacity-5"></div>
       
@@ -27,7 +27,7 @@ const Layout: Component<LayoutProps> = (props) => {
         
         <div class="flex flex-1 overflow-hidden">
           {/* Main Content */}
-          <div class="flex-1 overflow-y-auto">
+          <div class="flex-1 overflow-y-auto min-w-0">
             {props.children}
           </div>
           

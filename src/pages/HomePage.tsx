@@ -87,7 +87,7 @@ const HomePage: Component = () => {
           <SpotifyConnectButton />
           
           {/* Playlist tracks */}
-          <div class="flex-1 overflow-y-auto space-y-3" id="playlist-container">
+          <div class="flex-1 overflow-y-auto overflow-x-hidden space-y-4" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>
