@@ -1,4 +1,5 @@
-import { Component, createSignal, createMemo, For } from 'solid-js';
+import { Component, createSignal, createMemo, For, onMount } from 'solid-js';
+import { useSearchParams } from '@solidjs/router';
 
 export type PlaylistType = 'personal' | 'collaborative' | 'ai_curated';
 
@@ -16,12 +17,36 @@ export type PlaylistSortOption = 'recent' | 'popular' | 'alphabetical';
 export type PlaylistFilter = 'all' | 'personal' | 'collaborative' | 'ai_curated';
 
 const SharePage: Component = () => {
+  const [searchParams] = useSearchParams();
   const [songUrl, setSongUrl] = createSignal('');
   const [comment, setComment] = createSignal('');
   const [selectedPlaylist, setSelectedPlaylist] = createSignal<string>('my_jams');
   const [showNewPlaylistForm, setShowNewPlaylistForm] = createSignal(false);
   const [newPlaylistName, setNewPlaylistName] = createSignal('');
   const [newPlaylistType, setNewPlaylistType] = createSignal<PlaylistType>('collaborative');
+
+  // Set the selected playlist from URL parameter if provided
+  onMount(() => {
+    const preSelectedPlaylist = searchParams.playlist;
+    if (preSelectedPlaylist) {
+      // Map the playlist IDs from playlistStore to SharePage format
+      const playlistIdMapping: Record<string, string> = {
+        '90s_hits': 'friday_bangers',
+        '80s_synthwave': 'chill_study', 
+        'chill_vibes': 'chill_study',
+        'party_bangers': 'friday_bangers',
+        'indie_gems': 'indie_discoveries',
+        'hip_hop_classics': 'workout_pump'
+      };
+      
+      const mappedPlaylist = playlistIdMapping[preSelectedPlaylist] || preSelectedPlaylist;
+      const playlistExists = allPlaylistDestinations.find(p => p.id === mappedPlaylist);
+      
+      if (playlistExists) {
+        setSelectedPlaylist(mappedPlaylist);
+      }
+    }
+  });
   
   // Playlist selection controls
   const [playlistSearch, setPlaylistSearch] = createSignal('');
@@ -152,12 +177,6 @@ const SharePage: Component = () => {
     return playlists;
   });
 
-  // Quick access - recently used or favorited playlists
-  const quickAccessPlaylists = createMemo(() => {
-    return allPlaylistDestinations.filter(p => 
-      p.isDefault || (p.memberCount && p.memberCount > 10)
-    ).slice(0, 3);
-  });
 
   const handleShare = () => {
     if (!songUrl().trim()) return;
@@ -252,30 +271,6 @@ const SharePage: Component = () => {
               <i class="fas fa-list"></i>
               Where to add it?
             </h2>
-
-            {/* Quick Access */}
-            <div class="mb-4">
-              <h3 class="text-sm font-bold text-black mb-2 flex items-center gap-1">
-                <i class="fas fa-star text-yellow-500"></i>
-                Quick Access
-              </h3>
-              <div class="flex gap-2 flex-wrap">
-                <For each={quickAccessPlaylists()}>
-                  {(playlist) => (
-                    <button
-                      onClick={() => setSelectedPlaylist(playlist.id)}
-                      class="win95-button px-3 py-1 text-sm flex items-center gap-2"
-                      classList={{
-                        'bg-blue-100': selectedPlaylist() === playlist.id
-                      }}
-                    >
-                      <span class="text-lg">{playlist.icon}</span>
-                      {playlist.name}
-                    </button>
-                  )}
-                </For>
-              </div>
-            </div>
 
             {/* Search and Filter Controls */}
             <div class="mb-4 p-3 win95-panel">

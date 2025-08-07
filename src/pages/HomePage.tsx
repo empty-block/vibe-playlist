@@ -1,4 +1,5 @@
 import { Component, For, createSignal, createMemo } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
 import PlaylistHeader from '../components/PlaylistHeader';
@@ -6,6 +7,7 @@ import PlaylistHeader from '../components/PlaylistHeader';
 export type SortOption = 'recent' | 'likes' | 'comments';
 
 const HomePage: Component = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = createSignal('');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
 
@@ -60,44 +62,29 @@ const HomePage: Component = () => {
     return sortedTracks;
   });
   
+  const handleReply = () => {
+    console.log('Text reply submitted for playlist:', currentPlaylistId());
+    // TODO: Implement actual reply submission to Farcaster
+  };
+
+  const handleAddTrack = () => {
+    console.log('Track added to playlist:', currentPlaylistId());
+    // TODO: Implement actual track addition to Farcaster
+    // For now, could also navigate to SharePage as fallback:
+    // navigate(`/share?playlist=${currentPlaylistId()}`);
+  };
+
   return (
     <div class="p-2 md:p-4">
       <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
-          {/* Creator Info Bar */}
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
-            <div class="flex items-center gap-2">
-              <span class="text-xs sm:text-sm text-gray-500">Created by</span>
-              <button 
-                class="flex items-center gap-1 sm:gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-1 sm:px-2 py-1"
-                onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
-                title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
-              >
-                <span class="text-lg sm:text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
-                <span class="text-sm sm:text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
-              </button>
-            </div>
-            <div class="flex items-center gap-2 text-xs sm:text-sm">
-              <span class="text-gray-400 hidden sm:inline">•</span>
-              <span class="text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
-              {playlists[currentPlaylistId()].isCollaborative && (
-                <>
-                  <span class="text-gray-400">•</span>
-                  <span class="text-gray-500">
-                    <i class="fas fa-users mr-1"></i>
-                    <span class="hidden sm:inline">{playlists[currentPlaylistId()].memberCount} members</span>
-                    <span class="sm:hidden">{playlists[currentPlaylistId()].memberCount}</span>
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Playlist Info Section with Search */}
+          {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
             onCreatorClick={handleCreatorClick}
             searchQuery={searchQuery}
             onSearchInput={setSearchQuery}
+            onReply={handleReply}
+            onAddTrack={handleAddTrack}
           />
           
           {/* Sort Options */}
