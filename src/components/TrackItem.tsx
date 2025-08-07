@@ -1,9 +1,12 @@
-import { Component, createSignal, Show, createMemo, For } from 'solid-js';
+import { Component, createSignal, Show, createMemo, For, onMount } from 'solid-js';
 import { A } from '@solidjs/router';
 import { Track, currentTrack, Reply } from '../stores/playlistStore';
 import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../stores/authStore';
 import SocialStats from './social/SocialStats';
 import ReplyItem from './social/ReplyItem';
+import AnimatedButton from './AnimatedButton';
+import { slideIn, staggeredFadeIn, playbackButtonHover, particleBurst, magnetic } from '../utils/animations';
+import anime from 'animejs';
 
 interface TrackItemProps {
   track: Track;
@@ -13,6 +16,10 @@ interface TrackItemProps {
 // Using Reply interface from playlistStore now
 
 const TrackItem: Component<TrackItemProps> = (props) => {
+  let trackItemRef: HTMLDivElement;
+  let playButtonRef: HTMLButtonElement;
+  let thumbnailRef: HTMLImageElement;
+
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isPlayable = () => {
     console.log('TrackItem Debug:', {
@@ -28,6 +35,54 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   const [hasLiked, setHasLiked] = createSignal(false);
   const [showReplies, setShowReplies] = createSignal(false);
   const [replySort, setReplySort] = createSignal<'recent' | 'likes'>('recent');
+
+  onMount(() => {
+    // Add hover animations for playable tracks
+    if (trackItemRef && isPlayable()) {
+      trackItemRef.addEventListener('mouseenter', () => {
+        // Subtle hover effect
+        anime({
+          targets: trackItemRef,
+          scale: 1.02,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          duration: 200,
+          easing: 'easeOutQuad'
+        });
+      });
+
+      trackItemRef.addEventListener('mouseleave', () => {
+        anime({
+          targets: trackItemRef,
+          scale: 1,
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          duration: 200,
+          easing: 'easeOutQuad'
+        });
+      });
+    }
+
+    // Add gradient hover effect to play button
+    if (playButtonRef && isPlayable()) {
+      playButtonRef.addEventListener('mouseenter', () => {
+        playbackButtonHover.enter(playButtonRef);
+      });
+
+      playButtonRef.addEventListener('mouseleave', () => {
+        playbackButtonHover.leave(playButtonRef);
+      });
+
+      playButtonRef.addEventListener('click', (e) => {
+        e.stopPropagation();
+        particleBurst(playButtonRef);
+        props.onPlay(); // Actually play the track
+      });
+    }
+
+    // Add magnetic effect to thumbnail
+    if (thumbnailRef) {
+      magnetic(thumbnailRef, 15);
+    }
+  });
   
   // Source badge configuration
   const getSourceInfo = (source: string) => {
@@ -119,12 +174,20 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   
   return (
     <div 
-      class={`win95-button p-4 transition-all duration-200 ${
+      ref={trackItemRef!}
+      class={`win95-button p-6 ${
         isPlayable() 
-          ? 'cursor-pointer hover:bg-gray-200 hover:shadow-lg transform hover:scale-[1.01]' 
+          ? 'cursor-pointer' 
           : 'cursor-not-allowed opacity-60'
-      } ${isCurrentTrack() ? 'bg-blue-100 ring-2 ring-blue-400 ring-opacity-60' : ''}`}
+      } ${isCurrentTrack() ? 'border-4 border-blue-400' : ''}`}
       onClick={handleClick}
+      style={{
+        transform: 'translateZ(0)', // Enable hardware acceleration
+        transition: 'none', // Disable CSS transitions since we're using anime.js
+        ...(isCurrentTrack() ? {
+          'box-shadow': '0 0 25px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.1)'
+        } : {})
+      }}
     >
       <div class="flex gap-4 min-w-0">
         <div class="flex-1 min-w-0">
@@ -145,8 +208,8 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             <div class="flex items-center gap-2 text-sm text-gray-500">
               <span>{props.track.timestamp}</span>
               {isCurrentTrack() && (
-                <span class="text-blue-600 animate-pulse">
-                  <i class="fas fa-play-circle text-2xl drop-shadow-lg"></i>
+                <span class="text-blue-600 font-bold text-xs uppercase tracking-wider animate-pulse">
+                  NOW PLAYING
                 </span>
               )}
             </div>
@@ -154,12 +217,30 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           
           {/* Song info and thumbnail row */}
           <div class="flex items-start gap-4">
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 relative group">
               <img 
+                ref={thumbnailRef!}
                 src={props.track.thumbnail} 
                 alt={props.track.title}
                 class="w-24 h-24 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-lg transition-shadow duration-200"
               />
+              
+              {/* Gradient Play Button Overlay */}
+              {isPlayable() && (
+                <button
+                  ref={playButtonRef!}
+                  onClick={props.onPlay}
+                  class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-lg transition-all duration-300"
+                  title="Play this track"
+                  style={{
+                    transition: 'none' // Disable CSS transitions for anime.js
+                  }}
+                >
+                  <div class="w-12 h-12 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                    <i class="fas fa-play text-gray-800 ml-1 text-lg"></i>
+                  </div>
+                </button>
+              )}
             </div>
             
             <div class="flex-1 min-w-0">

@@ -1,5 +1,7 @@
 import { Component, createSignal, createMemo, For, onMount } from 'solid-js';
 import { useSearchParams } from '@solidjs/router';
+import { pageEnter, typewriter, float, glitch, magnetic } from '../utils/animations';
+import anime from 'animejs';
 
 export type PlaylistType = 'personal' | 'collaborative' | 'ai_curated';
 
@@ -25,6 +27,13 @@ const SharePage: Component = () => {
   const [newPlaylistName, setNewPlaylistName] = createSignal('');
   const [newPlaylistType, setNewPlaylistType] = createSignal<PlaylistType>('collaborative');
 
+  let pageRef: HTMLDivElement;
+  let titleRef: HTMLHeadingElement;
+  let submitButtonRef: HTMLButtonElement;
+  let songInputRef: HTMLInputElement;
+  let playlistSectionRef: HTMLDivElement;
+  let tipsRef: HTMLDivElement;
+
   // Set the selected playlist from URL parameter if provided
   onMount(() => {
     const preSelectedPlaylist = searchParams.playlist;
@@ -45,6 +54,71 @@ const SharePage: Component = () => {
       if (playlistExists) {
         setSelectedPlaylist(mappedPlaylist);
       }
+    }
+
+    // Add page animations
+    if (pageRef) {
+      pageEnter(pageRef);
+    }
+
+    if (titleRef) {
+      // Float the music note
+      float(titleRef);
+      
+      // Add glitch effect on click
+      titleRef.addEventListener('click', () => {
+        glitch(titleRef);
+      });
+    }
+
+    if (submitButtonRef) {
+      magnetic(submitButtonRef, 25);
+    }
+
+    // Add subtle animations to other interactive elements
+    if (songInputRef) {
+      songInputRef.addEventListener('focus', () => {
+        anime({
+          targets: songInputRef,
+          scale: 1.02,
+          boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+          duration: 200,
+          easing: 'easeOutQuad'
+        });
+      });
+
+      songInputRef.addEventListener('blur', () => {
+        anime({
+          targets: songInputRef,
+          scale: 1,
+          boxShadow: '0 0 0 0px rgba(59, 130, 246, 0)',
+          duration: 200,
+          easing: 'easeOutQuad'
+        });
+      });
+    }
+
+    // Animate sections with delayed entrance
+    if (playlistSectionRef) {
+      anime({
+        targets: playlistSectionRef,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 500,
+        delay: 300,
+        easing: 'easeOutCubic'
+      });
+    }
+
+    if (tipsRef) {
+      anime({
+        targets: tipsRef,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 500,
+        delay: 600,
+        easing: 'easeOutCubic'
+      });
     }
   });
   
@@ -216,12 +290,12 @@ const SharePage: Component = () => {
   };
 
   return (
-    <div class="p-4">
+    <div ref={pageRef!} class="p-4">
       <div class="win95-panel h-full p-6 overflow-y-auto">
         <div class="max-w-2xl mx-auto">
           {/* Header */}
           <div class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-black mb-2">
+            <h1 ref={titleRef!} class="text-3xl font-bold text-black mb-2 cursor-pointer hover:text-purple-600 transition-colors">
               🎵 Create Your Vibes
             </h1>
             <p class="text-gray-600">
@@ -242,6 +316,7 @@ const SharePage: Component = () => {
                   Song URL (YouTube, Spotify, SoundCloud, etc.)
                 </label>
                 <input
+                  ref={songInputRef!}
                   type="text"
                   placeholder="https://youtu.be/dQw4w9WgXcQ or https://open.spotify.com/track/..."
                   value={songUrl()}
@@ -266,7 +341,7 @@ const SharePage: Component = () => {
           </div>
 
           {/* Playlist Destination Section */}
-          <div class="win95-panel mb-6 p-4">
+          <div ref={playlistSectionRef!} class="win95-panel mb-6 p-4" style="opacity: 0;">
             <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
               <i class="fas fa-list"></i>
               Where to add it?
@@ -434,6 +509,7 @@ const SharePage: Component = () => {
           {/* Share Button */}
           <div class="text-center">
             <button
+              ref={submitButtonRef!}
               onClick={handleShare}
               disabled={!songUrl().trim()}
               class="win95-button px-8 py-3 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -448,7 +524,7 @@ const SharePage: Component = () => {
           </div>
 
           {/* Quick Tips */}
-          <div class="win95-panel mt-8 p-4 bg-yellow-50">
+          <div ref={tipsRef!} class="win95-panel mt-8 p-4 bg-yellow-50" style="opacity: 0;">
             <h3 class="font-bold text-black mb-2 flex items-center gap-2">
               <i class="fas fa-lightbulb text-yellow-600"></i>
               Pro Tips

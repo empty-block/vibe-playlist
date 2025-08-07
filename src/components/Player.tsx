@@ -1,8 +1,9 @@
-import { Component, Show, JSX, createSignal, For } from 'solid-js';
+import { Component, Show, JSX, createSignal, For, onMount } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying } from '../stores/playlistStore';
 import SocialStats from './social/SocialStats';
 import SocialActions from './social/SocialActions';
 import ReplyItem from './social/ReplyItem';
+import { playbackButtonHover } from '../utils/animations';
 
 interface PlayerProps {
   isCompact?: () => boolean;
@@ -21,6 +22,14 @@ const Player: Component<PlayerProps> = (props) => {
   const [newComment, setNewComment] = createSignal('');
   const [showAllReplies, setShowAllReplies] = createSignal(false);
   const [showSocialModal, setShowSocialModal] = createSignal(false);
+  
+  // Refs for player control buttons
+  let playButtonRef: HTMLButtonElement;
+  let prevButtonRef: HTMLButtonElement;
+  let nextButtonRef: HTMLButtonElement;
+  let compactPlayButtonRef: HTMLButtonElement;
+  let compactPrevButtonRef: HTMLButtonElement;
+  let compactNextButtonRef: HTMLButtonElement;
   
   // Control handlers
   const handleSkipPrevious = () => {
@@ -48,6 +57,30 @@ const Player: Component<PlayerProps> = (props) => {
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Set up button animations
+  onMount(() => {
+    const buttons = [
+      playButtonRef,
+      prevButtonRef, 
+      nextButtonRef,
+      compactPlayButtonRef,
+      compactPrevButtonRef,
+      compactNextButtonRef
+    ];
+
+    buttons.forEach(button => {
+      if (button) {
+        button.addEventListener('mouseenter', () => {
+          playbackButtonHover.enter(button);
+        });
+
+        button.addEventListener('mouseleave', () => {
+          playbackButtonHover.leave(button);
+        });
+      }
+    });
+  });
 
   return (
     <Show when={currentTrack()}>
@@ -120,6 +153,7 @@ const Player: Component<PlayerProps> = (props) => {
                 {/* Main Control Buttons */}
                 <div class="flex items-center justify-center gap-4 mb-3">
                   <button 
+                    ref={prevButtonRef!}
                     onClick={handleSkipPrevious}
                     class="win95-button w-12 h-12 flex items-center justify-center text-lg"
                     disabled={!props.playerReady()}
@@ -128,6 +162,7 @@ const Player: Component<PlayerProps> = (props) => {
                   </button>
                   
                   <button 
+                    ref={playButtonRef!}
                     onClick={props.onTogglePlay}
                     class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
                     disabled={!props.playerReady()}
@@ -136,6 +171,7 @@ const Player: Component<PlayerProps> = (props) => {
                   </button>
                   
                   <button 
+                    ref={nextButtonRef!}
                     onClick={handleSkipNext}
                     class="win95-button w-12 h-12 flex items-center justify-center text-lg"
                     disabled={!props.playerReady()}
@@ -160,6 +196,7 @@ const Player: Component<PlayerProps> = (props) => {
               {/* Compact Controls - Skip prev, Play/pause, Skip next, Social button */}
               <div class="flex items-center gap-2">
                 <button 
+                  ref={compactPrevButtonRef!}
                   onClick={handleSkipPrevious}
                   class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
                   disabled={!props.playerReady()}
@@ -169,6 +206,7 @@ const Player: Component<PlayerProps> = (props) => {
                 </button>
                 
                 <button 
+                  ref={compactPlayButtonRef!}
                   onClick={props.onTogglePlay}
                   class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-lg"
                   disabled={!props.playerReady()}
@@ -177,6 +215,7 @@ const Player: Component<PlayerProps> = (props) => {
                 </button>
                 
                 <button 
+                  ref={compactNextButtonRef!}
                   onClick={handleSkipNext}
                   class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
                   disabled={!props.playerReady()}
