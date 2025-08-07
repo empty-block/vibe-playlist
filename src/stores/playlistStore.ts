@@ -39,7 +39,7 @@ export interface Playlist {
 export const playlists: Record<string, Playlist> = {
   '90s_hits': {
     id: '90s_hits',
-    name: '90s Hits',
+    name: '90s Hits 🎸',
     description: 'The best grunge, alternative, and pop hits from the decade that changed music',
     icon: '🎸',
     color: '#ff6b6b',
@@ -52,7 +52,7 @@ export const playlists: Record<string, Playlist> = {
   },
   '80s_synthwave': {
     id: '80s_synthwave',
-    name: '80s Synthwave',
+    name: '80s Synthwave 🌈',
     description: 'Neon-soaked synth beats and electric dreams from the decade of excess',
     icon: '🌈',
     color: '#ff0080',
@@ -65,7 +65,7 @@ export const playlists: Record<string, Playlist> = {
   },
   'chill_vibes': {
     id: 'chill_vibes',
-    name: 'Chill Vibes',
+    name: 'Chill Vibes 🌙',
     description: 'Laid-back tracks for studying, relaxing, or just vibing',
     icon: '🌙',
     color: '#4ecdc4',
@@ -78,7 +78,7 @@ export const playlists: Record<string, Playlist> = {
   },
   'party_bangers': {
     id: 'party_bangers',
-    name: 'Party Bangers',
+    name: 'Party Bangers 🎉',
     description: 'High-energy tracks to get the party started and keep it going',
     icon: '🎉',
     color: '#ff6b35',
@@ -91,7 +91,7 @@ export const playlists: Record<string, Playlist> = {
   },
   'indie_gems': {
     id: 'indie_gems',
-    name: 'Indie Gems',
+    name: 'Indie Gems 💎',
     description: 'Hidden treasures and underground favorites from independent artists',
     icon: '💎',
     color: '#a8e6cf',
@@ -104,7 +104,7 @@ export const playlists: Record<string, Playlist> = {
   },
   'hip_hop_classics': {
     id: 'hip_hop_classics',
-    name: 'Hip-Hop Classics',
+    name: 'Hip-Hop Classics 🎤',
     description: 'Essential tracks that defined the culture and shaped the genre',
     icon: '🎤',
     color: '#ffd93d',

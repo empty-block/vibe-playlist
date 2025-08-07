@@ -186,8 +186,8 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
         <div class="h-full bg-gray-200 flex items-center px-4 gap-4">
           {/* Spotify Icon */}
           <div class="flex-shrink-0">
-            <div class="bg-gradient-to-br from-green-900 to-black rounded p-3 w-24 h-24 flex items-center justify-center">
-              <i class="fab fa-spotify text-green-400 text-4xl"></i>
+            <div class="bg-gradient-to-br from-green-900 to-black rounded p-2 w-32 h-20 sm:w-40 sm:h-24 flex items-center justify-center">
+              <i class="fab fa-spotify text-green-400 text-2xl sm:text-4xl"></i>
             </div>
           </div>
           
@@ -257,9 +257,19 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
               {currentTrack()?.title}
             </h3>
             <p class="text-gray-600 mb-2">{currentTrack()?.artist}</p>
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500 mb-3">
               Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
             </p>
+            
+            {/* Song Comment - Highlighted */}
+            <div class="p-3 bg-blue-50 rounded border-l-4 border-blue-400 mb-4">
+              <p class="text-sm text-gray-700 italic font-medium">
+                "{currentTrack()?.comment}"
+              </p>
+              <p class="text-xs text-gray-500 mt-1">
+                {currentTrack()?.timestamp}
+              </p>
+            </div>
           </div>
           
           {/* Play Controls */}
@@ -284,16 +294,16 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
             </div>
           </div>
           
-          {/* Track Actions */}
-          <div class="space-y-2">
-            <button class="win95-button w-full py-2 text-sm">
-              <i class="fas fa-heart mr-2"></i>Like Track
+          {/* Track Actions - Smaller and more compact */}
+          <div class="flex gap-2 mt-4">
+            <button class="win95-button flex-1 py-1 text-xs">
+              <i class="fas fa-heart mr-1"></i>Like
             </button>
-            <button class="win95-button w-full py-2 text-sm">
-              <i class="fas fa-plus mr-2"></i>Add to Playlist
+            <button class="win95-button flex-1 py-1 text-xs">
+              <i class="fas fa-plus mr-1"></i>Add
             </button>
-            <button class="win95-button w-full py-2 text-sm">
-              <i class="fas fa-share mr-2"></i>Share Track
+            <button class="win95-button flex-1 py-1 text-xs">
+              <i class="fas fa-share mr-1"></i>Share
             </button>
           </div>
           
@@ -304,16 +314,6 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
               <span><i class="fas fa-comment"></i> {currentTrack()?.replies}</span>
               <span><i class="fas fa-retweet"></i> {currentTrack()?.recasts}</span>
             </div>
-          </div>
-          
-          {/* Comment Preview */}
-          <div class="mt-3 p-3 bg-white rounded border">
-            <p class="text-sm text-gray-700 italic">
-              "{currentTrack()?.comment}"
-            </p>
-            <p class="text-xs text-gray-500 mt-1">
-              - {currentTrack()?.addedBy}, {currentTrack()?.timestamp}
-            </p>
           </div>
         </div>
       </div>

@@ -2,8 +2,7 @@ import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
 import WindowsFrame from './WindowsFrame';
 import Navigation from './Navigation';
 import Terminal from './Terminal';
-import YouTubePlayer from './YouTubePlayer';
-import SpotifyPlayer from './SpotifyPlayer';
+import MediaPlayer from './MediaPlayer';
 import ChatBot from './ChatBot';
 import { currentTrack } from '../stores/playlistStore';
 import { showChat, closeChat } from '../stores/chatStore';
@@ -56,17 +55,10 @@ const Layout: Component<LayoutProps> = (props) => {
           <Show when={currentTrack()}>
             <div class={`${
               isCompact() 
-                ? 'h-32 border-t-2 flex-shrink-0' 
+                ? 'h-28 border-t-2 flex-shrink-0' 
                 : 'w-80 border-l-2'
             } border-gray-400`}>
-              <Show 
-                when={currentTrack()?.source === 'spotify'} 
-                fallback={
-                  <YouTubePlayer isCompact={isCompact} />
-                }
-              >
-                <SpotifyPlayer isCompact={isCompact} />
-              </Show>
+              <MediaPlayer isCompact={isCompact} />
             </div>
           </Show>
         </div>

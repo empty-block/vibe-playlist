@@ -192,7 +192,7 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
           
           {/* YouTube Player Area - Positioned differently per layout */}
           <div class={`${isCompact() ? 'flex-shrink-0' : 'win95-panel p-2 mb-4'} relative`}>
-            <div class={`bg-black rounded overflow-hidden ${isCompact() ? 'w-20 h-15 sm:w-24 sm:h-18' : 'w-full h-48'}`}>
+            <div class={`bg-black rounded overflow-hidden ${isCompact() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-48'}`}>
               <div 
                 ref={(el) => {
                   playerContainer = el;
@@ -210,9 +210,21 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
               {currentTrack()?.title}
             </h3>
             <p class={`text-gray-600 truncate ${isCompact() ? 'text-xs' : 'mb-2'}`}>{currentTrack()?.artist}</p>
-            <p class={`text-gray-500 ${isCompact() ? 'text-xs truncate hidden sm:block' : 'text-sm'}`}>
+            <p class={`text-gray-500 ${isCompact() ? 'text-xs truncate hidden sm:block' : 'text-sm mb-3'}`}>
               Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
             </p>
+            
+            {/* Song Comment - Only show on desktop, moved up for prominence */}
+            <Show when={!isCompact()}>
+              <div class="p-3 bg-blue-50 rounded border-l-4 border-blue-400 mb-4">
+                <p class="text-sm text-gray-700 italic font-medium">
+                  "{currentTrack()?.comment}"
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  {currentTrack()?.timestamp}
+                </p>
+              </div>
+            </Show>
           </div>
           
           {/* Play Controls */}
@@ -267,27 +279,17 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
 
           {/* Desktop-only sections */}
           <Show when={!isCompact()}>
-            {/* Track Actions */}
-            <div class="space-y-2 mt-4">
-              <button class="win95-button w-full py-2 text-sm">
-                <i class="fas fa-heart mr-2"></i>Like Track
+            {/* Track Actions - Smaller and more compact */}
+            <div class="flex gap-2 mt-4">
+              <button class="win95-button flex-1 py-1 text-xs">
+                <i class="fas fa-heart mr-1"></i>Like
               </button>
-              <button class="win95-button w-full py-2 text-sm">
-                <i class="fas fa-plus mr-2"></i>Add to Playlist
+              <button class="win95-button flex-1 py-1 text-xs">
+                <i class="fas fa-plus mr-1"></i>Add
               </button>
-              <button class="win95-button w-full py-2 text-sm">
-                <i class="fas fa-share mr-2"></i>Share Track
+              <button class="win95-button flex-1 py-1 text-xs">
+                <i class="fas fa-share mr-1"></i>Share
               </button>
-            </div>
-            
-            {/* Comment Preview */}
-            <div class="mt-3 p-3 bg-white rounded border">
-              <p class="text-sm text-gray-700 italic">
-                "{currentTrack()?.comment}"
-              </p>
-              <p class="text-xs text-gray-500 mt-1">
-                - {currentTrack()?.addedBy}, {currentTrack()?.timestamp}
-              </p>
             </div>
           </Show>
         </div>

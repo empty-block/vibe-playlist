@@ -63,53 +63,41 @@ const HomePage: Component = () => {
   return (
     <div class="p-2 md:p-4">
       <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
-          {/* Search and Tools Bar */}
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <div class="flex items-center gap-2">
-                <span class="text-xs sm:text-sm text-gray-500">Created by</span>
-                <button 
-                  class="flex items-center gap-1 sm:gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-1 sm:px-2 py-1"
-                  onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
-                  title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
-                >
-                  <span class="text-lg sm:text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
-                  <span class="text-sm sm:text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
-                </button>
-              </div>
-              <div class="flex items-center gap-2 text-xs sm:text-sm">
-                <span class="text-gray-400 hidden sm:inline">•</span>
-                <span class="text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
-                {playlists[currentPlaylistId()].isCollaborative && (
-                  <>
-                    <span class="text-gray-400">•</span>
-                    <span class="text-gray-500">
-                      <i class="fas fa-users mr-1"></i>
-                      <span class="hidden sm:inline">{playlists[currentPlaylistId()].memberCount} members</span>
-                      <span class="sm:hidden">{playlists[currentPlaylistId()].memberCount}</span>
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
+          {/* Creator Info Bar */}
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4">
             <div class="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search tracks..."
-                value={searchQuery()}
-                onInput={(e) => setSearchQuery(e.currentTarget.value)}
-                class="win95-panel px-2 sm:px-3 py-1 text-xs sm:text-sm flex-1 md:flex-initial md:w-48 lg:w-64"
-              />
-              <button class="win95-button px-2 sm:px-3 py-1">
-                <i class="fas fa-search text-xs sm:text-sm"></i>
+              <span class="text-xs sm:text-sm text-gray-500">Created by</span>
+              <button 
+                class="flex items-center gap-1 sm:gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-1 sm:px-2 py-1"
+                onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
+                title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
+              >
+                <span class="text-lg sm:text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
+                <span class="text-sm sm:text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
               </button>
+            </div>
+            <div class="flex items-center gap-2 text-xs sm:text-sm">
+              <span class="text-gray-400 hidden sm:inline">•</span>
+              <span class="text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
+              {playlists[currentPlaylistId()].isCollaborative && (
+                <>
+                  <span class="text-gray-400">•</span>
+                  <span class="text-gray-500">
+                    <i class="fas fa-users mr-1"></i>
+                    <span class="hidden sm:inline">{playlists[currentPlaylistId()].memberCount} members</span>
+                    <span class="sm:hidden">{playlists[currentPlaylistId()].memberCount}</span>
+                  </span>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Playlist Info Section */}
+          {/* Playlist Info Section with Search */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
             onCreatorClick={handleCreatorClick}
+            searchQuery={searchQuery}
+            onSearchInput={setSearchQuery}
           />
           
           {/* Sort Options */}
