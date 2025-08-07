@@ -71,6 +71,21 @@
             80% { transform: translate(2px, -2px); filter: hue-rotate(360deg); }
         }
         
+        @keyframes slide-up {
+            from { 
+                transform: translateY(100%); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+        
+        .animate-slide-up {
+            animation: slide-up 0.3s ease-out;
+        }
+        
         .win95-button {
             border: 2px outset #c0c0c0;
             background: linear-gradient(145deg, #dfdfdf, #c0c0c0);

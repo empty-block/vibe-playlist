@@ -1,22 +1,16 @@
 import { Component, createSignal, Show, createMemo, For } from 'solid-js';
 import { A } from '@solidjs/router';
-import { Track, currentTrack } from '../stores/playlistStore';
+import { Track, currentTrack, Reply } from '../stores/playlistStore';
 import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../stores/authStore';
+import SocialStats from './social/SocialStats';
+import ReplyItem from './social/ReplyItem';
 
 interface TrackItemProps {
   track: Track;
   onPlay: () => void;
 }
 
-interface Reply {
-  id: string;
-  username: string;
-  avatar: string;
-  content: string;
-  timestamp: string;
-  likes: number;
-  isLiked?: boolean;
-}
+// Using Reply interface from playlistStore now
 
 const TrackItem: Component<TrackItemProps> = (props) => {
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
@@ -70,29 +64,26 @@ const TrackItem: Component<TrackItemProps> = (props) => {
     {
       id: '1',
       username: 'grunge_fan_93',
-      avatar: '🎸',
-      content: 'This song literally defined my teenage years! Still gives me chills every time. 🔥',
+      userAvatar: '🎸',
+      comment: 'This song literally defined my teenage years! Still gives me chills every time. 🔥',
       timestamp: '5 min ago',
-      likes: 12,
-      isLiked: false
+      likes: 12
     },
     {
       id: '2', 
       username: 'radiohead_stan',
-      avatar: '👁️',
-      content: 'Agreed! This was before they went all experimental. Pure raw emotion.',
+      userAvatar: '👁️',
+      comment: 'Agreed! This was before they went all experimental. Pure raw emotion.',
       timestamp: '8 min ago',
-      likes: 8,
-      isLiked: true
+      likes: 8
     },
     {
       id: '3',
       username: 'music_lover_95',
-      avatar: '🌟',
-      content: 'The guitar tone on this is INSANE. Kurt knew how to make a Mustang sing! 🎸✨',
+      userAvatar: '🌟',
+      comment: 'The guitar tone on this is INSANE. Kurt knew how to make a Mustang sing! 🎸✨',
       timestamp: '12 min ago',
-      likes: 5,
-      isLiked: false
+      likes: 5
     }
   ];
 
@@ -202,29 +193,17 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           
               <p class="text-sm text-gray-700 mb-3 leading-relaxed">{props.track.comment}</p>
               
-              <div class="flex gap-4 text-sm">
-            <button 
-              class={`flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 hover:bg-gray-100 ${hasLiked() ? 'text-red-500 bg-red-50' : 'text-gray-600 hover:text-red-500'}`}
-              onClick={handleLike}
-            >
-              <i class={`fas fa-heart ${hasLiked() ? 'fas' : 'far'}`}></i>
-              <span class="font-medium">{likes()}</span>
-              <span class="text-xs">likes</span>
-            </button>
-            <button class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-green-600 hover:bg-green-50">
-              <i class="fas fa-retweet"></i>
-              <span class="font-medium">{props.track.recasts}</span>
-              <span class="text-xs">recasts</span>
-            </button>
-            <button 
-              class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
-              onClick={handleRepliesClick}
-            >
-              <i class="fas fa-comment"></i>
-              <span class="font-medium">{props.track.replies}</span>
-              <span class="text-xs">replies</span>
-            </button>
-              </div>
+              <SocialStats
+                likes={likes()}
+                recasts={props.track.recasts}
+                replies={props.track.replies}
+                size="sm"
+                showLabels={true}
+                interactive={true}
+                onLikeClick={handleLike}
+                onRepliesClick={handleRepliesClick}
+                className="text-sm"
+              />
             </div>
           </div>
         </div>
@@ -248,41 +227,14 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           <div class="space-y-3 max-h-80 overflow-y-auto">
             <For each={sortedReplies()}>
               {(reply) => (
-                <div class="win95-button p-3 bg-gray-50">
-                  <div class="flex items-start gap-2">
-                    <span class="text-lg">{reply.avatar}</span>
-                    <div class="flex-1">
-                      <div class="flex items-center gap-2 mb-1">
-                        <A 
-                          href={`/profile/${reply.username}`}
-                          class="text-sm font-bold text-black hover:text-blue-700"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {reply.username}
-                        </A>
-                        <span class="text-xs text-gray-500">• {reply.timestamp}</span>
-                      </div>
-                      <p class="text-sm text-gray-700">{reply.content}</p>
-                      <div class="flex gap-3 mt-2 text-xs">
-                        <button 
-                          class={`flex items-center gap-1 ${
-                            reply.isLiked ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
-                          }`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <i class={reply.isLiked ? 'fas fa-heart' : 'far fa-heart'}></i>
-                          <span>{reply.likes}</span>
-                        </button>
-                        <button 
-                          class="flex items-center gap-1 text-gray-600 hover:text-blue-600"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <i class="fas fa-reply"></i>
-                          Reply
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                <div class="w-full" onClick={(e) => e.stopPropagation()}>
+                  <ReplyItem
+                    reply={reply}
+                    variant="default"
+                    onLike={(replyId) => console.log('Like reply:', replyId)}
+                    onReply={(replyId) => console.log('Reply to:', replyId)}
+                    className="win95-button bg-gray-50"
+                  />
                 </div>
               )}
             </For>

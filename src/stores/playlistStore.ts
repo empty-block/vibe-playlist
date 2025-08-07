@@ -3,6 +3,15 @@ import { createStore } from 'solid-js/store';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
+export interface Reply {
+  id: string;
+  username: string;
+  userAvatar: string;
+  comment: string;
+  timestamp: string;
+  likes: number;
+}
+
 export interface Track {
   id: string;
   title: string;
@@ -18,6 +27,7 @@ export interface Track {
   likes: number;
   replies: number;
   recasts: number;
+  repliesData?: Reply[]; // Actual reply objects
   // Keep videoId for backward compatibility during transition
   videoId?: string;
 }
@@ -134,7 +144,41 @@ const playlistSongs: Record<string, Track[]> = {
       comment: 'This song changed everything for me in high school. Peak 90s energy! 🔥',
       likes: 25,
       replies: 8,
-      recasts: 12
+      recasts: 12,
+      repliesData: [
+        {
+          id: 'reply_1',
+          username: 'alt_rock_lover',
+          userAvatar: '🤘',
+          comment: 'Totally agree! This was my anthem in \'92. Kurt was a legend.',
+          timestamp: '1 min ago',
+          likes: 12
+        },
+        {
+          id: 'reply_2',
+          username: 'seattle_sound',
+          userAvatar: '🌧️',
+          comment: 'The whole Nevermind album is pure gold. RIP Kurt 💔',
+          timestamp: '45 sec ago',
+          likes: 8
+        },
+        {
+          id: 'reply_3',
+          username: 'vinyl_collector',
+          userAvatar: '💿',
+          comment: 'Still have the original pressing! Sounds incredible on vinyl.',
+          timestamp: '30 sec ago',
+          likes: 5
+        },
+        {
+          id: 'reply_4',
+          username: 'gen_x_kid',
+          userAvatar: '📻',
+          comment: 'First heard this on MTV. Changed music forever!',
+          timestamp: '15 sec ago',
+          likes: 3
+        }
+      ]
     },
     {
       id: '2',
