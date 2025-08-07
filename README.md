@@ -35,6 +35,7 @@ This unified approach simplifies the mental model - users always think "where sh
 - **Windows 95 Aesthetic**: Authentic retro UI with pixel-perfect styling
 - **Familiar Interactions**: Classic buttons, panels, and navigation
 - **Modern Responsiveness**: Works beautifully on all devices
+- **Smooth Animations**: Subtle anime.js effects enhance the retro experience
 
 ## 🚀 Try It Out
 
@@ -81,6 +82,7 @@ bun run dev
 ### Technical Architecture
 - **Frontend**: SolidJS + TypeScript for reactive UI
 - **Styling**: TailwindCSS with custom Win95 components
+- **Animations**: anime.js v3.2.1 for smooth UI interactions
 - **Audio**: YouTube IFrame API + Spotify Web Playback SDK
 - **Backend**: Farcaster protocol for social features
 - **Deployment**: Cloudflare Pages

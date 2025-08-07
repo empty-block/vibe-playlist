@@ -1,8 +1,9 @@
-import { Component, For, createSignal, createMemo } from 'solid-js';
+import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
 import PlaylistHeader from '../components/PlaylistHeader';
+import { staggeredFadeIn } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
@@ -10,6 +11,8 @@ const HomePage: Component = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = createSignal('');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
+  
+  let trackContainerRef: HTMLDivElement;
 
   const handleCreatorClick = (creatorUsername: string) => {
     console.log('Navigate to creator profile:', creatorUsername);
@@ -74,6 +77,24 @@ const HomePage: Component = () => {
     // navigate(`/share?playlist=${currentPlaylistId()}`);
   };
 
+  // Animate track items when they change
+  createEffect(() => {
+    const tracks = filteredTracks();
+    if (trackContainerRef && tracks.length > 0) {
+      // Small delay to ensure DOM has updated
+      setTimeout(() => {
+        const trackItems = trackContainerRef.querySelectorAll('.win95-button');
+        if (trackItems.length > 0) {
+          // Reset opacity for stagger animation
+          trackItems.forEach(item => {
+            (item as HTMLElement).style.opacity = '0';
+          });
+          staggeredFadeIn(trackItems);
+        }
+      }, 50);
+    }
+  });
+
   return (
     <div class="p-2 md:p-4">
       <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
@@ -105,7 +126,7 @@ const HomePage: Component = () => {
           </div>
           
           {/* Playlist tracks */}
-          <div class="flex-1 overflow-y-auto overflow-x-hidden space-y-4" id="playlist-container">
+          <div ref={trackContainerRef!} class="flex-1 overflow-y-auto overflow-x-hidden space-y-4 px-2" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>

@@ -1,7 +1,9 @@
-import { Component, createSignal, Show } from 'solid-js';
+import { Component, createSignal, Show, onMount } from 'solid-js';
 import { Playlist } from '../stores/playlistStore';
 import SocialStats from './social/SocialStats';
 import TextInput from './TextInput';
+import AnimatedButton from './AnimatedButton';
+import { replyBoxExpand, replyBoxCollapse, slideIn } from '../utils/animations';
 
 interface PlaylistHeaderProps {
   playlist: Playlist;
@@ -17,6 +19,9 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   const [replyText, setReplyText] = createSignal('');
   const [trackUrl, setTrackUrl] = createSignal('');
   const [focusField, setFocusField] = createSignal<'comment' | 'track' | null>(null);
+  
+  let replyBoxRef: HTMLDivElement;
+  let headerRef: HTMLDivElement;
 
   // Mock social stats for the playlist cast
   const playlistStats = () => ({
@@ -33,14 +38,31 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
       // Open the reply box and set focus
       setShowReplyBox(true);
       setFocusField(action);
+      
+      // Animate the reply box in after it's rendered
+      setTimeout(() => {
+        if (replyBoxRef) {
+          replyBoxExpand(replyBoxRef);
+        }
+      }, 0);
     }
   };
 
   const handleCloseReply = () => {
-    setShowReplyBox(false);
-    setReplyText('');
-    setTrackUrl('');
-    setFocusField(null);
+    if (replyBoxRef) {
+      // Animate out then hide
+      replyBoxCollapse(replyBoxRef).finished.then(() => {
+        setShowReplyBox(false);
+        setReplyText('');
+        setTrackUrl('');
+        setFocusField(null);
+      });
+    } else {
+      setShowReplyBox(false);
+      setReplyText('');
+      setTrackUrl('');
+      setFocusField(null);
+    }
   };
 
   const handleSubmitReply = () => {
@@ -83,10 +105,17 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
     return false;
   };
 
+  onMount(() => {
+    // Animate the header in on mount
+    if (headerRef) {
+      slideIn.fromTop(headerRef);
+    }
+  });
+
   return (
     <div class="mb-4">
       {/* Playlist Cast Header - Like a Farcaster Post */}
-      <div class="win95-panel p-4 mb-4">
+      <div ref={headerRef!} class="win95-panel p-4 mb-4">
         {/* Creator Info Row */}
         <div class="flex items-start gap-3 mb-3">
           <button 
@@ -144,35 +173,37 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
         
         {/* Floating Action Buttons */}
         <div class="flex gap-3">
-          <button
+          <AnimatedButton
             onClick={() => handleReply('comment')}
             class="win95-button px-4 py-2 text-black font-bold text-sm group relative"
             title="Reply with a comment"
             classList={{
               'bg-blue-100': showReplyBox() && focusField() === 'comment'
             }}
+            animationType="social"
           >
             <i class="fas fa-comment mr-2"></i>
             <span>Reply</span>
-          </button>
+          </AnimatedButton>
           
-          <button
+          <AnimatedButton
             onClick={() => handleReply('track')}
             class="win95-button px-4 py-2 text-black font-bold text-sm group relative"
             title="Add a track to this playlist"
             classList={{
               'bg-green-100': showReplyBox() && focusField() === 'track'
             }}
+            animationType="social"
           >
             <i class="fas fa-music mr-2"></i>
             <span>Add a Track</span>
-          </button>
+          </AnimatedButton>
         </div>
       </div>
 
       {/* Unified Reply Box */}
       <Show when={showReplyBox()}>
-        <div class="win95-panel p-4 mb-4">
+        <div ref={replyBoxRef!} class="win95-panel p-4 mb-4">
           <h3 class="text-sm font-bold text-black mb-3 flex items-center gap-2">
             <i class={focusField() === 'track' ? 'fas fa-music' : 'fas fa-reply'}></i>
             {focusField() === 'track' ? 'Add a track to' : 'Reply to'} {props.playlist.createdBy}'s playlist
@@ -227,13 +258,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
             </div>
             
             <div class="flex gap-2 justify-end">
-              <button
+              <AnimatedButton
                 onClick={handleCloseReply}
                 class="win95-button px-4 py-2 text-sm font-bold"
+                animationType="default"
               >
                 Cancel
-              </button>
-              <button
+              </AnimatedButton>
+              <AnimatedButton
                 onClick={handleSubmitReply}
                 disabled={!canSubmit()}
                 class="win95-button px-4 py-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
@@ -242,10 +274,11 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                   'bg-blue-100': canSubmit() && focusField() === 'comment',
                   'opacity-50 cursor-not-allowed': !canSubmit()
                 }}
+                animationType={focusField() === 'track' ? 'social' : 'default'}
               >
                 <i class={focusField() === 'track' ? 'fas fa-music mr-2' : 'fas fa-paper-plane mr-2'}></i>
                 {focusField() === 'track' ? 'Add Track' : 'Reply'}
-              </button>
+              </AnimatedButton>
             </div>
           </div>
         </div>

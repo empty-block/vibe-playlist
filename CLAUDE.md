@@ -169,6 +169,68 @@ VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:3001  # For dev without YouTube
 - YouTube embedding should work normally with proper domain
 - Consider rate limiting and API key security for production Spotify integration
 
+## 🎨 Animation System (anime.js)
+
+### Overview
+The app uses **anime.js v3.2.1** for smooth, hardware-accelerated animations throughout the UI. All animation utilities are centralized in `src/utils/animations.ts`.
+
+### Key Implementation Details
+
+#### Version Notes
+- **anime.js v3.2.1**: Stable version with reliable module imports
+- **Avoid v4.x**: Has module export issues in our build setup
+- **Installation**: `bun add animejs@3.2.1`
+
+#### Core Animation Patterns
+
+**Player Controls**: Gradient hover effects with icon color changes
+```typescript
+// Player buttons get gradient backgrounds + white icons on hover
+playbackButtonHover.enter(buttonElement);
+```
+
+**Track Interactions**: 
+- Hover scale effects with proper container padding
+- Current track gets neon blue border with multi-layer glow
+- Particle burst effects on play button clicks
+- Magnetic effects on thumbnails
+
+**Page Transitions**: Staggered fade-ins, page entrance animations, floating elements
+
+#### Animation Architecture
+- **Centralized utilities**: All animations in `src/utils/animations.ts`
+- **Ref-based**: Uses SolidJS refs for direct DOM manipulation
+- **Hardware acceleration**: `transform: translateZ(0)` for smooth performance
+- **CSS transition override**: `transition: 'none'` to prevent conflicts
+
+#### Common Patterns
+```typescript
+// Always disable CSS transitions for anime.js elements
+element.style.transition = 'none';
+
+// Reset transforms after animations complete
+complete: () => {
+  element.style.transform = 'translateZ(0)';
+}
+
+// Proper cleanup in leave animations
+leave: (element) => {
+  element.style.background = '';
+  element.style.color = '';
+}
+```
+
+#### Critical Layout Considerations
+- **Container padding**: Track containers need `px-2` for hover scale effects
+- **Border visibility**: Current track uses `border-4` + multi-layer shadows
+- **Stagger conflicts**: Don't mix individual item animations with container staggered animations
+
+### Troubleshooting
+1. **Animations not working**: Check anime.js version (must be v3.x)
+2. **Layout clipping**: Ensure parent containers have adequate padding
+3. **Performance issues**: Verify hardware acceleration with `translateZ(0)`
+4. **Import errors**: Use `import anime from 'animejs'` (default import)
+
 ## 🧩 Component Architecture & DRY Principles
 
 ### Reusable Social Components

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.15.3",
+    "animejs": "3.2.1",
     "solid-js": "^1.9.7"
   }
 }
