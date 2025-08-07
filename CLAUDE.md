@@ -169,6 +169,139 @@ VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:3001  # For dev without YouTube
 - YouTube embedding should work normally with proper domain
 - Consider rate limiting and API key security for production Spotify integration
 
+## 🎨 Animation System (anime.js)
+
+### Overview
+The app uses **anime.js v3.2.1** for smooth, hardware-accelerated animations throughout the UI. All animation utilities are centralized in `src/utils/animations.ts`.
+
+### Key Implementation Details
+
+#### Version Notes
+- **anime.js v3.2.1**: Stable version with reliable module imports
+- **Avoid v4.x**: Has module export issues in our build setup
+- **Installation**: `bun add animejs@3.2.1`
+
+#### Core Animation Patterns
+
+**Player Controls**: Gradient hover effects with icon color changes
+```typescript
+// Player buttons get gradient backgrounds + white icons on hover
+playbackButtonHover.enter(buttonElement);
+```
+
+**Track Interactions**: 
+- Hover scale effects with proper container padding
+- Current track gets neon blue border with multi-layer glow
+- Particle burst effects on play button clicks
+- Magnetic effects on thumbnails
+
+**Page Transitions**: Staggered fade-ins, page entrance animations, floating elements
+
+#### Animation Architecture
+- **Centralized utilities**: All animations in `src/utils/animations.ts`
+- **Ref-based**: Uses SolidJS refs for direct DOM manipulation
+- **Hardware acceleration**: `transform: translateZ(0)` for smooth performance
+- **CSS transition override**: `transition: 'none'` to prevent conflicts
+
+#### Common Patterns
+```typescript
+// Always disable CSS transitions for anime.js elements
+element.style.transition = 'none';
+
+// Reset transforms after animations complete
+complete: () => {
+  element.style.transform = 'translateZ(0)';
+}
+
+// Proper cleanup in leave animations
+leave: (element) => {
+  element.style.background = '';
+  element.style.color = '';
+}
+```
+
+#### Critical Layout Considerations
+- **Container padding**: Track containers need `px-2` for hover scale effects
+- **Border visibility**: Current track uses `border-4` + multi-layer shadows
+- **Stagger conflicts**: Don't mix individual item animations with container staggered animations
+
+### Troubleshooting
+1. **Animations not working**: Check anime.js version (must be v3.x)
+2. **Layout clipping**: Ensure parent containers have adequate padding
+3. **Performance issues**: Verify hardware acceleration with `translateZ(0)`
+4. **Import errors**: Use `import anime from 'animejs'` (default import)
+
+## 🧩 Component Architecture & DRY Principles
+
+### Reusable Social Components
+
+The app follows a **DRY (Don't Repeat Yourself) principle** to eliminate duplicate code and ensure consistency. When building UI, always check if a reusable component exists before creating new ones.
+
+#### Social Component Library (`src/components/social/`)
+
+**`SocialStats.tsx`** - Unified display for likes/recasts/replies
+```typescript
+// Consistent stats display across all contexts
+<SocialStats
+  likes={track.likes}
+  recasts={track.recasts} 
+  replies={track.replies}
+  size="sm|md|lg"
+  showLabels={true|false}
+  interactive={true}  // Makes buttons clickable
+  onLikeClick={() => handleLike()}
+  onRepliesClick={() => showReplies()}
+/>
+```
+
+**`SocialActions.tsx`** - Reusable action buttons
+```typescript
+// Flexible button component with multiple variants
+<SocialActions
+  onLike={() => likeTrack()}
+  onAdd={() => addToPlaylist()}
+  onShare={() => shareTrack()}
+  size="sm|md|lg"
+  variant="buttons|links"  // Win95 buttons or simple links
+/>
+```
+
+**`ReplyItem.tsx`** - Standardized reply formatting
+```typescript
+// Consistent reply display everywhere
+<ReplyItem
+  reply={replyData}
+  variant="default|compact|modal"  // Different contexts
+  onLike={(id) => likeReply(id)}
+  onReply={(id) => replyTo(id)}
+/>
+```
+
+#### Design Principles
+
+1. **Component First**: Before creating duplicate UI, check if a reusable component exists
+2. **Variant Support**: Components support multiple visual variants for different contexts
+3. **Flexible Props**: Components accept optional handlers for different interaction patterns
+4. **Consistent Naming**: All social interactions follow same prop patterns (`onLikeClick`, `onReplyClick`, etc.)
+5. **Mobile-First**: All components are responsive and touch-friendly by default
+
+#### Usage Guidelines
+
+- **DO**: Use existing social components for likes, replies, shares across the app
+- **DO**: Add variant props when the same component needs different styling
+- **DO**: Make components flexible with optional click handlers
+- **DON'T**: Duplicate social UI patterns - extend existing components instead
+- **DON'T**: Create component variants unless there's a clear use case difference
+
+#### When to Create New Components
+
+Create new reusable components when:
+- The same UI pattern appears 3+ times
+- The pattern has clear variants (desktop vs mobile, large vs small)
+- The component encapsulates complex logic that shouldn't be duplicated
+
+Keep components straightforward - prefer simple, focused components over complex ones with many responsibilities.
+
 ## 🎨 UI/UX Features & Design Patterns
 
 ### HomePage (Main Feed)

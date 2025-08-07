@@ -1,0 +1,372 @@
+import anime from 'animejs';
+
+// Utility functions for common UI animations
+
+export const buttonHover = {
+  enter: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: 1.05,
+      translateY: -2,
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: 1,
+      translateY: 0,
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  }
+};
+
+export const playButtonPulse = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    scale: [1, 1.1, 1],
+    duration: 600,
+    easing: 'easeInOutQuad',
+    loop: false
+  });
+};
+
+export const slideIn = {
+  fromTop: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateY: [-20, 0],
+      opacity: [0, 1],
+      duration: 400,
+      easing: 'easeOutCubic'
+    });
+  },
+  
+  fromBottom: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateY: [20, 0],
+      opacity: [0, 1],
+      duration: 400,
+      easing: 'easeOutCubic'
+    });
+  },
+  
+  fromLeft: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateX: [-30, 0],
+      opacity: [0, 1],
+      duration: 400,
+      easing: 'easeOutCubic',
+      complete: () => {
+        // Ensure transform is properly reset after animation
+        element.style.transform = 'translateZ(0)';
+      }
+    });
+  }
+};
+
+export const slideOut = {
+  toTop: (element: HTMLElement) => {
+    return anime({
+      targets: element,
+      translateY: [0, -20],
+      opacity: [1, 0],
+      duration: 300,
+      easing: 'easeInCubic'
+    });
+  },
+  
+  toBottom: (element: HTMLElement) => {
+    return anime({
+      targets: element,
+      translateY: [0, 20],
+      opacity: [1, 0],
+      duration: 300,
+      easing: 'easeInCubic'
+    });
+  }
+};
+
+export const counterAnimation = (element: HTMLElement, from: number, to: number) => {
+  const obj = { count: from };
+  anime({
+    targets: obj,
+    count: to,
+    round: 1,
+    duration: 800,
+    easing: 'easeOutQuad',
+    update: () => {
+      element.textContent = obj.count.toString();
+    }
+  });
+};
+
+export const socialButtonClick = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    scale: [1, 0.95, 1],
+    duration: 150,
+    easing: 'easeInOutQuad'
+  });
+};
+
+export const replyBoxExpand = (element: HTMLElement) => {
+  // Set initial state
+  element.style.transform = 'scaleY(0)';
+  element.style.transformOrigin = 'top';
+  element.style.opacity = '0';
+  
+  anime({
+    targets: element,
+    scaleY: [0, 1],
+    opacity: [0, 1],
+    duration: 300,
+    easing: 'easeOutQuart'
+  });
+};
+
+export const replyBoxCollapse = (element: HTMLElement) => {
+  return anime({
+    targets: element,
+    scaleY: [1, 0],
+    opacity: [1, 0],
+    duration: 250,
+    easing: 'easeInQuart'
+  });
+};
+
+export const staggeredFadeIn = (elements: NodeListOf<Element> | Element[]) => {
+  anime({
+    targets: elements,
+    opacity: [0, 1],
+    translateY: [15, 0],
+    duration: 400,
+    delay: anime.stagger(100),
+    easing: 'easeOutCubic',
+    complete: () => {
+      // Ensure transforms are properly reset after stagger animation
+      Array.from(elements).forEach(el => {
+        (el as HTMLElement).style.transform = 'translateZ(0)';
+      });
+    }
+  });
+};
+
+export const iconSpin = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    rotate: '1turn',
+    duration: 500,
+    easing: 'easeInOutQuad'
+  });
+};
+
+export const heartBeat = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    scale: [1, 1.3, 1],
+    duration: 400,
+    easing: 'easeInOutQuad'
+  });
+};
+
+// Enhanced playback button animations with gradients
+export const playbackButtonHover = {
+  enter: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: 1.1,
+      boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+      duration: 300,
+      easing: 'easeOutBack'
+    });
+    
+    // Add gradient background
+    element.style.background = 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)';
+    element.style.backgroundSize = '200% 200%';
+    
+    // Make icon white for visibility against gradient
+    const icon = element.querySelector('i');
+    if (icon) {
+      icon.style.color = 'white';
+    }
+    
+    anime({
+      targets: element,
+      backgroundPosition: ['0% 50%', '100% 50%'],
+      duration: 2000,
+      easing: 'linear',
+      loop: true,
+      direction: 'alternate'
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: 1,
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+      duration: 250,
+      easing: 'easeOutQuad'
+    });
+    
+    // Reset background and icon color
+    element.style.background = '';
+    element.style.backgroundPosition = '';
+    const icon = element.querySelector('i');
+    if (icon) {
+      icon.style.color = '';
+    }
+  }
+};
+
+// Floating animation for special elements
+export const float = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    translateY: [0, -8, 0],
+    duration: 3000,
+    easing: 'easeInOutSine',
+    loop: true
+  });
+};
+
+// Page entrance animation
+export const pageEnter = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    opacity: [0, 1],
+    translateY: [30, 0],
+    scale: [0.95, 1],
+    duration: 600,
+    easing: 'easeOutCubic',
+    delay: 100
+  });
+};
+
+// Shimmer loading effect
+export const shimmer = (element: HTMLElement) => {
+  element.style.background = 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)';
+  element.style.backgroundSize = '200% 100%';
+  
+  anime({
+    targets: element,
+    backgroundPosition: ['-200% 0', '200% 0'],
+    duration: 1500,
+    easing: 'linear',
+    loop: true
+  });
+};
+
+// Typewriter effect
+export const typewriter = (element: HTMLElement, text: string, speed: number = 50) => {
+  element.textContent = '';
+  const chars = text.split('');
+  let i = 0;
+  
+  const timer = setInterval(() => {
+    if (i < chars.length) {
+      element.textContent += chars[i];
+      i++;
+    } else {
+      clearInterval(timer);
+    }
+  }, speed);
+};
+
+// Particle burst effect
+export const particleBurst = (element: HTMLElement) => {
+  const rect = element.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  
+  for (let i = 0; i < 12; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full pointer-events-none z-50';
+    particle.style.left = `${centerX}px`;
+    particle.style.top = `${centerY}px`;
+    document.body.appendChild(particle);
+    
+    const angle = (i * 30) * Math.PI / 180;
+    const distance = 80 + Math.random() * 40;
+    
+    anime({
+      targets: particle,
+      translateX: Math.cos(angle) * distance,
+      translateY: Math.sin(angle) * distance,
+      opacity: [1, 0],
+      scale: [0.5, 0],
+      duration: 800,
+      easing: 'easeOutCubic',
+      complete: () => {
+        particle.remove();
+      }
+    });
+  }
+};
+
+// Glitch effect
+export const glitch = (element: HTMLElement) => {
+  const originalText = element.textContent;
+  const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+  
+  for (let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      element.textContent = originalText?.split('').map(char => 
+        Math.random() < 0.3 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : char
+      ).join('') || '';
+      
+      anime({
+        targets: element,
+        textShadow: [
+          '2px 0 #ff0000, -2px 0 #00ffff',
+          '0 0 transparent'
+        ],
+        duration: 150,
+        complete: () => {
+          if (i === 2) element.textContent = originalText;
+        }
+      });
+    }, i * 100);
+  }
+};
+
+// Magnetic button effect
+export const magnetic = (element: HTMLElement, strength: number = 20) => {
+  const handleMouseMove = (e: MouseEvent) => {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const deltaX = (e.clientX - centerX) * 0.1;
+    const deltaY = (e.clientY - centerY) * 0.1;
+    
+    anime({
+      targets: element,
+      translateX: deltaX,
+      translateY: deltaY,
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  };
+  
+  const handleMouseLeave = () => {
+    anime({
+      targets: element,
+      translateX: 0,
+      translateY: 0,
+      duration: 300,
+      easing: 'easeOutElastic'
+    });
+  };
+  
+  element.addEventListener('mousemove', handleMouseMove);
+  element.addEventListener('mouseleave', handleMouseLeave);
+};

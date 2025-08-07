@@ -113,7 +113,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
     <div class={`w-72 win95-panel p-4 m-2 flex flex-col ${props.isVisible === false ? 'hidden' : ''}`} style="height: calc(100vh - 4rem);">
       {/* Title Bar */}
       <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
-        <span><i class="fas fa-robot mr-2"></i>DJ Bot 95 - Music Assistant</span>
+        <span><i class="fas fa-comment-dots mr-2"></i>VIBES Chat</span>
         <button 
           onClick={props.onToggle}
           class="win95-button w-6 h-4 text-xs font-bold text-black hover:bg-red-200"
@@ -145,7 +145,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
                   <div class={`rounded p-2 text-xs font-terminal ${
                     message.type === 'ai' ? 'bg-gray-200' : 'bg-blue-100'
                   }`}>
-                    <strong>{message.type === 'ai' ? 'DJ Bot 95:' : 'You:'}</strong> {message.message}
+                    <strong>{message.type === 'ai' ? 'VIBES:' : 'You:'}</strong> {message.message}
                   </div>
                   <div class="text-xs text-gray-500 mt-1">{formatTime(message.timestamp)}</div>
                 </div>
@@ -159,7 +159,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
               <div class="text-lg">🤖</div>
               <div class="flex-1">
                 <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
-                  <strong>DJ Bot 95:</strong> <i>typing...</i>
+                  <strong>VIBES:</strong> <i>typing...</i>
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
       {/* Chat Input */}
       <div class="flex flex-col gap-2 flex-shrink-0">
         <textarea 
-          placeholder="Ask DJ Bot 95 anything about music, playlists, or 90s trivia..."
+          placeholder="Chat about music, playlists, or ask for recommendations..."
           value={inputValue()}
           onInput={(e) => setInputValue(e.currentTarget.value)}
           onKeyPress={(e) => {

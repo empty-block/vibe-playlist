@@ -35,6 +35,7 @@ This unified approach simplifies the mental model - users always think "where sh
 - **Windows 95 Aesthetic**: Authentic retro UI with pixel-perfect styling
 - **Familiar Interactions**: Classic buttons, panels, and navigation
 - **Modern Responsiveness**: Works beautifully on all devices
+- **Smooth Animations**: Subtle anime.js effects enhance the retro experience
 
 ## 🚀 Try It Out
 
@@ -81,9 +82,26 @@ bun run dev
 ### Technical Architecture
 - **Frontend**: SolidJS + TypeScript for reactive UI
 - **Styling**: TailwindCSS with custom Win95 components
+- **Animations**: anime.js v3.2.1 for smooth UI interactions
 - **Audio**: YouTube IFrame API + Spotify Web Playback SDK
 - **Backend**: Farcaster protocol for social features
 - **Deployment**: Cloudflare Pages
+- **Component System**: Reusable social components following DRY principles
+
+### Component Architecture
+The app follows a **DRY (Don't Repeat Yourself) principle** with reusable social components:
+
+- **`SocialStats`**: Consistent likes/recasts/replies display across all contexts
+- **`SocialActions`**: Reusable action buttons (like, share, reply) with multiple variants
+- **`ReplyItem`**: Standardized reply formatting for desktop and mobile
+- **Responsive Player**: Single component that adapts from desktop sidebar to mobile bottom bar
+- **Social Modal**: Mobile-optimized overlay for full social experience in compact mode
+
+This architecture ensures:
+✅ **Consistency** - Same look/feel everywhere
+✅ **Maintainability** - Change once, update everywhere  
+✅ **Flexibility** - Components adapt to different contexts
+✅ **Mobile-first** - Responsive design with touch-friendly interactions
 
 ### Development Notes
 ⚠️ **Important**: There are specific setup quirks for YouTube/Spotify integration documented in [`CLAUDE.md`](./CLAUDE.md) - essential reading for developers.

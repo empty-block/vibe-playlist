@@ -41,6 +41,7 @@ const App: Component = () => {
       <Route path="/trending" component={TrendingPage} />
       <Route path="/share" component={SharePage} />
       <Route path="/profile" component={ProfilePage} />
+      <Route path="/profile/:username" component={ProfilePage} />
     </Router>
   );
 };

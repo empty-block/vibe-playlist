@@ -1,15 +1,18 @@
-import { Component, For, createSignal, createMemo } from 'solid-js';
+import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
-import ChatBot from '../components/ChatBot';
 import PlaylistHeader from '../components/PlaylistHeader';
+import { staggeredFadeIn } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
 const HomePage: Component = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = createSignal('');
-  const [showChatBot, setShowChatBot] = createSignal(false);
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
+  
+  let trackContainerRef: HTMLDivElement;
 
   const handleCreatorClick = (creatorUsername: string) => {
     console.log('Navigate to creator profile:', creatorUsername);
@@ -62,78 +65,57 @@ const HomePage: Component = () => {
     return sortedTracks;
   });
   
-  return (
-    <div class="flex h-full">
-      {/* ChatBot Sidebar */}
-      <ChatBot 
-        isVisible={showChatBot()} 
-        onToggle={() => setShowChatBot(false)}
-      />
-      
-      {/* Main Content */}
-      <div class="flex-1 p-4">
-        <div class="win95-panel h-full p-4 overflow-hidden flex flex-col">
-          {/* Search and Tools Bar */}
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-gray-500">Created by</span>
-              <button 
-                class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
-                onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
-                title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
-              >
-                <span class="text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
-                <span class="text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
-              </button>
-              <span class="text-gray-400">•</span>
-              <span class="text-sm text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
-              {playlists[currentPlaylistId()].isCollaborative && (
-                <>
-                  <span class="text-gray-400">•</span>
-                  <span class="text-sm text-gray-500">
-                    <i class="fas fa-users mr-1"></i>
-                    {playlists[currentPlaylistId()].memberCount} members
-                  </span>
-                </>
-              )}
-            </div>
-            <div class="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search tracks in this playlist..."
-                value={searchQuery()}
-                onInput={(e) => setSearchQuery(e.currentTarget.value)}
-                class="win95-panel px-3 py-1 text-sm w-64"
-              />
-              <button class="win95-button px-3 py-1">
-                <i class="fas fa-search"></i>
-              </button>
-              {!showChatBot() && (
-                <button
-                  onClick={() => setShowChatBot(true)}
-                  class="win95-button px-3 py-1 text-black font-bold text-sm"
-                  title="Show DJ Bot 95"
-                >
-                  <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
-                </button>
-              )}
-            </div>
-          </div>
+  const handleReply = () => {
+    console.log('Text reply submitted for playlist:', currentPlaylistId());
+    // TODO: Implement actual reply submission to Farcaster
+  };
 
-          {/* Playlist Info Section */}
+  const handleAddTrack = () => {
+    console.log('Track added to playlist:', currentPlaylistId());
+    // TODO: Implement actual track addition to Farcaster
+    // For now, could also navigate to SharePage as fallback:
+    // navigate(`/share?playlist=${currentPlaylistId()}`);
+  };
+
+  // Animate track items when they change
+  createEffect(() => {
+    const tracks = filteredTracks();
+    if (trackContainerRef && tracks.length > 0) {
+      // Small delay to ensure DOM has updated
+      setTimeout(() => {
+        const trackItems = trackContainerRef.querySelectorAll('.win95-button');
+        if (trackItems.length > 0) {
+          // Reset opacity for stagger animation
+          trackItems.forEach(item => {
+            (item as HTMLElement).style.opacity = '0';
+          });
+          staggeredFadeIn(trackItems);
+        }
+      }, 50);
+    }
+  });
+
+  return (
+    <div class="p-2 md:p-4">
+      <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
+          {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
             onCreatorClick={handleCreatorClick}
+            searchQuery={searchQuery}
+            onSearchInput={setSearchQuery}
+            onReply={handleReply}
+            onAddTrack={handleAddTrack}
           />
           
           {/* Sort Options */}
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-black">Sort by:</span>
+              <span class="text-xs sm:text-sm font-bold text-black">Sort by:</span>
               <select
                 value={sortBy()}
                 onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
-                class="win95-panel px-2 py-1 text-sm font-bold text-black"
+                class="win95-panel px-1 sm:px-2 py-1 text-xs sm:text-sm font-bold text-black"
                 title="Sort tracks"
               >
                 <option value="recent">📅 Most Recent</option>
@@ -144,7 +126,7 @@ const HomePage: Component = () => {
           </div>
           
           {/* Playlist tracks */}
-          <div class="flex-1 overflow-y-auto overflow-x-hidden space-y-4" id="playlist-container">
+          <div ref={trackContainerRef!} class="flex-1 overflow-y-auto overflow-x-hidden space-y-4 px-2" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>
@@ -163,7 +145,6 @@ const HomePage: Component = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
