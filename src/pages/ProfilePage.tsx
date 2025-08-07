@@ -1,5 +1,7 @@
-import { Component, createSignal, For, Show } from 'solid-js';
+import { Component, createSignal, For, Show, createMemo } from 'solid-js';
 import { Track } from '../stores/playlistStore';
+
+export type SortOption = 'recent' | 'likes' | 'comments';
 
 interface UserProfile {
   username: string;
@@ -15,6 +17,7 @@ interface UserProfile {
 
 const ProfilePage: Component = () => {
   const [currentTab, setCurrentTab] = createSignal<'shared' | 'liked' | 'replied'>('shared');
+  const [sortBy, setSortBy] = createSignal<SortOption>('recent');
   
   // Mock user profile data - in real app this would come from a store/API
   const userProfile: UserProfile = {
@@ -111,14 +114,53 @@ const ProfilePage: Component = () => {
     ]
   };
 
-  const getCurrentTracks = () => {
+  const getCurrentTracks = createMemo(() => {
+    let tracks;
     switch (currentTab()) {
-      case 'shared': return userProfile.sharedTracks;
-      case 'liked': return userProfile.likedTracks;
-      case 'replied': return userProfile.repliedTracks;
-      default: return [];
+      case 'shared': 
+        tracks = userProfile.sharedTracks;
+        break;
+      case 'liked': 
+        tracks = userProfile.likedTracks;
+        break;
+      case 'replied': 
+        tracks = userProfile.repliedTracks;
+        break;
+      default: 
+        tracks = [];
     }
-  };
+
+    // Sort tracks based on selected option
+    const sortOption = sortBy();
+    const sortedTracks = [...tracks].sort((a, b) => {
+      switch (sortOption) {
+        case 'recent':
+          // Parse timestamp for sorting (assuming "X min ago" format)
+          const getTimestamp = (timestamp: string) => {
+            const match = timestamp.match(/(\d+)\s*(min|hour|day)/);
+            if (!match) return 0;
+            const value = parseInt(match[1]);
+            const unit = match[2];
+            if (unit === 'min') return value;
+            if (unit === 'hour') return value * 60;
+            if (unit === 'day') return value * 1440;
+            return 0;
+          };
+          return getTimestamp(a.timestamp) - getTimestamp(b.timestamp);
+        
+        case 'likes':
+          return b.likes - a.likes;
+        
+        case 'comments':
+          return b.replies - a.replies;
+        
+        default:
+          return 0;
+      }
+    });
+    
+    return sortedTracks;
+  });
 
   const getTabTitle = () => {
     switch (currentTab()) {
@@ -131,53 +173,50 @@ const ProfilePage: Component = () => {
 
   return (
     <div class="p-8 pb-20">
-      {/* Profile Header with Top Artists */}
+      {/* Profile Header */}
       <div class="win95-panel p-6 mb-6">
-        <div class="flex items-start gap-8">
-          {/* Profile Info */}
-          <div class="flex items-center gap-6 flex-1">
-            <div class="text-6xl">{userProfile.avatar}</div>
-            <div class="flex-1">
-              <h2 class="text-3xl font-bold text-black mb-2">{userProfile.username}</h2>
-              <p class="text-gray-600 mb-4">{userProfile.bio}</p>
-              <div class="flex gap-6">
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-black">{userProfile.songsCount}</div>
-                  <div class="text-sm text-gray-600">Songs Added</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-black">{userProfile.joinDate}</div>
-                  <div class="text-sm text-gray-600">Member Since</div>
-                </div>
+        <div class="flex items-center gap-6">
+          <div class="text-6xl">{userProfile.avatar}</div>
+          <div class="flex-1">
+            <h2 class="text-3xl font-bold text-black mb-2">{userProfile.username}</h2>
+            <p class="text-gray-600 mb-4">{userProfile.bio}</p>
+            <div class="flex gap-6">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-black">{userProfile.songsCount}</div>
+                <div class="text-sm text-gray-600">Songs Added</div>
               </div>
-              <div class="flex gap-2 mt-4">
-                <button class="win95-button px-4 py-2 font-bold">
-                  <i class="fas fa-user-plus mr-2"></i>Follow
-                </button>
-                <button class="win95-button px-4 py-2">
-                  <i class="fas fa-share mr-2"></i>Share
-                </button>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-black">{userProfile.joinDate}</div>
+                <div class="text-sm text-gray-600">Member Since</div>
               </div>
             </div>
-          </div>
-          
-          {/* Top Artists */}
-          <div class="min-w-0 flex-shrink-0">
-            <h3 class="text-lg font-bold text-black mb-3 flex items-center">
-              <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
-            </h3>
-            <div class="flex gap-3">
-              <For each={userProfile.topArtists}>
-                {(artist) => (
-                  <div class="win95-button p-3 text-center cursor-pointer hover:bg-gray-100 min-w-[120px]">
-                    <div class="text-2xl mb-2">{artist.medal}</div>
-                    <h4 class="font-bold text-black text-sm">{artist.name}</h4>
-                    <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
-                  </div>
-                )}
-              </For>
+            <div class="flex gap-2 mt-4">
+              <button class="win95-button px-4 py-2 font-bold">
+                <i class="fas fa-user-plus mr-2"></i>Follow
+              </button>
+              <button class="win95-button px-4 py-2">
+                <i class="fas fa-share mr-2"></i>Share
+              </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Top Artists Section */}
+      <div class="win95-panel p-6 mb-6">
+        <h3 class="text-lg font-bold text-black mb-4 flex items-center">
+          <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
+        </h3>
+        <div class="flex gap-4">
+          <For each={userProfile.topArtists}>
+            {(artist) => (
+              <div class="win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
+                <div class="text-3xl mb-3">{artist.medal}</div>
+                <h4 class="font-bold text-black text-sm mb-1">{artist.name}</h4>
+                <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
+              </div>
+            )}
+          </For>
         </div>
       </div>
       
@@ -213,7 +252,22 @@ const ProfilePage: Component = () => {
 
       {/* Tab Content */}
       <div class="win95-panel p-6">
-        <h3 class="text-xl font-bold text-black mb-4">{getTabTitle()}</h3>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-black">{getTabTitle()}</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-black">Sort by:</span>
+            <select
+              value={sortBy()}
+              onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
+              class="win95-panel px-2 py-1 text-sm font-bold text-black"
+              title="Sort tracks"
+            >
+              <option value="recent">📅 Most Recent</option>
+              <option value="likes">❤️ Most Liked</option>
+              <option value="comments">💬 Most Comments</option>
+            </select>
+          </div>
+        </div>
         
         <Show when={getCurrentTracks().length > 0} fallback={
           <div class="text-center py-8 text-gray-500">

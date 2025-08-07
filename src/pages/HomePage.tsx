@@ -1,19 +1,19 @@
 import { Component, For, createSignal, createMemo } from 'solid-js';
-import { playlists, currentPlaylistId, setCurrentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
+import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
-import SpotifyConnectButton from '../components/SpotifyConnectButton';
 import ChatBot from '../components/ChatBot';
+import PlaylistHeader from '../components/PlaylistHeader';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
 const HomePage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
-  const [showChatBot, setShowChatBot] = createSignal(true);
+  const [showChatBot, setShowChatBot] = createSignal(false);
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
-  
-  const handlePlaylistSelect = (playlistId: string) => {
-    setCurrentPlaylistId(playlistId);
-    setSearchQuery(''); // Clear search when switching playlists
+
+  const handleCreatorClick = (creatorUsername: string) => {
+    console.log('Navigate to creator profile:', creatorUsername);
+    // TODO: Implement navigation to creator profile
   };
   
   const filteredTracks = createMemo(() => {
@@ -73,55 +73,58 @@ const HomePage: Component = () => {
       {/* Main Content */}
       <div class="flex-1 p-4">
         <div class="win95-panel h-full p-4 overflow-hidden flex flex-col">
-          <div class="mb-4">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-4">
-                {!showChatBot() && (
-                  <button
-                    onClick={() => setShowChatBot(true)}
-                    class="win95-button px-3 py-1 text-black font-bold text-sm"
-                    title="Show DJ Bot 95"
-                  >
-                    <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
-                  </button>
-                )}
-                <h1 class="text-2xl font-bold text-black">
-                  {playlists[currentPlaylistId()].icon} {playlists[currentPlaylistId()].name}
-                </h1>
-                <select 
-                  value={currentPlaylistId()} 
-                  onChange={(e) => handlePlaylistSelect(e.currentTarget.value)}
-                  class="win95-panel px-2 py-1 text-sm font-bold text-black"
-                >
-                  <For each={Object.values(playlists)}>
-                    {(playlist) => (
-                      <option value={playlist.id}>
-                        {playlist.icon} {playlist.name}
-                      </option>
-                    )}
-                  </For>
-                </select>
-              </div>
-              <div class="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Search tracks..."
-                  value={searchQuery()}
-                  onInput={(e) => setSearchQuery(e.currentTarget.value)}
-                  class="win95-panel px-3 py-1 text-sm w-64"
-                />
-                <button class="win95-button px-3 py-1">
-                  <i class="fas fa-search"></i>
-                </button>
-              </div>
+          {/* Search and Tools Bar */}
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-gray-500">Created by</span>
+              <button 
+                class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
+                onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
+                title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
+              >
+                <span class="text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
+                <span class="text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
+              </button>
+              <span class="text-gray-400">•</span>
+              <span class="text-sm text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
+              {playlists[currentPlaylistId()].isCollaborative && (
+                <>
+                  <span class="text-gray-400">•</span>
+                  <span class="text-sm text-gray-500">
+                    <i class="fas fa-users mr-1"></i>
+                    {playlists[currentPlaylistId()].memberCount} members
+                  </span>
+                </>
+              )}
             </div>
-            <p class="text-sm text-gray-600">
-              {playlists[currentPlaylistId()].description}
-            </p>
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Search tracks in this playlist..."
+                value={searchQuery()}
+                onInput={(e) => setSearchQuery(e.currentTarget.value)}
+                class="win95-panel px-3 py-1 text-sm w-64"
+              />
+              <button class="win95-button px-3 py-1">
+                <i class="fas fa-search"></i>
+              </button>
+              {!showChatBot() && (
+                <button
+                  onClick={() => setShowChatBot(true)}
+                  class="win95-button px-3 py-1 text-black font-bold text-sm"
+                  title="Show DJ Bot 95"
+                >
+                  <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
+                </button>
+              )}
+            </div>
           </div>
-          
-          {/* Spotify Connect */}
-          <SpotifyConnectButton />
+
+          {/* Playlist Info Section */}
+          <PlaylistHeader 
+            playlist={playlists[currentPlaylistId()]} 
+            onCreatorClick={handleCreatorClick}
+          />
           
           {/* Sort Options */}
           <div class="mb-4">

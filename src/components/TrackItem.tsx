@@ -1,6 +1,6 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createSignal, Show } from 'solid-js';
 import { Track, currentTrack } from '../stores/playlistStore';
-import { canPlayTrack } from '../stores/authStore';
+import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../stores/authStore';
 
 interface TrackItemProps {
   track: Track;
@@ -68,18 +68,21 @@ const TrackItem: Component<TrackItemProps> = (props) => {
         <div class="flex-1 min-w-0">
           {/* User info at top */}
           <div class="flex items-center justify-between mb-2">
-            <button 
-              class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                // TODO: Navigate to user profile
-                console.log('Navigate to profile:', props.track.addedBy);
-              }}
-              title={`View ${props.track.addedBy}'s profile`}
-            >
-              <span class="text-xl">{props.track.userAvatar}</span>
-              <span class="text-base text-black hover:text-blue-700">{props.track.addedBy}</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-500">Shared by</span>
+              <button 
+                class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // TODO: Navigate to user profile
+                  console.log('Navigate to profile:', props.track.addedBy);
+                }}
+                title={`View ${props.track.addedBy}'s profile`}
+              >
+                <span class="text-xl">{props.track.userAvatar}</span>
+                <span class="text-base text-black hover:text-blue-700">{props.track.addedBy}</span>
+              </button>
+            </div>
             <div class="flex items-center gap-2 text-sm text-gray-500">
               <span>{props.track.timestamp}</span>
               {isCurrentTrack() && (
@@ -105,9 +108,18 @@ const TrackItem: Component<TrackItemProps> = (props) => {
               <div class="mb-2">
             <div class="flex items-center gap-2 mb-1">
               <h3 class="font-bold text-black leading-tight">{props.track.title}</h3>
-              {!isPlayable() && (
-                <i class="fas fa-lock text-gray-400 text-sm" title="Requires authentication"></i>
-              )}
+              <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
+                <button
+                  class="win95-button px-2 py-0.5 text-xs font-bold text-black"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    initiateSpotifyAuth();
+                  }}
+                  title="Connect Spotify to play this track"
+                >
+                  🔗 Connect
+                </button>
+              </Show>
             </div>
             <div class="flex items-center gap-2">
               <p class="text-sm text-gray-600 font-medium">{props.track.artist} • {props.track.duration}</p>

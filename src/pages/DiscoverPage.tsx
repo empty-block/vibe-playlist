@@ -1,12 +1,8 @@
-import { Component } from 'solid-js';
-import { setCurrentPlaylistId, setCurrentTrack } from '../stores/playlistStore';
+import { Component, createSignal } from 'solid-js';
+import { setCurrentTrack } from '../stores/playlistStore';
 
 const DiscoverPage: Component = () => {
-  const switchToMoodPlaylist = (playlistId: string) => {
-    setCurrentPlaylistId(playlistId);
-    // Navigate back to home to see the playlist
-    window.location.hash = '#home';
-  };
+  const [searchQuery, setSearchQuery] = createSignal('');
 
   const playHiddenGem = (title: string, artist: string, videoId: string) => {
     const track = {
@@ -37,23 +33,35 @@ const DiscoverPage: Component = () => {
     window.location.hash = '#profile';
   };
 
-  const exploreGenreBlend = (blendType: string) => {
-    alert(`🎵 Exploring ${blendType} blend! This would create a custom mixed playlist.`);
-  };
-
   return (
     <div class="p-8">
       <div class="win95-panel p-6 mb-6">
-        <h2 class="text-2xl font-bold text-black mb-4">
-          <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
-        </h2>
-        <p class="text-gray-700">Multiple ways to discover your next favorite track</p>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-2xl font-bold text-black mb-2">
+              <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
+            </h2>
+            <p class="text-gray-700">Multiple ways to discover your next favorite track</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Search playlists, artists, content..."
+              value={searchQuery()}
+              onInput={(e) => setSearchQuery(e.currentTarget.value)}
+              class="win95-panel px-3 py-1 text-sm w-80"
+            />
+            <button class="win95-button px-3 py-1">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </div>
       </div>
       
       {/* Discover Similar Users */}
       <div class="win95-panel p-6 mb-6">
         <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-users text-purple-600 mr-2"></i>Discover Similar Users
+          <i class="fas fa-users text-blue-600 mr-2"></i>Discover Similar Users
         </h3>
         <p class="text-sm text-gray-600 mb-4">Find users with similar music taste to yours</p>
         <div class="grid grid-cols-3 gap-4">
@@ -215,7 +223,7 @@ const DiscoverPage: Component = () => {
       {/* Hidden Gems */}
       <div class="win95-panel p-6 mb-6">
         <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-gem text-purple-600 mr-2"></i>Hidden Gems
+          <i class="fas fa-gem text-blue-600 mr-2"></i>Hidden Gems
         </h3>
         <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
         <div class="grid grid-cols-2 gap-4">
@@ -255,134 +263,147 @@ const DiscoverPage: Component = () => {
         </div>
       </div>
       
-      {/* Mood-based Discovery */}
+      {/* Discover Artists */}
       <div class="win95-panel p-6 mb-6">
         <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-heart text-red-600 mr-2"></i>Discover by Mood
+          <i class="fas fa-microphone text-indigo-600 mr-2"></i>Discover Artists
         </h3>
+        <p class="text-sm text-gray-600 mb-4">Explore new artists based on your taste</p>
         <div class="grid grid-cols-3 gap-4">
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => switchToMoodPlaylist('chill_vibes')}>
-            <div class="text-4xl mb-2">😌</div>
-            <h3 class="font-bold text-black">Chill & Relax</h3>
-            <p class="text-sm text-gray-600">Laid-back vibes for your downtime</p>
-            <button 
-              class="win95-button px-3 py-1 text-xs mt-3 w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                switchToMoodPlaylist('chill_vibes');
-              }}
-            >
-              <i class="fas fa-play mr-1"></i>Switch to Chill Vibes
-            </button>
-          </div>
-          
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => switchToMoodPlaylist('party_bangers')}>
-            <div class="text-4xl mb-2">🔥</div>
-            <h3 class="font-bold text-black">High Energy</h3>
-            <p class="text-sm text-gray-600">Pump up your day with energetic beats</p>
-            <button 
-              class="win95-button px-3 py-1 text-xs mt-3 w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                switchToMoodPlaylist('party_bangers');
-              }}
-            >
-              <i class="fas fa-play mr-1"></i>Switch to Party Bangers
-            </button>
-          </div>
-          
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => switchToMoodPlaylist('80s_synthwave')}>
-            <div class="text-4xl mb-2">🌙</div>
-            <h3 class="font-bold text-black">Late Night</h3>
-            <p class="text-sm text-gray-600">Perfect for after midnight sessions</p>
-            <button 
-              class="win95-button px-3 py-1 text-xs mt-3 w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                switchToMoodPlaylist('80s_synthwave');
-              }}
-            >
-              <i class="fas fa-play mr-1"></i>Switch to 80s Synthwave
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Genre Blending */}
-      <div class="win95-panel p-6 mb-6">
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-blender text-orange-600 mr-2"></i>Genre Blending
-        </h3>
-        <p class="text-sm text-gray-600 mb-4">Mix genres you haven't explored yet</p>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => exploreGenreBlend('grunge-hiphop')}>
-            <div class="flex items-center gap-3 mb-2">
-              <div class="text-2xl">🎸</div>
-              <div class="text-xl">+</div>
-              <div class="text-2xl">🎤</div>
-              <div class="flex-1">
-                <h4 class="font-bold text-black">Grunge × Hip-Hop</h4>
-                <p class="text-sm text-gray-600">Raw energy meets urban beats</p>
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=PJ" 
+                alt="Pearl Jam"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">Pearl Jam</div>
+                <div class="text-sm text-gray-600">Grunge • 92% match</div>
+                <div class="text-xs text-gray-500">Based on your love for Nirvana</div>
               </div>
             </div>
-            <button class="win95-button px-3 py-1 text-xs w-full">
-              <i class="fas fa-shuffle mr-1"></i>Blend & Discover
-            </button>
-          </div>
-          
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => exploreGenreBlend('synthwave-indie')}>
-            <div class="flex items-center gap-3 mb-2">
-              <div class="text-2xl">🌈</div>
-              <div class="text-xl">+</div>
-              <div class="text-2xl">💎</div>
-              <div class="flex-1">
-                <h4 class="font-bold text-black">Synthwave × Indie</h4>
-                <p class="text-sm text-gray-600">Retro synths meet indie charm</p>
-              </div>
-            </div>
-            <button class="win95-button px-3 py-1 text-xs w-full">
-              <i class="fas fa-shuffle mr-1"></i>Blend & Discover
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {/* AI Recommendations */}
-      <div class="win95-panel p-6">
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-robot text-blue-600 mr-2"></i>Because you liked "Smells Like Teen Spirit"
-        </h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div 
-            class="win95-panel p-4 hover:bg-gray-100 cursor-pointer"
-            onClick={() => playHiddenGem('In Bloom', 'Nirvana', 'PbgKEjNBHqM')}
-          >
-            <div class="flex items-center gap-3">
-              <img src="https://img.youtube.com/vi/PbgKEjNBHqM/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
-              <div class="flex-1">
-                <h4 class="font-bold text-black text-sm">In Bloom</h4>
-                <p class="text-sm text-gray-600">Nirvana • 94% match</p>
-                <div class="text-xs text-gray-500 mt-1">🤖 AI recommended</div>
-              </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
               <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-play"></i>
+                <i class="fas fa-user-plus"></i>
               </button>
             </div>
           </div>
           
-          <div 
-            class="win95-panel p-4 hover:bg-gray-100 cursor-pointer"
-            onClick={() => playHiddenGem('Man in the Box', 'Alice in Chains', 'TAqZb52sgpU')}
-          >
-            <div class="flex items-center gap-3">
-              <img src="https://img.youtube.com/vi/TAqZb52sgpU/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
-              <div class="flex-1">
-                <h4 class="font-bold text-black text-sm">Man in the Box</h4>
-                <p class="text-sm text-gray-600">Alice in Chains • 91% match</p>
-                <div class="text-xs text-gray-500 mt-1">🤖 AI recommended</div>
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=SG" 
+                alt="Soundgarden"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">Soundgarden</div>
+                <div class="text-sm text-gray-600">Alternative • 88% match</div>
+                <div class="text-xs text-gray-500">Similar grunge energy</div>
               </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
               <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-play"></i>
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=DM" 
+                alt="Depeche Mode"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">Depeche Mode</div>
+                <div class="text-sm text-gray-600">Synthwave • 85% match</div>
+                <div class="text-xs text-gray-500">Based on your synthwave interests</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
+              <button class="win95-button px-2 py-1 text-xs">
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=RH" 
+                alt="Radiohead"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">Radiohead</div>
+                <div class="text-sm text-gray-600">Alternative • 82% match</div>
+                <div class="text-xs text-gray-500">Experimental rock vibes</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
+              <button class="win95-button px-2 py-1 text-xs">
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=SP" 
+                alt="Smashing Pumpkins"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">Smashing Pumpkins</div>
+                <div class="text-sm text-gray-600">Alternative • 79% match</div>
+                <div class="text-xs text-gray-500">90s alternative rock</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
+              <button class="win95-button px-2 py-1 text-xs">
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center gap-3 mb-3">
+              <img 
+                src="https://via.placeholder.com/60x60.png?text=PS" 
+                alt="Postal Service"
+                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
+              />
+              <div>
+                <div class="font-bold text-black">The Postal Service</div>
+                <div class="text-sm text-gray-600">Indie Electronic • 76% match</div>
+                <div class="text-xs text-gray-500">Electronic indie fusion</div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="win95-button px-2 py-1 text-xs flex-1">
+                <i class="fas fa-play mr-1"></i>Play Top Tracks
+              </button>
+              <button class="win95-button px-2 py-1 text-xs">
+                <i class="fas fa-user-plus"></i>
               </button>
             </div>
           </div>

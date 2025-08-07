@@ -29,6 +29,11 @@ export interface Playlist {
   icon: string;
   color: string;
   trackCount: number;
+  createdBy: string;
+  creatorAvatar: string;
+  createdAt: string;
+  memberCount?: number;
+  isCollaborative?: boolean;
 }
 
 export const playlists: Record<string, Playlist> = {
@@ -38,7 +43,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'The best grunge, alternative, and pop hits from the decade that changed music',
     icon: '🎸',
     color: '#ff6b6b',
-    trackCount: 5
+    trackCount: 5,
+    createdBy: 'nostalgia_curator',
+    creatorAvatar: '🎸',
+    createdAt: '3 months ago',
+    memberCount: 1248,
+    isCollaborative: true
   },
   '80s_synthwave': {
     id: '80s_synthwave',
@@ -46,7 +56,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'Neon-soaked synth beats and electric dreams from the decade of excess',
     icon: '🌈',
     color: '#ff0080',
-    trackCount: 4
+    trackCount: 4,
+    createdBy: 'synth_prophet_85',
+    creatorAvatar: '🌈',
+    createdAt: '5 months ago',
+    memberCount: 892,
+    isCollaborative: true
   },
   'chill_vibes': {
     id: 'chill_vibes',
@@ -54,7 +69,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'Laid-back tracks for studying, relaxing, or just vibing',
     icon: '🌙',
     color: '#4ecdc4',
-    trackCount: 3
+    trackCount: 3,
+    createdBy: 'lofi_dreamer',
+    creatorAvatar: '🌙',
+    createdAt: '2 months ago',
+    memberCount: 567,
+    isCollaborative: true
   },
   'party_bangers': {
     id: 'party_bangers',
@@ -62,7 +82,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'High-energy tracks to get the party started and keep it going',
     icon: '🎉',
     color: '#ff6b35',
-    trackCount: 3
+    trackCount: 3,
+    createdBy: 'dj_hype_master',
+    creatorAvatar: '🎉',
+    createdAt: '1 month ago',
+    memberCount: 2341,
+    isCollaborative: true
   },
   'indie_gems': {
     id: 'indie_gems',
@@ -70,7 +95,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'Hidden treasures and underground favorites from independent artists',
     icon: '💎',
     color: '#a8e6cf',
-    trackCount: 3
+    trackCount: 3,
+    createdBy: 'underground_oracle',
+    creatorAvatar: '💎',
+    createdAt: '6 months ago',
+    memberCount: 423,
+    isCollaborative: true
   },
   'hip_hop_classics': {
     id: 'hip_hop_classics',
@@ -78,7 +108,12 @@ export const playlists: Record<string, Playlist> = {
     description: 'Essential tracks that defined the culture and shaped the genre',
     icon: '🎤',
     color: '#ffd93d',
-    trackCount: 3
+    trackCount: 3,
+    createdBy: 'beats_historian',
+    creatorAvatar: '🎤',
+    createdAt: '4 months ago',
+    memberCount: 1876,
+    isCollaborative: true
   }
 };
 

@@ -8,7 +8,7 @@ tailwind.config = {
           cyan: '#00ffff',
           lime: '#00ff00',
           orange: '#ff8800',
-          purple: '#8000ff'
+          blue90s: '#0099ff'
         },
         windows: {
           gray: '#c0c0c0',

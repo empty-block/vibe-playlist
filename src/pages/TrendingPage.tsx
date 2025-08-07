@@ -74,7 +74,7 @@ const TrendingPage: Component = () => {
 
   const getChangeColor = (change: 'up' | 'down' | 'same') => {
     switch (change) {
-      case 'up': return 'text-purple-700';
+      case 'up': return 'text-blue-700';
       case 'down': return 'text-red-600';
       case 'same': return 'text-gray-500';
     }
