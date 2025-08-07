@@ -1,5 +1,7 @@
 import { Component, createSignal, For, Show, createMemo } from 'solid-js';
+import { useParams } from '@solidjs/router';
 import { Track } from '../stores/playlistStore';
+import { currentUser } from '../stores/authStore';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
@@ -16,115 +18,169 @@ interface UserProfile {
 }
 
 const ProfilePage: Component = () => {
+  const params = useParams();
   const [currentTab, setCurrentTab] = createSignal<'shared' | 'liked' | 'replied'>('shared');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
   
+  // Get the username from URL params, or use current user if none specified
+  const username = () => params.username || currentUser().username;
+  const isCurrentUser = () => !params.username || params.username === currentUser().username;
+  
   // Mock user profile data - in real app this would come from a store/API
-  const userProfile: UserProfile = {
-    username: 'grunge_kid_92',
-    avatar: '🎸',
-    bio: 'Seattle sound specialist • 90s grunge enthusiast • Vinyl collector',
-    joinDate: 'March 1995',
-    songsCount: 47,
-    topArtists: [
-      { name: 'Nirvana', plays: 1247, medal: '🥇' },
-      { name: 'Pearl Jam', plays: 892, medal: '🥈' },
-      { name: 'Soundgarden', plays: 654, medal: '🥉' }
-    ],
-    sharedTracks: [
-      {
-        id: '1',
-        title: 'Smells Like Teen Spirit',
-        artist: 'Nirvana',
-        duration: '5:01',
-        videoId: 'hTWKbfoikeg',
-        thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
-        addedBy: 'grunge_kid_92',
-        userAvatar: '🎸',
-        timestamp: '2 min ago',
-        comment: 'This song changed everything for me in high school. Peak 90s energy! 🔥',
-        likes: 25,
-        replies: 8,
-        recasts: 12
-      },
-      {
-        id: '2',
-        title: 'Black',
-        artist: 'Pearl Jam',
-        duration: '5:43',
-        videoId: 'cs-XZ_dN4Hc',
-        thumbnail: 'https://img.youtube.com/vi/cs-XZ_dN4Hc/mqdefault.jpg',
-        addedBy: 'grunge_kid_92',
-        userAvatar: '🎸',
-        timestamp: '1 day ago',
-        comment: 'Eddie Vedder\'s voice on this track... pure emotion. Seattle forever.',
-        likes: 36,
-        replies: 11,
-        recasts: 18
+  const getUserProfile = (username: string): UserProfile => {
+    // If it's the current user, return their profile
+    if (username === currentUser().username) {
+      return {
+        username: currentUser().username,
+        avatar: currentUser().avatar,
+        bio: 'Music lover • VIBES 95 enthusiast • Always discovering new tracks',
+        joinDate: 'January 1995',
+        songsCount: 23,
+        topArtists: [
+          { name: 'Radiohead', plays: 892, medal: '🥇' },
+          { name: 'Nirvana', plays: 567, medal: '🥈' },
+          { name: 'Pearl Jam', plays: 423, medal: '🥉' }
+        ],
+        sharedTracks: [
+          {
+            id: '1',
+            title: 'Fake Plastic Trees',
+            artist: 'Radiohead',
+            duration: '4:50',
+            source: 'youtube',
+            sourceId: 'n5h0qHwNrHk',
+            videoId: 'n5h0qHwNrHk',
+            thumbnail: 'https://img.youtube.com/vi/n5h0qHwNrHk/mqdefault.jpg',
+            addedBy: currentUser().username,
+            userAvatar: currentUser().avatar,
+            timestamp: '1 hour ago',
+            comment: 'This song hits different every time I listen to it.',
+            likes: 15,
+            replies: 4,
+            recasts: 7
+          }
+        ],
+        likedTracks: [],
+        repliedTracks: []
+      };
+    }
+    
+    // Mock profiles for other users
+    const mockProfiles: Record<string, UserProfile> = {
+      'grunge_kid_92': {
+        username: 'grunge_kid_92',
+        avatar: '🎸',
+        bio: 'Seattle sound specialist • 90s grunge enthusiast • Vinyl collector',
+        joinDate: 'March 1995',
+        songsCount: 47,
+        topArtists: [
+          { name: 'Nirvana', plays: 1247, medal: '🥇' },
+          { name: 'Pearl Jam', plays: 892, medal: '🥈' },
+          { name: 'Soundgarden', plays: 654, medal: '🥉' }
+        ],
+        sharedTracks: [
+          {
+            id: '1',
+            title: 'Smells Like Teen Spirit',
+            artist: 'Nirvana',
+            duration: '5:01',
+            source: 'youtube',
+            sourceId: 'hTWKbfoikeg',
+            videoId: 'hTWKbfoikeg',
+            thumbnail: 'https://img.youtube.com/vi/hTWKbfoikeg/mqdefault.jpg',
+            addedBy: 'grunge_kid_92',
+            userAvatar: '🎸',
+            timestamp: '2 min ago',
+            comment: 'This song changed everything for me in high school. Peak 90s energy! 🔥',
+            likes: 25,
+            replies: 8,
+            recasts: 12
+          },
+          {
+            id: '2',
+            title: 'Black',
+            artist: 'Pearl Jam',
+            duration: '5:43',
+            source: 'youtube',
+            sourceId: 'cs-XZ_dN4Hc',
+            videoId: 'cs-XZ_dN4Hc',
+            thumbnail: 'https://img.youtube.com/vi/cs-XZ_dN4Hc/mqdefault.jpg',
+            addedBy: 'grunge_kid_92',
+            userAvatar: '🎸',
+            timestamp: '1 day ago',
+            comment: 'Eddie Vedder\'s voice on this track... pure emotion. Seattle forever.',
+            likes: 36,
+            replies: 11,
+            recasts: 18
+          }
+        ],
+        likedTracks: [
+          {
+            id: '3',
+            title: 'Creep',
+            artist: 'Radiohead',
+            duration: '3:58',
+            source: 'youtube',
+            sourceId: 'XFkzRNyygfk',
+            videoId: 'XFkzRNyygfk',
+            thumbnail: 'https://img.youtube.com/vi/XFkzRNyygfk/mqdefault.jpg',
+            addedBy: 'radiohead_stan',
+            userAvatar: '👁️',
+            timestamp: '8 min ago',
+            comment: 'Before OK Computer, there was this masterpiece. Still hits different.',
+            likes: 29,
+            replies: 12,
+            recasts: 15
+          }
+        ],
+        repliedTracks: [
+          {
+            id: '4',
+            title: 'Blue Monday',
+            artist: 'New Order',
+            duration: '7:29',
+            source: 'youtube',
+            sourceId: 'FYH8DsU2WCk',
+            videoId: 'FYH8DsU2WCk',
+            thumbnail: 'https://img.youtube.com/vi/FYH8DsU2WCk/mqdefault.jpg',
+            addedBy: 'synth_master',
+            userAvatar: '🎹',
+            timestamp: '3 min ago',
+            comment: 'The bassline that launched a thousand dancefloors',
+            likes: 42,
+            replies: 7,
+            recasts: 15
+          }
+        ]
       }
-    ],
-    likedTracks: [
-      {
-        id: '3',
-        title: 'Creep',
-        artist: 'Radiohead',
-        duration: '3:58',
-        videoId: 'XFkzRNyygfk',
-        thumbnail: 'https://img.youtube.com/vi/XFkzRNyygfk/mqdefault.jpg',
-        addedBy: 'radiohead_stan',
-        userAvatar: '👁️',
-        timestamp: '8 min ago',
-        comment: 'Before OK Computer, there was this masterpiece. Still hits different.',
-        likes: 29,
-        replies: 12,
-        recasts: 15
-      },
-      {
-        id: '4',
-        title: 'Midnight City',
-        artist: 'M83',
-        duration: '4:03',
-        videoId: 'dX3k_QDnzHE',
-        thumbnail: 'https://img.youtube.com/vi/dX3k_QDnzHE/mqdefault.jpg',
-        addedBy: 'night_owl',
-        userAvatar: '🌃',
-        timestamp: '1 hour ago',
-        comment: 'Perfect for late night drives 🌙',
-        likes: 28,
-        replies: 6,
-        recasts: 10
-      }
-    ],
-    repliedTracks: [
-      {
-        id: '5',
-        title: 'Blue Monday',
-        artist: 'New Order',
-        duration: '7:29',
-        videoId: 'FYH8DsU2WCk',
-        thumbnail: 'https://img.youtube.com/vi/FYH8DsU2WCk/mqdefault.jpg',
-        addedBy: 'synth_master',
-        userAvatar: '🎹',
-        timestamp: '3 min ago',
-        comment: 'The bassline that launched a thousand dancefloors',
-        likes: 42,
-        replies: 7,
-        recasts: 15
-      }
-    ]
+    };
+    
+    return mockProfiles[username] || {
+      username,
+      avatar: '👤',
+      bio: 'Music enthusiast on VIBES 95',
+      joinDate: 'Recently',
+      songsCount: 0,
+      topArtists: [],
+      sharedTracks: [],
+      likedTracks: [],
+      repliedTracks: []
+    };
   };
+  
+  const userProfile = () => getUserProfile(username());
 
   const getCurrentTracks = createMemo(() => {
     let tracks;
     switch (currentTab()) {
       case 'shared': 
-        tracks = userProfile.sharedTracks;
+        tracks = userProfile().sharedTracks;
         break;
       case 'liked': 
-        tracks = userProfile.likedTracks;
+        tracks = userProfile().likedTracks;
         break;
       case 'replied': 
-        tracks = userProfile.repliedTracks;
+        tracks = userProfile().repliedTracks;
         break;
       default: 
         tracks = [];
@@ -164,9 +220,9 @@ const ProfilePage: Component = () => {
 
   const getTabTitle = () => {
     switch (currentTab()) {
-      case 'shared': return `Songs Added by ${userProfile.username}`;
-      case 'liked': return `Tracks Liked by ${userProfile.username}`;
-      case 'replied': return `Tracks Replied to by ${userProfile.username}`;
+      case 'shared': return `Songs Added by ${userProfile().username}`;
+      case 'liked': return `Tracks Liked by ${userProfile().username}`;
+      case 'replied': return `Tracks Replied to by ${userProfile().username}`;
       default: return '';
     }
   };
@@ -176,24 +232,26 @@ const ProfilePage: Component = () => {
       {/* Profile Header */}
       <div class="win95-panel p-6 mb-6">
         <div class="flex items-center gap-6">
-          <div class="text-6xl">{userProfile.avatar}</div>
+          <div class="text-6xl">{userProfile().avatar}</div>
           <div class="flex-1">
-            <h2 class="text-3xl font-bold text-black mb-2">{userProfile.username}</h2>
-            <p class="text-gray-600 mb-4">{userProfile.bio}</p>
+            <h2 class="text-3xl font-bold text-black mb-2">{userProfile().username}</h2>
+            <p class="text-gray-600 mb-4">{userProfile().bio}</p>
             <div class="flex gap-6">
               <div class="text-center">
-                <div class="text-2xl font-bold text-black">{userProfile.songsCount}</div>
+                <div class="text-2xl font-bold text-black">{userProfile().songsCount}</div>
                 <div class="text-sm text-gray-600">Songs Added</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-black">{userProfile.joinDate}</div>
+                <div class="text-2xl font-bold text-black">{userProfile().joinDate}</div>
                 <div class="text-sm text-gray-600">Member Since</div>
               </div>
             </div>
             <div class="flex gap-2 mt-4">
-              <button class="win95-button px-4 py-2 font-bold">
-                <i class="fas fa-user-plus mr-2"></i>Follow
-              </button>
+              <Show when={!isCurrentUser()}>
+                <button class="win95-button px-4 py-2 font-bold">
+                  <i class="fas fa-user-plus mr-2"></i>Follow
+                </button>
+              </Show>
               <button class="win95-button px-4 py-2">
                 <i class="fas fa-share mr-2"></i>Share
               </button>
@@ -203,22 +261,24 @@ const ProfilePage: Component = () => {
       </div>
 
       {/* Top Artists Section */}
-      <div class="win95-panel p-6 mb-6">
-        <h3 class="text-lg font-bold text-black mb-4 flex items-center">
-          <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
-        </h3>
-        <div class="flex gap-4">
-          <For each={userProfile.topArtists}>
-            {(artist) => (
-              <div class="win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
-                <div class="text-3xl mb-3">{artist.medal}</div>
-                <h4 class="font-bold text-black text-sm mb-1">{artist.name}</h4>
-                <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
-              </div>
-            )}
-          </For>
+      <Show when={userProfile().topArtists.length > 0}>
+        <div class="win95-panel p-6 mb-6">
+          <h3 class="text-lg font-bold text-black mb-4 flex items-center">
+            <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
+          </h3>
+          <div class="flex gap-4">
+            <For each={userProfile().topArtists}>
+              {(artist) => (
+                <div class="win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
+                  <div class="text-3xl mb-3">{artist.medal}</div>
+                  <h4 class="font-bold text-black text-sm mb-1">{artist.name}</h4>
+                  <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
+                </div>
+              )}
+            </For>
+          </div>
         </div>
-      </div>
+      </Show>
       
       {/* Profile Tabs */}
       <div class="win95-panel p-0 mb-6">
@@ -229,7 +289,7 @@ const ProfilePage: Component = () => {
             }`}
             onClick={() => setCurrentTab('shared')}
           >
-            <i class="fas fa-music mr-2"></i>Songs Shared ({userProfile.sharedTracks.length})
+            <i class="fas fa-music mr-2"></i>Songs Shared ({userProfile().sharedTracks.length})
           </button>
           <button
             class={`px-4 py-2 border-r border-gray-400 text-black ${
@@ -237,7 +297,7 @@ const ProfilePage: Component = () => {
             }`}
             onClick={() => setCurrentTab('liked')}
           >
-            <i class="fas fa-heart mr-2"></i>Liked Tracks ({userProfile.likedTracks.length})
+            <i class="fas fa-heart mr-2"></i>Liked Tracks ({userProfile().likedTracks.length})
           </button>
           <button
             class={`px-4 py-2 text-black ${
@@ -245,7 +305,7 @@ const ProfilePage: Component = () => {
             }`}
             onClick={() => setCurrentTab('replied')}
           >
-            <i class="fas fa-comment mr-2"></i>Replied To ({userProfile.repliedTracks.length})
+            <i class="fas fa-comment mr-2"></i>Replied To ({userProfile().repliedTracks.length})
           </button>
         </div>
       </div>

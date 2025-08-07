@@ -2,6 +2,10 @@ import { Component, Show, createEffect, createSignal, onMount, onCleanup } from 
 import { currentTrack, isPlaying, setIsPlaying } from '../stores/playlistStore';
 import { spotifyAccessToken } from '../stores/authStore';
 
+interface SpotifyPlayerProps {
+  isCompact?: () => boolean;
+}
+
 declare global {
   interface Window {
     Spotify: any;
@@ -11,7 +15,7 @@ declare global {
   }
 }
 
-const SpotifyPlayer: Component = () => {
+const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
   let player: any;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
@@ -173,12 +177,53 @@ const SpotifyPlayer: Component = () => {
     }
   };
   
+  const isCompact = () => props.isCompact?.() ?? false;
+
   return (
     <Show when={currentTrack() && currentTrack()?.source === 'spotify'}>
-      <div class="w-80 border-l-2 border-gray-400 bg-gray-200 flex flex-col">
-        {/* Player Header */}
-        <div class="windows-titlebar p-2 flex justify-between items-center">
-          <span><i class="fab fa-spotify mr-2 text-green-500"></i>Spotify Player</span>
+      <Show when={!isCompact()} fallback={
+        /* Horizontal Compact Layout */
+        <div class="h-full bg-gray-200 flex items-center px-4 gap-4">
+          {/* Spotify Icon */}
+          <div class="flex-shrink-0">
+            <div class="bg-gradient-to-br from-green-900 to-black rounded p-3 w-24 h-24 flex items-center justify-center">
+              <i class="fab fa-spotify text-green-400 text-4xl"></i>
+            </div>
+          </div>
+          
+          {/* Track Info */}
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-black text-sm truncate">
+              {currentTrack()?.title}
+            </h3>
+            <p class="text-gray-600 text-xs truncate">{currentTrack()?.artist}</p>
+            <p class="text-xs text-gray-500 truncate">
+              {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
+            </p>
+          </div>
+          
+          {/* Play Controls */}
+          <div class="flex items-center gap-2">
+            <button 
+              onClick={togglePlay}
+              class="win95-button w-12 h-12 flex items-center justify-center text-lg"
+            >
+              <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
+            </button>
+          </div>
+          
+          {/* Track Stats */}
+          <div class="flex items-center gap-3 text-xs text-gray-600">
+            <span><i class="fas fa-heart text-red-500"></i> {currentTrack()?.likes}</span>
+            <span><i class="fas fa-comment"></i> {currentTrack()?.replies}</span>
+          </div>
+        </div>
+      }>
+        {/* Vertical Desktop Layout */}
+        <div class="w-full h-full bg-gray-200 flex flex-col">
+          {/* Player Header */}
+          <div class="windows-titlebar p-2 flex justify-between items-center">
+            <span><i class="fab fa-spotify mr-2 text-green-500"></i>Spotify Player</span>
           <div class="flex gap-1">
             <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>
             <button class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
@@ -272,6 +317,7 @@ const SpotifyPlayer: Component = () => {
           </div>
         </div>
       </div>
+      </Show>
     </Show>
   );
 };

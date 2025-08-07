@@ -1,6 +1,13 @@
 import { createSignal } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 
+// Current user state (mock for now - would come from Farcaster in real app)
+export const [currentUser, setCurrentUser] = createSignal({
+  username: 'my_vibes_95',
+  avatar: '🎵',
+  displayName: 'My VIBES 95'
+});
+
 // Spotify authentication state
 export const [isSpotifyAuthenticated, setIsSpotifyAuthenticated] = createSignal(false);
 export const [spotifyAccessToken, setSpotifyAccessToken] = createSignal<string | null>(null);

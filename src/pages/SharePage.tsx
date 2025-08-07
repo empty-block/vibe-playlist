@@ -290,10 +290,11 @@ const SharePage: Component = () => {
                       setPlaylistFilter('all');
                       setPlaylistSort('recent');
                     }}
-                    class="win95-button px-2 py-1 text-xs"
+                    class="win95-button px-2 py-1 text-xs whitespace-nowrap"
                   >
                     <i class="fas fa-times mr-1"></i>
-                    Clear Filters
+                    <span class="hidden sm:inline">Clear Filters</span>
+                    <span class="sm:hidden">Clear</span>
                   </button>
                 )}
               </div>

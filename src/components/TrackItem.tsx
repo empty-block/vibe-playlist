@@ -1,10 +1,21 @@
-import { Component, createSignal, Show } from 'solid-js';
+import { Component, createSignal, Show, createMemo, For } from 'solid-js';
+import { A } from '@solidjs/router';
 import { Track, currentTrack } from '../stores/playlistStore';
 import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../stores/authStore';
 
 interface TrackItemProps {
   track: Track;
   onPlay: () => void;
+}
+
+interface Reply {
+  id: string;
+  username: string;
+  avatar: string;
+  content: string;
+  timestamp: string;
+  likes: number;
+  isLiked?: boolean;
 }
 
 const TrackItem: Component<TrackItemProps> = (props) => {
@@ -21,6 +32,8 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   };
   const [likes, setLikes] = createSignal(props.track.likes);
   const [hasLiked, setHasLiked] = createSignal(false);
+  const [showReplies, setShowReplies] = createSignal(false);
+  const [replySort, setReplySort] = createSignal<'recent' | 'likes'>('recent');
   
   // Source badge configuration
   const getSourceInfo = (source: string) => {
@@ -47,6 +60,64 @@ const TrackItem: Component<TrackItemProps> = (props) => {
     }
   };
   
+  const handleRepliesClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    setShowReplies(!showReplies());
+  };
+
+  // Mock replies data - in real app this would come from store/API
+  const mockReplies: Reply[] = [
+    {
+      id: '1',
+      username: 'grunge_fan_93',
+      avatar: '🎸',
+      content: 'This song literally defined my teenage years! Still gives me chills every time. 🔥',
+      timestamp: '5 min ago',
+      likes: 12,
+      isLiked: false
+    },
+    {
+      id: '2', 
+      username: 'radiohead_stan',
+      avatar: '👁️',
+      content: 'Agreed! This was before they went all experimental. Pure raw emotion.',
+      timestamp: '8 min ago',
+      likes: 8,
+      isLiked: true
+    },
+    {
+      id: '3',
+      username: 'music_lover_95',
+      avatar: '🌟',
+      content: 'The guitar tone on this is INSANE. Kurt knew how to make a Mustang sing! 🎸✨',
+      timestamp: '12 min ago',
+      likes: 5,
+      isLiked: false
+    }
+  ];
+
+  const sortedReplies = createMemo(() => {
+    const sorted = [...mockReplies].sort((a, b) => {
+      if (replySort() === 'likes') {
+        return b.likes - a.likes;
+      } else {
+        // Sort by recent - parse timestamp
+        const getTimestamp = (timestamp: string) => {
+          const match = timestamp.match(/(\d+)\s*(min|hour|day)/);
+          if (!match) return 0;
+          const value = parseInt(match[1]);
+          const unit = match[2];
+          if (unit === 'min') return value;
+          if (unit === 'hour') return value * 60;
+          if (unit === 'day') return value * 1440;
+          return 0;
+        };
+        return getTimestamp(a.timestamp) - getTimestamp(b.timestamp);
+      }
+    });
+    return sorted;
+  });
+  
   const handleClick = () => {
     if (isPlayable()) {
       props.onPlay();
@@ -70,18 +141,15 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <span class="text-sm text-gray-500">Shared by</span>
-              <button 
+              <A 
+                href={`/profile/${props.track.addedBy}`}
                 class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // TODO: Navigate to user profile
-                  console.log('Navigate to profile:', props.track.addedBy);
-                }}
+                onClick={(e) => e.stopPropagation()}
                 title={`View ${props.track.addedBy}'s profile`}
               >
                 <span class="text-xl">{props.track.userAvatar}</span>
                 <span class="text-base text-black hover:text-blue-700">{props.track.addedBy}</span>
-              </button>
+              </A>
             </div>
             <div class="flex items-center gap-2 text-sm text-gray-500">
               <span>{props.track.timestamp}</span>
@@ -148,7 +216,10 @@ const TrackItem: Component<TrackItemProps> = (props) => {
               <span class="font-medium">{props.track.recasts}</span>
               <span class="text-xs">recasts</span>
             </button>
-            <button class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-blue-600 hover:bg-blue-50">
+            <button 
+              class="flex items-center gap-1 px-2 py-1 rounded-lg transition-all duration-200 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+              onClick={handleRepliesClick}
+            >
               <i class="fas fa-comment"></i>
               <span class="font-medium">{props.track.replies}</span>
               <span class="text-xs">replies</span>
@@ -158,6 +229,66 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           </div>
         </div>
       </div>
+      
+      {/* Replies Section */}
+      <Show when={showReplies()}>
+        <div class="mt-4 border-t border-gray-300 pt-4">
+          <div class="mb-3 flex items-center justify-between">
+            <h4 class="text-sm font-bold text-black">Replies ({mockReplies.length})</h4>
+            <select 
+              class="win95-panel px-2 py-1 text-xs font-bold text-black"
+              value={replySort()}
+              onChange={(e) => setReplySort(e.currentTarget.value as 'recent' | 'likes')}
+            >
+              <option value="recent">📅 Most Recent</option>
+              <option value="likes">❤️ Most Liked</option>
+            </select>
+          </div>
+          
+          <div class="space-y-3 max-h-80 overflow-y-auto">
+            <For each={sortedReplies()}>
+              {(reply) => (
+                <div class="win95-button p-3 bg-gray-50">
+                  <div class="flex items-start gap-2">
+                    <span class="text-lg">{reply.avatar}</span>
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-1">
+                        <A 
+                          href={`/profile/${reply.username}`}
+                          class="text-sm font-bold text-black hover:text-blue-700"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {reply.username}
+                        </A>
+                        <span class="text-xs text-gray-500">• {reply.timestamp}</span>
+                      </div>
+                      <p class="text-sm text-gray-700">{reply.content}</p>
+                      <div class="flex gap-3 mt-2 text-xs">
+                        <button 
+                          class={`flex items-center gap-1 ${
+                            reply.isLiked ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i class={reply.isLiked ? 'fas fa-heart' : 'far fa-heart'}></i>
+                          <span>{reply.likes}</span>
+                        </button>
+                        <button 
+                          class="flex items-center gap-1 text-gray-600 hover:text-blue-600"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <i class="fas fa-reply"></i>
+                          Reply
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </For>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 };

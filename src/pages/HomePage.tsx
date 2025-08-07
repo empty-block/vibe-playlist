@@ -1,14 +1,12 @@
 import { Component, For, createSignal, createMemo } from 'solid-js';
 import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
-import ChatBot from '../components/ChatBot';
 import PlaylistHeader from '../components/PlaylistHeader';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
 const HomePage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
-  const [showChatBot, setShowChatBot] = createSignal(false);
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
 
   const handleCreatorClick = (creatorUsername: string) => {
@@ -63,60 +61,48 @@ const HomePage: Component = () => {
   });
   
   return (
-    <div class="flex h-full">
-      {/* ChatBot Sidebar */}
-      <ChatBot 
-        isVisible={showChatBot()} 
-        onToggle={() => setShowChatBot(false)}
-      />
-      
-      {/* Main Content */}
-      <div class="flex-1 p-4">
-        <div class="win95-panel h-full p-4 overflow-hidden flex flex-col">
+    <div class="p-2 md:p-4">
+      <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
           {/* Search and Tools Bar */}
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-gray-500">Created by</span>
-              <button 
-                class="flex items-center gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-2 py-1 -ml-2"
-                onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
-                title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
-              >
-                <span class="text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
-                <span class="text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
-              </button>
-              <span class="text-gray-400">•</span>
-              <span class="text-sm text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
-              {playlists[currentPlaylistId()].isCollaborative && (
-                <>
-                  <span class="text-gray-400">•</span>
-                  <span class="text-sm text-gray-500">
-                    <i class="fas fa-users mr-1"></i>
-                    {playlists[currentPlaylistId()].memberCount} members
-                  </span>
-                </>
-              )}
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs sm:text-sm text-gray-500">Created by</span>
+                <button 
+                  class="flex items-center gap-1 sm:gap-2 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 rounded-lg px-1 sm:px-2 py-1"
+                  onClick={() => handleCreatorClick(playlists[currentPlaylistId()].createdBy)}
+                  title={`View ${playlists[currentPlaylistId()].createdBy}'s profile`}
+                >
+                  <span class="text-lg sm:text-xl">{playlists[currentPlaylistId()].creatorAvatar}</span>
+                  <span class="text-sm sm:text-base text-black hover:text-blue-700 font-bold">{playlists[currentPlaylistId()].createdBy}</span>
+                </button>
+              </div>
+              <div class="flex items-center gap-2 text-xs sm:text-sm">
+                <span class="text-gray-400 hidden sm:inline">•</span>
+                <span class="text-gray-500">{playlists[currentPlaylistId()].createdAt}</span>
+                {playlists[currentPlaylistId()].isCollaborative && (
+                  <>
+                    <span class="text-gray-400">•</span>
+                    <span class="text-gray-500">
+                      <i class="fas fa-users mr-1"></i>
+                      <span class="hidden sm:inline">{playlists[currentPlaylistId()].memberCount} members</span>
+                      <span class="sm:hidden">{playlists[currentPlaylistId()].memberCount}</span>
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <input
                 type="text"
-                placeholder="Search tracks in this playlist..."
+                placeholder="Search tracks..."
                 value={searchQuery()}
                 onInput={(e) => setSearchQuery(e.currentTarget.value)}
-                class="win95-panel px-3 py-1 text-sm w-64"
+                class="win95-panel px-2 sm:px-3 py-1 text-xs sm:text-sm flex-1 md:flex-initial md:w-48 lg:w-64"
               />
-              <button class="win95-button px-3 py-1">
-                <i class="fas fa-search"></i>
+              <button class="win95-button px-2 sm:px-3 py-1">
+                <i class="fas fa-search text-xs sm:text-sm"></i>
               </button>
-              {!showChatBot() && (
-                <button
-                  onClick={() => setShowChatBot(true)}
-                  class="win95-button px-3 py-1 text-black font-bold text-sm"
-                  title="Show DJ Bot 95"
-                >
-                  <i class="fas fa-robot mr-1"></i>🤖 DJ Bot
-                </button>
-              )}
             </div>
           </div>
 
@@ -127,13 +113,13 @@ const HomePage: Component = () => {
           />
           
           {/* Sort Options */}
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-bold text-black">Sort by:</span>
+              <span class="text-xs sm:text-sm font-bold text-black">Sort by:</span>
               <select
                 value={sortBy()}
                 onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
-                class="win95-panel px-2 py-1 text-sm font-bold text-black"
+                class="win95-panel px-1 sm:px-2 py-1 text-xs sm:text-sm font-bold text-black"
                 title="Sort tracks"
               >
                 <option value="recent">📅 Most Recent</option>
@@ -163,7 +149,6 @@ const HomePage: Component = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
 
