@@ -169,6 +169,77 @@ VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:3001  # For dev without YouTube
 - YouTube embedding should work normally with proper domain
 - Consider rate limiting and API key security for production Spotify integration
 
+## 🧩 Component Architecture & DRY Principles
+
+### Reusable Social Components
+
+The app follows a **DRY (Don't Repeat Yourself) principle** to eliminate duplicate code and ensure consistency. When building UI, always check if a reusable component exists before creating new ones.
+
+#### Social Component Library (`src/components/social/`)
+
+**`SocialStats.tsx`** - Unified display for likes/recasts/replies
+```typescript
+// Consistent stats display across all contexts
+<SocialStats
+  likes={track.likes}
+  recasts={track.recasts} 
+  replies={track.replies}
+  size="sm|md|lg"
+  showLabels={true|false}
+  interactive={true}  // Makes buttons clickable
+  onLikeClick={() => handleLike()}
+  onRepliesClick={() => showReplies()}
+/>
+```
+
+**`SocialActions.tsx`** - Reusable action buttons
+```typescript
+// Flexible button component with multiple variants
+<SocialActions
+  onLike={() => likeTrack()}
+  onAdd={() => addToPlaylist()}
+  onShare={() => shareTrack()}
+  size="sm|md|lg"
+  variant="buttons|links"  // Win95 buttons or simple links
+/>
+```
+
+**`ReplyItem.tsx`** - Standardized reply formatting
+```typescript
+// Consistent reply display everywhere
+<ReplyItem
+  reply={replyData}
+  variant="default|compact|modal"  // Different contexts
+  onLike={(id) => likeReply(id)}
+  onReply={(id) => replyTo(id)}
+/>
+```
+
+#### Design Principles
+
+1. **Component First**: Before creating duplicate UI, check if a reusable component exists
+2. **Variant Support**: Components support multiple visual variants for different contexts
+3. **Flexible Props**: Components accept optional handlers for different interaction patterns
+4. **Consistent Naming**: All social interactions follow same prop patterns (`onLikeClick`, `onReplyClick`, etc.)
+5. **Mobile-First**: All components are responsive and touch-friendly by default
+
+#### Usage Guidelines
+
+- **DO**: Use existing social components for likes, replies, shares across the app
+- **DO**: Add variant props when the same component needs different styling
+- **DO**: Make components flexible with optional click handlers
+- **DON'T**: Duplicate social UI patterns - extend existing components instead
+- **DON'T**: Create component variants unless there's a clear use case difference
+
+#### When to Create New Components
+
+Create new reusable components when:
+- The same UI pattern appears 3+ times
+- The pattern has clear variants (desktop vs mobile, large vs small)
+- The component encapsulates complex logic that shouldn't be duplicated
+
+Keep components straightforward - prefer simple, focused components over complex ones with many responsibilities.
+
 ## 🎨 UI/UX Features & Design Patterns
 
 ### HomePage (Main Feed)

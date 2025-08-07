@@ -84,6 +84,22 @@ bun run dev
 - **Audio**: YouTube IFrame API + Spotify Web Playback SDK
 - **Backend**: Farcaster protocol for social features
 - **Deployment**: Cloudflare Pages
+- **Component System**: Reusable social components following DRY principles
+
+### Component Architecture
+The app follows a **DRY (Don't Repeat Yourself) principle** with reusable social components:
+
+- **`SocialStats`**: Consistent likes/recasts/replies display across all contexts
+- **`SocialActions`**: Reusable action buttons (like, share, reply) with multiple variants
+- **`ReplyItem`**: Standardized reply formatting for desktop and mobile
+- **Responsive Player**: Single component that adapts from desktop sidebar to mobile bottom bar
+- **Social Modal**: Mobile-optimized overlay for full social experience in compact mode
+
+This architecture ensures:
+✅ **Consistency** - Same look/feel everywhere
+✅ **Maintainability** - Change once, update everywhere  
+✅ **Flexibility** - Components adapt to different contexts
+✅ **Mobile-first** - Responsive design with touch-friendly interactions
 
 ### Development Notes
 ⚠️ **Important**: There are specific setup quirks for YouTube/Spotify integration documented in [`CLAUDE.md`](./CLAUDE.md) - essential reading for developers.
