@@ -1,8 +1,9 @@
 import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack } from '../stores/playlistStore';
+import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
 import TrackItem from '../components/TrackItem';
 import PlaylistHeader from '../components/PlaylistHeader';
+import DiscoveryBar from '../components/DiscoveryBar';
 import { staggeredFadeIn } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
@@ -77,6 +78,24 @@ const HomePage: Component = () => {
     // navigate(`/share?playlist=${currentPlaylistId()}`);
   };
 
+  const handlePlaylistChange = (playlistId: string) => {
+    console.log('Switching to playlist:', playlistId);
+    setCurrentPlaylistId(playlistId);
+    
+    // Auto-start playing the first track from the new playlist
+    const newPlaylistTracks = playlistTracks[playlistId] || [];
+    if (newPlaylistTracks.length > 0) {
+      const firstTrack = newPlaylistTracks[0];
+      console.log('Auto-playing first track:', firstTrack.title);
+      setCurrentTrack(firstTrack);
+      setIsPlaying(true);
+    } else {
+      // Clear current track if playlist is empty
+      setCurrentTrack(null);
+      setIsPlaying(false);
+    }
+  };
+
   // Animate track items when they change
   createEffect(() => {
     const tracks = filteredTracks();
@@ -98,6 +117,12 @@ const HomePage: Component = () => {
   return (
     <div class="p-2 md:p-4">
       <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
+          {/* Discovery Bar */}
+          <DiscoveryBar
+            playlists={Object.values(playlists)}
+            onPlaylistClick={handlePlaylistChange}
+          />
+          
           {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 

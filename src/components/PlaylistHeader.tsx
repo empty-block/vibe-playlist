@@ -116,95 +116,117 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
     <div class="mb-4">
       {/* Playlist Cast Header - Like a Farcaster Post */}
       <div ref={headerRef!} class="win95-panel p-4 mb-4">
-        {/* Creator Info Row */}
-        <div class="flex items-start gap-3 mb-3">
-          <button 
-            class="flex-shrink-0 text-2xl hover:scale-110 transition-transform"
-            onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-            title={`View ${props.playlist.createdBy}'s profile`}
-          >
-            {props.playlist.creatorAvatar}
-          </button>
+        {/* Main Content Layout - Always two columns */}
+        <div class="flex items-start gap-4">
           
-          <div class="flex-1 min-w-0">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
+          {/* Left Section: Creator Info & Playlist Content */}
+          <div class="flex-1 min-w-0 max-w-[60%]">
+            {/* Creator Info Row */}
+            <div class="flex items-start gap-3 mb-3">
               <button 
-                class="text-left font-bold text-black hover:text-blue-700 transition-colors"
+                class="flex-shrink-0 text-2xl hover:scale-110 transition-transform"
                 onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+                title={`View ${props.playlist.createdBy}'s profile`}
               >
-                {props.playlist.createdBy}
+                {props.playlist.creatorAvatar}
               </button>
-              <span class="text-sm text-gray-500">
-                {props.playlist.createdAt}
-                {props.playlist.isCollaborative && (
-                  <>
-                    {' • '}
-                    <i class="fas fa-users mr-1"></i>
-                    {props.playlist.memberCount} members
-                  </>
-                )}
-              </span>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
+                  <button 
+                    class="text-left font-bold text-black hover:text-blue-700 transition-colors"
+                    onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+                  >
+                    {props.playlist.createdBy}
+                  </button>
+                  <span class="text-sm text-gray-500">
+                    {props.playlist.createdAt}
+                    {props.playlist.isCollaborative && (
+                      <>
+                        {' • '}
+                        <i class="fas fa-users mr-1"></i>
+                        {props.playlist.memberCount} members
+                      </>
+                    )}
+                  </span>
+                </div>
+                
+                {/* Playlist Title & Description - The "Cast Content" */}
+                <h1 class="text-xl font-bold text-black mb-2">
+                  {props.playlist.name}
+                </h1>
+                <p class="text-sm text-gray-700 leading-relaxed break-words">
+                  {props.playlist.description}
+                </p>
+              </div>
             </div>
-            
-            {/* Playlist Title & Description - The "Cast Content" */}
-            <h1 class="text-xl font-bold text-black mb-2">
-              {props.playlist.name}
-            </h1>
-            <p class="text-sm text-gray-700 leading-relaxed">
-              {props.playlist.description}
-            </p>
           </div>
-        </div>
-        
-        {/* Social Stats */}
-        <div class="mb-4">
-          <SocialStats
-            likes={playlistStats().likes}
-            recasts={playlistStats().recasts}
-            replies={playlistStats().replies}
-            size="sm"
-            showLabels={true}
-            interactive={true}
-            onLikeClick={() => console.log('Like playlist')}
-            onRepliesClick={() => console.log('View all replies')}
-            className="text-gray-500"
-          />
-        </div>
-        
-        {/* Floating Action Buttons */}
-        <div class="flex gap-3">
-          <AnimatedButton
-            onClick={() => handleReply('comment')}
-            class="win95-button px-4 py-2 text-black font-bold text-sm group relative"
-            title="Reply with a comment"
-            classList={{
-              'bg-blue-100': showReplyBox() && focusField() === 'comment'
-            }}
-            animationType="social"
-          >
-            <i class="fas fa-comment mr-2"></i>
-            <span>Reply</span>
-          </AnimatedButton>
+
+          {/* Right Section: Social Stats & Actions */}
+          <div class="flex-shrink-0 w-[35%]">
+            <div class="flex flex-col items-end gap-3">
+              {/* Action Buttons - Stack on mobile */}
+              <div class="flex flex-col gap-1 w-full">
+                <AnimatedButton
+                  onClick={() => handleReply('comment')}
+                  class="win95-button px-2 py-1 text-black font-bold text-xs group relative whitespace-nowrap w-full"
+                  title="Reply with a comment"
+                  classList={{
+                    'bg-blue-100': showReplyBox() && focusField() === 'comment'
+                  }}
+                  animationType="social"
+                >
+                  <i class="fas fa-comment mr-1"></i>
+                  <span>Reply</span>
+                </AnimatedButton>
+                
+                <AnimatedButton
+                  onClick={() => handleReply('track')}
+                  class="win95-button px-2 py-1 text-black font-bold text-xs group relative whitespace-nowrap w-full"
+                  title="Add a track to this playlist"
+                  classList={{
+                    'bg-green-100': showReplyBox() && focusField() === 'track'
+                  }}
+                  animationType="social"
+                >
+                  <i class="fas fa-music mr-1"></i>
+                  <span>Add Track</span>
+                </AnimatedButton>
+              </div>
+              
+              {/* Social Stats - Below action buttons */}
+              <div class="w-full">
+                <SocialStats
+                  likes={playlistStats().likes}
+                  recasts={playlistStats().recasts}
+                  replies={playlistStats().replies}
+                  size="sm"
+                  showLabels={true}
+                  interactive={true}
+                  onLikeClick={() => console.log('Like playlist')}
+                  onRepliesClick={() => console.log('View all replies')}
+                  className="text-gray-500 justify-start flex-col md:flex-row"
+                />
+              </div>
+            </div>
+          </div>
           
-          <AnimatedButton
-            onClick={() => handleReply('track')}
-            class="win95-button px-4 py-2 text-black font-bold text-sm group relative"
-            title="Add a track to this playlist"
-            classList={{
-              'bg-green-100': showReplyBox() && focusField() === 'track'
-            }}
-            animationType="social"
-          >
-            <i class="fas fa-music mr-2"></i>
-            <span>Add a Track</span>
-          </AnimatedButton>
         </div>
       </div>
 
       {/* Unified Reply Box */}
       <Show when={showReplyBox()}>
-        <div ref={replyBoxRef!} class="win95-panel p-4 mb-4">
-          <h3 class="text-sm font-bold text-black mb-3 flex items-center gap-2">
+        <div ref={replyBoxRef!} class="win95-panel p-4 mb-4 relative">
+          {/* Close Button */}
+          <button 
+            onClick={handleCloseReply}
+            class="absolute top-2 right-2 win95-button w-6 h-6 text-xs font-bold flex items-center justify-center hover:bg-red-100 transition-colors"
+            title="Close"
+          >
+            ×
+          </button>
+          
+          <h3 class="text-sm font-bold text-black mb-3 flex items-center gap-2 pr-8">
             <i class={focusField() === 'track' ? 'fas fa-music' : 'fas fa-reply'}></i>
             {focusField() === 'track' ? 'Add a track to' : 'Reply to'} {props.playlist.createdBy}'s playlist
           </h3>
