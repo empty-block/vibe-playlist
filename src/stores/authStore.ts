@@ -3,10 +3,23 @@ import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 
 // Current user state (mock for now - would come from Farcaster in real app)
 export const [currentUser, setCurrentUser] = createSignal({
-  username: 'my_vibes_95',
+  username: 'my_jamzy',
   avatar: '🎵',
-  displayName: 'My VIBES 95'
+  displayName: 'My JAMZY'
 });
+
+// General authentication state (mock - for demo purposes)
+// In real app this would check Farcaster authentication
+export const [isAuthenticated, setIsAuthenticated] = createSignal(
+  localStorage.getItem('demo_authenticated') === 'true'
+);
+
+// Demo function to toggle authentication for testing
+export const toggleDemoAuth = () => {
+  const newState = !isAuthenticated();
+  setIsAuthenticated(newState);
+  localStorage.setItem('demo_authenticated', newState.toString());
+};
 
 // Spotify authentication state
 export const [isSpotifyAuthenticated, setIsSpotifyAuthenticated] = createSignal(false);

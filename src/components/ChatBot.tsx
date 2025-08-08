@@ -17,7 +17,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
     {
       id: '1',
       type: 'ai',
-      message: "Hey there! I'm your AI music assistant. I can help you discover new tracks, analyze your playlist, or chat about 90s music. What would you like to do?",
+      message: "Hey there! I'm your AI music assistant. I can help you discover new tracks, analyze your playlist, or chat about music. What would you like to do?",
       timestamp: new Date()
     }
   ]);
@@ -113,7 +113,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
     <div class={`w-72 win95-panel p-4 m-2 flex flex-col ${props.isVisible === false ? 'hidden' : ''}`} style="height: calc(100vh - 4rem);">
       {/* Title Bar */}
       <div class="windows-titlebar p-2 mb-4 flex justify-between items-center">
-        <span><i class="fas fa-comment-dots mr-2"></i>VIBES Chat</span>
+        <span><i class="fas fa-comment-dots mr-2"></i>JAMZY Chat</span>
         <button 
           onClick={props.onToggle}
           class="win95-button w-6 h-4 text-xs font-bold text-black hover:bg-red-200"
@@ -145,7 +145,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
                   <div class={`rounded p-2 text-xs font-terminal ${
                     message.type === 'ai' ? 'bg-gray-200' : 'bg-blue-100'
                   }`}>
-                    <strong>{message.type === 'ai' ? 'VIBES:' : 'You:'}</strong> {message.message}
+                    <strong>{message.type === 'ai' ? 'JAMZY:' : 'You:'}</strong> {message.message}
                   </div>
                   <div class="text-xs text-gray-500 mt-1">{formatTime(message.timestamp)}</div>
                 </div>
@@ -159,7 +159,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
               <div class="text-lg">🤖</div>
               <div class="flex-1">
                 <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
-                  <strong>VIBES:</strong> <i>typing...</i>
+                  <strong>JAMZY:</strong> <i>typing...</i>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { Component, onMount } from 'solid-js';
 import { Router, Route } from '@solidjs/router';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
+import SmartHomePage from './pages/SmartHomePage';
 import DiscoverPage from './pages/DiscoverPage';
 import TrendingPage from './pages/TrendingPage';
 import SharePage from './pages/SharePage';
@@ -35,7 +36,8 @@ const App: Component = () => {
 
   return (
     <Router root={Layout}>
-      <Route path="/" component={HomePage} />
+      <Route path="/" component={SmartHomePage} />
+      <Route path="/player" component={HomePage} />
       <Route path="/home" component={HomePage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />

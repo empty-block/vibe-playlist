@@ -63,7 +63,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
     
     console.log('Initializing Spotify Web Playback SDK');
     player = new window.Spotify.Player({
-      name: 'VIBES 95 Player',
+      name: 'JAMZY Player',
       getOAuthToken: (cb: (token: string) => void) => {
         cb(token);
       },
@@ -244,7 +244,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
                 </div>
                 {deviceId() && (
                   <div class="text-xs text-center mt-1 opacity-75">
-                    Device: VIBES 95 Player
+                    Device: JAMZY Player
                   </div>
                 )}
               </div>

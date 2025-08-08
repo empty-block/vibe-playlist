@@ -1,4 +1,5 @@
-import { Component, createSignal, For, Show } from 'solid-js';
+import { Component, createSignal, For, Show, onMount } from 'solid-js';
+import { pageEnter, staggeredFadeIn, buttonHover, slideIn } from '../utils/animations';
 
 interface TrendingItem {
   id: string;
@@ -14,6 +15,37 @@ interface TrendingItem {
 const TrendingPage: Component = () => {
   const [currentCategory, setCurrentCategory] = createSignal<'playlists' | 'songs' | 'artists' | 'users'>('playlists');
   const [currentTimeframe, setCurrentTimeframe] = createSignal<'today' | 'week' | 'month' | 'all'>('today');
+  let pageRef: HTMLDivElement;
+
+  onMount(() => {
+    // Page entrance animation
+    if (pageRef) {
+      pageEnter(pageRef);
+    }
+    
+    // Animate filter buttons with slide in
+    setTimeout(() => {
+      const filterButtons = pageRef?.querySelectorAll('.filter-button');
+      if (filterButtons) {
+        Array.from(filterButtons).forEach((button, index) => {
+          setTimeout(() => slideIn.fromLeft(button as HTMLElement), index * 50);
+        });
+      }
+      
+      // Animate initial trending items
+      setTimeout(() => animateTrendingItems(), 500);
+    }, 300);
+  });
+
+  // Animate trending items when data changes
+  const animateTrendingItems = () => {
+    setTimeout(() => {
+      const trendingItems = pageRef?.querySelectorAll('.trending-item');
+      if (trendingItems) {
+        staggeredFadeIn(trendingItems);
+      }
+    }, 100);
+  };
 
   const trendingData = {
     playlists: {
@@ -82,8 +114,28 @@ const TrendingPage: Component = () => {
 
   const currentData = () => trendingData[currentCategory()][currentTimeframe()] || [];
 
+  const handleCategoryChange = (category: 'playlists' | 'songs' | 'artists' | 'users') => {
+    setCurrentCategory(category);
+    animateTrendingItems();
+  };
+
+  const handleTimeframeChange = (timeframe: 'today' | 'week' | 'month' | 'all') => {
+    setCurrentTimeframe(timeframe);
+    animateTrendingItems();
+  };
+
+  const handleButtonHover = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.enter(button);
+  };
+
+  const handleButtonLeave = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.leave(button);
+  };
+
   return (
-    <div class="p-8">
+    <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
       <div class="win95-panel p-6 mb-6">
         <h2 class="text-2xl font-bold text-black mb-4">
           <i class="fas fa-fire text-red-500 mr-2"></i>What's Trending
@@ -96,26 +148,38 @@ const TrendingPage: Component = () => {
         {/* Category filters */}
         <div class="flex gap-2">
           <button
-            class={`win95-button px-4 py-2 text-black ${currentCategory() === 'playlists' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentCategory('playlists')}
+            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'playlists' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleCategoryChange('playlists')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             🎵 Playlists
           </button>
           <button
-            class={`win95-button px-4 py-2 text-black ${currentCategory() === 'songs' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentCategory('songs')}
+            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'songs' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleCategoryChange('songs')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             🎵 Songs
           </button>
           <button
-            class={`win95-button px-4 py-2 text-black ${currentCategory() === 'artists' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentCategory('artists')}
+            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'artists' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleCategoryChange('artists')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             🎤 Artists
           </button>
           <button
-            class={`win95-button px-4 py-2 text-black ${currentCategory() === 'users' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentCategory('users')}
+            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'users' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleCategoryChange('users')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             👥 Users
           </button>
@@ -125,26 +189,38 @@ const TrendingPage: Component = () => {
         <div class="flex items-center gap-2">
           <span class="text-sm font-bold text-gray-600">Timeframe:</span>
           <button
-            class={`win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'today' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentTimeframe('today')}
+            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'today' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleTimeframeChange('today')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             Today
           </button>
           <button
-            class={`win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'week' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentTimeframe('week')}
+            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'week' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleTimeframeChange('week')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             This Week
           </button>
           <button
-            class={`win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'month' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentTimeframe('month')}
+            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'month' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleTimeframeChange('month')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             This Month
           </button>
           <button
-            class={`win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'all' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => setCurrentTimeframe('all')}
+            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'all' ? 'font-bold bg-blue-200' : ''}`}
+            onClick={() => handleTimeframeChange('all')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+            style={{ opacity: '0' }}
           >
             All Time
           </button>
@@ -155,7 +231,7 @@ const TrendingPage: Component = () => {
       <div class="space-y-4">
         <For each={currentData()}>
           {(item) => (
-            <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer transition-all">
+            <div class="trending-item win95-panel p-4 hover:bg-gray-100 cursor-pointer transition-all" style={{ opacity: '0' }}>
               <div class="flex items-center gap-4">
                 {/* Rank */}
                 <div class="flex items-center gap-2 w-16">

@@ -6,8 +6,8 @@ interface TerminalProps {
 
 const Terminal: Component<TerminalProps> = (props) => {
   const [terminalLines, setTerminalLines] = createSignal<string[]>([
-    'VIBES OS [Version 1.0.95]',
-    '(C) Copyright 1995 Vibes Corp. All rights reserved.',
+    'JAMZY OS [Version 1.0.2024]',
+    '(C) Copyright 2024 JAMZY. All rights reserved.',
     '',
     'System exited. Terminal mode activated.',
     ''
@@ -24,7 +24,7 @@ const Terminal: Component<TerminalProps> = (props) => {
   };
   
   const handleCommand = (cmd: string) => {
-    addLine(`C:\\VIBES> ${cmd}`);
+    addLine(`C:\\JAMZY> ${cmd}`);
     
     const command = cmd.toLowerCase().trim();
     
@@ -32,7 +32,7 @@ const Terminal: Component<TerminalProps> = (props) => {
       case 'help':
         addLine('Available commands:');
         addLine('  help     - Show this help message');
-        addLine('  about    - About VIBES');
+        addLine('  about    - About JAMZY');
         addLine('  clear    - Clear terminal');
         addLine('  exit     - Exit terminal');
         addLine('  play     - Resume playback');
@@ -42,7 +42,7 @@ const Terminal: Component<TerminalProps> = (props) => {
         break;
         
       case 'about':
-        addLine('VIBES 95 - Digital Mixtape Creator');
+        addLine('JAMZY - Social Music Discovery');
         addLine('Version 1.0');
         addLine('Created with pure 90s nostalgia and modern web tech');
         break;
@@ -90,7 +90,7 @@ const Terminal: Component<TerminalProps> = (props) => {
     >
       <div class="max-w-4xl mx-auto">
         <div class="mb-2 flex justify-between items-center">
-          <h2 class="text-xl">VIBES Terminal</h2>
+          <h2 class="text-xl">JAMZY Terminal</h2>
           <button 
             onClick={props.onClose}
             class="text-red-500 hover:text-red-400"
@@ -105,7 +105,7 @@ const Terminal: Component<TerminalProps> = (props) => {
           ))}
           
           <div class="flex items-center">
-            <span>C:\VIBES&gt; </span>
+            <span>C:\JAMZY&gt; </span>
             <input
               ref={inputRef!}
               type="text"

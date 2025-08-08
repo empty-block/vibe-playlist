@@ -1,9 +1,9 @@
-# VIBES 95 - Development Documentation
+# JAMZY - Development Documentation
 
 ## 🎵 Core Design Philosophy
 
 ### "Everything is a Playlist" Architecture
-VIBES 95 treats **playlists as the fundamental organizational unit** for all music content:
+JAMZY treats **playlists as the fundamental organizational unit** for all music content:
 
 - **User Profiles = Personal Playlists**: Every user's profile acts as their personal "Username's Jams" playlist
 - **Social Sharing = Playlist Creation**: When users share songs, they're creating playlist entries/contributions
@@ -88,7 +88,7 @@ This unified model simplifies the mental model - users always think "where shoul
 
 #### 7. **Spotify Web Playback SDK**
 - **Requires**: Spotify Premium account for full playback
-- **Device Registration**: Creates "VIBES 95 Player" device in user's Spotify Connect
+- **Device Registration**: Creates "JAMZY Player" device in user's Spotify Connect
 - **Script Loading**: Must be loaded before component initialization
 - **Error Handling**: Comprehensive error listeners for auth, playback, and account issues
 

@@ -12,7 +12,7 @@ const WindowsFrame: Component<WindowsFrameProps> = (props) => {
       <div class="windows-titlebar p-2 flex justify-between items-center">
         <div class="flex items-center gap-2">
           <i class="fas fa-cassette-tape"></i>
-          VIBES 95 - Digital Mixtape Creator v1.0
+          JAMZY - Social Music Discovery v1.0
         </div>
         <div class="flex gap-1">
           <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>

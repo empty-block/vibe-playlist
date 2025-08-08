@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎧 VIBES 95 - Digital Mixtape</title>
+    <title>🎧 JAMZY - Social Music Discovery</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
@@ -84,6 +84,32 @@
         
         .animate-slide-up {
             animation: slide-up 0.3s ease-out;
+        }
+        
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .animate-spin-slow {
+            animation: spin-slow 3s linear infinite;
+        }
+        
+        @keyframes scroll-left {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
+        }
+        
+        .animate-scroll-left {
+            animation: scroll-left 30s linear infinite;
         }
         
         .win95-button {

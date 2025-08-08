@@ -1,8 +1,33 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createSignal, onMount } from 'solid-js';
 import { setCurrentTrack } from '../stores/playlistStore';
+import { pageEnter, staggeredFadeIn, buttonHover, magnetic, playButtonPulse } from '../utils/animations';
 
 const DiscoverPage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
+  let pageRef: HTMLDivElement;
+
+  onMount(() => {
+    // Page entrance animation
+    if (pageRef) {
+      pageEnter(pageRef);
+    }
+    
+    // Animate sections with staggered fade-in
+    setTimeout(() => {
+      const sections = pageRef?.querySelectorAll('.discover-section');
+      if (sections) {
+        staggeredFadeIn(sections);
+      }
+      
+      // Add magnetic effect to user cards
+      const userCards = pageRef?.querySelectorAll('.user-card');
+      userCards?.forEach(card => magnetic(card as HTMLElement, 15));
+      
+      // Add magnetic effect to artist cards
+      const artistCards = pageRef?.querySelectorAll('.artist-card');
+      artistCards?.forEach(card => magnetic(card as HTMLElement, 10));
+    }, 300);
+  });
 
   const playHiddenGem = (title: string, artist: string, videoId: string) => {
     const track = {
@@ -33,8 +58,24 @@ const DiscoverPage: Component = () => {
     window.location.hash = '#profile';
   };
 
+  const handlePlayClick = (e: MouseEvent, title: string, artist: string, videoId: string) => {
+    const button = e.currentTarget as HTMLElement;
+    playButtonPulse(button);
+    setTimeout(() => playHiddenGem(title, artist, videoId), 200);
+  };
+
+  const handleButtonHover = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.enter(button);
+  };
+
+  const handleButtonLeave = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.leave(button);
+  };
+
   return (
-    <div class="p-8">
+    <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
       <div class="win95-panel p-6 mb-6">
         <div class="flex items-center justify-between mb-4">
           <div>
@@ -59,13 +100,13 @@ const DiscoverPage: Component = () => {
       </div>
       
       {/* Discover Similar Users */}
-      <div class="win95-panel p-6 mb-6">
+      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-users text-blue-600 mr-2"></i>Discover Similar Users
         </h3>
         <p class="text-sm text-gray-600 mb-4">Find users with similar music taste to yours</p>
         <div class="grid grid-cols-3 gap-4">
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">🎸</div>
               <div>
@@ -85,7 +126,7 @@ const DiscoverPage: Component = () => {
             </button>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">🎹</div>
               <div>
@@ -105,7 +146,7 @@ const DiscoverPage: Component = () => {
             </button>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">💎</div>
               <div>
@@ -128,13 +169,13 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* Discover Curators */}
-      <div class="win95-panel p-6 mb-6">
+      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-crown text-yellow-600 mr-2"></i>Discover Top Curators
         </h3>
         <p class="text-sm text-gray-600 mb-4">Music experts who consistently share amazing tracks</p>
         <div class="grid grid-cols-2 gap-4">
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🎸</div>
               <div class="flex-1">
@@ -155,7 +196,7 @@ const DiscoverPage: Component = () => {
             </button>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">💿</div>
               <div class="flex-1">
@@ -176,7 +217,7 @@ const DiscoverPage: Component = () => {
             </button>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🌈</div>
               <div class="flex-1">
@@ -197,7 +238,7 @@ const DiscoverPage: Component = () => {
             </button>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🔮</div>
               <div class="flex-1">
@@ -221,16 +262,13 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* Hidden Gems */}
-      <div class="win95-panel p-6 mb-6">
+      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-gem text-blue-600 mr-2"></i>Hidden Gems
         </h3>
         <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
         <div class="grid grid-cols-2 gap-4">
-          <div 
-            class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" 
-            onClick={() => playHiddenGem('Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}
-          >
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/P8lHLqOUvFY/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
               <div class="flex-1">
@@ -238,16 +276,18 @@ const DiscoverPage: Component = () => {
                 <p class="text-sm text-gray-600">Nirvana • Deep cut</p>
                 <div class="text-xs text-gray-500 mt-1">💎 Only 12% of fans know this one</div>
               </div>
-              <button class="win95-button px-2 py-1 text-xs">
+              <button 
+                class="win95-button px-2 py-1 text-xs"
+                onClick={(e) => handlePlayClick(e, 'Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
                 <i class="fas fa-play"></i>
               </button>
             </div>
           </div>
           
-          <div 
-            class="win95-panel p-4 hover:bg-gray-100 cursor-pointer" 
-            onClick={() => playHiddenGem('Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}
-          >
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/A8JNL6bwmls/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
               <div class="flex-1">
@@ -255,7 +295,12 @@ const DiscoverPage: Component = () => {
                 <p class="text-sm text-gray-600">New Order • Rare find</p>
                 <div class="text-xs text-gray-500 mt-1">💎 Synthwave classic</div>
               </div>
-              <button class="win95-button px-2 py-1 text-xs">
+              <button 
+                class="win95-button px-2 py-1 text-xs"
+                onClick={(e) => handlePlayClick(e, 'Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
                 <i class="fas fa-play"></i>
               </button>
             </div>
@@ -264,13 +309,13 @@ const DiscoverPage: Component = () => {
       </div>
       
       {/* Discover Artists */}
-      <div class="win95-panel p-6 mb-6">
+      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-microphone text-indigo-600 mr-2"></i>Discover Artists
         </h3>
         <p class="text-sm text-gray-600 mb-4">Explore new artists based on your taste</p>
         <div class="grid grid-cols-3 gap-4">
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=PJ" 
@@ -293,7 +338,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=SG" 
@@ -316,7 +361,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=DM" 
@@ -339,7 +384,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=RH" 
@@ -362,7 +407,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=SP" 
@@ -385,7 +430,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=PS" 

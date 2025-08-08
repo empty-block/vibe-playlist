@@ -1,12 +1,13 @@
 import { Component } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
 import { toggleChat, showChat } from '../stores/chatStore';
+import { isAuthenticated } from '../stores/authStore';
 
 const Navigation: Component = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    return location.pathname === path || (path === '/home' && location.pathname === '/');
+    return location.pathname === path || (path === '/' && location.pathname === '/') || (path === '/player' && location.pathname === '/player');
   };
   
   return (
@@ -14,11 +15,18 @@ const Navigation: Component = () => {
       <div class="flex justify-between items-center text-black text-sm font-bold">
         <div class="flex gap-4">
           <A 
-            href="/home" 
+            href="/" 
             class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer"
-            classList={{ 'bg-blue-600 text-white': isActive('/home') }}
+            classList={{ 'bg-blue-600 text-white': isActive('/') }}
           >
             <i class="fas fa-home mr-1"></i>Home
+          </A>
+          <A 
+            href="/player" 
+            class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer"
+            classList={{ 'bg-blue-600 text-white': isActive('/player') }}
+          >
+            <i class="fas fa-play mr-1"></i>Player
           </A>
           <A 
             href="/discover" 

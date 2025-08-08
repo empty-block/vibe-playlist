@@ -1,7 +1,8 @@
-import { Component, createSignal, For, Show, createMemo } from 'solid-js';
+import { Component, createSignal, For, Show, createMemo, onMount } from 'solid-js';
 import { useParams } from '@solidjs/router';
 import { Track } from '../stores/playlistStore';
 import { currentUser } from '../stores/authStore';
+import { pageEnter, staggeredFadeIn, buttonHover, slideIn, float, magnetic, counterAnimation } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
 
@@ -21,6 +22,43 @@ const ProfilePage: Component = () => {
   const params = useParams();
   const [currentTab, setCurrentTab] = createSignal<'shared' | 'liked' | 'replied'>('shared');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
+  let pageRef: HTMLDivElement;
+
+  onMount(() => {
+    // Page entrance animation
+    if (pageRef) {
+      pageEnter(pageRef);
+    }
+    
+    setTimeout(() => {
+      // Animate profile avatar with floating effect
+      const avatar = pageRef?.querySelector('.profile-avatar');
+      if (avatar) {
+        float(avatar as HTMLElement);
+      }
+      
+      // Animate stats with counter animation
+      const statsNumbers = pageRef?.querySelectorAll('.stat-number');
+      statsNumbers?.forEach((stat, index) => {
+        const targetNumber = parseInt(stat.textContent || '0');
+        if (targetNumber > 0) {
+          setTimeout(() => {
+            counterAnimation(stat as HTMLElement, 0, targetNumber);
+          }, index * 200);
+        }
+      });
+      
+      // Add magnetic effect to top artist medals
+      const medals = pageRef?.querySelectorAll('.artist-medal');
+      medals?.forEach(medal => magnetic(medal as HTMLElement, 10));
+      
+      // Animate sections
+      const sections = pageRef?.querySelectorAll('.profile-section');
+      if (sections) {
+        staggeredFadeIn(sections);
+      }
+    }, 300);
+  });
   
   // Get the username from URL params, or use current user if none specified
   const username = () => params.username || currentUser().username;
@@ -33,7 +71,7 @@ const ProfilePage: Component = () => {
       return {
         username: currentUser().username,
         avatar: currentUser().avatar,
-        bio: 'Music lover • VIBES 95 enthusiast • Always discovering new tracks',
+        bio: 'Music lover • JAMZY enthusiast • Always discovering new tracks',
         joinDate: 'January 1995',
         songsCount: 23,
         topArtists: [
@@ -158,7 +196,7 @@ const ProfilePage: Component = () => {
     return mockProfiles[username] || {
       username,
       avatar: '👤',
-      bio: 'Music enthusiast on VIBES 95',
+      bio: 'Music enthusiast on JAMZY',
       joinDate: 'Recently',
       songsCount: 0,
       topArtists: [],
@@ -227,18 +265,39 @@ const ProfilePage: Component = () => {
     }
   };
 
+  const handleTabChange = (tab: 'shared' | 'liked' | 'replied') => {
+    setCurrentTab(tab);
+    // Animate track items when switching tabs
+    setTimeout(() => {
+      const trackItems = pageRef?.querySelectorAll('.track-item');
+      if (trackItems) {
+        staggeredFadeIn(trackItems);
+      }
+    }, 100);
+  };
+
+  const handleButtonHover = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.enter(button);
+  };
+
+  const handleButtonLeave = (e: MouseEvent) => {
+    const button = e.currentTarget as HTMLElement;
+    buttonHover.leave(button);
+  };
+
   return (
-    <div class="p-8 pb-20">
+    <div ref={pageRef!} class="p-8 pb-20" style={{ opacity: '0' }}>
       {/* Profile Header */}
-      <div class="win95-panel p-6 mb-6">
+      <div class="profile-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
         <div class="flex items-center gap-6">
-          <div class="text-6xl">{userProfile().avatar}</div>
+          <div class="profile-avatar text-6xl">{userProfile().avatar}</div>
           <div class="flex-1">
             <h2 class="text-3xl font-bold text-black mb-2">{userProfile().username}</h2>
             <p class="text-gray-600 mb-4">{userProfile().bio}</p>
             <div class="flex gap-6">
               <div class="text-center">
-                <div class="text-2xl font-bold text-black">{userProfile().songsCount}</div>
+                <div class="stat-number text-2xl font-bold text-black">{userProfile().songsCount}</div>
                 <div class="text-sm text-gray-600">Songs Added</div>
               </div>
               <div class="text-center">
@@ -248,11 +307,19 @@ const ProfilePage: Component = () => {
             </div>
             <div class="flex gap-2 mt-4">
               <Show when={!isCurrentUser()}>
-                <button class="win95-button px-4 py-2 font-bold">
+                <button 
+                  class="win95-button px-4 py-2 font-bold"
+                  onMouseEnter={handleButtonHover}
+                  onMouseLeave={handleButtonLeave}
+                >
                   <i class="fas fa-user-plus mr-2"></i>Follow
                 </button>
               </Show>
-              <button class="win95-button px-4 py-2">
+              <button 
+                class="win95-button px-4 py-2"
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
                 <i class="fas fa-share mr-2"></i>Share
               </button>
             </div>
@@ -262,14 +329,14 @@ const ProfilePage: Component = () => {
 
       {/* Top Artists Section */}
       <Show when={userProfile().topArtists.length > 0}>
-        <div class="win95-panel p-6 mb-6">
+        <div class="profile-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
           <h3 class="text-lg font-bold text-black mb-4 flex items-center">
             <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
           </h3>
           <div class="flex gap-4">
             <For each={userProfile().topArtists}>
               {(artist) => (
-                <div class="win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
+                <div class="artist-medal win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
                   <div class="text-3xl mb-3">{artist.medal}</div>
                   <h4 class="font-bold text-black text-sm mb-1">{artist.name}</h4>
                   <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
@@ -281,13 +348,15 @@ const ProfilePage: Component = () => {
       </Show>
       
       {/* Profile Tabs */}
-      <div class="win95-panel p-0 mb-6">
+      <div class="profile-section win95-panel p-0 mb-6" style={{ opacity: '0' }}>
         <div class="flex border-b-2 border-gray-400">
           <button
             class={`px-4 py-2 border-r border-gray-400 text-black font-bold ${
               currentTab() === 'shared' ? 'bg-blue-200' : 'hover:bg-gray-100'
             }`}
-            onClick={() => setCurrentTab('shared')}
+            onClick={() => handleTabChange('shared')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
           >
             <i class="fas fa-music mr-2"></i>Songs Shared ({userProfile().sharedTracks.length})
           </button>
@@ -295,7 +364,9 @@ const ProfilePage: Component = () => {
             class={`px-4 py-2 border-r border-gray-400 text-black ${
               currentTab() === 'liked' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-100'
             }`}
-            onClick={() => setCurrentTab('liked')}
+            onClick={() => handleTabChange('liked')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
           >
             <i class="fas fa-heart mr-2"></i>Liked Tracks ({userProfile().likedTracks.length})
           </button>
@@ -303,7 +374,9 @@ const ProfilePage: Component = () => {
             class={`px-4 py-2 text-black ${
               currentTab() === 'replied' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-100'
             }`}
-            onClick={() => setCurrentTab('replied')}
+            onClick={() => handleTabChange('replied')}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
           >
             <i class="fas fa-comment mr-2"></i>Replied To ({userProfile().repliedTracks.length})
           </button>
@@ -311,7 +384,7 @@ const ProfilePage: Component = () => {
       </div>
 
       {/* Tab Content */}
-      <div class="win95-panel p-6">
+      <div class="profile-section win95-panel p-6" style={{ opacity: '0' }}>
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-xl font-bold text-black">{getTabTitle()}</h3>
           <div class="flex items-center gap-2">
@@ -338,7 +411,7 @@ const ProfilePage: Component = () => {
           <div class="space-y-4">
             <For each={getCurrentTracks()}>
               {(track) => (
-                <div class="win95-button p-4 hover:bg-gray-100 cursor-pointer">
+                <div class="track-item win95-button p-4 hover:bg-gray-100 cursor-pointer" style={{ opacity: '0' }}>
                   <div class="flex items-start gap-4">
                     <img 
                       src={track.thumbnail} 
@@ -352,7 +425,11 @@ const ProfilePage: Component = () => {
                           <h3 class="font-bold text-black">{track.title}</h3>
                           <p class="text-sm text-gray-600">{track.artist} • {track.duration}</p>
                         </div>
-                        <button class="win95-button px-3 py-1 text-sm">
+                        <button 
+                          class="win95-button px-3 py-1 text-sm"
+                          onMouseEnter={handleButtonHover}
+                          onMouseLeave={handleButtonLeave}
+                        >
                           <i class="fas fa-play mr-1"></i>Play
                         </button>
                       </div>
