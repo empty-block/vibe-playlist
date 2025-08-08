@@ -116,11 +116,11 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
     <div class="mb-4">
       {/* Playlist Cast Header - Like a Farcaster Post */}
       <div ref={headerRef!} class="win95-panel p-4 mb-4">
-        {/* Main Content Layout - Always two columns */}
-        <div class="flex items-start gap-4">
+        {/* Main Content Layout - Responsive */}
+        <div class="flex flex-col lg:flex-row lg:items-start gap-4">
           
           {/* Left Section: Creator Info & Playlist Content */}
-          <div class="flex-1 min-w-0 max-w-[60%]">
+          <div class="flex-1 min-w-0">
             {/* Creator Info Row */}
             <div class="flex items-start gap-3 mb-3">
               <button 
@@ -155,59 +155,56 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 <h1 class="text-xl font-bold text-black mb-2">
                   {props.playlist.name}
                 </h1>
-                <p class="text-sm text-gray-700 leading-relaxed break-words">
+                <p class="text-sm text-gray-700 leading-relaxed break-words mb-3">
                   {props.playlist.description}
                 </p>
+                
+                {/* Social Stats - In left column under description */}
+                <div class="lg:block">
+                  <SocialStats
+                    likes={playlistStats().likes}
+                    recasts={playlistStats().recasts}
+                    replies={playlistStats().replies}
+                    size="sm"
+                    showLabels={true}
+                    interactive={true}
+                    onLikeClick={() => console.log('Like playlist')}
+                    onRepliesClick={() => console.log('View all replies')}
+                    className="text-gray-500 justify-start flex-row"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Section: Social Stats & Actions */}
-          <div class="flex-shrink-0 w-[35%]">
-            <div class="flex flex-col items-end gap-3">
-              {/* Action Buttons - Stack on mobile */}
-              <div class="flex flex-col gap-1 w-full">
-                <AnimatedButton
-                  onClick={() => handleReply('comment')}
-                  class="win95-button px-2 py-1 text-black font-bold text-xs group relative whitespace-nowrap w-full"
-                  title="Reply with a comment"
-                  classList={{
-                    'bg-blue-100': showReplyBox() && focusField() === 'comment'
-                  }}
-                  animationType="social"
-                >
-                  <i class="fas fa-comment mr-1"></i>
-                  <span>Reply</span>
-                </AnimatedButton>
-                
-                <AnimatedButton
-                  onClick={() => handleReply('track')}
-                  class="win95-button px-2 py-1 text-black font-bold text-xs group relative whitespace-nowrap w-full"
-                  title="Add a track to this playlist"
-                  classList={{
-                    'bg-green-100': showReplyBox() && focusField() === 'track'
-                  }}
-                  animationType="social"
-                >
-                  <i class="fas fa-music mr-1"></i>
-                  <span>Add Track</span>
-                </AnimatedButton>
-              </div>
+          {/* Right Section: Action Buttons Only */}
+          <div class="flex-shrink-0 lg:w-80">
+            <div class="flex gap-2 lg:gap-3 w-full">
+              <AnimatedButton
+                onClick={() => handleReply('comment')}
+                class="win95-button px-4 py-2 lg:px-6 lg:py-3 text-black font-bold text-sm lg:text-base group relative whitespace-nowrap flex-1"
+                title="Reply with a comment"
+                classList={{
+                  'bg-blue-100': showReplyBox() && focusField() === 'comment'
+                }}
+                animationType="social"
+              >
+                <i class="fas fa-comment mr-2"></i>
+                <span>Reply</span>
+              </AnimatedButton>
               
-              {/* Social Stats - Below action buttons */}
-              <div class="w-full">
-                <SocialStats
-                  likes={playlistStats().likes}
-                  recasts={playlistStats().recasts}
-                  replies={playlistStats().replies}
-                  size="sm"
-                  showLabels={true}
-                  interactive={true}
-                  onLikeClick={() => console.log('Like playlist')}
-                  onRepliesClick={() => console.log('View all replies')}
-                  className="text-gray-500 justify-start flex-col md:flex-row"
-                />
-              </div>
+              <AnimatedButton
+                onClick={() => handleReply('track')}
+                class="win95-button px-4 py-2 lg:px-6 lg:py-3 text-black font-bold text-sm lg:text-base group relative whitespace-nowrap flex-1"
+                title="Add a track to this playlist"
+                classList={{
+                  'bg-green-100': showReplyBox() && focusField() === 'track'
+                }}
+                animationType="social"
+              >
+                <i class="fas fa-music mr-2"></i>
+                <span>Add Track</span>
+              </AnimatedButton>
             </div>
           </div>
           

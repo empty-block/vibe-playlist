@@ -1,5 +1,6 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import { setCurrentTrack } from '../stores/playlistStore';
+import { setCurrentTrack, playlists, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
+import DiscoveryBar from '../components/DiscoveryBar';
 import { pageEnter, staggeredFadeIn, buttonHover, magnetic, playButtonPulse } from '../utils/animations';
 
 const DiscoverPage: Component = () => {
@@ -74,29 +75,62 @@ const DiscoverPage: Component = () => {
     buttonHover.leave(button);
   };
 
+  const handlePlaylistChange = (playlistId: string) => {
+    console.log('Switching to playlist from discover page:', playlistId);
+    setCurrentPlaylistId(playlistId);
+    
+    // Auto-start playing the first track from the new playlist
+    const newPlaylistTracks = playlistTracks[playlistId] || [];
+    if (newPlaylistTracks.length > 0) {
+      const firstTrack = newPlaylistTracks[0];
+      console.log('Auto-playing first track:', firstTrack.title);
+      setCurrentTrack(firstTrack);
+      setIsPlaying(true);
+      
+      // Navigate to home page to see the playlist
+      window.location.hash = '#home';
+    }
+  };
+
   return (
     <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
-      <div class="win95-panel p-6 mb-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h2 class="text-2xl font-bold text-black mb-2">
-              <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
-            </h2>
-            <p class="text-gray-700">Multiple ways to discover your next favorite track</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <input
-              type="text"
-              placeholder="Search playlists, artists, content..."
-              value={searchQuery()}
-              onInput={(e) => setSearchQuery(e.currentTarget.value)}
-              class="win95-panel px-3 py-1 text-sm w-80"
-            />
-            <button class="win95-button px-3 py-1">
-              <i class="fas fa-search"></i>
-            </button>
-          </div>
+      <div class="win95-panel p-6 mb-4">
+        <div class="text-center">
+          <h2 class="text-2xl font-bold text-black mb-2">
+            <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
+          </h2>
+          <p class="text-gray-700">Multiple ways to discover your next favorite track</p>
         </div>
+      </div>
+
+      {/* Search Bar - Full Width Row */}
+      <div class="flex items-center gap-2 mb-6">
+        <input
+          type="text"
+          placeholder="Search playlists, artists, content..."
+          value={searchQuery()}
+          onInput={(e) => setSearchQuery(e.currentTarget.value)}
+          class="win95-panel px-3 py-2 text-sm flex-1"
+        />
+        <button class="win95-button px-3 py-2">
+          <i class="fas fa-search text-sm"></i>
+        </button>
+      </div>
+
+      {/* Discover New Playlists - Featured Section */}
+      <div class="discover-section win95-panel p-6 mb-8" style={{ opacity: '0' }}>
+        <div class="mb-6">
+          <h3 class="text-2xl font-bold text-black mb-2">
+            <i class="fas fa-list-music text-blue-600 mr-2"></i>Discover New Playlists
+          </h3>
+          <p class="text-gray-600">Curated playlists tailored to your music taste</p>
+        </div>
+        
+        <DiscoveryBar
+          playlists={Object.values(playlists)}
+          onPlaylistClick={handlePlaylistChange}
+        />
+        
       </div>
       
       {/* Discover Similar Users */}
@@ -114,16 +148,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">85% match</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">Loves: Nirvana, Pearl Jam, Soundgarden</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full" 
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('grunge_kid_92');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow
-            </button>
+            <div class="text-sm text-gray-700">Loves: Nirvana, Pearl Jam, Soundgarden</div>
           </div>
           
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
@@ -134,16 +159,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">78% match</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">Loves: New Order, Depeche Mode, A-ha</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('synth_lover_85');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow
-            </button>
+            <div class="text-sm text-gray-700">Loves: New Order, Depeche Mode, A-ha</div>
           </div>
           
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
@@ -154,16 +170,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">72% match</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">Loves: Postal Service, Bon Iver, Arcade Fire</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('indie_explorer');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow
-            </button>
+            <div class="text-sm text-gray-700">Loves: Postal Service, Bon Iver, Arcade Fire</div>
           </div>
         </div>
       </div>
@@ -184,16 +191,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500 mt-1">2.3k followers • 156 tracks shared</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">"Seattle sound specialist. Deep cuts and hidden gems from the grunge era."</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('grunge_master_93');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow Curator
-            </button>
+            <div class="text-sm text-gray-700">"Seattle sound specialist. Deep cuts and hidden gems from the grunge era."</div>
           </div>
           
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
@@ -205,16 +203,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500 mt-1">4.1k followers • 287 tracks shared</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">"Digging up rare pressings and forgotten classics. Vinyl-first approach to curation."</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('vinyl_archaeologist');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow Curator
-            </button>
+            <div class="text-sm text-gray-700">"Digging up rare pressings and forgotten classics. Vinyl-first approach to curation."</div>
           </div>
           
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
@@ -226,16 +215,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500 mt-1">1.8k followers • 203 tracks shared</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">"80s synthwave evangelist. Neon dreams and electronic nostalgia curator."</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('synth_prophet_85');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow Curator
-            </button>
+            <div class="text-sm text-gray-700">"80s synthwave evangelist. Neon dreams and electronic nostalgia curator."</div>
           </div>
           
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
@@ -247,16 +227,7 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500 mt-1">3.7k followers • 412 tracks shared</div>
               </div>
             </div>
-            <div class="text-sm text-gray-700 mb-3">"Your guide to the musical underground. Discovering tomorrow's classics today."</div>
-            <button 
-              class="win95-button px-3 py-1 text-xs w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                followUser('underground_oracle');
-              }}
-            >
-              <i class="fas fa-user-plus mr-1"></i>Follow Curator
-            </button>
+            <div class="text-sm text-gray-700">"Your guide to the musical underground. Discovering tomorrow's classics today."</div>
           </div>
         </div>
       </div>
@@ -268,7 +239,8 @@ const DiscoverPage: Component = () => {
         </h3>
         <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
         <div class="grid grid-cols-2 gap-4">
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer"
+               onClick={() => playHiddenGem('Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}>
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/P8lHLqOUvFY/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
               <div class="flex-1">
@@ -276,18 +248,11 @@ const DiscoverPage: Component = () => {
                 <p class="text-sm text-gray-600">Nirvana • Deep cut</p>
                 <div class="text-xs text-gray-500 mt-1">💎 Only 12% of fans know this one</div>
               </div>
-              <button 
-                class="win95-button px-2 py-1 text-xs"
-                onClick={(e) => handlePlayClick(e, 'Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}
-                onMouseEnter={handleButtonHover}
-                onMouseLeave={handleButtonLeave}
-              >
-                <i class="fas fa-play"></i>
-              </button>
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer"
+               onClick={() => playHiddenGem('Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}>
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/A8JNL6bwmls/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
               <div class="flex-1">
@@ -295,14 +260,6 @@ const DiscoverPage: Component = () => {
                 <p class="text-sm text-gray-600">New Order • Rare find</p>
                 <div class="text-xs text-gray-500 mt-1">💎 Synthwave classic</div>
               </div>
-              <button 
-                class="win95-button px-2 py-1 text-xs"
-                onClick={(e) => handlePlayClick(e, 'Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}
-                onMouseEnter={handleButtonHover}
-                onMouseLeave={handleButtonLeave}
-              >
-                <i class="fas fa-play"></i>
-              </button>
             </div>
           </div>
         </div>
@@ -328,14 +285,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500">Based on your love for Nirvana</div>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
-            </div>
           </div>
           
           <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
@@ -350,14 +299,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">Alternative • 88% match</div>
                 <div class="text-xs text-gray-500">Similar grunge energy</div>
               </div>
-            </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
             </div>
           </div>
           
@@ -374,14 +315,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500">Based on your synthwave interests</div>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
-            </div>
           </div>
           
           <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
@@ -396,14 +329,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">Alternative • 82% match</div>
                 <div class="text-xs text-gray-500">Experimental rock vibes</div>
               </div>
-            </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
             </div>
           </div>
           
@@ -420,14 +345,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-xs text-gray-500">90s alternative rock</div>
               </div>
             </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
-            </div>
           </div>
           
           <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
@@ -442,14 +359,6 @@ const DiscoverPage: Component = () => {
                 <div class="text-sm text-gray-600">Indie Electronic • 76% match</div>
                 <div class="text-xs text-gray-500">Electronic indie fusion</div>
               </div>
-            </div>
-            <div class="flex gap-2">
-              <button class="win95-button px-2 py-1 text-xs flex-1">
-                <i class="fas fa-play mr-1"></i>Play Top Tracks
-              </button>
-              <button class="win95-button px-2 py-1 text-xs">
-                <i class="fas fa-user-plus"></i>
-              </button>
             </div>
           </div>
         </div>
