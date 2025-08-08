@@ -14,6 +14,7 @@ interface LayoutProps {
 const Layout: Component<LayoutProps> = (props) => {
   const [showTerminal, setShowTerminal] = createSignal(false);
   const [isCompact, setIsCompact] = createSignal(window.innerWidth < 1024);
+  const [forceCompact, setForceCompact] = createSignal(false);
 
   // Make showTerminal globally accessible for the close button
   (window as any).showTerminal = () => setShowTerminal(true);
@@ -37,9 +38,9 @@ const Layout: Component<LayoutProps> = (props) => {
       <WindowsFrame onCloseClick={() => setShowTerminal(true)}>
         <Navigation />
         
-        <div class={`flex ${isCompact() ? 'flex-col' : 'flex-row'} flex-1 overflow-hidden`}>
+        <div class={`flex ${isCompact() || forceCompact() ? 'flex-col' : 'flex-row'} flex-1 overflow-hidden`}>
           {/* Chat Sidebar - Only on desktop */}
-          <Show when={!isCompact()}>
+          <Show when={!isCompact() && !forceCompact()}>
             <ChatBot 
               isVisible={showChat()} 
               onToggle={closeChat}
@@ -54,11 +55,11 @@ const Layout: Component<LayoutProps> = (props) => {
           {/* Player - Bottom horizontal on compact, side vertical on desktop */}
           <Show when={currentTrack()}>
             <div class={`${
-              isCompact() 
+              isCompact() || forceCompact()
                 ? 'h-28 border-t-2 flex-shrink-0' 
                 : 'w-80 border-l-2'
             } border-gray-400`}>
-              <MediaPlayer isCompact={isCompact} />
+              <MediaPlayer isCompact={() => isCompact() || forceCompact()} onForceCompact={setForceCompact} />
             </div>
           </Show>
         </div>

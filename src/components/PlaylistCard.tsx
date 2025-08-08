@@ -85,12 +85,8 @@ const PlaylistCard: Component<PlaylistCardProps> = (props) => {
           </div>
         </Show>
 
-        {/* Hover Play Button */}
-        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded">
-          <button class="win95-button w-8 h-8 flex items-center justify-center text-sm">
-            <i class="fas fa-play"></i>
-          </button>
-        </div>
+        {/* Hover overlay effect */}
+        <div class="absolute inset-0 bg-black bg-opacity-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded"></div>
       </div>
 
       {/* Playlist Info */}
@@ -101,11 +97,6 @@ const PlaylistCard: Component<PlaylistCardProps> = (props) => {
         <p class="text-xs text-gray-600 truncate">
           {props.playlist.trackCount} tracks
         </p>
-        <Show when={props.playlist.memberCount}>
-          <p class="text-xs text-gray-500">
-            {props.playlist.memberCount} members
-          </p>
-        </Show>
       </div>
     </div>
   );

@@ -81,19 +81,8 @@ const HomePage: Component = () => {
   const handlePlaylistChange = (playlistId: string) => {
     console.log('Switching to playlist:', playlistId);
     setCurrentPlaylistId(playlistId);
-    
-    // Auto-start playing the first track from the new playlist
-    const newPlaylistTracks = playlistTracks[playlistId] || [];
-    if (newPlaylistTracks.length > 0) {
-      const firstTrack = newPlaylistTracks[0];
-      console.log('Auto-playing first track:', firstTrack.title);
-      setCurrentTrack(firstTrack);
-      setIsPlaying(true);
-    } else {
-      // Clear current track if playlist is empty
-      setCurrentTrack(null);
-      setIsPlaying(false);
-    }
+    // Just switch playlist view - don't auto-play or change current track
+    // This allows users to browse playlists while continuing to listen to current music
   };
 
   // Animate track items when they change
@@ -151,7 +140,7 @@ const HomePage: Component = () => {
           </div>
           
           {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="flex-1 overflow-y-auto overflow-x-hidden space-y-4 px-2" id="playlist-container">
+          <div ref={trackContainerRef!} class="flex-1 overflow-y-auto overflow-x-hidden space-y-2 px-2" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>

@@ -6,6 +6,7 @@ import SpotifyMedia from './SpotifyMedia';
 
 interface MediaPlayerProps {
   isCompact?: () => boolean;
+  onForceCompact?: (force: boolean) => void;
 }
 
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
@@ -68,6 +69,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         mediaComponent={getMediaComponent()}
         onTogglePlay={onTogglePlay}
         playerReady={playerReady}
+        onForceCompact={props.onForceCompact}
       />
     </Show>
   );

@@ -13,6 +13,7 @@ interface PlayerProps {
   currentTime?: () => number;
   duration?: () => number;
   onSeek?: (time: number) => void;
+  onForceCompact?: (force: boolean) => void;
 }
 
 const Player: Component<PlayerProps> = (props) => {
@@ -92,8 +93,13 @@ const Player: Component<PlayerProps> = (props) => {
           <div class="windows-titlebar p-2 flex justify-between items-center">
             <span><i class="fas fa-play-circle mr-2"></i>Now Playing</span>
             <div class="flex gap-1">
-              <button class="win95-button w-6 h-4 text-xs font-bold text-black">_</button>
-              <button class="win95-button w-6 h-4 text-xs font-bold text-black">×</button>
+              <button 
+                class="win95-button w-6 h-4 text-xs font-bold text-black"
+                onClick={() => props.onForceCompact?.(true)}
+                title="Minimize to compact player"
+              >
+                _
+              </button>
             </div>
           </div>
         </Show>
@@ -194,7 +200,7 @@ const Player: Component<PlayerProps> = (props) => {
             </Show>
 
             <Show when={isCompact()}>
-              {/* Compact Controls - Skip prev, Play/pause, Skip next, Social button */}
+              {/* Compact Controls - Skip prev, Play/pause, Skip next, Social button, Expand button */}
               <div class="flex items-center gap-2">
                 <button 
                   ref={compactPrevButtonRef!}
@@ -237,6 +243,17 @@ const Player: Component<PlayerProps> = (props) => {
                     </span>
                   </Show>
                 </button>
+                
+                {/* Expand button - only show on larger screens where sidebar view is available */}
+                <div class="hidden lg:block">
+                  <button 
+                    onClick={() => props.onForceCompact?.(false)}
+                    class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
+                    title="Expand to full player"
+                  >
+                    <i class="fas fa-expand-alt"></i>
+                  </button>
+                </div>
               </div>
             </Show>
           </div>

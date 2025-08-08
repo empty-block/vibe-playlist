@@ -116,96 +116,84 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
     <div class="mb-4">
       {/* Playlist Cast Header - Like a Farcaster Post */}
       <div ref={headerRef!} class="win95-panel p-4 mb-4">
-        {/* Main Content Layout - Responsive */}
-        <div class="flex flex-col lg:flex-row lg:items-start gap-4">
+        {/* Single Column Layout */}
+        <div class="space-y-4">
           
-          {/* Left Section: Creator Info & Playlist Content */}
-          <div class="flex-1 min-w-0">
-            {/* Creator Info Row */}
-            <div class="flex items-start gap-3 mb-3">
-              <button 
-                class="flex-shrink-0 text-2xl hover:scale-110 transition-transform"
-                onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-                title={`View ${props.playlist.createdBy}'s profile`}
-              >
-                {props.playlist.creatorAvatar}
-              </button>
-              
-              <div class="flex-1 min-w-0">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
-                  <button 
-                    class="text-left font-bold text-black hover:text-blue-700 transition-colors"
-                    onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-                  >
-                    {props.playlist.createdBy}
-                  </button>
-                  <span class="text-sm text-gray-500">
-                    {props.playlist.createdAt}
-                    {props.playlist.isCollaborative && (
-                      <>
-                        {' • '}
-                        <i class="fas fa-users mr-1"></i>
-                        {props.playlist.memberCount} members
-                      </>
-                    )}
-                  </span>
-                </div>
-                
-                {/* Playlist Title & Description - The "Cast Content" */}
-                <h1 class="text-xl font-bold text-black mb-2">
-                  {props.playlist.name}
-                </h1>
-                <p class="text-sm text-gray-700 leading-relaxed break-words mb-3">
-                  {props.playlist.description}
-                </p>
-                
-                {/* Social Stats - In left column under description */}
-                <div class="lg:block">
-                  <SocialStats
-                    likes={playlistStats().likes}
-                    recasts={playlistStats().recasts}
-                    replies={playlistStats().replies}
-                    size="sm"
-                    showLabels={true}
-                    interactive={true}
-                    onLikeClick={() => console.log('Like playlist')}
-                    onRepliesClick={() => console.log('View all replies')}
-                    className="text-gray-500 justify-start flex-row"
-                  />
-                </div>
+          {/* Creator Info Row */}
+          <div class="flex items-start gap-3">
+            <button 
+              class="flex-shrink-0 text-2xl hover:scale-110 transition-transform"
+              onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+              title={`View ${props.playlist.createdBy}'s profile`}
+            >
+              {props.playlist.creatorAvatar}
+            </button>
+            
+            <div class="flex-1 min-w-0">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2 mb-1">
+                <button 
+                  class="text-left font-bold text-black hover:text-blue-700 transition-colors"
+                  onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+                >
+                  {props.playlist.createdBy}
+                </button>
+                <span class="text-sm text-gray-500">
+                  {props.playlist.createdAt}
+                </span>
               </div>
+              
+              {/* Playlist Title & Description */}
+              <h1 class="text-xl font-bold text-black mb-2">
+                {props.playlist.name}
+              </h1>
+              <p class="text-sm text-gray-700 leading-relaxed break-words">
+                {props.playlist.description}
+              </p>
             </div>
           </div>
-
-          {/* Right Section: Action Buttons Only */}
-          <div class="flex-shrink-0 lg:w-80">
-            <div class="flex gap-2 lg:gap-3 w-full">
-              <AnimatedButton
-                onClick={() => handleReply('comment')}
-                class="win95-button px-4 py-2 lg:px-6 lg:py-3 text-black font-bold text-sm lg:text-base group relative whitespace-nowrap flex-1"
-                title="Reply with a comment"
-                classList={{
-                  'bg-blue-100': showReplyBox() && focusField() === 'comment'
-                }}
-                animationType="social"
-              >
-                <i class="fas fa-comment mr-2"></i>
-                <span>Reply</span>
-              </AnimatedButton>
-              
-              <AnimatedButton
-                onClick={() => handleReply('track')}
-                class="win95-button px-4 py-2 lg:px-6 lg:py-3 text-black font-bold text-sm lg:text-base group relative whitespace-nowrap flex-1"
-                title="Add a track to this playlist"
-                classList={{
-                  'bg-green-100': showReplyBox() && focusField() === 'track'
-                }}
-                animationType="social"
-              >
-                <i class="fas fa-music mr-2"></i>
-                <span>Add Track</span>
-              </AnimatedButton>
-            </div>
+          
+          {/* Social Stats */}
+          <div>
+            <SocialStats
+              likes={playlistStats().likes}
+              recasts={playlistStats().recasts}
+              replies={playlistStats().replies}
+              size="sm"
+              showLabels={true}
+              interactive={true}
+              onLikeClick={() => console.log('Like playlist')}
+              onRepliesClick={() => console.log('View all replies')}
+              className="text-gray-500"
+            />
+          </div>
+          
+          {/* Action Buttons - Full Width */}
+          <div class="flex gap-3">
+            <AnimatedButton
+              onClick={() => handleReply('comment')}
+              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
+              title="Reply with a comment"
+              classList={{
+                'bg-blue-100': showReplyBox() && focusField() === 'comment'
+              }}
+              animationType="social"
+            >
+              <i class="fas fa-comment mr-2"></i>
+              <span>Reply</span>
+            </AnimatedButton>
+            
+            <AnimatedButton
+              onClick={() => handleReply('track')}
+              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
+              title="Add a track to this playlist"
+              classList={{
+                'bg-green-100': showReplyBox() && focusField() === 'track'
+              }}
+              animationType="social"
+            >
+              <i class="fas fa-music mr-2"></i>
+              <span>Add Track</span>
+            </AnimatedButton>
           </div>
           
         </div>

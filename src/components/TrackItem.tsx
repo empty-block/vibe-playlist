@@ -175,7 +175,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   return (
     <div 
       ref={trackItemRef!}
-      class={`win95-button p-6 ${
+      class={`win95-button p-4 ${
         isPlayable() 
           ? 'cursor-pointer' 
           : 'cursor-not-allowed opacity-60'
@@ -192,7 +192,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
       <div class="flex gap-4 min-w-0">
         <div class="flex-1 min-w-0">
           {/* User info at top */}
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <span class="text-sm text-gray-500">Shared by</span>
               <A 
@@ -246,32 +246,32 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             <div class="flex-1 min-w-0">
               {/* Song info */}
               <div class="mb-2">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-black leading-tight">{props.track.title}</h3>
-              <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
-                <button
-                  class="win95-button px-2 py-0.5 text-xs font-bold text-black"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    initiateSpotifyAuth();
-                  }}
-                  title="Connect Spotify to play this track"
-                >
-                  🔗 Connect
-                </button>
-              </Show>
-            </div>
-            <div class="flex items-center gap-2">
-              <p class="text-sm text-gray-600 font-medium">{props.track.artist} • {props.track.duration}</p>
-              <span 
-                class="text-lg"
-                title={`Source: ${sourceInfo.label}`}
-              >
-                {sourceInfo.icon}
-              </span>
-            </div>
-          </div>
-          
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="font-bold text-black leading-tight">{props.track.title}</h3>
+                  <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
+                    <button
+                      class="win95-button px-2 py-0.5 text-xs font-bold text-black"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        initiateSpotifyAuth();
+                      }}
+                      title="Connect Spotify to play this track"
+                    >
+                      🔗 Connect
+                    </button>
+                  </Show>
+                </div>
+                <div class="flex items-center gap-2">
+                  <p class="text-sm text-gray-600 font-medium">{props.track.artist} • {props.track.duration}</p>
+                  <span 
+                    class="text-lg"
+                    title={`Source: ${sourceInfo.label}`}
+                  >
+                    {sourceInfo.icon}
+                  </span>
+                </div>
+              </div>
+              
               <p class="text-sm text-gray-700 mb-3 leading-relaxed">{props.track.comment}</p>
               
               <SocialStats

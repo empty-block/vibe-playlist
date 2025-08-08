@@ -79,17 +79,8 @@ const DiscoverPage: Component = () => {
     console.log('Switching to playlist from discover page:', playlistId);
     setCurrentPlaylistId(playlistId);
     
-    // Auto-start playing the first track from the new playlist
-    const newPlaylistTracks = playlistTracks[playlistId] || [];
-    if (newPlaylistTracks.length > 0) {
-      const firstTrack = newPlaylistTracks[0];
-      console.log('Auto-playing first track:', firstTrack.title);
-      setCurrentTrack(firstTrack);
-      setIsPlaying(true);
-      
-      // Navigate to home page to see the playlist
-      window.location.hash = '#home';
-    }
+    // Navigate to home page to see the playlist (but don't auto-play)
+    window.location.hash = '#home';
   };
 
   return (
