@@ -253,24 +253,14 @@ const TrendingPage: Component = () => {
                   <p class="text-sm text-blue-600 mt-1">{item.metric}</p>
                 </div>
                 
-                {/* Action Button */}
-                <div class="flex gap-2">
-                  <Show when={currentCategory() === 'playlists'}>
-                    <button class="win95-button px-3 py-1 text-sm">
-                      <i class="fas fa-play mr-1"></i>Play
-                    </button>
-                  </Show>
-                  <Show when={currentCategory() === 'users'}>
+                {/* Action Button - Only show for users */}
+                <Show when={currentCategory() === 'users'}>
+                  <div class="flex gap-2">
                     <button class="win95-button px-3 py-1 text-sm">
                       <i class="fas fa-user-plus mr-1"></i>Follow
                     </button>
-                  </Show>
-                  <Show when={currentCategory() === 'songs' || currentCategory() === 'artists'}>
-                    <button class="win95-button px-3 py-1 text-sm">
-                      <i class="fas fa-plus mr-1"></i>Add
-                    </button>
-                  </Show>
-                </div>
+                  </div>
+                </Show>
               </div>
             </div>
           )}

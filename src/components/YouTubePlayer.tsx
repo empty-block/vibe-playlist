@@ -88,7 +88,8 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
           iv_load_policy: 3,
           autohide: 0,
           origin: window.location.origin,
-          enablejsapi: 1
+          enablejsapi: 1,
+          playsinline: 1  // Critical for mobile playback
         },
         events: {
           onReady: onPlayerReady,
@@ -134,10 +135,24 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
       console.log('Loading YouTube video:', track.title, track.sourceId);
       try {
-        player.loadVideoById({
-          videoId: track.sourceId,
-          startSeconds: 0
-        });
+        // Check if we're on a mobile device
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          // On mobile, cue the video instead of loading to prevent autoplay
+          // User must tap play button to start
+          player.cueVideoById({
+            videoId: track.sourceId,
+            startSeconds: 0
+          });
+          console.log('Mobile device detected - video cued, waiting for user interaction');
+        } else {
+          // On desktop, load and autoplay as before
+          player.loadVideoById({
+            videoId: track.sourceId,
+            startSeconds: 0
+          });
+        }
       } catch (error) {
         console.error('Error loading video:', error);
       }

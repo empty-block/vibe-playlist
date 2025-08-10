@@ -56,7 +56,7 @@ const Layout: Component<LayoutProps> = (props) => {
           <Show when={currentTrack()}>
             <div class={`${
               isCompact() || forceCompact()
-                ? 'h-28 border-t-2 flex-shrink-0' 
+                ? 'h-32 border-t-2 flex-shrink-0 pb-safe' 
                 : 'w-80 border-l-2'
             } border-gray-400`}>
               <MediaPlayer isCompact={() => isCompact() || forceCompact()} onForceCompact={setForceCompact} />

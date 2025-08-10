@@ -283,7 +283,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 interactive={true}
                 onLikeClick={handleLike}
                 onRepliesClick={handleRepliesClick}
-                className="text-sm"
+                className="text-sm justify-center sm:justify-start flex-wrap"
               />
             </div>
           </div>

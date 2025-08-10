@@ -191,6 +191,11 @@
             background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
         }
         
+        /* Safe area padding for mobile devices with notches/bottom bars */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        
         .windows-titlebar {
             background: linear-gradient(90deg, #008080 0%, #0000ff 100%);
             color: white;

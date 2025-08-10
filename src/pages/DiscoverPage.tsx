@@ -130,7 +130,7 @@ const DiscoverPage: Component = () => {
           <i class="fas fa-users text-blue-600 mr-2"></i>Discover Similar Users
         </h3>
         <p class="text-sm text-gray-600 mb-4">Find users with similar music taste to yours</p>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">🎸</div>
@@ -172,7 +172,7 @@ const DiscoverPage: Component = () => {
           <i class="fas fa-crown text-yellow-600 mr-2"></i>Discover Top Curators
         </h3>
         <p class="text-sm text-gray-600 mb-4">Music experts who consistently share amazing tracks</p>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🎸</div>
@@ -229,7 +229,7 @@ const DiscoverPage: Component = () => {
           <i class="fas fa-gem text-blue-600 mr-2"></i>Hidden Gems
         </h3>
         <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer"
                onClick={() => playHiddenGem('Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}>
             <div class="flex items-center gap-3">
@@ -262,7 +262,7 @@ const DiscoverPage: Component = () => {
           <i class="fas fa-microphone text-indigo-600 mr-2"></i>Discover Artists
         </h3>
         <p class="text-sm text-gray-600 mb-4">Explore new artists based on your taste</p>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
