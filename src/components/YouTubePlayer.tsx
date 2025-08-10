@@ -17,8 +17,10 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
   let playerContainer: HTMLDivElement | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   
+  const isMobile = () => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  
   onMount(() => {
-    console.log('YouTubePlayer onMount called');
+    console.log('YouTubePlayer onMount called, mobile:', isMobile());
     
     const checkAndInit = () => {
       console.log('Checking for container and YouTube API...', { 
@@ -79,7 +81,7 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
         videoId: 'hTWKbfoikeg',
         playerVars: {
           autoplay: 0,
-          controls: 1,
+          controls: 1,  // Always show controls for mobile users
           modestbranding: 1,
           rel: 0,
           showinfo: 0,
@@ -135,17 +137,13 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
       console.log('Loading YouTube video:', track.title, track.sourceId);
       try {
-        // Check if we're on a mobile device
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        
-        if (isMobile) {
-          // On mobile, cue the video instead of loading to prevent autoplay
-          // User must tap play button to start
+        if (isMobile()) {
+          // On mobile, just cue the video and let users use native controls
           player.cueVideoById({
             videoId: track.sourceId,
             startSeconds: 0
           });
-          console.log('Mobile device detected - video cued, waiting for user interaction');
+          console.log('Mobile device - video cued, use native YouTube controls');
         } else {
           // On desktop, load and autoplay as before
           player.loadVideoById({
@@ -165,11 +163,30 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
     console.log('togglePlay called:', { 
       hasPlayer: !!player, 
       playerReady: playerReady(), 
-      isPlaying: isPlaying() 
+      isPlaying: isPlaying(),
+      isMobile: isMobile() 
     });
     
     if (!player || !playerReady()) {
       console.log('Player not ready or not available');
+      return;
+    }
+    
+    // On mobile, we can't reliably control playback
+    // Users should interact with native YouTube controls
+    if (isMobile()) {
+      console.log('Mobile device - please use YouTube native controls');
+      // Try to play anyway, but it might not work
+      try {
+        const state = player.getPlayerState();
+        if (state === window.YT.PlayerState.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      } catch (error) {
+        console.error('Mobile playback control error:', error);
+      }
       return;
     }
     
@@ -246,13 +263,20 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
           <div class={`${isCompact() ? 'flex items-center gap-1 sm:gap-2' : 'mb-4'}`}>
             <Show when={!isCompact()}>
               <div class="flex justify-center mb-3">
-                <button 
-                  onClick={togglePlay}
-                  class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
-                  disabled={!playerReady()}
-                >
-                  <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-                </button>
+                <Show when={!isMobile()} fallback={
+                  <div class="text-center text-sm text-gray-600">
+                    <i class="fas fa-hand-pointer mr-1"></i>
+                    Tap video to play
+                  </div>
+                }>
+                  <button 
+                    onClick={togglePlay}
+                    class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
+                    disabled={!playerReady()}
+                  >
+                    <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
+                  </button>
+                </Show>
               </div>
               
               {/* Player Status */}
@@ -266,7 +290,7 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
               </div>
             </Show>
 
-            <Show when={isCompact()}>
+            <Show when={isCompact() && !isMobile()}>
               <button 
                 onClick={togglePlay}
                 class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-lg"

@@ -19,6 +19,9 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
   let player: any;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
+  const [isActivated, setIsActivated] = createSignal(false);
+  
+  const isMobile = () => /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   
   onMount(() => {
     console.log('SpotifyPlayer onMount called');
@@ -61,7 +64,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
       return;
     }
     
-    console.log('Initializing Spotify Web Playback SDK');
+    console.log('Initializing Spotify Web Playback SDK, mobile:', isMobile());
     player = new window.Spotify.Player({
       name: 'JAMZY Player',
       getOAuthToken: (cb: (token: string) => void) => {
@@ -164,6 +167,18 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
       return;
     }
     
+    // On mobile, need to activate element first on user interaction
+    if (isMobile() && !isActivated() && player.activateElement) {
+      console.log('Activating Spotify player element for mobile...');
+      try {
+        await player.activateElement();
+        setIsActivated(true);
+        console.log('Spotify player activated for mobile');
+      } catch (error) {
+        console.error('Failed to activate Spotify player:', error);
+      }
+    }
+    
     try {
       if (isPlaying()) {
         await player.pause();
@@ -174,6 +189,10 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
       }
     } catch (error) {
       console.error('Error toggling Spotify playback:', error);
+      // On mobile, show helpful message
+      if (isMobile()) {
+        console.log('Mobile playback issue - Spotify Premium required for mobile web playback');
+      }
     }
   };
   
@@ -207,6 +226,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
             <button 
               onClick={togglePlay}
               class="win95-button w-12 h-12 flex items-center justify-center text-lg"
+              title={isMobile() && !isActivated() ? 'Tap to activate player' : ''}
             >
               <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
             </button>
@@ -240,7 +260,9 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
                   <span class="font-bold">Spotify Premium</span>
                 </div>
                 <div class="text-center text-sm">
-                  {playerReady() ? '🎵 Ready to Play' : '⏳ Connecting...'}
+                  {playerReady() ? 
+                    (isMobile() && !isActivated() ? '👆 Tap play to activate' : '🎵 Ready to Play') : 
+                    '⏳ Connecting...'}
                 </div>
                 {deviceId() && (
                   <div class="text-xs text-center mt-1 opacity-75">
@@ -275,12 +297,26 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
           {/* Play Controls */}
           <div class="mb-4">
             <div class="flex justify-center mb-3">
-              <button 
-                onClick={togglePlay}
-                class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
-              >
-                <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-              </button>
+              <Show when={!isMobile()} fallback={
+                <div class="text-center">
+                  <button 
+                    onClick={togglePlay}
+                    class="win95-button w-16 h-16 flex items-center justify-center text-2xl mb-2"
+                  >
+                    <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
+                  </button>
+                  <Show when={!isActivated()}>
+                    <p class="text-xs text-gray-600">Tap to activate player</p>
+                  </Show>
+                </div>
+              }>
+                <button 
+                  onClick={togglePlay}
+                  class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
+                >
+                  <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
+                </button>
+              </Show>
             </div>
             
             {/* Player Status */}
