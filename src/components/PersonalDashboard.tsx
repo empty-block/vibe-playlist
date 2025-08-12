@@ -144,7 +144,7 @@ const PersonalDashboard: Component = () => {
             <div class="space-y-3">
               <For each={recentActivity}>
                 {(activity) => (
-                  <div class="win95-panel p-3 hover:bg-gray-100">
+                  <div class="win95-panel p-3 hover:bg-gray-50">
                     <div class="flex items-center gap-3">
                       <div class="text-lg">
                         {activity.type === 'added' && '🎵'}
@@ -179,7 +179,7 @@ const PersonalDashboard: Component = () => {
             <div class="space-y-2">
               <For each={trendingInYourNetwork}>
                 {(track, index) => (
-                  <div class="win95-panel p-3 hover:bg-gray-100 cursor-pointer">
+                  <div class="win95-panel p-3 hover:bg-gray-50 cursor-pointer">
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-3">
                         <span class="text-sm font-bold text-gray-600">#{index() + 1}</span>
@@ -216,7 +216,7 @@ const PersonalDashboard: Component = () => {
             <div class="space-y-3">
               <For each={recommendations}>
                 {(rec) => (
-                  <div class="win95-panel p-3 hover:bg-gray-100">
+                  <div class="win95-panel p-3 hover:bg-gray-50">
                     <div class="flex items-center justify-between">
                       <div class="flex-1">
                         <div class="font-bold text-black text-sm">{rec.title}</div>
@@ -245,7 +245,7 @@ const PersonalDashboard: Component = () => {
             </h3>
             <div class="grid grid-cols-2 gap-3">
               <button 
-                class="win95-button p-3 text-center hover:bg-gray-100"
+                class="win95-button p-3 text-center hover:bg-gray-50"
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
               >
@@ -253,7 +253,7 @@ const PersonalDashboard: Component = () => {
                 <div class="text-xs font-bold">Add Track</div>
               </button>
               <button 
-                class="win95-button p-3 text-center hover:bg-gray-100"
+                class="win95-button p-3 text-center hover:bg-gray-50"
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
               >
@@ -261,7 +261,7 @@ const PersonalDashboard: Component = () => {
                 <div class="text-xs font-bold">New Playlist</div>
               </button>
               <button 
-                class="win95-button p-3 text-center hover:bg-gray-100"
+                class="win95-button p-3 text-center hover:bg-gray-50"
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
               >
@@ -269,7 +269,7 @@ const PersonalDashboard: Component = () => {
                 <div class="text-xs font-bold">Discover</div>
               </button>
               <button 
-                class="win95-button p-3 text-center hover:bg-gray-100"
+                class="win95-button p-3 text-center hover:bg-gray-50"
                 onClick={handleSignOut}
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}

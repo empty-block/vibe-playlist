@@ -58,7 +58,7 @@ const Layout: Component<LayoutProps> = (props) => {
               isCompact() || forceCompact()
                 ? 'h-52 border-t-2 flex-shrink-0 pb-safe' 
                 : 'w-80 border-l-2'
-            } border-gray-400`}>
+            } border-gray-300`}>
               <MediaPlayer isCompact={() => isCompact() || forceCompact()} onForceCompact={setForceCompact} />
             </div>
           </Show>

@@ -422,7 +422,7 @@ const SharePage: Component = () => {
               ) : (
                 <For each={filteredPlaylists()}>
                   {(playlist) => (
-                    <label class="flex items-center gap-3 p-3 win95-panel hover:bg-gray-100 cursor-pointer">
+                    <label class="flex items-center gap-3 p-3 win95-panel hover:bg-gray-50 cursor-pointer">
                       <input
                         type="radio"
                         name="playlist"

@@ -84,7 +84,7 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class={`h-full bg-gray-200 ${isCompact() ? 'flex items-center px-2 sm:px-4 gap-2 sm:gap-4' : 'flex flex-col'} relative`}>
+      <div class={`h-full bg-gray-50 ${isCompact() ? 'flex items-center px-2 sm:px-4 gap-2 sm:gap-4' : 'flex flex-col'} relative`}>
         
         {/* Desktop Header - Only show when not compact */}
         <Show when={!isCompact()}>
@@ -142,7 +142,7 @@ const Player: Component<PlayerProps> = (props) => {
                   <div class="w-full mb-3">
                     <div class="flex items-center gap-2 text-xs text-gray-600">
                       <span>{formatTime(props.currentTime?.() || 0)}</span>
-                      <div class="flex-1 bg-gray-300 h-2 rounded-full overflow-hidden">
+                      <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
                         <div 
                           class="bg-blue-500 h-full transition-all duration-200"
                           style={{
@@ -292,7 +292,7 @@ const Player: Component<PlayerProps> = (props) => {
               </h4>
               
               {/* Replies List */}
-              <div class="bg-gray-100 border-2 border-gray-300 rounded">
+              <div class="bg-gray-50 border-2 border-gray-300 rounded">
                 <Show when={currentTrack()?.repliesData && currentTrack()?.repliesData!.length > 0} fallback={
                   <div class="p-4 text-center text-gray-500 text-sm">
                     No replies yet. Be the first to comment!
@@ -366,9 +366,9 @@ const Player: Component<PlayerProps> = (props) => {
           ></div>
           
           {/* Modal Content */}
-          <div class="relative bg-gray-200 w-full max-w-lg max-h-[80vh] rounded-t-lg border-2 border-gray-400 border-b-0 animate-slide-up mb-4">
+          <div class="relative bg-gray-50 w-full max-w-lg max-h-[80vh] rounded-t-lg border-2 border-gray-300 border-b-0 animate-slide-up mb-4">
             {/* Modal Header */}
-            <div class="flex items-center justify-between p-3 border-b-2 border-gray-400 bg-gray-300">
+            <div class="flex items-center justify-between p-3 border-b-2 border-gray-300 bg-gray-100">
               <h3 class="font-bold text-sm flex items-center gap-2">
                 <i class="fas fa-comments"></i>
                 Comments & Replies
@@ -450,7 +450,7 @@ const Player: Component<PlayerProps> = (props) => {
             </div>
             
             {/* Comment Input - Fixed at bottom */}
-            <div class="p-4 border-t-2 border-gray-300 bg-gray-100">
+            <div class="p-4 border-t-2 border-gray-300 bg-gray-50">
               <div class="flex gap-2">
                 <input
                   type="text"

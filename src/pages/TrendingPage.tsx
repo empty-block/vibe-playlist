@@ -231,7 +231,7 @@ const TrendingPage: Component = () => {
       <div class="space-y-4">
         <For each={currentData()}>
           {(item) => (
-            <div class="trending-item win95-panel p-4 hover:bg-gray-100 cursor-pointer transition-all" style={{ opacity: '0' }}>
+            <div class="trending-item win95-panel p-4 hover:bg-gray-50 cursor-pointer transition-all" style={{ opacity: '0' }}>
               <div class="flex items-center gap-4">
                 {/* Rank */}
                 <div class="flex items-center gap-2 w-16">

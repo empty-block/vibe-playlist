@@ -207,7 +207,7 @@ const YouTubePlayer: Component<YouTubePlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class={`h-full bg-gray-200 ${isCompact() ? 'flex items-center px-2 sm:px-4 gap-2 sm:gap-4' : 'flex flex-col'} relative`}>
+      <div class={`h-full bg-gray-50 ${isCompact() ? 'flex items-center px-2 sm:px-4 gap-2 sm:gap-4' : 'flex flex-col'} relative`}>
         
         {/* Desktop Header - Only show when not compact */}
         <Show when={!isCompact()}>

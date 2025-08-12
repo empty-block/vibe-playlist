@@ -175,7 +175,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
   return (
     <div 
       ref={trackItemRef!}
-      class={`win95-button p-4 ${
+      class={`track-item win95-button p-4 ${
         isPlayable() 
           ? 'cursor-pointer' 
           : 'cursor-not-allowed opacity-60'
@@ -314,7 +314,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                     variant="default"
                     onLike={(replyId) => console.log('Like reply:', replyId)}
                     onReply={(replyId) => console.log('Reply to:', replyId)}
-                    className="win95-button bg-gray-50"
+                    className="win95-button bg-white"
                   />
                 </div>
               )}

@@ -202,7 +202,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
     <Show when={currentTrack() && currentTrack()?.source === 'spotify'}>
       <Show when={!isCompact()} fallback={
         /* Horizontal Compact Layout */
-        <div class="h-full bg-gray-200 flex items-center px-4 gap-4">
+        <div class="h-full bg-gray-50 flex items-center px-4 gap-4">
           {/* Spotify Icon */}
           <div class="flex-shrink-0">
             <div class="bg-gradient-to-br from-green-900 to-black rounded p-2 w-32 h-20 sm:w-40 sm:h-24 flex items-center justify-center">
@@ -240,7 +240,7 @@ const SpotifyPlayer: Component<SpotifyPlayerProps> = (props) => {
         </div>
       }>
         {/* Vertical Desktop Layout */}
-        <div class="w-full h-full bg-gray-200 flex flex-col">
+        <div class="w-full h-full bg-gray-50 flex flex-col">
           {/* Player Header */}
           <div class="windows-titlebar p-2 flex justify-between items-center">
             <span><i class="fab fa-spotify mr-2 text-green-500"></i>Spotify Player</span>

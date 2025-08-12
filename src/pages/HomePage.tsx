@@ -117,7 +117,7 @@ const HomePage: Component = () => {
   return (
     <div class="h-full flex">
       {/* Discovery Bar - Left Sidebar (Desktop only) - Fixed, no scroll */}
-      <div class="hidden lg:flex w-56 flex-shrink-0 bg-gray-100 border-r-2 border-gray-400">
+      <div class="hidden lg:flex w-56 flex-shrink-0 bg-white border-r-2 border-gray-300">
         <div class="p-3 flex flex-col h-full">
           <DiscoveryBar
             playlists={Object.values(playlists)}

@@ -336,7 +336,7 @@ const ProfilePage: Component = () => {
           <div class="flex gap-4">
             <For each={userProfile().topArtists}>
               {(artist) => (
-                <div class="artist-medal win95-button p-4 text-center cursor-pointer hover:bg-gray-100 min-w-[140px]">
+                <div class="artist-medal win95-button p-4 text-center cursor-pointer hover:bg-gray-50 min-w-[140px]">
                   <div class="text-3xl mb-3">{artist.medal}</div>
                   <h4 class="font-bold text-black text-sm mb-1">{artist.name}</h4>
                   <p class="text-xs text-gray-600">{artist.plays.toLocaleString()} plays</p>
@@ -349,10 +349,10 @@ const ProfilePage: Component = () => {
       
       {/* Profile Tabs */}
       <div class="profile-section win95-panel p-0 mb-6" style={{ opacity: '0' }}>
-        <div class="flex border-b-2 border-gray-400">
+        <div class="flex border-b-2 border-gray-300">
           <button
             class={`px-4 py-2 border-r border-gray-400 text-black font-bold ${
-              currentTab() === 'shared' ? 'bg-blue-200' : 'hover:bg-gray-100'
+              currentTab() === 'shared' ? 'bg-blue-200' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleTabChange('shared')}
             onMouseEnter={handleButtonHover}
@@ -362,7 +362,7 @@ const ProfilePage: Component = () => {
           </button>
           <button
             class={`px-4 py-2 border-r border-gray-400 text-black ${
-              currentTab() === 'liked' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-100'
+              currentTab() === 'liked' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleTabChange('liked')}
             onMouseEnter={handleButtonHover}
@@ -372,7 +372,7 @@ const ProfilePage: Component = () => {
           </button>
           <button
             class={`px-4 py-2 text-black ${
-              currentTab() === 'replied' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-100'
+              currentTab() === 'replied' ? 'bg-blue-200 font-bold' : 'hover:bg-gray-50'
             }`}
             onClick={() => handleTabChange('replied')}
             onMouseEnter={handleButtonHover}
@@ -411,7 +411,7 @@ const ProfilePage: Component = () => {
           <div class="space-y-4">
             <For each={getCurrentTracks()}>
               {(track) => (
-                <div class="track-item win95-button p-4 hover:bg-gray-100 cursor-pointer" style={{ opacity: '0' }}>
+                <div class="track-item win95-button p-4 hover:bg-gray-50 cursor-pointer" style={{ opacity: '0' }}>
                   <div class="flex items-start gap-4">
                     <img 
                       src={track.thumbnail} 

@@ -131,7 +131,7 @@ const DiscoverPage: Component = () => {
         </h3>
         <p class="text-sm text-gray-600 mb-4">Find users with similar music taste to yours</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">🎸</div>
               <div>
@@ -142,7 +142,7 @@ const DiscoverPage: Component = () => {
             <div class="text-sm text-gray-700">Loves: Nirvana, Pearl Jam, Soundgarden</div>
           </div>
           
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">🎹</div>
               <div>
@@ -153,7 +153,7 @@ const DiscoverPage: Component = () => {
             <div class="text-sm text-gray-700">Loves: New Order, Depeche Mode, A-ha</div>
           </div>
           
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-2xl">💎</div>
               <div>
@@ -173,7 +173,7 @@ const DiscoverPage: Component = () => {
         </h3>
         <p class="text-sm text-gray-600 mb-4">Music experts who consistently share amazing tracks</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🎸</div>
               <div class="flex-1">
@@ -185,7 +185,7 @@ const DiscoverPage: Component = () => {
             <div class="text-sm text-gray-700">"Seattle sound specialist. Deep cuts and hidden gems from the grunge era."</div>
           </div>
           
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">💿</div>
               <div class="flex-1">
@@ -197,7 +197,7 @@ const DiscoverPage: Component = () => {
             <div class="text-sm text-gray-700">"Digging up rare pressings and forgotten classics. Vinyl-first approach to curation."</div>
           </div>
           
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🌈</div>
               <div class="flex-1">
@@ -209,7 +209,7 @@ const DiscoverPage: Component = () => {
             <div class="text-sm text-gray-700">"80s synthwave evangelist. Neon dreams and electronic nostalgia curator."</div>
           </div>
           
-          <div class="user-card win95-panel p-4 hover:bg-gray-100 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
+          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
             <div class="flex items-center gap-3 mb-3">
               <div class="text-3xl">🔮</div>
               <div class="flex-1">
@@ -230,7 +230,7 @@ const DiscoverPage: Component = () => {
         </h3>
         <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer"
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer"
                onClick={() => playHiddenGem('Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}>
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/P8lHLqOUvFY/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
@@ -242,7 +242,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer"
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer"
                onClick={() => playHiddenGem('Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}>
             <div class="flex items-center gap-3">
               <img src="https://img.youtube.com/vi/A8JNL6bwmls/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
@@ -263,7 +263,7 @@ const DiscoverPage: Component = () => {
         </h3>
         <p class="text-sm text-gray-600 mb-4">Explore new artists based on your taste</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=PJ" 
@@ -278,7 +278,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=SG" 
@@ -293,7 +293,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=DM" 
@@ -308,7 +308,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=RH" 
@@ -323,7 +323,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=SP" 
@@ -338,7 +338,7 @@ const DiscoverPage: Component = () => {
             </div>
           </div>
           
-          <div class="artist-card win95-panel p-4 hover:bg-gray-100 cursor-pointer">
+          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
             <div class="flex items-center gap-3 mb-3">
               <img 
                 src="https://via.placeholder.com/60x60.png?text=PS" 

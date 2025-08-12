@@ -143,7 +143,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
                 </div>
                 <div class="flex-1">
                   <div class={`rounded p-2 text-xs font-terminal ${
-                    message.type === 'ai' ? 'bg-gray-200' : 'bg-blue-100'
+                    message.type === 'ai' ? 'bg-gray-100' : 'bg-blue-100'
                   }`}>
                     <strong>{message.type === 'ai' ? 'JAMZY:' : 'You:'}</strong> {message.message}
                   </div>
@@ -158,7 +158,7 @@ const ChatBot: Component<ChatBotProps> = (props) => {
             <div class="flex gap-2">
               <div class="text-lg">🤖</div>
               <div class="flex-1">
-                <div class="bg-gray-200 rounded p-2 text-xs font-terminal">
+                <div class="bg-gray-100 rounded p-2 text-xs font-terminal">
                   <strong>JAMZY:</strong> <i>typing...</i>
                 </div>
               </div>
