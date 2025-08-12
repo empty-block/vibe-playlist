@@ -6,9 +6,11 @@ interface PlaylistCardProps {
   isCurrentlyPlaying?: boolean;
   tracks?: Array<{ thumbnail: string; title: string }>;
   onClick?: () => void;
+  variant?: 'default' | 'compact';
 }
 
 const PlaylistCard: Component<PlaylistCardProps> = (props) => {
+  const isCompact = () => props.variant === 'compact';
   // Generate playlist cover from first 4 track thumbnails
   const generateCover = () => {
     if (!props.tracks || props.tracks.length === 0) {
@@ -64,17 +66,56 @@ const PlaylistCard: Component<PlaylistCardProps> = (props) => {
     );
   };
 
+  if (isCompact()) {
+    // Compact horizontal layout for Discovery sidebar
+    return (
+      <div 
+        class={`
+          w-full cursor-pointer group transition-all duration-200 hover:bg-gray-50 rounded p-2
+          ${props.isCurrentlyPlaying ? 'bg-blue-50 border-l-4 border-blue-400' : 'hover:bg-gray-50'}
+        `}
+        onClick={props.onClick}
+        title={`${props.playlist.name} - ${props.playlist.description}`}
+      >
+        <div class="flex items-center gap-3">
+          {/* Small thumbnail */}
+          <div class="relative w-12 h-12 flex-shrink-0">
+            {generateCover()}
+            
+            {/* Now Playing Indicator */}
+            <Show when={props.isCurrentlyPlaying}>
+              <div class="absolute -top-1 -right-1 bg-blue-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                <i class="fas fa-play text-xs"></i>
+              </div>
+            </Show>
+          </div>
+          
+          {/* Playlist Info */}
+          <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-bold text-black truncate leading-tight">
+              {props.playlist.name}
+            </h4>
+            <p class="text-xs text-gray-600 truncate">
+              {props.playlist.trackCount} tracks
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default card layout (for horizontal discovery bar)
   return (
     <div 
       class={`
-        flex-shrink-0 w-32 lg:w-auto cursor-pointer group transition-transform duration-200 hover:scale-105
-        ${props.isCurrentlyPlaying ? 'border-4 border-blue-400 rounded-lg p-1' : ''}
+        flex-shrink-0 w-28 lg:w-auto cursor-pointer group transition-transform duration-200 hover:scale-105
+        ${props.isCurrentlyPlaying ? 'border-2 border-blue-400 rounded-lg p-1' : ''}
       `}
       onClick={props.onClick}
       title={`${props.playlist.name} - ${props.playlist.description}`}
     >
       {/* Playlist Cover */}
-      <div class="relative w-full h-28 mb-2">
+      <div class="relative w-full h-24 sm:h-28 mb-2">
         {generateCover()}
         
         {/* Now Playing Indicator */}

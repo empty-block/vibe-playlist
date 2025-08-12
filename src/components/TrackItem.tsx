@@ -222,7 +222,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 ref={thumbnailRef!}
                 src={props.track.thumbnail} 
                 alt={props.track.title}
-                class="w-24 h-24 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-lg transition-shadow duration-200"
+                class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
               />
               
               {/* Gradient Play Button Overlay */}
@@ -230,14 +230,14 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 <button
                   ref={playButtonRef!}
                   onClick={props.onPlay}
-                  class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-lg transition-all duration-300"
+                  class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-purple-600/0 to-blue-600/0 group-hover:from-purple-600/80 group-hover:to-blue-600/80 rounded-lg transition-all duration-300"
                   title="Play this track"
                   style={{
                     transition: 'none' // Disable CSS transitions for anime.js
                   }}
                 >
-                  <div class="w-12 h-12 rounded-full bg-white bg-opacity-90 flex items-center justify-center shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-300">
-                    <i class="fas fa-play text-gray-800 ml-1 text-lg"></i>
+                  <div class="w-16 h-16 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/30">
+                    <i class="fas fa-play text-white ml-1 text-2xl drop-shadow-lg"></i>
                   </div>
                 </button>
               )}

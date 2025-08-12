@@ -38,6 +38,7 @@ export interface Playlist {
   description: string;
   icon: string;
   color: string;
+  image?: string;
   trackCount: number;
   createdBy: string;
   creatorAvatar: string;
@@ -53,6 +54,7 @@ export const playlists: Record<string, Playlist> = {
     description: 'The best grunge, alternative, and pop hits from the decade that changed music',
     icon: '🎸',
     color: '#ff6b6b',
+    image: 'https://img.youtube.com/vi/hTWKbfoikeg/maxresdefault.jpg',
     trackCount: 16,
     createdBy: 'nostalgia_curator',
     creatorAvatar: '🎸',
@@ -66,6 +68,7 @@ export const playlists: Record<string, Playlist> = {
     description: 'Neon-soaked synth beats and electric dreams from the decade of excess',
     icon: '🌈',
     color: '#ff0080',
+    image: 'https://img.youtube.com/vi/dX3k_QDnzHE/maxresdefault.jpg',
     trackCount: 12,
     createdBy: 'synth_prophet_85',
     creatorAvatar: '🌈',
@@ -79,6 +82,7 @@ export const playlists: Record<string, Playlist> = {
     description: 'Laid-back tracks for studying, relaxing, or just vibing',
     icon: '🌙',
     color: '#4ecdc4',
+    image: 'https://img.youtube.com/vi/lTRiuFIWV54/maxresdefault.jpg',
     trackCount: 10,
     createdBy: 'lofi_dreamer',
     creatorAvatar: '🌙',
@@ -149,6 +153,71 @@ export const playlists: Record<string, Playlist> = {
     creatorAvatar: '🎛️',
     createdAt: '1 week ago',
     memberCount: 789,
+    isCollaborative: true
+  },
+  'summer_roadtrip': {
+    id: 'summer_roadtrip',
+    name: 'Summer Roadtrip ☀️',
+    description: 'Windows down, music up - perfect tracks for cruising',
+    icon: '☀️',
+    color: '#f59e0b',
+    trackCount: 15,
+    createdBy: 'highway_hero',
+    creatorAvatar: '☀️',
+    createdAt: '3 days ago',
+    memberCount: 287,
+    isCollaborative: true
+  },
+  'late_night_coding': {
+    id: 'late_night_coding',
+    name: 'Late Night Coding 💻',
+    description: 'Focus tracks for those 3am debugging sessions',
+    icon: '💻',
+    color: '#10b981',
+    trackCount: 22,
+    createdBy: 'code_ninja_dev',
+    creatorAvatar: '💻',
+    createdAt: '5 days ago',
+    memberCount: 1523,
+    isCollaborative: true
+  },
+  'jazz_cafe': {
+    id: 'jazz_cafe',
+    name: 'Jazz Cafe ☕',
+    description: 'Smooth jazz and coffee house vibes for sophisticated listening',
+    icon: '☕',
+    color: '#8b4513',
+    trackCount: 18,
+    createdBy: 'smooth_operator',
+    creatorAvatar: '☕',
+    createdAt: '1 week ago',
+    memberCount: 456,
+    isCollaborative: true
+  },
+  'workout_pump': {
+    id: 'workout_pump',
+    name: 'Workout Pump 💪',
+    description: 'High-energy beats to power through your fitness routine',
+    icon: '💪',
+    color: '#ef4444',
+    trackCount: 25,
+    createdBy: 'fitness_beast',
+    creatorAvatar: '💪',
+    createdAt: '2 days ago',
+    memberCount: 2891,
+    isCollaborative: true
+  },
+  'acoustic_sunset': {
+    id: 'acoustic_sunset',
+    name: 'Acoustic Sunset 🌅',
+    description: 'Gentle acoustic melodies for peaceful evening moments',
+    icon: '🌅',
+    color: '#f97316',
+    trackCount: 14,
+    createdBy: 'sunset_strummer',
+    creatorAvatar: '🌅',
+    createdAt: '4 days ago',
+    memberCount: 678,
     isCollaborative: true
   }
 };

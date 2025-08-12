@@ -42,8 +42,6 @@ const Player: Component<PlayerProps> = (props) => {
     console.log('Skip to next track');
     // TODO: Implement playlist navigation
   };
-
-  
   
   const handleAddComment = () => {
     const comment = newComment().trim();

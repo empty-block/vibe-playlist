@@ -169,26 +169,36 @@
             text-shadow: 0 0 10px #00ff00;
         }
         
-        /* Windows 95 style scrollbar */
+        /* Windows 95 style scrollbar - slimmer version */
         ::-webkit-scrollbar {
-            width: 16px;
+            width: 10px;
+            height: 10px;
         }
         
         ::-webkit-scrollbar-track {
             background: #c0c0c0;
-            border: 2px inset #c0c0c0;
+            border: 1px inset #999;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(145deg, #dfdfdf, #c0c0c0);
-            border: 2px outset #c0c0c0;
+            background: linear-gradient(145deg, #dfdfdf, #b0b0b0);
+            border: 1px outset #c0c0c0;
             box-shadow: 
-                inset 1px 1px 0px #ffffff,
-                inset -1px -1px 0px #808080;
+                inset 1px 1px 0px #ffffff;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+            background: linear-gradient(145deg, #e0e0e0, #c0c0c0);
+        }
+        
+        ::-webkit-scrollbar-thumb:active {
+            background: linear-gradient(145deg, #b0b0b0, #999);
+            border: 1px inset #999;
+        }
+        
+        /* Corner where scrollbars meet */
+        ::-webkit-scrollbar-corner {
+            background: #c0c0c0;
         }
         
         /* Safe area padding for mobile devices with notches/bottom bars */

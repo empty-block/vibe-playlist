@@ -77,12 +77,23 @@ const HomePage: Component = () => {
     // For now, could also navigate to SharePage as fallback:
     // navigate(`/share?playlist=${currentPlaylistId()}`);
   };
+  
+  const handlePlayPlaylist = () => {
+    const tracks = playlistTracks();
+    if (tracks.length > 0) {
+      console.log('Playing playlist:', currentPlaylistId());
+      setCurrentTrack(tracks[0]); // Play first track
+    }
+  };
 
   const handlePlaylistChange = (playlistId: string) => {
     console.log('Switching to playlist:', playlistId);
     setCurrentPlaylistId(playlistId);
-    // Just switch playlist view - don't auto-play or change current track
-    // This allows users to browse playlists while continuing to listen to current music
+    // Optionally auto-play first track of the selected playlist
+    const tracks = playlistTracks[playlistId] || [];
+    if (tracks.length > 0) {
+      setCurrentTrack(tracks[0]);
+    }
   };
 
   // Animate track items when they change
@@ -104,14 +115,21 @@ const HomePage: Component = () => {
   });
 
   return (
-    <div class="p-2 md:p-4">
-      <div class="win95-panel h-full p-2 md:p-4 overflow-hidden flex flex-col">
-          {/* Discovery Bar */}
+    <div class="h-full flex">
+      {/* Discovery Bar - Left Sidebar (Desktop only) - Fixed, no scroll */}
+      <div class="hidden lg:flex w-56 flex-shrink-0 bg-gray-100 border-r-2 border-gray-400">
+        <div class="p-3 flex flex-col h-full">
           <DiscoveryBar
             playlists={Object.values(playlists)}
             onPlaylistClick={handlePlaylistChange}
+            variant="vertical"
           />
-          
+        </div>
+      </div>
+      
+      {/* Main Content - Playlist - THE ONLY SCROLLABLE AREA */}
+      <div class="flex-1 overflow-y-auto p-2 md:p-4">
+        <div class="win95-panel p-2 md:p-4">
           {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
@@ -120,6 +138,7 @@ const HomePage: Component = () => {
             onSearchInput={setSearchQuery}
             onReply={handleReply}
             onAddTrack={handleAddTrack}
+            onPlayPlaylist={handlePlayPlaylist}
           />
           
           {/* Sort Options */}
@@ -140,7 +159,7 @@ const HomePage: Component = () => {
           </div>
           
           {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="flex-1 overflow-y-auto overflow-x-hidden space-y-2 px-2" id="playlist-container">
+          <div ref={trackContainerRef!} class="space-y-2 px-2" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>
@@ -159,6 +178,7 @@ const HomePage: Component = () => {
           </div>
         </div>
       </div>
+    </div>
   );
 };
 

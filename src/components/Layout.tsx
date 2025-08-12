@@ -14,12 +14,12 @@ interface LayoutProps {
 const Layout: Component<LayoutProps> = (props) => {
   const [showTerminal, setShowTerminal] = createSignal(false);
   const [isCompact, setIsCompact] = createSignal(window.innerWidth < 1024);
-  const [forceCompact, setForceCompact] = createSignal(false);
+  const [forceCompact, setForceCompact] = createSignal(false); // Default to right side when screen is large
 
   // Make showTerminal globally accessible for the close button
   (window as any).showTerminal = () => setShowTerminal(true);
 
-  // Handle responsive state - simpler breakpoint at 1024px
+  // Handle responsive state
   createEffect(() => {
     const handleResize = () => {
       setIsCompact(window.innerWidth < 1024);
@@ -56,7 +56,7 @@ const Layout: Component<LayoutProps> = (props) => {
           <Show when={currentTrack()}>
             <div class={`${
               isCompact() || forceCompact()
-                ? 'h-32 border-t-2 flex-shrink-0 pb-safe' 
+                ? 'h-52 border-t-2 flex-shrink-0 pb-safe' 
                 : 'w-80 border-l-2'
             } border-gray-400`}>
               <MediaPlayer isCompact={() => isCompact() || forceCompact()} onForceCompact={setForceCompact} />
