@@ -1,11 +1,11 @@
 import { Component, createSignal, Show, createMemo, For, onMount } from 'solid-js';
 import { A } from '@solidjs/router';
-import { Track, currentTrack, Reply } from '../stores/playlistStore';
-import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../stores/authStore';
-import ReplyItem from './social/ReplyItem';
-import AnimatedButton from './AnimatedButton';
-import ReplyForm from './ReplyForm';
-import { slideIn, staggeredFadeIn, playbackButtonHover, particleBurst, magnetic } from '../utils/animations';
+import { Track, currentTrack, Reply } from '../../stores/playlistStore';
+import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../../stores/authStore';
+import ReplyItem from '../social/ReplyItem';
+import AnimatedButton from '../common/AnimatedButton';
+import ReplyForm from '../common/ReplyForm';
+import { slideIn, staggeredFadeIn, playbackButtonHover, particleBurst, magnetic } from '../../utils/animations';
 import anime from 'animejs';
 
 interface TrackItemProps {

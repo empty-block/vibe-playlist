@@ -1,5 +1,5 @@
 import { Component, Show } from 'solid-js';
-import { Playlist } from '../stores/playlistStore';
+import { Playlist } from '../../stores/playlistStore';
 
 interface PlaylistCardProps {
   playlist: Playlist;

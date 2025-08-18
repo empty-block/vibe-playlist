@@ -1,11 +1,11 @@
 import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
 import WindowsFrame from './WindowsFrame';
 import Navigation from './Navigation';
-import Terminal from './Terminal';
-import MediaPlayer from './MediaPlayer';
-import ChatBot from './ChatBot';
-import { currentTrack } from '../stores/playlistStore';
-import { showChat, closeChat } from '../stores/chatStore';
+import Terminal from '../chat/Terminal';
+import MediaPlayer from '../player/MediaPlayer';
+import ChatBot from '../chat/ChatBot';
+import { currentTrack } from '../../stores/playlistStore';
+import { showChat, closeChat } from '../../stores/chatStore';
 
 interface LayoutProps {
   children?: JSX.Element;

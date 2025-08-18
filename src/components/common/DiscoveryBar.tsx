@@ -1,6 +1,6 @@
 import { Component, For } from 'solid-js';
-import { Playlist, playlistTracks, currentPlaylistId } from '../stores/playlistStore';
-import PlaylistCard from './PlaylistCard';
+import { Playlist, playlistTracks, currentPlaylistId } from '../../stores/playlistStore';
+import PlaylistCard from '../playlist/PlaylistCard';
 
 interface DiscoveryBarProps {
   playlists: Playlist[];

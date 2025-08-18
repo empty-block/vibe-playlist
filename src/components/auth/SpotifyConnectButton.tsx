@@ -5,7 +5,7 @@ import {
   spotifyAuthLoading,
   initiateSpotifyAuth, 
   disconnectSpotify 
-} from '../stores/authStore';
+} from '../../stores/authStore';
 
 const SpotifyConnectButton: Component = () => {
   return (

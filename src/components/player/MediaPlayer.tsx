@@ -1,5 +1,5 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { currentTrack } from '../stores/playlistStore';
+import { currentTrack } from '../../stores/playlistStore';
 import Player from './Player';
 import YouTubeMedia from './YouTubeMedia';
 import SpotifyMedia from './SpotifyMedia';

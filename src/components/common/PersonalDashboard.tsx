@@ -1,7 +1,7 @@
 import { Component, onMount, For, createSignal, Show } from 'solid-js';
-import { currentUser, setIsAuthenticated } from '../stores/authStore';
-import { currentTrack, setCurrentTrack, type Track } from '../stores/playlistStore';
-import { pageEnter, staggeredFadeIn, buttonHover, counterAnimation, slideIn } from '../utils/animations';
+import { currentUser, setIsAuthenticated } from '../../stores/authStore';
+import { currentTrack, setCurrentTrack, type Track } from '../../stores/playlistStore';
+import { pageEnter, staggeredFadeIn, buttonHover, counterAnimation, slideIn } from '../../utils/animations';
 
 const PersonalDashboard: Component = () => {
   const [statsVisible, setStatsVisible] = createSignal(false);

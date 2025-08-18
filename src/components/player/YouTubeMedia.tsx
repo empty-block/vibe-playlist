@@ -1,5 +1,5 @@
 import { Component, createEffect, onMount, createSignal } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying } from '../stores/playlistStore';
+import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playlistStore';
 
 interface YouTubeMediaProps {
   isCompact?: () => boolean;

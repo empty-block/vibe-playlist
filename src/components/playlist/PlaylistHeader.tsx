@@ -1,8 +1,8 @@
 import { Component, createSignal, Show, onMount } from 'solid-js';
-import { Playlist } from '../stores/playlistStore';
-import TextInput from './TextInput';
-import AnimatedButton from './AnimatedButton';
-import { replyBoxExpand, replyBoxCollapse, slideIn, magnetic, playButtonPulse } from '../utils/animations';
+import { Playlist } from '../../stores/playlistStore';
+import TextInput from '../common/TextInput';
+import AnimatedButton from '../common/AnimatedButton';
+import { replyBoxExpand, replyBoxCollapse, slideIn, magnetic, playButtonPulse } from '../../utils/animations';
 
 interface PlaylistHeaderProps {
   playlist: Playlist;

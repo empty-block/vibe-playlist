@@ -1,9 +1,9 @@
 import { Component, Show, JSX, createSignal, For, onMount } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying } from '../stores/playlistStore';
-import SocialStats from './social/SocialStats';
-import SocialActions from './social/SocialActions';
-import ReplyItem from './social/ReplyItem';
-import { playbackButtonHover } from '../utils/animations';
+import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playlistStore';
+import SocialStats from '../social/SocialStats';
+import SocialActions from '../social/SocialActions';
+import ReplyItem from '../social/ReplyItem';
+import { playbackButtonHover } from '../../utils/animations';
 
 interface PlayerProps {
   isCompact?: () => boolean;

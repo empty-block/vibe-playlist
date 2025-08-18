@@ -1,7 +1,7 @@
 import { Component } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
-import { toggleChat, showChat } from '../stores/chatStore';
-import { isAuthenticated } from '../stores/authStore';
+import { toggleChat, showChat } from '../../stores/chatStore';
+import { isAuthenticated } from '../../stores/authStore';
 
 const Navigation: Component = () => {
   const location = useLocation();

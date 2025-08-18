@@ -1,5 +1,5 @@
 import { Component, createSignal, For, onMount } from 'solid-js';
-import { slideIn, staggeredFadeIn } from '../utils/animations';
+import { slideIn, staggeredFadeIn } from '../../utils/animations';
 import anime from 'animejs';
 
 interface Message {

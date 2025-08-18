@@ -1,5 +1,5 @@
 import { Component, JSX, onMount } from 'solid-js';
-import { buttonHover, socialButtonClick, playButtonPulse, iconSpin } from '../utils/animations';
+import { buttonHover, socialButtonClick, playButtonPulse, iconSpin } from '../../utils/animations';
 
 interface AnimatedButtonProps {
   children: JSX.Element;
