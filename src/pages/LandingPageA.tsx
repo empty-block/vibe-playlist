@@ -102,7 +102,10 @@ const LandingPageA: Component = () => {
   };
 
   return (
-    <div ref={pageRef!} class="min-h-screen bg-gradient-to-b from-gray-200 to-gray-300" style={{ opacity: '0' }}>
+    <div ref={pageRef!} class="min-h-screen" style={{ 
+      opacity: '0',
+      background: 'linear-gradient(to bottom, #e6f0ff 0%, #f0e6ff 100%)'
+    }}>
       {/* Hero Section */}
       <div class="container mx-auto px-8 py-16">
         <div class="text-center mb-12">

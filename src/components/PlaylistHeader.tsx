@@ -128,8 +128,11 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 alt={`${props.playlist.name} cover`}
                 class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-lg shadow-lg border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
               />
-              {/* Purple gradient overlay on hover */}
-              <div class="absolute inset-0 bg-gradient-to-br from-purple-600/80 to-blue-600/80 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+              {/* Neon gradient overlay on hover */}
+              <div 
+                class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
+                style="background: linear-gradient(to bottom right, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 100%);"
+              >
                 <div class="w-20 h-20 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border-2 border-white/30">
                   <i class="fas fa-play text-white text-4xl ml-1 drop-shadow-lg"></i>
                 </div>

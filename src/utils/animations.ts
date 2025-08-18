@@ -183,13 +183,13 @@ export const playbackButtonHover = {
     anime({
       targets: element,
       scale: 1.1,
-      boxShadow: '0 8px 25px rgba(59, 130, 246, 0.3)',
+      boxShadow: '0 8px 25px rgba(4, 202, 244, 0.4)',
       duration: 300,
       easing: 'easeOutBack'
     });
     
-    // Add gradient background
-    element.style.background = 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)';
+    // Add gradient background with neon colors
+    element.style.background = 'linear-gradient(135deg, #04caf4 0%, #00f92a 100%)';
     element.style.backgroundSize = '200% 200%';
     
     // Make icon white for visibility against gradient
@@ -289,7 +289,8 @@ export const particleBurst = (element: HTMLElement) => {
   
   for (let i = 0; i < 12; i++) {
     const particle = document.createElement('div');
-    particle.className = 'absolute w-2 h-2 bg-blue-400 rounded-full pointer-events-none z-50';
+    particle.className = 'absolute w-2 h-2 rounded-full pointer-events-none z-50';
+    particle.style.backgroundColor = '#04caf4';
     particle.style.left = `${centerX}px`;
     particle.style.top = `${centerY}px`;
     document.body.appendChild(particle);

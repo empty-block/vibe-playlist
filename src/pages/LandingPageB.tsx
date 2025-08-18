@@ -143,7 +143,7 @@ const LandingPageB: Component = () => {
             {/* Window Frame */}
             <div class="win95-window bg-gray-200">
               {/* Title Bar */}
-              <div class="win95-title-bar bg-gradient-to-r from-blue-800 to-blue-600 px-2 py-1 flex items-center justify-between">
+              <div class="win95-title-bar px-2 py-1 flex items-center justify-between" style="background: linear-gradient(to right, #3b00fd 0%, #04caf4 100%);">
                 <div class="flex items-center gap-2">
                   <i class="fas fa-music text-white"></i>
                   <span class="text-white font-bold text-sm">JAMZY.exe - Welcome</span>
@@ -257,7 +257,7 @@ const LandingPageB: Component = () => {
             {/* Taskbar */}
             <div class="win95-taskbar mt-4 bg-gray-300 border-t-2 border-white p-1 flex items-center justify-between">
               <button class="win95-button px-3 py-1 font-bold text-sm flex items-center gap-1">
-                <div class="w-4 h-4 bg-gradient-to-br from-red-500 via-yellow-500 to-blue-500"></div>
+                <div class="w-4 h-4" style="background: linear-gradient(to bottom right, #3b00fd 0%, #04caf4 50%, #00f92a 100%);"></div>
                 Start
               </button>
               <div class="flex items-center gap-2 text-xs text-black">

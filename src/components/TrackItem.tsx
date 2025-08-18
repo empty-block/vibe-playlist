@@ -153,15 +153,16 @@ const TrackItem: Component<TrackItemProps> = (props) => {
         isPlayable() 
           ? 'cursor-pointer' 
           : 'cursor-not-allowed opacity-60'
-      } ${isCurrentTrack() ? 'border-4 border-blue-400' : ''}`}
-      onClick={handleClick}
+      } ${isCurrentTrack() ? 'border-4' : ''}`}
       style={{
         transform: 'translateZ(0)',
         transition: 'none',
         ...(isCurrentTrack() ? {
-          'box-shadow': '0 0 25px rgba(59, 130, 246, 0.8), 0 0 40px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.1)'
+          'border-color': '#3b00fd',
+          'box-shadow': '0 0 25px rgba(59, 0, 253, 0.8), 0 0 40px rgba(59, 0, 253, 0.4), inset 0 0 15px rgba(59, 0, 253, 0.1)'
         } : {})
       }}
+      onClick={handleClick}
     >
       <div class="flex gap-4 min-w-0">
         {/* Thumbnail with Overlay Number */}
@@ -185,9 +186,18 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             <button
               ref={playButtonRef!}
               onClick={props.onPlay}
-              class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-purple-600/0 to-blue-600/0 group-hover:from-purple-600/80 group-hover:to-blue-600/80 rounded-lg transition-all duration-300"
+              class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-cyan-400/0 to-green-400/0 rounded-lg transition-all duration-300"
               title="Play this track"
-              style={{ transition: 'none' }}
+              style={{ 
+                background: 'linear-gradient(to bottom right, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 100%)',
+                transition: 'background 300ms'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(to bottom right, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 100%)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(to bottom right, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 100%)';
+              }}
             >
               <div class="w-12 h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/30">
                 <i class="fas fa-play text-white ml-0.5 text-lg drop-shadow-lg"></i>

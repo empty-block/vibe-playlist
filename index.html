@@ -40,10 +40,19 @@
     <script src="tailwind-config.js"></script>
     <style>
         :root {
-            --primary-color: #0099ff;   /* 90s neon blue */
-            --secondary-color: #00ccff;  /* lighter 90s blue accent */
-            --success-color: #10b981;    /* green for success states */
-            --error-color: #ef4444;      /* red for errors */
+            /* Neon 90s Color Palette */
+            --primary-color: #3b00fd;     /* Deep blue/purple - primary */
+            --secondary-color: #04caf4;   /* Neon cyan */
+            --accent-color: #00f92a;      /* Bright green */
+            --highlight-color: #f906d6;   /* Hot pink */
+            --warning-color: #d1f60a;     /* Neon yellow */
+            --success-color: #00f92a;     /* Bright green for success */
+            --error-color: #f906d6;       /* Hot pink for errors */
+            
+            /* Gradient combinations */
+            --gradient-primary: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            --gradient-accent: linear-gradient(135deg, var(--highlight-color) 0%, var(--warning-color) 100%);
         }
         
         @keyframes blink {

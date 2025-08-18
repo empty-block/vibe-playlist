@@ -30,7 +30,7 @@ const Layout: Component<LayoutProps> = (props) => {
   });
 
   return (
-    <div class="h-screen grunge-bg relative overflow-hidden">
+    <div class="h-screen relative overflow-hidden" style="background: linear-gradient(135deg, #04caf4 0%, #00f92a 100%);">
       {/* TV Static overlay */}
       <div class="tv-static fixed inset-0 pointer-events-none opacity-5"></div>
       
