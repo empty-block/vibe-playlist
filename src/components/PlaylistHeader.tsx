@@ -1,6 +1,5 @@
 import { Component, createSignal, Show, onMount } from 'solid-js';
 import { Playlist } from '../stores/playlistStore';
-import SocialStats from './social/SocialStats';
 import TextInput from './TextInput';
 import AnimatedButton from './AnimatedButton';
 import { replyBoxExpand, replyBoxCollapse, slideIn, magnetic, playButtonPulse } from '../utils/animations';
@@ -25,12 +24,8 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   let headerRef: HTMLDivElement;
   let playlistImageRef: HTMLDivElement;
 
-  // Mock social stats for the playlist cast
-  const playlistStats = () => ({
-    likes: 47,
-    recasts: 23,
-    replies: props.playlist.trackCount + 12 // Tracks + actual comments
-  });
+  // Mock playlist likes for now
+  const playlistLikes = () => 47;
 
   const handleReply = (action: 'comment' | 'track') => {
     if (showReplyBox()) {
@@ -121,14 +116,13 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
 
   return (
     <div class="mb-4">
-      {/* Playlist Cast Header - Like a Farcaster Post */}
+      {/* Playlist Header - Simplified but with key features */}
       <div ref={headerRef!} class="win95-panel p-4 mb-4">
-        {/* Single Column Layout */}
         <div class="space-y-4">
           
           {/* Main Content Row with Image on Left */}
           <div class="flex items-start gap-4">
-            {/* Playlist Image - Clickable to play (LEFT SIDE) */}
+            {/* Playlist Image - Keep original large size */}
             <div 
               ref={playlistImageRef!}
               class="flex-shrink-0 relative group cursor-pointer"
@@ -153,56 +147,39 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               </div>
             </div>
             
-            {/* Creator Info and Playlist Details (RIGHT SIDE) */}
+            {/* Playlist Details */}
             <div class="flex-1 min-w-0">
-              {/* Creator Info */}
-              <div class="flex items-center gap-2 mb-3">
-                <button 
-                  class="flex-shrink-0 text-2xl hover:scale-110 transition-transform"
-                  onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-                  title={`View ${props.playlist.createdBy}'s profile`}
-                >
-                  {props.playlist.creatorAvatar}
-                </button>
-                <div class="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                  <button 
-                    class="text-left font-bold text-black hover:text-blue-700 transition-colors"
-                    onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-                  >
-                    {props.playlist.createdBy}
-                  </button>
-                  <span class="text-sm text-gray-500">
-                    {props.playlist.createdAt}
-                  </span>
-                </div>
-              </div>
-              
               {/* Playlist Title - Bigger */}
-              <h1 class="text-3xl sm:text-4xl font-bold text-black mb-3">
+              <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-3">
                 {props.playlist.name}
               </h1>
-              <p class="text-base text-gray-700 leading-relaxed break-words mb-4">
-                {props.playlist.description}
-              </p>
               
-              {/* Social Stats - Under playlist text */}
-              <div class="py-2">
-                <SocialStats
-                  likes={playlistStats().likes}
-                  recasts={playlistStats().recasts}
-                  replies={playlistStats().replies}
-                  size="sm"
-                  showLabels={true}
-                  interactive={true}
-                  onLikeClick={() => console.log('Like playlist')}
-                  onRepliesClick={() => console.log('View all replies')}
-                  className="text-gray-500 justify-start gap-6"
-                />
+              {/* Creator Info - Slightly bigger */}
+              <div class="flex items-center gap-2 mb-4">
+                <span class="text-base text-gray-600">Created by</span>
+                <button 
+                  class="text-lg font-bold text-black hover:text-blue-700 transition-colors"
+                  onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+                >
+                  {props.playlist.createdBy}
+                </button>
+                <span class="text-base text-gray-500">•</span>
+                <span class="text-base text-gray-500">{props.playlist.createdAt}</span>
+              </div>
+              
+              {/* Like count display */}
+              <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                <button class="flex items-center gap-2 hover:text-red-600 transition-colors">
+                  <i class="fas fa-heart"></i>
+                  <span>{playlistLikes()} likes</span>
+                </button>
+                <span>•</span>
+                <span>{props.playlist.trackCount} tracks</span>
               </div>
             </div>
           </div>
           
-          {/* Action Buttons - Full Width */}
+          {/* Action Buttons - Keep these! */}
           <div class="flex gap-3">
             <AnimatedButton
               onClick={() => handleReply('comment')}

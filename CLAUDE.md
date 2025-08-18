@@ -20,6 +20,21 @@ This unified model simplifies the mental model - users always think "where shoul
 - **Frontend Focus**: UI/UX layer that presents Farcaster content through playlist metaphor
 - **No Custom Social Features**: Authentication, messaging, user management handled by Farcaster
 
+### Playlists = Farcaster Threads
+**Important Concept**: In JAMZY, playlists are actually Farcaster threads under the hood:
+
+- **Thread Creation**: When someone creates a playlist, they're starting a Farcaster thread
+- **Initial Post**: The first post might contain both the playlist concept AND initial tracks
+  - Example: "Here are my favorite 90s hits" + first few songs
+- **Song Contributions**: Each song added is a reply to the thread
+- **Collaborative Nature**: Anyone can reply to the thread with their song suggestions
+- **Playlist Structure**:
+  - **Title**: Can be AI-generated from thread content or user-provided
+  - **Creator**: The thread initiator
+  - **First Post**: Treated as the first track(s) in the playlist, not separate header content
+  - **Subsequent Replies**: Additional tracks from any contributor
+- **No Separate Description**: The thread's first post serves as both introduction and initial content
+
 ## 🏗 Tech Stack Notes
 
 - **Bun**: All commands use `bun` not `npm` (`bun run dev`, `bun add`, etc.)

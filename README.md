@@ -6,6 +6,13 @@ VIBES 95 reimagines music sharing by treating **playlists as the fundamental uni
 
 **Rethinking Music Sharing**: Instead of posting individual tracks to feeds, users create playlist entries. Your profile becomes your personal "Jams" playlist, collaborative playlists become group spaces, and AI algorithms curate discovery playlists.
 
+**Playlists = Farcaster Threads**: Under the hood, every playlist is actually a Farcaster thread:
+- When someone creates a playlist, they're starting a new thread
+- The first post might contain both the playlist intro AND initial tracks (e.g., "Here are my favorite 90s hits" + songs)
+- Each song added is a reply to that thread
+- Anyone can contribute by replying with their song suggestions
+- The playlist title can be user-provided or AI-generated from thread content
+
 **Three Playlist Types**:
 - **👤 Personal**: Your musical identity (e.g., "Alex's Jams") 
 - **👥 Collaborative**: Group music curation with friends
@@ -28,8 +35,10 @@ This unified approach simplifies the mental model - users always think "where sh
 
 ### 🌐 Farcaster Integration
 - **Social Backend**: Built on decentralized social protocol
+- **Thread-Based Playlists**: Each playlist is a Farcaster thread where songs are replies
 - **Existing Communities**: Leverages your Farcaster network
 - **No Account Creation**: Use your existing Farcaster identity
+- **Native Social Features**: Likes, recasts, and replies work just like Farcaster
 
 ### 🎨 Nostalgic Design
 - **Windows 95 Aesthetic**: Authentic retro UI with pixel-perfect styling
