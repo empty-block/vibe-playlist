@@ -16,9 +16,8 @@ interface PlaylistHeaderProps {
 
 const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   const [showReplyBox, setShowReplyBox] = createSignal(false);
-  const [replyText, setReplyText] = createSignal('');
+  const [comment, setComment] = createSignal('');
   const [trackUrl, setTrackUrl] = createSignal('');
-  const [focusField, setFocusField] = createSignal<'comment' | 'track' | null>(null);
   
   let replyBoxRef: HTMLDivElement;
   let headerRef: HTMLDivElement;
@@ -27,21 +26,18 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   // Mock playlist likes for now
   const playlistLikes = () => 47;
 
-  const handleReply = (action: 'comment' | 'track') => {
-    if (showReplyBox()) {
-      // If already open, just change focus
-      setFocusField(action);
-    } else {
-      // Open the reply box and set focus
+  const handleAddTrack = () => {
+    if (!showReplyBox()) {
       setShowReplyBox(true);
-      setFocusField(action);
-      
       // Animate the reply box in after it's rendered
       setTimeout(() => {
         if (replyBoxRef) {
           replyBoxExpand(replyBoxRef);
         }
       }, 0);
+    } else {
+      // If form is already open, close it
+      handleCloseReply();
     }
   };
 
@@ -50,34 +46,31 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
       // Animate out then hide
       replyBoxCollapse(replyBoxRef).finished.then(() => {
         setShowReplyBox(false);
-        setReplyText('');
+        setComment('');
         setTrackUrl('');
-        setFocusField(null);
       });
     } else {
       setShowReplyBox(false);
-      setReplyText('');
+      setComment('');
       setTrackUrl('');
-      setFocusField(null);
     }
   };
 
   const handleSubmitReply = () => {
     console.log('Submitting to playlist:', props.playlist.id);
     
-    if (focusField() === 'comment') {
-      // Pure comment reply
-      console.log('Text reply:', replyText());
-      props.onReply?.();
-    } else if (focusField() === 'track') {
-      // Track addition (with optional comment)
+    // Can submit with just a track URL, just a comment, or both
+    if (trackUrl()) {
       console.log('Track URL:', trackUrl());
-      console.log('Optional comment:', replyText() || 'None');
-      props.onAddTrack?.();
+    }
+    if (comment()) {
+      console.log('Comment:', comment());
     }
     
+    props.onAddTrack?.();
+    
     // Reset and hide reply box
-    setReplyText('');
+    setComment('');
     setTrackUrl('');
     setShowReplyBox(false);
   };
@@ -92,14 +85,10 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   };
 
   const canSubmit = () => {
-    if (focusField() === 'comment') {
-      // Reply mode: only need comment
-      return replyText().trim();
-    } else if (focusField() === 'track') {
-      // Add track mode: only need valid track URL
-      return trackUrl().trim() && isValidUrl(trackUrl());
-    }
-    return false;
+    // Can submit if we have either a valid track URL or a comment
+    const hasValidUrl = trackUrl().trim() && isValidUrl(trackUrl());
+    const hasComment = comment().trim();
+    return hasValidUrl || hasComment;
   };
 
   onMount(() => {
@@ -167,45 +156,45 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 <span class="text-base text-gray-500">{props.playlist.createdAt}</span>
               </div>
               
-              {/* Like count display */}
+              {/* Like count display - clickable to see who liked */}
               <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-                <button class="flex items-center gap-2 hover:text-red-600 transition-colors">
-                  <i class="fas fa-heart"></i>
+                <button 
+                  class="flex items-center gap-2 hover:text-blue-600 transition-colors"
+                  title="See who liked this playlist"
+                  onClick={() => console.log('Show who liked the playlist')}
+                >
                   <span>{playlistLikes()} likes</span>
                 </button>
                 <span>•</span>
                 <span>{props.playlist.trackCount} tracks</span>
               </div>
+              
+              {/* Action Buttons - Now inside the right column */}
+              <div class="flex gap-3">
+                <AnimatedButton
+                  onClick={() => console.log('Like playlist')}
+                  class="win95-button px-3 py-1.5 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap flex-1"
+                  title="Like this playlist"
+                  animationType="social"
+                >
+                  <i class="fas fa-heart mr-1.5"></i>
+                  <span>Like</span>
+                </AnimatedButton>
+                
+                <AnimatedButton
+                  onClick={handleAddTrack}
+                  class="win95-button px-3 py-1.5 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap flex-1"
+                  title="Add to this playlist"
+                  classList={{
+                    'bg-green-100': showReplyBox()
+                  }}
+                  animationType="social"
+                >
+                  <i class="fas fa-plus mr-1.5"></i>
+                  <span>Add to Playlist</span>
+                </AnimatedButton>
+              </div>
             </div>
-          </div>
-          
-          {/* Action Buttons - Keep these! */}
-          <div class="flex gap-3">
-            <AnimatedButton
-              onClick={() => handleReply('comment')}
-              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
-              title="Reply with a comment"
-              classList={{
-                'bg-blue-100': showReplyBox() && focusField() === 'comment'
-              }}
-              animationType="social"
-            >
-              <i class="fas fa-comment mr-2"></i>
-              <span>Reply</span>
-            </AnimatedButton>
-            
-            <AnimatedButton
-              onClick={() => handleReply('track')}
-              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
-              title="Add a track to this playlist"
-              classList={{
-                'bg-green-100': showReplyBox() && focusField() === 'track'
-              }}
-              animationType="social"
-            >
-              <i class="fas fa-music mr-2"></i>
-              <span>Add Track</span>
-            </AnimatedButton>
           </div>
           
         </div>
@@ -213,67 +202,50 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
 
       {/* Unified Reply Box */}
       <Show when={showReplyBox()}>
-        <div ref={replyBoxRef!} class="win95-panel p-4 mb-4 relative">
-          {/* Close Button */}
-          <button 
-            onClick={handleCloseReply}
-            class="absolute top-2 right-2 win95-button w-6 h-6 text-xs font-bold flex items-center justify-center hover:bg-red-100 transition-colors"
-            title="Close"
-          >
-            ×
-          </button>
-          
-          <h3 class="text-sm font-bold text-black mb-3 flex items-center gap-2 pr-8">
-            <i class={focusField() === 'track' ? 'fas fa-music' : 'fas fa-reply'}></i>
-            {focusField() === 'track' ? 'Add a track to' : 'Reply to'} {props.playlist.createdBy}'s playlist
+        <div ref={replyBoxRef!} class="win95-panel p-4 mb-4">
+          <h3 class="text-sm font-bold text-black mb-3 flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Add to {props.playlist.createdBy}'s playlist
           </h3>
           
           <div class="space-y-4">
-            {/* Comment Section - Always show with blue highlight */}
+            {/* Track URL Section (Optional) */}
+            <div class="border-l-4 border-green-400 pl-3">
+              <label class="block text-xs font-bold text-black mb-1">
+                <i class="fas fa-music mr-1"></i>
+                Track URL (optional)
+              </label>
+              <TextInput
+                value={trackUrl()}
+                onInput={setTrackUrl}
+                placeholder="Paste a YouTube, Spotify, or SoundCloud URL"
+              />
+              {trackUrl() && !isValidUrl(trackUrl()) && (
+                <p class="text-xs text-red-600 mt-1">
+                  Please enter a valid URL
+                </p>
+              )}
+            </div>
+
+            {/* Comment Section (Optional) */}
             <div class="border-l-4 border-blue-400 pl-3">
               <label class="block text-xs font-bold text-black mb-1">
                 <i class="fas fa-comment mr-1"></i>
-                {focusField() === 'track' ? 'Your comment (optional)' : 'Your comment'}
+                Your comment (optional)
               </label>
               <TextInput
-                value={replyText()}
-                onInput={setReplyText}
-                placeholder={focusField() === 'track' 
-                  ? "What do you think of this track? (optional)"
-                  : "Share your thoughts on this playlist..."
-                }
+                value={comment()}
+                onInput={setComment}
+                placeholder="Share your thoughts or just add a track..."
                 multiline={true}
-                rows={focusField() === 'comment' ? 3 : 2}
+                rows={2}
               />
             </div>
-
-            {/* Track URL Section - Only show when "Add a Track" was clicked */}
-            <Show when={focusField() === 'track'}>
-              <div class="border-l-4 border-green-400 pl-3">
-                <label class="block text-xs font-bold text-black mb-1">
-                  <i class="fas fa-music mr-1"></i>
-                  Track URL
-                </label>
-                <TextInput
-                  value={trackUrl()}
-                  onInput={setTrackUrl}
-                  placeholder="Paste a track URL (YouTube, Spotify, SoundCloud, etc.)"
-                />
-                {trackUrl() && !isValidUrl(trackUrl()) && (
-                  <p class="text-xs text-red-600 mt-1">
-                    Please enter a valid URL
-                  </p>
-                )}
-              </div>
-            </Show>
 
             {/* Helper text */}
             <div class="text-xs text-gray-600 bg-gray-50 p-2 rounded">
               <i class="fas fa-info-circle mr-1"></i>
-              {focusField() === 'track' 
-                ? 'Paste a track URL above. Add a comment to share your thoughts about it!'
-                : 'Share your thoughts about this playlist.'
-              }
+              Add a track, leave a comment, or both!
             </div>
             
             <div class="flex gap-2 justify-end">
@@ -289,14 +261,13 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 disabled={!canSubmit()}
                 class="win95-button px-4 py-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                 classList={{
-                  'bg-green-100': canSubmit() && focusField() === 'track',
-                  'bg-blue-100': canSubmit() && focusField() === 'comment',
+                  'bg-green-100': canSubmit(),
                   'opacity-50 cursor-not-allowed': !canSubmit()
                 }}
-                animationType={focusField() === 'track' ? 'social' : 'default'}
+                animationType="social"
               >
-                <i class={focusField() === 'track' ? 'fas fa-music mr-2' : 'fas fa-paper-plane mr-2'}></i>
-                {focusField() === 'track' ? 'Add Track' : 'Reply'}
+                <i class="fas fa-plus mr-2"></i>
+                Add
               </AnimatedButton>
             </div>
           </div>

@@ -167,9 +167,10 @@ const HomePage: Component = () => {
               </div>
             ) : (
               <For each={filteredTracks()}>
-                {(track) => (
+                {(track, index) => (
                   <TrackItem 
                     track={track} 
+                    trackNumber={index() + 1}
                     onPlay={() => setCurrentTrack(track)}
                   />
                 )}
