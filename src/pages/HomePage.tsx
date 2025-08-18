@@ -1,9 +1,9 @@
 import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
-import TrackItem from '../components/TrackItem';
-import PlaylistHeader from '../components/PlaylistHeader';
-import DiscoveryBar from '../components/DiscoveryBar';
+import TrackItem from '../components/playlist/TrackItem';
+import PlaylistHeader from '../components/playlist/PlaylistHeader';
+import DiscoveryBar from '../components/common/DiscoveryBar';
 import { staggeredFadeIn } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';

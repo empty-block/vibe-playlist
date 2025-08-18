@@ -1,7 +1,7 @@
 import { Component, Show } from 'solid-js';
 import { currentUser, isAuthenticated } from '../stores/authStore';
 import LandingPageA from './LandingPageA';
-import PersonalDashboard from '../components/PersonalDashboard';
+import PersonalDashboard from '../components/common/PersonalDashboard';
 
 const SmartHomePage: Component = () => {
   return (

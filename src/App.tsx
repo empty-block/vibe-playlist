@@ -1,6 +1,6 @@
 import { Component, onMount } from 'solid-js';
 import { Router, Route } from '@solidjs/router';
-import Layout from './components/Layout';
+import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
 import SmartHomePage from './pages/SmartHomePage';
 import DiscoverPage from './pages/DiscoverPage';

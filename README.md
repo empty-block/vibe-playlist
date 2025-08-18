@@ -42,9 +42,18 @@ This unified approach simplifies the mental model - users always think "where sh
 
 ### 🎨 Nostalgic Design
 - **Windows 95 Aesthetic**: Authentic retro UI with pixel-perfect styling
+- **Neon 90s Colors**: Vibrant high-contrast palette inspired by 1990s design
 - **Familiar Interactions**: Classic buttons, panels, and navigation
 - **Modern Responsiveness**: Works beautifully on all devices
 - **Smooth Animations**: Subtle anime.js effects enhance the retro experience
+
+#### Color Palette
+Our neon 90s color scheme creates an authentic retro atmosphere:
+- **🔵 Neon Blue** `#3b00fd` - Primary brand color for main actions
+- **🟢 Neon Green** `#00f92a` - Success states and play buttons
+- **🔷 Neon Cyan** `#04caf4` - Interactive elements and highlights  
+- **🩷 Neon Pink** `#f906d6` - Accent colors and warnings
+- **💛 Neon Yellow** `#d1f60a` - Notifications and attention grabbers
 
 ## 🚀 Try It Out
 

@@ -2,7 +2,7 @@ import { Component, createSignal, createMemo, For, onMount, Show } from 'solid-j
 import { useSearchParams } from '@solidjs/router';
 import { pageEnter, typewriter, float, glitch, magnetic } from '../utils/animations';
 import anime from 'animejs';
-import CreateChatInterface from '../components/CreateChatInterface';
+import CreateChatInterface from '../components/chat/CreateChatInterface';
 
 export type PlaylistType = 'personal' | 'collaborative' | 'ai_curated';
 

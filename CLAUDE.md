@@ -246,6 +246,101 @@ leave: (element) => {
 3. **Performance issues**: Verify hardware acceleration with `translateZ(0)`
 4. **Import errors**: Use `import anime from 'animejs'` (default import)
 
+## 🗂️ Component Organization Structure
+
+### Feature-Based Component Architecture
+
+Components are organized by **feature domain** rather than technical categories, making the codebase intuitive and maintainable. Always place new components in the appropriate domain folder.
+
+```
+src/components/
+├── auth/          - Authentication & user management
+│   └── SpotifyConnectButton.tsx
+├── chat/          - AI chat & conversation features  
+│   ├── ChatBot.tsx
+│   ├── CreateChatInterface.tsx
+│   └── Terminal.tsx
+├── common/        - Shared/reusable components
+│   ├── AnimatedButton.tsx
+│   ├── TextInput.tsx
+│   ├── DiscoveryBar.tsx
+│   ├── PersonalDashboard.tsx
+│   └── ReplyForm.tsx
+├── layout/        - App structure & navigation
+│   ├── Layout.tsx
+│   ├── Navigation.tsx
+│   └── WindowsFrame.tsx
+├── player/        - Music playback functionality
+│   ├── MediaPlayer.tsx
+│   ├── Player.tsx
+│   ├── SpotifyMedia.tsx
+│   └── YouTubeMedia.tsx
+├── playlist/      - Playlist & track management
+│   ├── PlaylistCard.tsx
+│   ├── PlaylistHeader.tsx
+│   └── TrackItem.tsx
+└── social/        - Social interactions & engagement
+    ├── ReplyItem.tsx
+    ├── SocialActions.tsx
+    └── SocialStats.tsx
+```
+
+#### Component Placement Guidelines
+
+- **`auth/`**: Login, authentication, user account management
+- **`chat/`**: AI interactions, chat interfaces, terminal/console features  
+- **`common/`**: Reusable UI elements, shared utility components, cross-feature components
+- **`layout/`**: App shell, navigation, window frames, layout containers
+- **`player/`**: Music playback, media controls, player UI, audio/video handling
+- **`playlist/`**: Playlist display, track items, playlist headers, music browsing
+- **`social/`**: Likes, comments, replies, social stats, social actions
+
+#### Benefits of This Structure
+
+1. **Intuitive**: Finding components is logical - playlist stuff is in `playlist/`
+2. **Maintainable**: Related components are grouped together  
+3. **Scalable**: Easy to add new features in appropriate domains
+4. **Clear Dependencies**: Import paths reflect actual relationships
+5. **DRY Enforcement**: Avoids duplicate components across domains
+
+## 🎨 Neon 90s Color Palette
+
+The app uses a vibrant, high-contrast neon color scheme inspired by 1990s aesthetics. Use these colors consistently throughout the UI.
+
+### Primary Colors
+```css
+--neon-blue:   #3b00fd  /* Deep Blue/Violet - Primary brand color */
+--neon-green:  #00f92a  /* Bright Neon Green - Success, play states */
+--neon-cyan:   #04caf4  /* Bright Cyan/Aqua - Links, info, highlights */
+--neon-pink:   #f906d6  /* Bright Neon Pink - Accent, warnings */
+--neon-yellow: #d1f60a  /* Bright Neon Yellow - Attention, notifications */
+```
+
+### Usage Guidelines
+- **Primary Actions**: Use neon-blue (#3b00fd) for main CTAs
+- **Success States**: Use neon-green (#00f92a) for confirmations, play buttons
+- **Interactive Elements**: Use neon-cyan (#04caf4) for links and hover states
+- **Accent Elements**: Use neon-pink (#f906d6) sparingly for emphasis
+- **Notifications**: Use neon-yellow (#d1f60a) for alerts and badges
+
+### Implementation Examples
+```typescript
+// Gradient buttons (common pattern)
+style={{
+  background: 'linear-gradient(135deg, #3b00fd 0%, #04caf4 100%)'
+}}
+
+// Neon glow effects
+style={{
+  boxShadow: '0 0 20px #00f92a, 0 0 40px #00f92a'
+}}
+
+// Text highlights
+style={{
+  color: '#04caf4'
+}}
+```
+
 ## 🧩 Component Architecture & DRY Principles
 
 ### Reusable Social Components

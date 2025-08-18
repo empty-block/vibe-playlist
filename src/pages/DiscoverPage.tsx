@@ -1,6 +1,6 @@
 import { Component, createSignal, onMount } from 'solid-js';
 import { setCurrentTrack, playlists, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
-import DiscoveryBar from '../components/DiscoveryBar';
+import DiscoveryBar from '../components/common/DiscoveryBar';
 import { pageEnter, staggeredFadeIn, buttonHover, magnetic, playButtonPulse } from '../utils/animations';
 
 const DiscoverPage: Component = () => {
