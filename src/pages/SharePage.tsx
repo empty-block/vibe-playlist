@@ -315,8 +315,7 @@ const SharePage: Component = () => {
   };
 
   return (
-    <div ref={pageRef!} class="p-4">
-      <div class="win95-panel h-full p-6 overflow-y-auto">
+    <div ref={pageRef!} class="p-4 h-full overflow-y-auto">
         <div class="max-w-2xl mx-auto">
           {/* Header */}
           <div class="mb-8 text-center">
@@ -649,7 +648,6 @@ const SharePage: Component = () => {
             </ul>
           </div>
         </div>
-      </div>
     </div>
   );
 };

@@ -85,7 +85,7 @@ const DiscoverPage: Component = () => {
 
   return (
     <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
-      <div class="win95-panel p-6 mb-4">
+      <div class="p-6 mb-4">
         <div class="text-center">
           <h2 class="text-2xl font-bold text-black mb-2">
             <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
@@ -109,7 +109,7 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* Discover New Playlists - Featured Section */}
-      <div class="discover-section win95-panel p-6 mb-8" style={{ opacity: '0' }}>
+      <div class="discover-section p-6 mb-8" style={{ opacity: '0' }}>
         <div class="mb-6">
           <h3 class="text-2xl font-bold text-black mb-2">
             <i class="fas fa-list-music text-blue-600 mr-2"></i>Discover New Playlists
@@ -125,7 +125,7 @@ const DiscoverPage: Component = () => {
       </div>
       
       {/* Discover Similar Users */}
-      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-users text-blue-600 mr-2"></i>Discover Similar Users
         </h3>
@@ -167,7 +167,7 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* Discover Curators */}
-      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-crown text-yellow-600 mr-2"></i>Discover Top Curators
         </h3>
@@ -224,7 +224,7 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* Hidden Gems */}
-      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-gem text-blue-600 mr-2"></i>Hidden Gems
         </h3>
@@ -257,7 +257,7 @@ const DiscoverPage: Component = () => {
       </div>
       
       {/* Discover Artists */}
-      <div class="discover-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
         <h3 class="text-xl font-bold text-black mb-4">
           <i class="fas fa-microphone text-indigo-600 mr-2"></i>Discover Artists
         </h3>

@@ -106,7 +106,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   return (
     <div class="mb-4">
       {/* Playlist Header - Simplified but with key features */}
-      <div ref={headerRef!} class="win95-panel p-4 mb-4">
+      <div ref={headerRef!} class="p-4 mb-4">
         <div class="space-y-4">
           
           {/* Main Content Row with Image on Left */}

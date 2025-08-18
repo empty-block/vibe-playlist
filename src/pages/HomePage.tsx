@@ -117,7 +117,7 @@ const HomePage: Component = () => {
   return (
     <div class="h-full flex">
       {/* Discovery Bar - Left Sidebar (Desktop only) - Fixed, no scroll */}
-      <div class="hidden lg:flex w-56 flex-shrink-0 bg-white border-r-2 border-gray-300">
+      <div class="hidden lg:flex w-56 flex-shrink-0 bg-white">
         <div class="p-3 flex flex-col h-full">
           <DiscoveryBar
             playlists={Object.values(playlists)}
@@ -129,7 +129,6 @@ const HomePage: Component = () => {
       
       {/* Main Content - Playlist - THE ONLY SCROLLABLE AREA */}
       <div class="flex-1 overflow-y-auto p-2 md:p-4">
-        <div class="win95-panel p-2 md:p-4">
           {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
@@ -177,7 +176,6 @@ const HomePage: Component = () => {
               </For>
             )}
           </div>
-        </div>
       </div>
     </div>
   );

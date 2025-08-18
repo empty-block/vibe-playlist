@@ -289,7 +289,7 @@ const ProfilePage: Component = () => {
   return (
     <div ref={pageRef!} class="p-8 pb-20" style={{ opacity: '0' }}>
       {/* Profile Header */}
-      <div class="profile-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+      <div class="profile-section p-6 mb-6" style={{ opacity: '0' }}>
         <div class="flex items-center gap-6">
           <div class="profile-avatar text-6xl">{userProfile().avatar}</div>
           <div class="flex-1">
@@ -329,7 +329,7 @@ const ProfilePage: Component = () => {
 
       {/* Top Artists Section */}
       <Show when={userProfile().topArtists.length > 0}>
-        <div class="profile-section win95-panel p-6 mb-6" style={{ opacity: '0' }}>
+        <div class="profile-section p-6 mb-6" style={{ opacity: '0' }}>
           <h3 class="text-lg font-bold text-black mb-4 flex items-center">
             <i class="fas fa-trophy text-yellow-500 mr-2"></i>Top Artists
           </h3>
@@ -348,7 +348,7 @@ const ProfilePage: Component = () => {
       </Show>
       
       {/* Profile Tabs */}
-      <div class="profile-section win95-panel p-0 mb-6" style={{ opacity: '0' }}>
+      <div class="profile-section p-0 mb-6" style={{ opacity: '0' }}>
         <div class="flex border-b-2 border-gray-300">
           <button
             class={`px-4 py-2 border-r border-gray-400 text-black font-bold ${
@@ -384,7 +384,7 @@ const ProfilePage: Component = () => {
       </div>
 
       {/* Tab Content */}
-      <div class="profile-section win95-panel p-6" style={{ opacity: '0' }}>
+      <div class="profile-section p-6" style={{ opacity: '0' }}>
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-xl font-bold text-black">{getTabTitle()}</h3>
           <div class="flex items-center gap-2">

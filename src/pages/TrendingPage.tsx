@@ -136,7 +136,7 @@ const TrendingPage: Component = () => {
 
   return (
     <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
-      <div class="win95-panel p-6 mb-6">
+      <div class="p-6 mb-6">
         <h2 class="text-2xl font-bold text-black mb-4">
           <i class="fas fa-fire text-red-500 mr-2"></i>What's Trending
         </h2>
@@ -269,7 +269,7 @@ const TrendingPage: Component = () => {
       
       {/* Empty State */}
       <Show when={currentData().length === 0}>
-        <div class="win95-panel p-8 text-center">
+        <div class="p-8 text-center">
           <i class="fas fa-chart-line text-4xl text-gray-400 mb-4"></i>
           <p class="text-gray-600">No trending data available for this timeframe.</p>
         </div>
