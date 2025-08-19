@@ -164,19 +164,19 @@ const TrackItem: Component<TrackItemProps> = (props) => {
       }}
       onClick={handleClick}
     >
-      <div class="flex gap-4 min-w-0">
-        {/* Thumbnail with Overlay Number */}
-        <div class="flex-shrink-0 relative group">
+      <div class="flex flex-col min-[400px]:flex-row gap-3 sm:gap-4 min-w-0">
+        {/* Thumbnail with Overlay Number - Stacks on very small screens */}
+        <div class="flex-shrink-0 relative group mx-auto min-[400px]:mx-0">
           <img 
             ref={thumbnailRef!}
             src={props.track.thumbnail} 
             alt={props.track.title}
-            class="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
+            class="w-32 h-32 min-[400px]:w-20 min-[400px]:h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 object-cover rounded-lg shadow-md border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
           />
           
           {/* Track Number Overlay */}
-          <div class="absolute top-1 left-1 bg-black/70 backdrop-blur-sm rounded-md w-8 h-8 flex items-center justify-center shadow-lg">
-            <span class="text-white font-bold text-lg drop-shadow-md font-pixel">
+          <div class="absolute top-1 left-1 bg-black/70 backdrop-blur-sm rounded-md w-8 h-8 min-[400px]:w-6 min-[400px]:h-6 sm:w-8 sm:h-8 flex items-center justify-center shadow-lg">
+            <span class="text-white font-bold text-lg min-[400px]:text-sm sm:text-lg drop-shadow-md font-pixel">
               {props.trackNumber}
             </span>
           </div>
@@ -199,61 +199,62 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 e.currentTarget.style.background = 'linear-gradient(to bottom right, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 100%)';
               }}
             >
-              <div class="w-12 h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/30">
-                <i class="fas fa-play text-white ml-0.5 text-lg drop-shadow-lg"></i>
+              <div class="w-12 h-12 min-[400px]:w-8 min-[400px]:h-8 sm:w-12 sm:h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/30">
+                <i class="fas fa-play text-white ml-0.5 text-lg min-[400px]:text-sm sm:text-lg drop-shadow-lg"></i>
               </div>
             </button>
           )}
         </div>
         
-        {/* Track Info */}
-        <div class="flex-1 min-w-0">
+        {/* Track Info - Centered on very small screens */}
+        <div class="flex-1 min-w-0 text-center min-[400px]:text-left">
           {/* Song Title and Artist */}
           <div class="mb-2">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold text-black text-lg leading-tight">{props.track.title}</h3>
-              {sourceInfo.icon}
-              <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
-                <button
-                  class="win95-button px-2 py-0.5 text-xs font-bold text-black"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    initiateSpotifyAuth();
-                  }}
-                  title="Connect Spotify to play this track"
-                >
-                  🔗 Connect
-                </button>
-              </Show>
+            <div class="flex items-start justify-center min-[400px]:justify-start gap-2 mb-1">
+              <h3 class="font-bold text-black text-base sm:text-lg leading-tight flex-1 min-w-0 break-words">{props.track.title}</h3>
+              <span class="text-lg flex-shrink-0">{sourceInfo.icon}</span>
             </div>
-            <p class="text-sm text-gray-600">
-              {props.track.artist} • {props.track.duration} • 
+            <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
+              <button
+                class="win95-button px-2 py-1 text-xs font-bold text-black mb-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  initiateSpotifyAuth();
+                }}
+                title="Connect Spotify to play this track"
+              >
+                🔗 Connect Spotify
+              </button>
+            </Show>
+            <p class="text-xs sm:text-sm text-gray-600 break-words">
+              <span class="font-medium">{props.track.artist}</span> • {props.track.duration}<br class="sm:hidden" />
+              <span class="sm:hidden"> • </span>
               <span class="text-red-500"><i class="fas fa-heart"></i> {props.track.likes || 3}</span> • 
               <span class="text-blue-500"><i class="fas fa-comment"></i> {mockReplies.length}</span>
             </p>
           </div>
           
-          {/* Posted by info */}
-          <div class="flex items-center gap-2 text-sm text-gray-600 mb-3">
+          {/* Posted by info - Mobile responsive */}
+          <div class="flex flex-wrap items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600 mb-3">
             <span>Posted by</span>
             <A 
               href={`/profile/${props.track.addedBy}`}
-              class="font-bold text-black hover:text-blue-700 transition-colors text-base px-1 py-0.5 rounded hover:bg-blue-50"
+              class="font-bold text-black hover:text-blue-700 transition-colors text-sm px-1 py-0.5 rounded hover:bg-blue-50 break-words"
               onClick={(e) => e.stopPropagation()}
             >
               {props.track.addedBy}
             </A>
             <span>•</span>
-            <span>{props.track.timestamp}</span>
+            <span class="whitespace-nowrap">{props.track.timestamp}</span>
             {isCurrentTrack() && (
-              <span class="text-blue-600 font-bold uppercase tracking-wider animate-pulse ml-2">
+              <span class="text-blue-600 font-bold uppercase tracking-wider animate-pulse text-xs">
                 NOW PLAYING
               </span>
             )}
           </div>
           
-          {/* Action Buttons */}
-          <div class="flex gap-3">
+          {/* Action Buttons - Centered on very small screens */}
+          <div class="flex flex-wrap gap-2 sm:gap-3 justify-center min-[400px]:justify-start">
             {/* Show conversation button - only if there's a comment */}
             <Show when={props.track.comment}>
               <AnimatedButton
@@ -262,18 +263,19 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                   setShowConversation(newState);
                   setShowReplies(newState); // Also show/hide replies with the post
                 }}
-                class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap"
+                class="win95-button px-3 py-1.5 sm:px-4 sm:py-2 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap"
                 title={showConversation() ? "Hide conversation" : "Show conversation"}
                 animationType="default"
               >
                 <i class={`fas fa-${showConversation() ? 'eye-slash' : 'eye'} mr-1`}></i>
-                <span>{showConversation() ? 'Hide' : 'Show'} Post</span>
+                <span class="hidden sm:inline">{showConversation() ? 'Hide' : 'Show'} Post</span>
+                <span class="sm:hidden">Post</span>
               </AnimatedButton>
             </Show>
             
             <AnimatedButton
               onClick={() => console.log('Like track')}
-              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap"
+              class="win95-button px-3 py-1.5 sm:px-4 sm:py-2 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap"
               title="Like this track"
               animationType="social"
             >
@@ -287,7 +289,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 setShowReplyForm(newReplyState);
                 setShowReplies(newReplyState); // Show/hide replies along with reply form
               }}
-              class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap"
+              class="win95-button px-3 py-1.5 sm:px-4 sm:py-2 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap"
               title="Reply to this track"
               animationType="social"
             >

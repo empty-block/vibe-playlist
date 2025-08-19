@@ -109,12 +109,12 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
       <div ref={headerRef!} class="p-4 mb-4">
         <div class="space-y-4">
           
-          {/* Main Content Row with Image on Left */}
-          <div class="flex items-start gap-4">
-            {/* Playlist Image - Keep original large size */}
+          {/* Mobile-First Layout */}
+          <div class="flex flex-col sm:flex-row items-start gap-4">
+            {/* Playlist Image - Responsive sizing */}
             <div 
               ref={playlistImageRef!}
-              class="flex-shrink-0 relative group cursor-pointer"
+              class="flex-shrink-0 relative group cursor-pointer self-center sm:self-start"
               onClick={(e) => {
                 if (props.onPlayPlaylist) {
                   playButtonPulse(e.currentTarget as HTMLElement);
@@ -126,75 +126,74 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               <img 
                 src={props.playlist.image || 'https://via.placeholder.com/150x150/c0c0c0/000000?text=🎵'}
                 alt={`${props.playlist.name} cover`}
-                class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-lg shadow-lg border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
+                class="w-24 h-24 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-lg shadow-lg border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
               />
               {/* Neon gradient overlay on hover */}
               <div 
                 class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
                 style="background: linear-gradient(to bottom right, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 100%);"
               >
-                <div class="w-20 h-20 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border-2 border-white/30">
-                  <i class="fas fa-play text-white text-4xl ml-1 drop-shadow-lg"></i>
+                <div class="w-12 h-12 sm:w-20 sm:h-20 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border-2 border-white/30">
+                  <i class="fas fa-play text-white text-2xl sm:text-4xl ml-1 drop-shadow-lg"></i>
                 </div>
               </div>
             </div>
             
             {/* Playlist Details */}
-            <div class="flex-1 min-w-0">
-              {/* Playlist Title - Bigger */}
-              <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-3">
-                {props.playlist.name}
+            <div class="flex-1 min-w-0 text-center sm:text-left">
+              {/* Playlist Title - Mobile responsive */}
+              <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-2 sm:mb-3 break-words">
+                {props.playlist.name} {/* Add emoji inline */}
+                <span class="ml-2 text-2xl">🎸</span>
               </h1>
               
-              {/* Creator Info - Slightly bigger */}
-              <div class="flex items-center gap-2 mb-4">
-                <span class="text-base text-gray-600">Created by</span>
+              {/* Creator Info - Mobile responsive */}
+              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1 sm:gap-2 mb-3 sm:mb-4">
+                <span class="text-sm text-gray-600">Created by</span>
                 <button 
-                  class="text-lg font-bold text-black hover:text-blue-700 transition-colors"
+                  class="text-base sm:text-lg font-bold text-black hover:text-blue-700 transition-colors break-words"
                   onClick={() => props.onCreatorClick(props.playlist.createdBy)}
                 >
                   {props.playlist.createdBy}
                 </button>
-                <span class="text-base text-gray-500">•</span>
-                <span class="text-base text-gray-500">{props.playlist.createdAt}</span>
               </div>
               
-              {/* Like count display - clickable to see who liked */}
-              <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
+              {/* Stats - Mobile responsive */}
+              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 text-sm text-gray-600 mb-4">
                 <button 
-                  class="flex items-center gap-2 hover:text-blue-600 transition-colors"
+                  class="flex items-center gap-1 hover:text-blue-600 transition-colors"
                   title="See who liked this playlist"
                   onClick={() => console.log('Show who liked the playlist')}
                 >
                   <span>{playlistLikes()} likes</span>
                 </button>
-                <span>•</span>
+                <span class="hidden sm:inline">•</span>
                 <span>{props.playlist.trackCount} tracks</span>
               </div>
               
-              {/* Action Buttons - Now inside the right column */}
-              <div class="flex gap-3">
+              {/* Action Buttons - Mobile responsive */}
+              <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <AnimatedButton
                   onClick={() => console.log('Like playlist')}
-                  class="win95-button px-3 py-1.5 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap flex-1"
+                  class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
                   title="Like this playlist"
                   animationType="social"
                 >
-                  <i class="fas fa-heart mr-1.5"></i>
+                  <i class="fas fa-heart mr-2"></i>
                   <span>Like</span>
                 </AnimatedButton>
                 
                 <AnimatedButton
                   onClick={handleAddTrack}
-                  class="win95-button px-3 py-1.5 text-black font-bold text-xs sm:text-sm group relative whitespace-nowrap flex-1"
+                  class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
                   title="Add to this playlist"
                   classList={{
                     'bg-green-100': showReplyBox()
                   }}
                   animationType="social"
                 >
-                  <i class="fas fa-plus mr-1.5"></i>
-                  <span>Add to Playlist</span>
+                  <i class="fas fa-plus mr-2"></i>
+                  <span>+ Add to Playlist</span>
                 </AnimatedButton>
               </div>
             </div>
