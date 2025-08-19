@@ -3,9 +3,7 @@ import WindowsFrame from './WindowsFrame';
 import Navigation from './Navigation';
 import Terminal from '../chat/Terminal';
 import MediaPlayer from '../player/MediaPlayer';
-import ChatBot from '../chat/ChatBot';
 import { currentTrack } from '../../stores/playlistStore';
-import { showChat, closeChat } from '../../stores/chatStore';
 
 interface LayoutProps {
   children?: JSX.Element;
@@ -39,15 +37,7 @@ const Layout: Component<LayoutProps> = (props) => {
         <Navigation />
         
         <div class={`flex ${isCompact() || forceCompact() ? 'flex-col' : 'flex-row'} flex-1 overflow-hidden`}>
-          {/* Chat Sidebar - Only on desktop */}
-          <Show when={!isCompact() && !forceCompact()}>
-            <ChatBot 
-              isVisible={showChat()} 
-              onToggle={closeChat}
-            />
-          </Show>
-          
-          {/* Main Content - Takes full width on compact, shares on desktop */}
+          {/* Main Content - Takes full width */}
           <div class="flex-1 overflow-y-auto min-w-0">
             {props.children}
           </div>

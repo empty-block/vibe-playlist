@@ -135,27 +135,12 @@ const HomePage: Component = () => {
             onCreatorClick={handleCreatorClick}
             searchQuery={searchQuery}
             onSearchInput={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={(value) => setSortBy(value as SortOption)}
             onReply={handleReply}
             onAddTrack={handleAddTrack}
             onPlayPlaylist={handlePlayPlaylist}
           />
-          
-          {/* Sort Options */}
-          <div class="mb-3 md:mb-4">
-            <div class="flex items-center gap-2">
-              <span class="text-xs sm:text-sm font-bold text-black">Sort by:</span>
-              <select
-                value={sortBy()}
-                onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
-                class="win95-panel px-1 sm:px-2 py-1 text-xs sm:text-sm font-bold text-black"
-                title="Sort tracks"
-              >
-                <option value="recent">📅 Most Recent</option>
-                <option value="likes">❤️ Most Liked</option>
-                <option value="comments">💬 Most Comments</option>
-              </select>
-            </div>
-          </div>
           
           {/* Playlist tracks */}
           <div ref={trackContainerRef!} class="space-y-2 px-2" id="playlist-container">

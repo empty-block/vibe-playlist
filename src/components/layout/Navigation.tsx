@@ -1,6 +1,5 @@
 import { Component } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
-import { toggleChat, showChat } from '../../stores/chatStore';
 import { isAuthenticated } from '../../stores/authStore';
 
 const Navigation: Component = () => {
@@ -51,15 +50,8 @@ const Navigation: Component = () => {
           </A>
         </div>
         
-        {/* Right side buttons */}
+        {/* Right side button */}
         <div class="flex gap-2 sm:gap-4 flex-shrink-0 ml-4">
-          <button
-            class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer whitespace-nowrap"
-            classList={{ 'bg-blue-600 text-white': showChat() }}
-            onClick={toggleChat}
-          >
-            <i class="fas fa-comment-dots mr-1"></i>Chat
-          </button>
           <A 
             href="/profile" 
             class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer whitespace-nowrap"

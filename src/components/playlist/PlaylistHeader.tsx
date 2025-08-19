@@ -9,6 +9,8 @@ interface PlaylistHeaderProps {
   onCreatorClick: (creatorUsername: string) => void;
   searchQuery?: () => string;
   onSearchInput?: (value: string) => void;
+  sortBy?: () => string;
+  onSortChange?: (value: string) => void;
   onReply?: () => void;
   onAddTrack?: () => void;
   onPlayPlaylist?: () => void;
@@ -276,19 +278,39 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
         </div>
       </Show>
       
-      {/* Search Bar - Separate from the main cast */}
+      {/* Search and Sort Bar */}
       {props.searchQuery && props.onSearchInput && (
-        <div class="flex items-center gap-2 mb-4">
-          <input
-            type="text"
-            placeholder="Search this playlist..."
-            value={props.searchQuery()}
-            onInput={(e) => props.onSearchInput!(e.currentTarget.value)}
-            class="win95-panel px-3 py-2 text-sm flex-1"
-          />
-          <button class="win95-button px-3 py-2">
-            <i class="fas fa-search text-sm"></i>
-          </button>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+          {/* Sort Dropdown - Left side on desktop, full width on mobile */}
+          {props.sortBy && props.onSortChange && (
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <span class="text-xs sm:text-sm font-bold text-black whitespace-nowrap">Sort by:</span>
+              <select
+                value={props.sortBy()}
+                onChange={(e) => props.onSortChange!(e.currentTarget.value)}
+                class="win95-panel px-2 py-1.5 sm:py-2 text-xs sm:text-sm font-bold text-black flex-1 sm:flex-initial"
+                title="Sort tracks"
+              >
+                <option value="recent">📅 Most Recent</option>
+                <option value="likes">❤️ Most Liked</option>
+                <option value="comments">💬 Most Comments</option>
+              </select>
+            </div>
+          )}
+          
+          {/* Search Bar - Right side on desktop, below sort on mobile */}
+          <div class="flex items-center gap-2 flex-1 w-full sm:w-auto">
+            <input
+              type="text"
+              placeholder="Search this playlist..."
+              value={props.searchQuery()}
+              onInput={(e) => props.onSearchInput!(e.currentTarget.value)}
+              class="win95-panel px-3 py-1.5 sm:py-2 text-sm flex-1"
+            />
+            <button class="win95-button px-3 py-1.5 sm:py-2">
+              <i class="fas fa-search text-sm"></i>
+            </button>
+          </div>
         </div>
       )}
     </div>
