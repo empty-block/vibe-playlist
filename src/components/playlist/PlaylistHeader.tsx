@@ -176,7 +176,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
           </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-6">
+        <div class="flex flex-col lg:flex-row gap-8">
           {/* Playlist Artwork - Digital Frame */}
           <div class="flex-shrink-0 self-center lg:self-start">
             <div 
@@ -200,7 +200,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               <img 
                 src={props.playlist.image || 'https://via.placeholder.com/200x200/1a1a1a/04caf4?text=🎵'}
                 alt={`${props.playlist.name} cover`}
-                class="w-48 h-48 object-cover rounded-lg"
+                class="w-56 h-56 object-cover rounded-lg"
                 style={{
                   filter: 'contrast(1.2) saturate(1.3)'
                 }}
@@ -233,7 +233,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
           
           {/* Digital Information Display */}
           <div 
-            class="flex-1 p-4 rounded-xl"
+            class="flex-1 p-6 rounded-xl"
             style={{
               background: 'rgba(0, 0, 0, 0.7)',
               border: '1px solid rgba(4, 202, 244, 0.2)',
@@ -241,18 +241,9 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
             }}
           >
             {/* Playlist Title - LCD Style */}
-            <div class="mb-4">
-              <div 
-                class="text-xs font-mono uppercase tracking-wide mb-2"
-                style={{
-                  color: 'rgba(4, 202, 244, 0.6)',
-                  'text-shadow': '0 0 2px rgba(4, 202, 244, 0.3)'
-                }}
-              >
-                PLAYLIST TITLE
-              </div>
+            <div class="mb-5">
               <h1 
-                class="font-mono font-bold text-2xl lg:text-3xl leading-tight break-words"
+                class="font-mono font-bold text-3xl lg:text-4xl leading-tight break-words"
                 style={{
                   color: '#04caf4',
                   'text-shadow': '0 0 5px rgba(4, 202, 244, 0.5)',
@@ -260,14 +251,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 }}
               >
                 {props.playlist.name}
-                <span class="ml-2 text-2xl">🎸</span>
+                <span class="ml-3 text-3xl lg:text-4xl">🎸</span>
               </h1>
             </div>
 
             {/* Creator Info - LCD Style */}
-            <div class="mb-3">
+            <div class="mb-4">
               <div 
-                class="text-xs font-mono uppercase tracking-wide mb-2"
+                class="text-sm font-mono uppercase tracking-wide mb-2"
                 style={{
                   color: 'rgba(249, 6, 214, 0.6)',
                   'text-shadow': '0 0 2px rgba(249, 6, 214, 0.3)'
@@ -276,7 +267,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 CREATED BY
               </div>
               <button 
-                class="font-mono font-bold text-lg transition-all duration-200"
+                class="font-mono font-bold text-xl lg:text-2xl transition-all duration-200"
                 style={{
                   color: '#f906d6',
                   'text-shadow': '0 0 5px rgba(249, 6, 214, 0.5)',
@@ -296,78 +287,12 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               </button>
             </div>
 
-            {/* Likes Section - Separated for better spacing */}
-            <div class="mb-4">
-              <div 
-                class="text-xs font-mono uppercase tracking-wide mb-2"
-                style={{
-                  color: 'rgba(211, 246, 10, 0.6)',
-                  'text-shadow': '0 0 2px rgba(211, 246, 10, 0.4)'
-                }}
-              >
-                PLAYLIST LIKES
-              </div>
-              <button 
-                class="font-mono font-bold text-lg transition-all duration-200 px-3 py-1 rounded"
-                style={{
-                  color: '#d1f60a',
-                  'text-shadow': '0 0 6px rgba(211, 246, 10, 0.6)',
-                  'font-family': 'Courier New, monospace',
-                  background: 'rgba(211, 246, 10, 0.08)',
-                  border: '1px solid rgba(211, 246, 10, 0.25)'
-                }}
-                title="See who liked this playlist"
-                onClick={() => console.log('Show who liked the playlist')}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 12px rgba(211, 246, 10, 0.4)';
-                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.08)';
-                }}
-              >
-                ❤ {playlistLikes()}
-              </button>
-            </div>
-
-            {/* Action Buttons - Retro Terminal Style */}
-            <div class="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={() => console.log('Like playlist')}
-                class="px-6 py-3 font-mono font-bold text-sm transition-all duration-300 flex-1"
-                style={{
-                  background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                  border: '2px solid rgba(249, 6, 214, 0.4)',
-                  color: '#ffffff',
-                  'border-radius': '6px',
-                  'min-height': '48px',
-                  'font-family': 'Courier New, monospace',
-                  'letter-spacing': '0.05em'
-                }}
-                onMouseEnter={(e: MouseEvent) => {
-                  const target = e.currentTarget as HTMLButtonElement;
-                  target.style.borderColor = '#f906d6';
-                  target.style.boxShadow = '0 0 15px rgba(249, 6, 214, 0.4)';
-                  target.style.color = '#f906d6';
-                  target.style.textShadow = '0 0 6px rgba(249, 6, 214, 0.6)';
-                }}
-                onMouseLeave={(e: MouseEvent) => {
-                  const target = e.currentTarget as HTMLButtonElement;
-                  target.style.borderColor = 'rgba(249, 6, 214, 0.4)';
-                  target.style.boxShadow = 'none';
-                  target.style.color = '#ffffff';
-                  target.style.textShadow = 'none';
-                }}
-                title="Like this playlist"
-              >
-                <i class="fas fa-heart mr-2"></i>
-                LIKE PLAYLIST
-              </button>
-              
+            {/* Compact Action Bar - Single horizontal line */}
+            <div class="flex flex-col sm:flex-row gap-4 items-center">
+              {/* Add Track Button */}
               <button
                 onClick={handleAddTrack}
-                class="px-6 py-3 font-mono font-bold text-sm transition-all duration-300 flex-1"
+                class="px-6 py-3 font-mono font-bold text-sm transition-all duration-300 w-full sm:w-auto"
                 style={{
                   background: showReplyBox() 
                     ? 'linear-gradient(145deg, #1a4a1a, #2a2a2a)' 
@@ -377,7 +302,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                     : '2px solid rgba(0, 249, 42, 0.4)',
                   color: showReplyBox() ? '#00f92a' : '#ffffff',
                   'border-radius': '6px',
-                  'min-height': '48px',
+                  'min-height': '44px',
                   'font-family': 'Courier New, monospace',
                   'letter-spacing': '0.05em',
                   'box-shadow': showReplyBox() 
@@ -408,7 +333,64 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 title="Add to this playlist"
               >
                 <i class="fas fa-plus mr-2"></i>
-                {showReplyBox() ? 'CANCEL ADD' : 'ADD TRACK'}
+                {showReplyBox() ? 'CANCEL' : 'ADD TRACK'}
+              </button>
+              
+              {/* Like Playlist Button */}
+              <button
+                onClick={() => console.log('Like playlist')}
+                class="px-6 py-3 font-mono font-bold text-sm transition-all duration-300 w-full sm:w-auto"
+                style={{
+                  background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+                  border: '2px solid rgba(249, 6, 214, 0.4)',
+                  color: '#ffffff',
+                  'border-radius': '6px',
+                  'min-height': '44px',
+                  'font-family': 'Courier New, monospace',
+                  'letter-spacing': '0.05em'
+                }}
+                onMouseEnter={(e: MouseEvent) => {
+                  const target = e.currentTarget as HTMLButtonElement;
+                  target.style.borderColor = '#f906d6';
+                  target.style.boxShadow = '0 0 15px rgba(249, 6, 214, 0.4)';
+                  target.style.color = '#f906d6';
+                  target.style.textShadow = '0 0 6px rgba(249, 6, 214, 0.6)';
+                }}
+                onMouseLeave={(e: MouseEvent) => {
+                  const target = e.currentTarget as HTMLButtonElement;
+                  target.style.borderColor = 'rgba(249, 6, 214, 0.4)';
+                  target.style.boxShadow = 'none';
+                  target.style.color = '#ffffff';
+                  target.style.textShadow = 'none';
+                }}
+                title="Like this playlist"
+              >
+                <i class="fas fa-heart mr-2"></i>
+                LIKE
+              </button>
+              
+              {/* Simplified Likes Count Display */}
+              <button 
+                class="font-mono font-bold text-lg transition-all duration-200 px-3 py-2 rounded ml-auto"
+                style={{
+                  color: '#d1f60a',
+                  'text-shadow': '0 0 6px rgba(211, 246, 10, 0.6)',
+                  'font-family': 'Courier New, monospace',
+                  background: 'rgba(211, 246, 10, 0.08)',
+                  border: '1px solid rgba(211, 246, 10, 0.25)'
+                }}
+                title="See who liked this playlist"
+                onClick={() => console.log('Show who liked the playlist')}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 12px rgba(211, 246, 10, 0.4)';
+                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.08)';
+                }}
+              >
+                ❤ {playlistLikes()}
               </button>
             </div>
           </div>
@@ -519,11 +501,11 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
           />
           
 
-          <div class="flex flex-col lg:flex-row gap-4">
+          <div class="flex flex-col lg:flex-row gap-6">
             {/* Sort Control - LCD Style */}
             {props.sortBy && props.onSortChange && (
               <div 
-                class="p-3 rounded-lg"
+                class="p-4 rounded-lg lg:min-w-64"
                 style={{
                   background: 'rgba(0, 0, 0, 0.9)',
                   border: '1px solid rgba(4, 202, 244, 0.3)',
@@ -531,7 +513,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 }}
               >
                 <div 
-                  class="text-xs font-mono uppercase tracking-wide mb-2"
+                  class="text-sm font-mono uppercase tracking-wide mb-3"
                   style={{
                     color: 'rgba(4, 202, 244, 0.6)',
                     'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
@@ -542,14 +524,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 <select
                   value={props.sortBy()}
                   onChange={(e) => props.onSortChange!(e.currentTarget.value)}
-                  class="w-full px-3 py-2 font-mono font-bold text-sm rounded"
+                  class="w-full px-4 py-3 font-mono font-bold text-base rounded"
                   style={{
                     background: 'rgba(0, 0, 0, 0.8)',
                     border: '2px solid rgba(4, 202, 244, 0.4)',
                     color: '#04caf4',
                     'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '44px'
+                    'min-height': '52px'
                   }}
                   title="Sort tracks"
                 >
@@ -562,7 +544,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
             
             {/* Search Control - LCD Style */}
             <div 
-              class="flex-1 p-3 rounded-lg"
+              class="flex-1 p-4 rounded-lg"
               style={{
                 background: 'rgba(0, 0, 0, 0.9)',
                 border: '1px solid rgba(0, 249, 42, 0.3)',
@@ -570,7 +552,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               }}
             >
               <div 
-                class="text-xs font-mono uppercase tracking-wide mb-2"
+                class="text-sm font-mono uppercase tracking-wide mb-3"
                 style={{
                   color: 'rgba(0, 249, 42, 0.6)',
                   'text-shadow': '0 0 3px rgba(0, 249, 42, 0.4)'
@@ -578,20 +560,20 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               >
                 SEARCH TRACKS
               </div>
-              <div class="flex gap-2">
+              <div class="flex gap-3">
                 <input
                   type="text"
                   placeholder="ENTER SEARCH QUERY..."
                   value={props.searchQuery()}
                   onInput={(e) => props.onSearchInput!(e.currentTarget.value)}
-                  class="flex-1 px-3 py-2 font-mono font-bold text-sm rounded"
+                  class="flex-1 px-4 py-3 font-mono font-bold text-base rounded"
                   style={{
                     background: 'rgba(0, 0, 0, 0.8)',
                     border: '2px solid rgba(0, 249, 42, 0.4)',
                     color: '#00f92a',
                     'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '44px'
+                    'min-height': '52px'
                   }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = '#00f92a';
@@ -603,14 +585,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                   }}
                 />
                 <button 
-                  class="px-4 py-2 font-mono font-bold text-sm transition-all duration-300 rounded"
+                  class="px-5 py-3 font-mono font-bold text-base transition-all duration-300 rounded"
                   style={{
                     background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
                     border: '2px solid rgba(0, 249, 42, 0.4)',
                     color: '#ffffff',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '44px',
-                    'min-width': '44px'
+                    'min-height': '52px',
+                    'min-width': '52px'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#00f92a';

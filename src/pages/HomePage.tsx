@@ -128,7 +128,7 @@ const HomePage: Component = () => {
       </div>
       
       {/* Main Content - Playlist - THE ONLY SCROLLABLE AREA */}
-      <div class="flex-1 overflow-y-auto p-2 md:p-4">
+      <div class="flex-1 overflow-y-auto p-3 md:p-6">
           {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
@@ -143,7 +143,7 @@ const HomePage: Component = () => {
           />
           
           {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="space-y-2 px-2" id="playlist-container">
+          <div ref={trackContainerRef!} class="space-y-3" id="playlist-container">
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>

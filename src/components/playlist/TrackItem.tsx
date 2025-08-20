@@ -40,10 +40,10 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           easing: 'easeOutCubic'
         });
         
-        // Add subtle neon border glow on hover
+        // Add enhanced neon border glow on hover for unified design
         if (!isCurrentTrack()) {
-          trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.5)';
-          trackItemRef.style.boxShadow = '0 4px 20px rgba(4, 202, 244, 0.2), 0 2px 10px rgba(0, 0, 0, 0.3)';
+          trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.6)';
+          trackItemRef.style.boxShadow = '0 8px 30px rgba(4, 202, 244, 0.3), 0 4px 15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(4, 202, 244, 0.2)';
         }
       });
 
@@ -57,7 +57,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           });
           
           trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.3)';
-          trackItemRef.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+          trackItemRef.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(4, 202, 244, 0.1)';
         }
       });
     }
@@ -166,42 +166,51 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           : 'cursor-not-allowed opacity-60'
       }`}
       style={{
-        padding: '12px',
-        margin: '12px 0',
+        padding: '20px',
+        margin: '16px 0',
         background: 'linear-gradient(145deg, #1a1a1a, #2a2a2a)',
         border: isCurrentTrack() 
-          ? '2px solid transparent' 
-          : '1px solid rgba(4, 202, 244, 0.3)',
+          ? '3px solid transparent' 
+          : '2px solid rgba(4, 202, 244, 0.3)',
         'background-image': isCurrentTrack() 
           ? 'linear-gradient(45deg, #3b00fd, #04caf4, #00f92a, #f906d6), linear-gradient(145deg, #1a1a1a, #2a2a2a)'
           : 'none',
         'background-origin': 'border-box',
         'background-clip': isCurrentTrack() ? 'padding-box, border-box' : 'padding-box',
-        'border-radius': '12px',
+        'border-radius': '16px',
         'box-shadow': isCurrentTrack() 
-          ? '0 0 15px rgba(59, 0, 253, 0.3), 0 0 30px rgba(4, 202, 244, 0.2), inset 0 0 10px rgba(0, 249, 42, 0.05)'
-          : '0 2px 10px rgba(0, 0, 0, 0.2)',
+          ? '0 0 20px rgba(59, 0, 253, 0.4), 0 0 40px rgba(4, 202, 244, 0.3), inset 0 0 15px rgba(0, 249, 42, 0.1)'
+          : '0 4px 20px rgba(0, 0, 0, 0.3), 0 0 10px rgba(4, 202, 244, 0.1)',
         transform: 'translateZ(0)',
         transition: 'none'
       }}
       onClick={handleClick}
     >
-      {/* FLOWING SINGLE-COLUMN LAYOUT */}
-      <div class="space-y-4">
-        
-        {/* RETRO DIGITAL RADIO DISPLAY */}
-        <div class="w-full max-w-2xl mx-auto">
-          {/* Retro Radio Display Container */}
+      {/* UNIFIED RETRO BOOMBOX CONTAINER */}
+      <div 
+        class="relative rounded-2xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(145deg, #000000, #1a1a1a)',
+          border: '3px solid rgba(4, 202, 244, 0.4)',
+          'box-shadow': `
+            0 0 30px rgba(4, 202, 244, 0.2),
+            inset 0 0 50px rgba(0, 0, 0, 0.9),
+            inset 0 4px 0 rgba(255, 255, 255, 0.05),
+            inset 0 -4px 0 rgba(0, 0, 0, 0.8)
+          `
+        }}
+      >
+        {/* SECTION 1: RETRO DIGITAL RADIO DISPLAY - Main Track Info */}
+        <div class="w-full">
+          {/* Main Display Panel */}
           <div 
-            class="relative p-4 rounded-xl overflow-hidden"
+            class="relative p-6 border-b-2"
             style={{
               background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-              border: '2px solid rgba(4, 202, 244, 0.3)',
+              'border-bottom-color': 'rgba(4, 202, 244, 0.3)',
               'box-shadow': `
-                inset 0 0 20px rgba(0, 0, 0, 0.8),
-                inset 0 2px 0 rgba(255, 255, 255, 0.1),
-                inset 0 -2px 0 rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(4, 202, 244, 0.2)
+                inset 0 0 25px rgba(0, 0, 0, 0.8),
+                0 2px 0 rgba(4, 202, 244, 0.1)
               `
             }}
           >
@@ -251,9 +260,9 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             </div>
 
             {/* Horizontal Layout for Album Art + Track Info */}
-            <div class="flex gap-4">
+            <div class="flex gap-6">
               {/* Album Art with Retro Frame */}
-              <div class="relative group flex-shrink-0 w-40">
+              <div class="relative group flex-shrink-0 w-48">
                 <div 
                   class="p-1 rounded-lg"
                   style={{
@@ -322,7 +331,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
 
               {/* Digital Readout Display */}
               <div 
-                class="flex-1 p-3 rounded-lg"
+                class="flex-1 p-4 rounded-lg"
                 style={{
                   background: 'rgba(0, 0, 0, 0.9)',
                   border: '1px solid rgba(4, 202, 244, 0.3)',
@@ -330,7 +339,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 }}
               >
                 {/* Track Title - LCD Style */}
-                <div class="mb-2">
+                <div class="mb-3">
                   <div 
                     class="text-xs font-mono uppercase tracking-wide mb-1"
                     style={{
@@ -341,7 +350,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                     TITLE
                   </div>
                   <div 
-                    class="font-mono font-bold text-lg leading-tight"
+                    class="font-mono font-bold text-xl lg:text-2xl leading-tight break-words"
                     style={{
                       color: isCurrentTrack() ? '#00f92a' : '#04caf4',
                       'text-shadow': isCurrentTrack() 
@@ -355,7 +364,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 </div>
 
                 {/* Artist - LCD Style */}
-                <div class="mb-2">
+                <div class="mb-3">
                   <div 
                     class="text-xs font-mono uppercase tracking-wide mb-1"
                     style={{
@@ -366,7 +375,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                     ARTIST
                   </div>
                   <div 
-                    class="font-mono font-semibold text-base"
+                    class="font-mono font-semibold text-lg lg:text-xl break-words"
                     style={{
                       color: '#f906d6',
                       'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)',
@@ -378,7 +387,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 </div>
 
                 {/* Duration & Status Row - LCD Style */}
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-end">
                   <div>
                     <div 
                       class="text-xs font-mono uppercase tracking-wide mb-1"
@@ -390,7 +399,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                       DURATION
                     </div>
                     <div 
-                      class="font-mono font-bold text-sm"
+                      class="font-mono font-bold text-base lg:text-lg"
                       style={{
                         color: '#d1f60a',
                         'text-shadow': '0 0 5px rgba(211, 246, 10, 0.6)',
@@ -413,7 +422,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                       STATUS
                     </div>
                     <div 
-                      class="font-mono font-bold text-xs px-2 py-1 rounded"
+                      class="font-mono font-bold text-sm px-3 py-2 rounded"
                       style={{
                         color: isPlayable() ? '#00f92a' : '#ff4444',
                         background: isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)',
@@ -453,45 +462,142 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           </div>
         </div>
 
-        {/* USER ATTRIBUTION & SOCIAL STATS SECTION */}
+        {/* CONSOLIDATED SECTION: USER INFO + SOCIAL STATS + ACTIONS - Single Row Layout */}
         <div 
-          class="p-4 rounded-xl max-w-2xl mx-auto w-full"
+          class="p-5"
           style={{
-            background: 'linear-gradient(145deg, #1a1a1a, #2a2a2a)',
-            border: '2px solid rgba(249, 6, 214, 0.3)',
-            'box-shadow': '0 4px 20px rgba(249, 6, 214, 0.1)'
+            background: 'linear-gradient(145deg, #0d0d0d, #1d1d1d)',
+            'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.7)'
           }}
         >
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            {/* User Info */}
+          {/* Single Row Layout: Action Buttons + User Info + Social Stats */}
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            
+            {/* Left: Action Buttons */}
             <div class="flex flex-wrap items-center gap-3">
-              <span 
-                class="text-sm font-medium"
-                style={{ color: colors.muted }}
+              
+              {/* JOIN DISCUSSION Button - PROMINENT POSITION for social discovery */}
+              <button
+                  onClick={() => setShowDiscussion(!showDiscussion())}
+                  class="relative overflow-hidden font-bold transition-all duration-300 font-mono uppercase tracking-wide text-xs"
+                  style={{
+                    padding: '10px 20px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    borderRadius: '8px',
+                    border: showDiscussion() 
+                      ? '2px solid #04caf4' 
+                      : '2px solid rgba(4, 202, 244, 0.4)',
+                    background: showDiscussion() 
+                      ? 'linear-gradient(145deg, rgba(4, 202, 244, 0.2), rgba(0, 0, 0, 0.9))' 
+                      : 'linear-gradient(145deg, #2a2a2a, #0a0a0a)',
+                    color: showDiscussion() ? '#04caf4' : colors.body,
+                    minHeight: '40px',
+                    minWidth: '130px',
+                    'box-shadow': showDiscussion() 
+                      ? '0 0 15px rgba(4, 202, 244, 0.4), inset 0 0 10px rgba(4, 202, 244, 0.1)'
+                      : '0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    'text-shadow': showDiscussion() 
+                      ? '0 0 5px rgba(4, 202, 244, 0.8)'
+                      : 'none',
+                    'white-space': 'nowrap'
+                  }}
+                  title={showDiscussion() ? "Hide discussion" : "Join discussion"}
+                  onMouseEnter={(e) => {
+                    if (!showDiscussion()) {
+                      e.currentTarget.style.borderColor = '#04caf4';
+                      e.currentTarget.style.boxShadow = '0 0 15px rgba(4, 202, 244, 0.4), inset 0 0 10px rgba(4, 202, 244, 0.1)';
+                      e.currentTarget.style.color = '#04caf4';
+                      e.currentTarget.style.textShadow = '0 0 5px rgba(4, 202, 244, 0.8)';
+                      e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!showDiscussion()) {
+                      e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.4)';
+                      e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                      e.currentTarget.style.color = colors.body;
+                      e.currentTarget.style.textShadow = 'none';
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    }
+                  }}
+                >
+                  <i class="fas fa-comments mr-2"></i>
+                  <span>{showDiscussion() ? 'Hide' : 'Join'}</span>
+                </button>
+
+                {/* Like Track Button - Next to JOIN button */}
+                <button
+                  onClick={() => console.log('Like track')}
+                  class="relative overflow-hidden font-bold transition-all duration-300 font-mono uppercase tracking-wide text-xs"
+                  style={{
+                    padding: '10px 18px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    borderRadius: '8px',
+                    border: '2px solid rgba(249, 6, 214, 0.4)',
+                    background: 'linear-gradient(145deg, #2a2a2a, #0a0a0a)',
+                    color: colors.body,
+                    minHeight: '40px',
+                    minWidth: '110px',
+                    'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    'white-space': 'nowrap'
+                  }}
+                  title="Like this track"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#f906d6';
+                    e.currentTarget.style.boxShadow = '0 0 15px rgba(249, 6, 214, 0.4), inset 0 0 10px rgba(249, 6, 214, 0.1)';
+                    e.currentTarget.style.color = '#f906d6';
+                    e.currentTarget.style.textShadow = '0 0 5px rgba(249, 6, 214, 0.8)';
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(249, 6, 214, 0.4)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.color = colors.body;
+                    e.currentTarget.style.textShadow = 'none';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-heart mr-2"></i>
+                  <span>Like</span>
+                </button>
+
+            </div>
+            
+            {/* Center: User Info */}
+            <div class="flex flex-wrap items-center gap-3">
+              <div 
+                class="px-3 py-1 rounded-md text-xs font-mono uppercase tracking-wider"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.8)',
+                  border: '1px solid rgba(4, 202, 244, 0.4)',
+                  color: 'rgba(4, 202, 244, 0.8)'
+                }}
               >
-                Added by
-              </span>
+                Added By
+              </div>
               <A 
                 href={`/profile/${props.track.addedBy}`}
-                class="font-bold transition-all duration-300 px-3 py-2 rounded-lg cursor-pointer text-lg"
+                class="font-bold transition-all duration-300 px-3 py-2 rounded-lg cursor-pointer text-sm"
                 style={{
-                  color: colors.info,
-                  'text-shadow': `0 0 5px ${colors.info}40`,
-                  background: 'rgba(102, 179, 255, 0.1)',
-                  border: `2px solid ${colors.info}40`
+                  color: '#04caf4',
+                  'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
+                  background: 'rgba(4, 202, 244, 0.1)',
+                  border: '1px solid rgba(4, 202, 244, 0.3)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = colors.success;
-                  e.currentTarget.style.textShadow = `0 0 8px ${colors.success}60`;
-                  e.currentTarget.style.background = 'rgba(76, 175, 80, 0.15)';
-                  e.currentTarget.style.borderColor = `${colors.success}60`;
+                  e.currentTarget.style.color = '#00f92a';
+                  e.currentTarget.style.textShadow = '0 0 8px rgba(0, 249, 42, 0.8)';
+                  e.currentTarget.style.background = 'rgba(0, 249, 42, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
                   e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.color = colors.info;
-                  e.currentTarget.style.textShadow = `0 0 5px ${colors.info}40`;
-                  e.currentTarget.style.background = 'rgba(102, 179, 255, 0.1)';
-                  e.currentTarget.style.borderColor = `${colors.info}40`;
+                  e.currentTarget.style.color = '#04caf4';
+                  e.currentTarget.style.textShadow = '0 0 5px rgba(4, 202, 244, 0.6)';
+                  e.currentTarget.style.background = 'rgba(4, 202, 244, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.3)';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
                 onClick={(e) => e.stopPropagation()}
@@ -502,180 +608,94 @@ const TrackItem: Component<TrackItemProps> = (props) => {
               <span class="text-sm" style={{ color: colors.muted }}>{props.track.timestamp}</span>
             </div>
 
-            {/* Social Stats */}
-            <div class="flex items-center gap-4">
-              <div class="flex items-center gap-2">
-                <i 
-                  class="fas fa-heart"
-                  style={{
-                    color: '#f906d6',
-                    'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)'
-                  }}
-                ></i>
-                <span 
-                  class="font-bold"
-                  style={{
-                    color: '#f906d6',
-                    'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)'
-                  }}
-                >
-                  {props.track.likes || 3}
-                </span>
-                <span class="text-sm" style={{ color: colors.muted }}>likes</span>
+            {/* Right: Social Stats */}
+            <div class="flex flex-wrap items-center gap-3">
+              {/* Compact Likes Pill */}
+              <div 
+                class="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-mono font-bold uppercase tracking-wide"
+                style={{
+                  background: 'rgba(249, 6, 214, 0.15)',
+                  border: '1px solid rgba(249, 6, 214, 0.4)',
+                  color: '#f906d6',
+                  'text-shadow': '0 0 3px rgba(249, 6, 214, 0.6)',
+                  'min-height': '32px'
+                }}
+              >
+                <i class="fas fa-heart text-xs" style={{ color: '#f906d6' }}></i>
+                <span>{props.track.likes || 25}</span>
               </div>
-              <span class="text-base" style={{ color: colors.muted }}>•</span>
-              <div class="flex items-center gap-2">
-                <i 
-                  class="fas fa-comment"
-                  style={{
-                    color: '#04caf4',
-                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)'
-                  }}
-                ></i>
-                <span 
-                  class="font-bold"
-                  style={{
-                    color: '#04caf4',
-                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)'
-                  }}
-                >
-                  {mockReplies.length}
-                </span>
-                <span class="text-sm" style={{ color: colors.muted }}>replies</span>
+              
+              {/* Compact Replies Pill */}
+              <div 
+                class="flex items-center gap-1 px-3 py-2 rounded-full text-xs font-mono font-bold uppercase tracking-wide"
+                style={{
+                  background: 'rgba(4, 202, 244, 0.15)',
+                  border: '1px solid rgba(4, 202, 244, 0.4)',
+                  color: '#04caf4',
+                  'text-shadow': '0 0 3px rgba(4, 202, 244, 0.6)',
+                  'min-height': '32px'
+                }}
+              >
+                <i class="fas fa-comment text-xs" style={{ color: '#04caf4' }}></i>
+                <span>{mockReplies.length}</span>
               </div>
             </div>
           </div>
         </div>
-
-        {/* ACTION BUTTONS SECTION */}
-        <div 
-          class="p-4 rounded-xl max-w-2xl mx-auto w-full"
-          style={{
-            background: 'linear-gradient(145deg, #1a1a1a, #2a2a2a)',
-            border: '2px solid rgba(4, 202, 244, 0.3)',
-            'box-shadow': '0 4px 20px rgba(4, 202, 244, 0.1)'
-          }}
-        >
-          <div class="flex flex-wrap gap-4 justify-center">
-            {/* Discussion button */}
-            <button
-              onClick={() => setShowDiscussion(!showDiscussion())}
-              class="relative overflow-hidden font-bold transition-all duration-300 flex-1 min-w-[140px]"
-              style={{
-                padding: '14px 24px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                borderRadius: '8px',
-                border: `2px solid ${colors.info}40`,
-                background: showDiscussion() 
-                  ? `linear-gradient(145deg, rgba(102, 179, 255, 0.2), rgba(42, 42, 42, 0.8))` 
-                  : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                color: showDiscussion() ? colors.info : colors.body,
-                minHeight: '48px',
-                'box-shadow': showDiscussion() 
-                  ? `0 0 15px ${colors.info}40, 0 0 30px ${colors.info}20`
-                  : '0 3px 12px rgba(0, 0, 0, 0.3)',
-                'text-shadow': showDiscussion() 
-                  ? `0 0 5px ${colors.info}60`
-                  : 'none'
-              }}
-              title={showDiscussion() ? "Hide discussion" : "Join discussion"}
-              onMouseEnter={(e) => {
-                if (!showDiscussion()) {
-                  e.currentTarget.style.borderColor = `${colors.info}80`;
-                  e.currentTarget.style.boxShadow = `0 0 15px ${colors.info}40, 0 0 30px ${colors.info}20`;
-                  e.currentTarget.style.color = colors.info;
-                  e.currentTarget.style.textShadow = `0 0 5px ${colors.info}60`;
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!showDiscussion()) {
-                  e.currentTarget.style.borderColor = `${colors.info}40`;
-                  e.currentTarget.style.boxShadow = '0 3px 12px rgba(0, 0, 0, 0.3)';
-                  e.currentTarget.style.color = colors.body;
-                  e.currentTarget.style.textShadow = 'none';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }
-              }}
-            >
-              <i class="fas fa-comments mr-2"></i>
-              <span>{showDiscussion() ? 'Hide Discussion' : 'Join Discussion'}</span>
-            </button>
-            
-            <button
-              onClick={() => console.log('Like track')}
-              class="relative overflow-hidden font-bold transition-all duration-300 flex-1 min-w-[120px]"
-              style={{
-                padding: '14px 24px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                borderRadius: '8px',
-                border: `2px solid ${colors.error}40`,
-                background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                color: colors.body,
-                minHeight: '48px',
-                'box-shadow': '0 3px 12px rgba(0, 0, 0, 0.3)'
-              }}
-              title="Like this track"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = `${colors.error}80`;
-                e.currentTarget.style.boxShadow = `0 0 15px ${colors.error}40, 0 0 30px ${colors.error}20`;
-                e.currentTarget.style.color = colors.error;
-                e.currentTarget.style.textShadow = `0 0 5px ${colors.error}60`;
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = `${colors.error}40`;
-                e.currentTarget.style.boxShadow = '0 3px 12px rgba(0, 0, 0, 0.3)';
-                e.currentTarget.style.color = colors.body;
-                e.currentTarget.style.textShadow = 'none';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <i class="fas fa-heart mr-2"></i>
-              <span>Like Track</span>
-            </button>
-          </div>
-        </div>
       </div>
       
-      {/* Unified Discussion Panel - Three-section layout with neon accents */}
+      {/* INTEGRATED DISCUSSION PANEL - Extension of the Retro Radio Unit */}
       <Show when={showDiscussion()}>
-        <div class="mt-4 rounded-lg overflow-hidden">
-          {/* Section 1: Original Post (if exists) - Neon Blue Accent */}
+        <div 
+          class="mt-4 rounded-2xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(145deg, #000000, #1a1a1a)',
+            border: '3px solid rgba(0, 249, 42, 0.4)',
+            'box-shadow': `
+              0 0 25px rgba(0, 249, 42, 0.2),
+              inset 0 0 50px rgba(0, 0, 0, 0.9),
+              inset 0 4px 0 rgba(0, 249, 42, 0.1),
+              inset 0 -4px 0 rgba(0, 0, 0, 0.8)
+            `
+          }}
+        >
+          {/* DISCUSSION SECTION 1: Original Post Display */}
           <Show when={props.track.comment}>
             <div 
-              class="pt-8 px-6 pb-6"
+              class="p-6 border-b-2"
               style={{
-                background: colors.elevated,
-                'border-left': `4px solid ${colors.info}`,
-                'border-bottom': `1px solid ${colors.border}`
+                background: 'linear-gradient(145deg, #0d0d0d, #1d1d1d)',
+                'border-bottom-color': 'rgba(4, 202, 244, 0.3)',
+                'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.8)'
               }}
             >
-              <div class="flex items-start gap-3">
+              <div 
+                class="flex items-start gap-4 p-4 rounded-lg"
+                style={{
+                  background: 'rgba(4, 202, 244, 0.05)',
+                  border: '1px solid rgba(4, 202, 244, 0.2)'
+                }}
+              >
                 <div class="flex-shrink-0">
-                  <span class="text-lg">🎸</span>
+                  <span class="text-xl">🎸</span>
                 </div>
                 <div class="flex-1">
-                  <div class="flex items-center gap-2 mb-2">
+                  <div class="flex items-center gap-3 mb-3">
                     <span 
-                      class="font-semibold text-lg leading-tight"
+                      class="font-bold text-lg font-mono"
                       style={{
-                        color: colors.info,
-                        ...getNeonGlow(colors.info, 'low')
+                        color: '#04caf4',
+                        'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)'
                       }}
                     >
                       {props.track.addedBy}
                     </span>
-                    <span class="text-sm" style={{ color: colors.muted }}>•</span>
-                    <span class="text-sm leading-normal" style={{ color: colors.muted }}>{props.track.timestamp}</span>
+                    <span class="text-sm font-mono" style={{ color: colors.muted }}>•</span>
+                    <span class="text-sm font-mono" style={{ color: colors.muted }}>{props.track.timestamp}</span>
                   </div>
                   <p 
                     class="text-base leading-relaxed"
-                    style={{
-                      color: colors.body
-                    }}
+                    style={{ color: colors.body }}
                   >
                     {props.track.comment}
                   </p>
@@ -684,13 +704,13 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             </div>
           </Show>
           
-          {/* Section 2: Reply Input - Cyan Accent (always shown when discussion is open) */}
+          {/* DISCUSSION SECTION 2: Reply Input Panel */}
           <div 
-            class="px-6 py-5"
+            class="p-6 border-b-2"
             style={{
-              background: colors.surface,
-              'border-left': `4px solid ${colors.success}`,
-              'border-bottom': `1px solid ${colors.border}`
+              background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+              'border-bottom-color': 'rgba(0, 249, 42, 0.3)',
+              'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.8)'
             }}
           >
             <ReplyForm
@@ -708,30 +728,43 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             />
           </div>
           
-          {/* Section 3: Existing Replies - Green Accent */}
+          {/* DISCUSSION SECTION 3: Existing Replies Display */}
           <div 
-            class="px-6 py-5 pb-8"
+            class="p-6"
             style={{
-              background: colors.panel,
-              'border-left': `4px solid ${colors.warning}`
+              background: 'linear-gradient(145deg, #0d0d0d, #1d1d1d)',
+              'box-shadow': 'inset 0 0 25px rgba(0, 0, 0, 0.8)'
             }}
           >
-            <div class="mb-5 flex items-center justify-between">
-              <h4 
-                class="text-xl font-bold leading-tight"
-                style={{
-                  color: colors.warning,
-                  ...getNeonGlow(colors.warning, 'low')
-                }}
-              >
-                💬 Replies ({mockReplies.length})
-              </h4>
+            <div class="mb-6 flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <div 
+                  class="px-3 py-1 rounded-md text-xs font-mono uppercase tracking-wider"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    border: '1px solid rgba(0, 249, 42, 0.4)',
+                    color: 'rgba(0, 249, 42, 0.8)'
+                  }}
+                >
+                  Discussion
+                </div>
+                <h4 
+                  class="text-xl font-bold font-mono leading-tight"
+                  style={{
+                    color: '#00f92a',
+                    'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)'
+                  }}
+                >
+                  💬 {mockReplies.length} Replies
+                </h4>
+              </div>
               <select 
-                class="px-3 py-3 text-sm font-bold rounded min-h-[44px]"
+                class="px-4 py-3 text-sm font-bold font-mono rounded-lg min-h-[44px]"
                 style={{
-                  background: colors.elevated,
-                  border: `2px solid ${colors.border}`,
-                  color: colors.body
+                  background: 'linear-gradient(145deg, #2a2a2a, #0a0a0a)',
+                  border: '2px solid rgba(0, 249, 42, 0.4)',
+                  color: colors.body,
+                  'box-shadow': '0 4px 8px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
                 }}
                 value={replySort()}
                 onChange={(e) => setReplySort(e.currentTarget.value as 'recent' | 'likes')}
