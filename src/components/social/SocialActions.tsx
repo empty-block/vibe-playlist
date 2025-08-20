@@ -1,4 +1,5 @@
 import { Component } from 'solid-js';
+import { getThemeColors } from '../../utils/contrastColors';
 
 interface SocialActionsProps {
   onLike?: () => void;
@@ -15,6 +16,7 @@ const SocialActions: Component<SocialActionsProps> = (props) => {
   const size = () => props.size || 'md';
   const layout = () => props.layout || 'horizontal';
   const variant = () => props.variant || 'buttons';
+  const colors = getThemeColors();
   
   const getSizeClasses = () => {
     switch (size()) {
@@ -38,51 +40,64 @@ const SocialActions: Component<SocialActionsProps> = (props) => {
     return layout() === 'vertical' ? `flex-col ${gap}` : `items-center ${gap}`;
   };
   
-  const buttonBaseClass = () => variant() === 'buttons' 
-    ? `win95-button flex items-center justify-center ${getSizeClasses()}` 
-    : `hover:text-blue-500 transition-colors ${getSizeClasses()}`;
+  const getButtonStyle = (isHover = false) => variant() === 'buttons' 
+    ? {
+        background: colors.elevated,
+        border: `1px solid ${colors.border}`,
+        color: colors.body,
+        padding: '0.5rem 1rem',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }
+    : {
+        color: isHover ? colors.linkHover : colors.link,
+        cursor: 'pointer',
+        transition: 'color 0.2s ease'
+      };
     
-  const containerClass = () => variant() === 'buttons'
-    ? `flex ${layoutClasses()} ${props.className || ''}`
-    : `flex ${layoutClasses()} text-gray-500 ${props.className || ''}`;
+  const containerStyle = () => ({
+    display: 'flex',
+    alignItems: layout() === 'vertical' ? 'flex-start' : 'center',
+    flexDirection: layout() === 'vertical' ? 'column' : 'row',
+    gap: size() === 'sm' ? '0.25rem' : size() === 'lg' ? '1rem' : '0.5rem'
+  });
+
+  const createButton = (icon: string, text: string, onClick: () => void) => (
+    <button 
+      onClick={onClick}
+      class={`flex items-center justify-center ${getSizeClasses()}`}
+      style={getButtonStyle()}
+      onMouseEnter={(e) => {
+        if (variant() === 'buttons') {
+          e.currentTarget.style.borderColor = colors.borderHover;
+          e.currentTarget.style.color = colors.linkHover;
+        } else {
+          e.currentTarget.style.color = colors.linkHover;
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (variant() === 'buttons') {
+          e.currentTarget.style.borderColor = colors.border;
+          e.currentTarget.style.color = colors.body;
+        } else {
+          e.currentTarget.style.color = colors.link;
+        }
+      }}
+    >
+      <i class={`${icon} mr-1`}></i>{text}
+    </button>
+  );
 
   return (
-    <div class={containerClass()}>
-      {props.onLike && (
-        <button 
-          onClick={props.onLike}
-          class={`${buttonBaseClass()} ${variant() === 'buttons' ? 'flex-1' : ''}`}
-        >
-          <i class="fas fa-heart mr-1"></i>Like
-        </button>
-      )}
-      
-      {props.onAdd && (
-        <button 
-          onClick={props.onAdd}
-          class={`${buttonBaseClass()} ${variant() === 'buttons' ? 'flex-1' : ''}`}
-        >
-          <i class="fas fa-plus mr-1"></i>Add
-        </button>
-      )}
-      
-      {props.onShare && (
-        <button 
-          onClick={props.onShare}
-          class={`${buttonBaseClass()} ${variant() === 'buttons' ? 'flex-1' : ''}`}
-        >
-          <i class="fas fa-share mr-1"></i>Share
-        </button>
-      )}
-      
-      {props.onReply && (
-        <button 
-          onClick={props.onReply}
-          class={buttonBaseClass()}
-        >
-          <i class="fas fa-reply mr-1"></i>Reply
-        </button>
-      )}
+    <div 
+      class={props.className || ''}
+      style={containerStyle()}
+    >
+      {props.onLike && createButton('fas fa-heart', 'Like', props.onLike)}
+      {props.onAdd && createButton('fas fa-plus', 'Add', props.onAdd)}
+      {props.onShare && createButton('fas fa-share', 'Share', props.onShare)}
+      {props.onReply && createButton('fas fa-reply', 'Reply', props.onReply)}
     </div>
   );
 };

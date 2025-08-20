@@ -1,4 +1,5 @@
 import { Component } from 'solid-js';
+import { getThemeColors } from '../../utils/contrastColors';
 
 interface TextInputProps {
   value: string;
@@ -12,13 +13,42 @@ interface TextInputProps {
 }
 
 const TextInput: Component<TextInputProps> = (props) => {
-  const baseClasses = "w-full px-3 py-2 text-sm border-2 border-gray-400 bg-white disabled:opacity-50 disabled:cursor-not-allowed";
-  const combinedClasses = `${baseClasses} ${props.className || ''}`;
+  const colors = getThemeColors();
+  
+  const getInputStyle = () => ({
+    width: '100%',
+    padding: '0.75rem',
+    fontSize: '0.875rem',
+    background: colors.elevated,
+    border: `2px solid ${colors.border}`,
+    borderRadius: '4px',
+    color: colors.body,
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+    opacity: props.disabled ? '0.5' : '1',
+    cursor: props.disabled ? 'not-allowed' : 'text'
+  });
+
+  const getLabelStyle = () => ({
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: 'bold',
+    color: colors.subheading,
+    marginBottom: '0.25rem'
+  });
+
+  const handleFocus = (e: FocusEvent) => {
+    (e.currentTarget as HTMLElement).style.borderColor = colors.borderAccent;
+  };
+
+  const handleBlur = (e: FocusEvent) => {
+    (e.currentTarget as HTMLElement).style.borderColor = colors.border;
+  };
 
   return (
-    <div>
+    <div class={props.className || ''}>
       {props.label && (
-        <label class="block text-sm font-bold text-black mb-1">
+        <label style={getLabelStyle()}>
           {props.label}
         </label>
       )}
@@ -28,7 +58,9 @@ const TextInput: Component<TextInputProps> = (props) => {
           placeholder={props.placeholder}
           value={props.value}
           onInput={(e) => props.onInput(e.currentTarget.value)}
-          class={`${combinedClasses} resize-none`}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          style={{ ...getInputStyle(), resize: 'none' }}
           rows={props.rows || 3}
           disabled={props.disabled}
         />
@@ -38,7 +70,9 @@ const TextInput: Component<TextInputProps> = (props) => {
           placeholder={props.placeholder}
           value={props.value}
           onInput={(e) => props.onInput(e.currentTarget.value)}
-          class={combinedClasses}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          style={getInputStyle()}
           disabled={props.disabled}
         />
       )}

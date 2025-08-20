@@ -113,10 +113,18 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
           
           {/* Mobile-First Layout */}
           <div class="flex flex-col sm:flex-row items-start gap-4">
-            {/* Playlist Image - Responsive sizing */}
+            {/* Playlist Image - Cyberpunk style with animated border */}
             <div 
               ref={playlistImageRef!}
               class="flex-shrink-0 relative group cursor-pointer self-center sm:self-start"
+              style={{
+                padding: '4px',
+                background: 'linear-gradient(45deg, #3b00fd, #04caf4, #00f92a, #f906d6)',
+                'background-size': '400% 400%',
+                'border-radius': '12px',
+                filter: 'drop-shadow(0 8px 25px rgba(59, 0, 253, 0.4))',
+                animation: 'gradient-shift 6s ease infinite'
+              }}
               onClick={(e) => {
                 if (props.onPlayPlaylist) {
                   playButtonPulse(e.currentTarget as HTMLElement);
@@ -126,77 +134,190 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               title="Play this playlist"
             >
               <img 
-                src={props.playlist.image || 'https://via.placeholder.com/150x150/c0c0c0/000000?text=🎵'}
+                src={props.playlist.image || 'https://via.placeholder.com/150x150/1a1a1a/04caf4?text=🎵'}
                 alt={`${props.playlist.name} cover`}
-                class="w-24 h-24 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover rounded-lg shadow-lg border-2 border-gray-300 hover:shadow-xl transition-shadow duration-200"
+                class="w-24 h-24 sm:w-40 sm:h-40 md:w-48 md:h-48 object-cover border-2 border-black"
+                style={{
+                  'border-radius': '8px',
+                  filter: 'brightness(1.1) contrast(1.2)'
+                }}
               />
-              {/* Neon gradient overlay on hover */}
+              {/* Enhanced neon play overlay */}
               <div 
-                class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
-                style="background: linear-gradient(to bottom right, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 100%);"
+                class="absolute inset-1 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center"
+                style={{
+                  'border-radius': '8px',
+                  background: 'radial-gradient(circle, rgba(4, 202, 244, 0.9) 0%, rgba(0, 249, 42, 0.7) 100%)',
+                  'backdrop-filter': 'blur(2px)'
+                }}
               >
-                <div class="w-12 h-12 sm:w-20 sm:h-20 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl border-2 border-white/30">
-                  <i class="fas fa-play text-white text-2xl sm:text-4xl ml-1 drop-shadow-lg"></i>
+                <div 
+                  class="w-12 h-12 sm:w-20 sm:h-20 rounded-full flex items-center justify-center border-2"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    'border-color': '#ffffff',
+                    'box-shadow': '0 0 30px rgba(255, 255, 255, 0.8), inset 0 0 20px rgba(4, 202, 244, 0.3)'
+                  }}
+                >
+                  <i 
+                    class="fas fa-play text-white text-2xl sm:text-4xl ml-1 drop-shadow-lg"
+                    style={{'text-shadow': '0 0 10px rgba(255, 255, 255, 0.9)'}}
+                  ></i>
                 </div>
               </div>
             </div>
             
             {/* Playlist Details */}
             <div class="flex-1 min-w-0 text-center sm:text-left">
-              {/* Playlist Title - Mobile responsive */}
-              <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-2 sm:mb-3 break-words">
-                {props.playlist.name} {/* Add emoji inline */}
+              {/* Playlist Title - Mobile responsive with neon styling */}
+              <h1 
+                class="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 break-words"
+                style={{
+                  background: 'linear-gradient(135deg, #04caf4 0%, #00f92a 50%, #f906d6 100%)',
+                  'background-clip': 'text',
+                  '-webkit-background-clip': 'text',
+                  color: 'transparent',
+                  'text-shadow': '0 0 20px rgba(4, 202, 244, 0.5)',
+                  filter: 'drop-shadow(0 0 10px rgba(0, 249, 42, 0.3))'
+                }}
+              >
+                {props.playlist.name}
                 <span class="ml-2 text-2xl">🎸</span>
               </h1>
               
-              {/* Creator Info - Mobile responsive */}
+              {/* Creator Info - Mobile responsive with neon styling */}
               <div class="flex flex-wrap items-center justify-center sm:justify-start gap-1 sm:gap-2 mb-3 sm:mb-4">
                 <span class="text-sm text-gray-600">Created by</span>
                 <button 
-                  class="text-base sm:text-lg font-bold text-black hover:text-blue-700 transition-colors break-words"
+                  class="text-base sm:text-lg font-bold transition-all duration-200 break-words"
+                  style={{
+                    color: '#04caf4',
+                    'text-shadow': '0 0 10px rgba(4, 202, 244, 0.6)',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#00f92a';
+                    e.currentTarget.style.textShadow = '0 0 15px rgba(0, 249, 42, 0.8)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#04caf4';
+                    e.currentTarget.style.textShadow = '0 0 10px rgba(4, 202, 244, 0.6)';
+                  }}
                   onClick={() => props.onCreatorClick(props.playlist.createdBy)}
                 >
                   {props.playlist.createdBy}
                 </button>
               </div>
               
-              {/* Stats - Mobile responsive */}
-              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 text-sm text-gray-600 mb-4">
+              {/* Stats - Mobile responsive with neon glow */}
+              <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4 text-sm mb-4">
                 <button 
-                  class="flex items-center gap-1 hover:text-blue-600 transition-colors"
+                  class="flex items-center gap-1 transition-all duration-200 px-2 py-1 rounded"
+                  style={{
+                    color: '#04caf4',
+                    'text-shadow': '0 0 8px rgba(4, 202, 244, 0.8)',
+                    background: 'rgba(4, 202, 244, 0.1)',
+                    border: '1px solid rgba(4, 202, 244, 0.3)',
+                    'font-weight': '600'
+                  }}
                   title="See who liked this playlist"
                   onClick={() => console.log('Show who liked the playlist')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 0 15px rgba(4, 202, 244, 0.6)';
+                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = 'none';
+                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.1)';
+                  }}
                 >
+                  <i class="fas fa-heart mr-1"></i>
                   <span>{playlistLikes()} likes</span>
                 </button>
-                <span class="hidden sm:inline">•</span>
-                <span>{props.playlist.trackCount} tracks</span>
+                <span class="hidden sm:inline text-gray-400">•</span>
+                <span style={{
+                  color: '#04caf4',
+                  'text-shadow': '0 0 6px rgba(4, 202, 244, 0.6)'
+                }}>
+                  {props.playlist.trackCount} tracks
+                </span>
               </div>
               
-              {/* Action Buttons - Mobile responsive */}
+              {/* Action Buttons - Mobile responsive with neon effects */}
               <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <AnimatedButton
+                <button
                   onClick={() => console.log('Like playlist')}
-                  class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
+                  class="px-5 py-3 font-bold text-sm group relative whitespace-nowrap flex-1 transition-all duration-300"
+                  style={{
+                    background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+                    border: '2px solid rgba(249, 6, 214, 0.4)',
+                    color: '#ffffff',
+                    'border-radius': '0px',
+                    'min-height': '44px'
+                  }}
+                  onMouseEnter={(e: MouseEvent) => {
+                    const target = e.currentTarget as HTMLButtonElement;
+                    target.style.borderColor = '#f906d6';
+                    target.style.boxShadow = '0 0 25px rgba(249, 6, 214, 0.6), 0 0 50px rgba(249, 6, 214, 0.3)';
+                    target.style.color = '#f906d6';
+                    target.style.textShadow = '0 0 10px rgba(249, 6, 214, 0.8)';
+                  }}
+                  onMouseLeave={(e: MouseEvent) => {
+                    const target = e.currentTarget as HTMLButtonElement;
+                    target.style.borderColor = 'rgba(249, 6, 214, 0.4)';
+                    target.style.boxShadow = 'none';
+                    target.style.color = '#ffffff';
+                    target.style.textShadow = 'none';
+                  }}
                   title="Like this playlist"
-                  animationType="social"
                 >
                   <i class="fas fa-heart mr-2"></i>
                   <span>Like</span>
-                </AnimatedButton>
+                </button>
                 
-                <AnimatedButton
+                <button
                   onClick={handleAddTrack}
-                  class="win95-button px-4 py-2 text-black font-bold text-sm group relative whitespace-nowrap flex-1"
-                  title="Add to this playlist"
-                  classList={{
-                    'bg-green-100': showReplyBox()
+                  class="px-5 py-3 font-bold text-sm group relative whitespace-nowrap flex-1 transition-all duration-300"
+                  style={{
+                    background: showReplyBox() 
+                      ? 'linear-gradient(145deg, #1a4a1a, #2a2a2a)' 
+                      : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+                    border: showReplyBox() 
+                      ? '2px solid #00f92a'
+                      : '2px solid rgba(0, 249, 42, 0.4)',
+                    color: showReplyBox() ? '#00f92a' : '#ffffff',
+                    'border-radius': '0px',
+                    'min-height': '44px',
+                    'box-shadow': showReplyBox() 
+                      ? '0 0 25px rgba(0, 249, 42, 0.8), 0 0 50px rgba(0, 249, 42, 0.4)'
+                      : 'none',
+                    'text-shadow': showReplyBox() 
+                      ? '0 0 10px rgba(0, 249, 42, 0.8)'
+                      : 'none'
                   }}
-                  animationType="social"
+                  onMouseEnter={(e: MouseEvent) => {
+                    if (!showReplyBox()) {
+                      const target = e.currentTarget as HTMLButtonElement;
+                      target.style.borderColor = '#00f92a';
+                      target.style.boxShadow = '0 0 25px rgba(0, 249, 42, 0.6), 0 0 50px rgba(0, 249, 42, 0.3)';
+                      target.style.color = '#00f92a';
+                      target.style.textShadow = '0 0 10px rgba(0, 249, 42, 0.8)';
+                    }
+                  }}
+                  onMouseLeave={(e: MouseEvent) => {
+                    if (!showReplyBox()) {
+                      const target = e.currentTarget as HTMLButtonElement;
+                      target.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+                      target.style.boxShadow = 'none';
+                      target.style.color = '#ffffff';
+                      target.style.textShadow = 'none';
+                    }
+                  }}
+                  title="Add to this playlist"
                 >
                   <i class="fas fa-plus mr-2"></i>
                   <span>+ Add to Playlist</span>
-                </AnimatedButton>
+                </button>
               </div>
             </div>
           </div>
@@ -263,7 +384,7 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               <AnimatedButton
                 onClick={handleSubmitReply}
                 disabled={!canSubmit()}
-                class="win95-button px-4 py-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                class="win95-button px-4 py-2 text-sm font-bold"
                 classList={{
                   'bg-green-100': canSubmit(),
                   'opacity-50 cursor-not-allowed': !canSubmit()
