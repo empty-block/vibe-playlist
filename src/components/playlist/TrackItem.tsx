@@ -42,8 +42,8 @@ const TrackItem: Component<TrackItemProps> = (props) => {
         
         // Add subtle neon border glow on hover
         if (!isCurrentTrack()) {
-          trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.6)';
-          trackItemRef.style.boxShadow = '0 8px 30px rgba(4, 202, 244, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3)';
+          trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.5)';
+          trackItemRef.style.boxShadow = '0 4px 20px rgba(4, 202, 244, 0.2), 0 2px 10px rgba(0, 0, 0, 0.3)';
         }
       });
 
@@ -57,7 +57,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
           });
           
           trackItemRef.style.borderColor = 'rgba(4, 202, 244, 0.3)';
-          trackItemRef.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.3)';
+          trackItemRef.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
         }
       });
     }
@@ -179,164 +179,317 @@ const TrackItem: Component<TrackItemProps> = (props) => {
         'background-clip': isCurrentTrack() ? 'padding-box, border-box' : 'padding-box',
         'border-radius': '12px',
         'box-shadow': isCurrentTrack() 
-          ? '0 0 30px rgba(59, 0, 253, 0.6), 0 0 60px rgba(4, 202, 244, 0.4), inset 0 0 20px rgba(0, 249, 42, 0.1)'
-          : '0 4px 15px rgba(0, 0, 0, 0.3)',
+          ? '0 0 15px rgba(59, 0, 253, 0.3), 0 0 30px rgba(4, 202, 244, 0.2), inset 0 0 10px rgba(0, 249, 42, 0.05)'
+          : '0 2px 10px rgba(0, 0, 0, 0.2)',
         transform: 'translateZ(0)',
         transition: 'none'
       }}
       onClick={handleClick}
     >
-      <div class="flex flex-col min-[400px]:flex-row gap-3 sm:gap-4 min-w-0 min-[400px]:items-center">
-        {/* Thumbnail - Stacks on very small screens */}
-        <div class="flex-shrink-0 relative group mx-auto min-[400px]:mx-0">
-          <img 
-            ref={thumbnailRef!}
-            src={props.track.thumbnail} 
-            alt={props.track.title}
-            class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 object-cover rounded-lg"
-          />
-          
-          {/* Track Number - Properly overlaid on image */}
+      {/* FLOWING SINGLE-COLUMN LAYOUT */}
+      <div class="space-y-4">
+        
+        {/* RETRO DIGITAL RADIO DISPLAY */}
+        <div class="w-full max-w-2xl mx-auto">
+          {/* Retro Radio Display Container */}
           <div 
-            class="absolute top-2 left-2 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 flex items-center justify-center z-10"
+            class="relative p-4 rounded-xl overflow-hidden"
             style={{
-              background: 'rgba(0, 0, 0, 0.8)',
-              'border-radius': '50%',
-              border: '2px solid rgba(255, 255, 255, 0.9)',
-              'backdrop-filter': 'blur(4px)'
+              background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+              border: '2px solid rgba(4, 202, 244, 0.3)',
+              'box-shadow': `
+                inset 0 0 20px rgba(0, 0, 0, 0.8),
+                inset 0 2px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -2px 0 rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(4, 202, 244, 0.2)
+              `
             }}
           >
-            <span 
-              class="text-white font-bold text-xs sm:text-sm md:text-base"
-              style={{'text-shadow': '0 0 4px rgba(0, 0, 0, 0.8)'}}
-            >
-              {props.trackNumber}
-            </span>
-          </div>
-          
-          {/* Play Button Overlay */}
-          {isPlayable() && (
-            <button
-              ref={playButtonRef!}
-              onClick={props.onPlay}
-              class="absolute inset-0 flex items-center justify-center rounded-lg transition-all duration-300"
-              title="Play this track"
-              style={{ 
-                background: 'linear-gradient(135deg, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 50%, rgba(249, 6, 214, 0) 100%)',
-                transition: 'background 300ms'
+            {/* Retro Scan Lines Effect */}
+            <div 
+              class="absolute inset-0 pointer-events-none opacity-20"
+              style={{
+                background: `repeating-linear-gradient(
+                  0deg,
+                  transparent 0px,
+                  transparent 1px,
+                  rgba(4, 202, 244, 0.1) 2px,
+                  rgba(4, 202, 244, 0.1) 3px
+                )`
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 50%, rgba(249, 6, 214, 0.8) 100%)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 50%, rgba(249, 6, 214, 0) 100%)';
+            />
+            
+            {/* Digital Display Header */}
+            <div 
+              class="flex items-center justify-between mb-3 px-2 py-1 rounded"
+              style={{
+                background: 'rgba(0, 0, 0, 0.8)',
+                border: '1px solid rgba(4, 202, 244, 0.4)'
               }}
             >
-              <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/30">
-                <i class="fas fa-play text-white ml-0.5 text-sm sm:text-base md:text-lg drop-shadow-lg"></i>
-              </div>
-            </button>
-          )}
-        </div>
-        
-        {/* Track Info - Consolidated layout for space efficiency */}
-        <div class="flex-1 min-w-0 text-center min-[400px]:text-left">
-          {/* Consolidated Track Info - Single Line Format */}
-          <div class="mb-2">
-            {/* Track Name - Artist Name • Duration - All on one line */}
-            <div class="flex items-center justify-center min-[400px]:justify-start gap-2 mb-1">
-              <div class="flex-1 min-w-0">
-                <h3 
-                  class="font-bold text-lg leading-tight truncate"
+              <div class="flex items-center gap-2">
+                <div 
+                  class="w-2 h-2 rounded-full"
                   style={{
-                    color: isCurrentTrack() ? colors.info : colors.heading,
-                    'text-shadow': isCurrentTrack() 
-                      ? '0 0 12px rgba(102, 179, 255, 0.8), 0 0 20px rgba(102, 179, 255, 0.4)' 
-                      : '0 0 8px rgba(102, 179, 255, 0.6)',
-                    transition: 'all 0.3s ease',
-                    'font-weight': '700'
+                    background: isCurrentTrack() ? '#00f92a' : '#f906d6',
+                    'box-shadow': isCurrentTrack() 
+                      ? '0 0 8px #00f92a' 
+                      : '0 0 6px #f906d6'
+                  }}
+                />
+                <span 
+                  class="text-xs font-mono uppercase tracking-widest"
+                  style={{
+                    color: '#04caf4',
+                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.8)'
                   }}
                 >
-                  <span class="inline">
-                    {props.track.title || 'Unknown Title'}
-                  </span>
-                  <span class="mx-2 font-normal text-base" style={{ color: colors.muted }}>
-                    -
-                  </span>
-                  <span 
-                    class="font-medium text-base"
+                  {isCurrentTrack() ? 'NOW PLAYING' : 'TRACK ' + props.trackNumber.toString().padStart(2, '0')}
+                </span>
+              </div>
+              <span class="text-lg">{sourceInfo.icon}</span>
+            </div>
+
+            {/* Horizontal Layout for Album Art + Track Info */}
+            <div class="flex gap-4">
+              {/* Album Art with Retro Frame */}
+              <div class="relative group flex-shrink-0 w-40">
+                <div 
+                  class="p-1 rounded-lg"
+                  style={{
+                    background: 'linear-gradient(145deg, #333, #111)',
+                    border: '2px solid rgba(255, 255, 255, 0.1)',
+                    'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.8)'
+                  }}
+                >
+                  <img 
+                    ref={thumbnailRef!}
+                    src={props.track.thumbnail} 
+                    alt={props.track.title}
+                    class="w-full aspect-square object-cover rounded"
                     style={{
-                      color: colors.success,
-                      'text-shadow': '0 0 10px rgba(76, 175, 80, 0.6)',
-                      'font-weight': '500'
+                      filter: 'contrast(1.1) saturate(1.2)'
+                    }}
+                  />
+                  
+                  {/* Track Number Badge */}
+                  <div 
+                    class="absolute -top-2 -left-2 w-8 h-8 flex items-center justify-center z-10"
+                    style={{
+                      background: 'linear-gradient(145deg, #000, #333)',
+                      'border-radius': '50%',
+                      border: '2px solid #04caf4',
+                      'box-shadow': '0 0 10px rgba(4, 202, 244, 0.5)',
+                      'backdrop-filter': 'blur(4px)'
+                    }}
+                  >
+                    <span 
+                      class="text-white font-bold text-sm font-mono"
+                      style={{
+                        'text-shadow': '0 0 5px rgba(4, 202, 244, 0.8)',
+                        color: '#04caf4'
+                      }}
+                    >
+                      {props.trackNumber}
+                    </span>
+                  </div>
+                  
+                  {/* Play Button Overlay */}
+                  {isPlayable() && (
+                    <button
+                      ref={playButtonRef!}
+                      onClick={props.onPlay}
+                      class="absolute inset-0 flex items-center justify-center rounded transition-all duration-300"
+                      title="Play this track"
+                      style={{ 
+                        background: 'linear-gradient(135deg, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 50%, rgba(249, 6, 214, 0) 100%)',
+                        transition: 'background 300ms'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(4, 202, 244, 0.8) 0%, rgba(0, 249, 42, 0.8) 50%, rgba(249, 6, 214, 0.8) 100%)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, rgba(4, 202, 244, 0) 0%, rgba(0, 249, 42, 0) 50%, rgba(249, 6, 214, 0) 100%)';
+                      }}
+                    >
+                      <div class="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center shadow-2xl transform scale-0 group-hover:scale-100 transition-transform duration-300 border-2 border-white/40">
+                        <i class="fas fa-play text-white ml-1 text-lg drop-shadow-lg"></i>
+                      </div>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Digital Readout Display */}
+              <div 
+                class="flex-1 p-3 rounded-lg"
+                style={{
+                  background: 'rgba(0, 0, 0, 0.9)',
+                  border: '1px solid rgba(4, 202, 244, 0.3)',
+                  'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.8)'
+                }}
+              >
+                {/* Track Title - LCD Style */}
+                <div class="mb-2">
+                  <div 
+                    class="text-xs font-mono uppercase tracking-wide mb-1"
+                    style={{
+                      color: 'rgba(4, 202, 244, 0.6)',
+                      'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
+                    }}
+                  >
+                    TITLE
+                  </div>
+                  <div 
+                    class="font-mono font-bold text-lg leading-tight"
+                    style={{
+                      color: isCurrentTrack() ? '#00f92a' : '#04caf4',
+                      'text-shadow': isCurrentTrack() 
+                        ? '0 0 8px rgba(0, 249, 42, 0.8)' 
+                        : '0 0 5px rgba(4, 202, 244, 0.6)',
+                      'font-family': 'Courier New, monospace'
+                    }}
+                  >
+                    {props.track.title || 'UNKNOWN TITLE'}
+                  </div>
+                </div>
+
+                {/* Artist - LCD Style */}
+                <div class="mb-2">
+                  <div 
+                    class="text-xs font-mono uppercase tracking-wide mb-1"
+                    style={{
+                      color: 'rgba(249, 6, 214, 0.6)',
+                      'text-shadow': '0 0 3px rgba(249, 6, 214, 0.4)'
+                    }}
+                  >
+                    ARTIST
+                  </div>
+                  <div 
+                    class="font-mono font-semibold text-base"
+                    style={{
+                      color: '#f906d6',
+                      'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)',
+                      'font-family': 'Courier New, monospace'
                     }}
                   >
                     {props.track.artist}
-                  </span>
-                  <span class="mx-2 font-normal text-sm" style={{ color: colors.muted }}>
-                    •
-                  </span>
-                  <span class="font-normal text-sm" style={{ color: colors.muted }}>
-                    {props.track.duration}
-                  </span>
-                </h3>
+                  </div>
+                </div>
+
+                {/* Duration & Status Row - LCD Style */}
+                <div class="flex justify-between items-center">
+                  <div>
+                    <div 
+                      class="text-xs font-mono uppercase tracking-wide mb-1"
+                      style={{
+                        color: 'rgba(211, 246, 10, 0.6)',
+                        'text-shadow': '0 0 3px rgba(211, 246, 10, 0.4)'
+                      }}
+                    >
+                      DURATION
+                    </div>
+                    <div 
+                      class="font-mono font-bold text-sm"
+                      style={{
+                        color: '#d1f60a',
+                        'text-shadow': '0 0 5px rgba(211, 246, 10, 0.6)',
+                        'font-family': 'Courier New, monospace',
+                        'letter-spacing': '0.1em'
+                      }}
+                    >
+                      {props.track.duration}
+                    </div>
+                  </div>
+                  
+                  {/* Status Indicator */}
+                  <div class="text-right">
+                    <div 
+                      class="text-xs font-mono uppercase tracking-wide mb-1"
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.4)'
+                      }}
+                    >
+                      STATUS
+                    </div>
+                    <div 
+                      class="font-mono font-bold text-xs px-2 py-1 rounded"
+                      style={{
+                        color: isPlayable() ? '#00f92a' : '#ff4444',
+                        background: isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)',
+                        border: isPlayable() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(255, 68, 68, 0.3)',
+                        'text-shadow': isPlayable() 
+                          ? '0 0 5px rgba(0, 249, 42, 0.6)' 
+                          : '0 0 5px rgba(255, 68, 68, 0.6)'
+                      }}
+                    >
+                      {isPlayable() ? 'READY' : 'AUTH REQ'}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Spotify Connect Button - If needed */}
+                <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
+                  <button
+                    class="w-full mt-3 px-4 py-2 text-sm font-bold font-mono border-2 transition-all duration-200 rounded"
+                    style={{
+                      background: 'linear-gradient(145deg, #dfdfdf, #c0c0c0)',
+                      'border-color': '#00f92a',
+                      color: 'black',
+                      'box-shadow': `inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080, 0 0 8px #00f92a40`,
+                      'min-height': '36px'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      initiateSpotifyAuth();
+                    }}
+                    title="Connect Spotify to play this track"
+                  >
+                    🔗 CONNECT SPOTIFY
+                  </button>
+                </Show>
               </div>
-              <span class="text-lg flex-shrink-0">{sourceInfo.icon}</span>
             </div>
-
-            {/* Spotify Connect Button - If needed */}
-            <Show when={props.track.source === 'spotify' && !isSpotifyAuthenticated()}>
-              <button
-                class="px-4 py-2 text-sm font-bold mb-2 border-2 transition-all duration-200"
-                style={{
-                  background: 'linear-gradient(145deg, #dfdfdf, #c0c0c0)',
-                  'border-color': colors.success,
-                  color: 'black',
-                  'box-shadow': `inset 1px 1px 0px #ffffff, inset -1px -1px 0px #808080, 0 0 15px ${colors.success}60`,
-                  'min-height': '36px'
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  initiateSpotifyAuth();
-                }}
-                title="Connect Spotify to play this track"
-              >
-                🔗 Connect Spotify
-              </button>
-            </Show>
           </div>
+        </div>
 
-          {/* Consolidated User Attribution & Social Stats Row */}
-          <div class="flex flex-wrap items-center justify-center min-[400px]:justify-between gap-2 mb-2 py-2 px-3 rounded-lg" style={{
-            background: 'rgba(102, 179, 255, 0.05)',
-            border: `1px solid ${colors.border}`
-          }}>
-            {/* Left side: User attribution with timestamp */}
-            <div class="flex flex-wrap items-center gap-2 text-sm">
-              <span style={{ color: colors.muted, 'font-weight': '400' }}>added by</span>
+        {/* USER ATTRIBUTION & SOCIAL STATS SECTION */}
+        <div 
+          class="p-4 rounded-xl max-w-2xl mx-auto w-full"
+          style={{
+            background: 'linear-gradient(145deg, #1a1a1a, #2a2a2a)',
+            border: '2px solid rgba(249, 6, 214, 0.3)',
+            'box-shadow': '0 4px 20px rgba(249, 6, 214, 0.1)'
+          }}
+        >
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            {/* User Info */}
+            <div class="flex flex-wrap items-center gap-3">
+              <span 
+                class="text-sm font-medium"
+                style={{ color: colors.muted }}
+              >
+                Added by
+              </span>
               <A 
                 href={`/profile/${props.track.addedBy}`}
-                class="font-bold transition-all duration-300 px-2 py-1 rounded-md cursor-pointer"
+                class="font-bold transition-all duration-300 px-3 py-2 rounded-lg cursor-pointer text-lg"
                 style={{
                   color: colors.info,
-                  'text-shadow': `0 0 8px ${colors.info}60`,
-                  'font-size': '14px',
-                  'min-height': '32px',
-                  display: 'inline-flex',
-                  'align-items': 'center',
+                  'text-shadow': `0 0 5px ${colors.info}40`,
                   background: 'rgba(102, 179, 255, 0.1)',
-                  border: `1px solid ${colors.info}40`
+                  border: `2px solid ${colors.info}40`
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.color = colors.success;
-                  e.currentTarget.style.textShadow = `0 0 12px ${colors.success}80`;
+                  e.currentTarget.style.textShadow = `0 0 8px ${colors.success}60`;
                   e.currentTarget.style.background = 'rgba(76, 175, 80, 0.15)';
                   e.currentTarget.style.borderColor = `${colors.success}60`;
                   e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.color = colors.info;
-                  e.currentTarget.style.textShadow = `0 0 8px ${colors.info}60`;
+                  e.currentTarget.style.textShadow = `0 0 5px ${colors.info}40`;
                   e.currentTarget.style.background = 'rgba(102, 179, 255, 0.1)';
                   e.currentTarget.style.borderColor = `${colors.info}40`;
                   e.currentTarget.style.transform = 'scale(1)';
@@ -345,120 +498,143 @@ const TrackItem: Component<TrackItemProps> = (props) => {
               >
                 {props.track.addedBy}
               </A>
-              <span style={{ color: colors.muted }}>•</span>
-              <span class="whitespace-nowrap text-sm" style={{ color: colors.muted }}>{props.track.timestamp}</span>
-              {isCurrentTrack() && (
-                <span 
-                  class="font-bold uppercase tracking-wider text-xs px-2 py-1 rounded-md ml-1"
-                  style={{
-                    color: colors.success,
-                    background: 'rgba(76, 175, 80, 0.15)',
-                    border: `1px solid ${colors.success}50`,
-                    'text-shadow': `0 0 10px ${colors.success}80`,
-                    animation: 'neon-pulse 2s ease-in-out infinite'
-                  }}
-                >
-                  NOW PLAYING
-                </span>
-              )}
+              <span class="text-base" style={{ color: colors.muted }}>•</span>
+              <span class="text-sm" style={{ color: colors.muted }}>{props.track.timestamp}</span>
             </div>
 
-            {/* Right side: Social stats (likes and replies counts) */}
-            <div class="flex items-center gap-3">
-              <div class="flex items-center gap-1 text-sm" style={{ color: colors.info }}>
-                <i class="fas fa-heart"></i>
-                <span class="font-semibold">{props.track.likes || 3}</span>
+            {/* Social Stats */}
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <i 
+                  class="fas fa-heart"
+                  style={{
+                    color: '#f906d6',
+                    'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)'
+                  }}
+                ></i>
+                <span 
+                  class="font-bold"
+                  style={{
+                    color: '#f906d6',
+                    'text-shadow': '0 0 5px rgba(249, 6, 214, 0.6)'
+                  }}
+                >
+                  {props.track.likes || 3}
+                </span>
+                <span class="text-sm" style={{ color: colors.muted }}>likes</span>
               </div>
-              <div class="flex items-center gap-1 text-sm" style={{ color: colors.success }}>
-                <i class="fas fa-comment"></i>
-                <span class="font-semibold">{mockReplies.length}</span>
+              <span class="text-base" style={{ color: colors.muted }}>•</span>
+              <div class="flex items-center gap-2">
+                <i 
+                  class="fas fa-comment"
+                  style={{
+                    color: '#04caf4',
+                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)'
+                  }}
+                ></i>
+                <span 
+                  class="font-bold"
+                  style={{
+                    color: '#04caf4',
+                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)'
+                  }}
+                >
+                  {mockReplies.length}
+                </span>
+                <span class="text-sm" style={{ color: colors.muted }}>replies</span>
               </div>
             </div>
           </div>
-          
-          {/* Action Buttons - Compact spacing */}
-          <div class="flex flex-wrap gap-2 justify-center min-[400px]:justify-start">
-            {/* Discussion button - shows if there's a comment OR to encourage replies */}
+        </div>
+
+        {/* ACTION BUTTONS SECTION */}
+        <div 
+          class="p-4 rounded-xl max-w-2xl mx-auto w-full"
+          style={{
+            background: 'linear-gradient(145deg, #1a1a1a, #2a2a2a)',
+            border: '2px solid rgba(4, 202, 244, 0.3)',
+            'box-shadow': '0 4px 20px rgba(4, 202, 244, 0.1)'
+          }}
+        >
+          <div class="flex flex-wrap gap-4 justify-center">
+            {/* Discussion button */}
             <button
               onClick={() => setShowDiscussion(!showDiscussion())}
-              class="relative overflow-hidden font-bold transition-all duration-300"
+              class="relative overflow-hidden font-bold transition-all duration-300 flex-1 min-w-[140px]"
               style={{
-                padding: '10px 24px',
-                fontSize: '13px',
+                padding: '14px 24px',
+                fontSize: '14px',
                 fontWeight: 'bold',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 border: `2px solid ${colors.info}40`,
                 background: showDiscussion() 
                   ? `linear-gradient(145deg, rgba(102, 179, 255, 0.2), rgba(42, 42, 42, 0.8))` 
                   : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
                 color: showDiscussion() ? colors.info : colors.body,
-                minWidth: '130px',
-                minHeight: '36px',
+                minHeight: '48px',
                 'box-shadow': showDiscussion() 
-                  ? `0 0 20px ${colors.info}60, 0 0 40px ${colors.info}30`
-                  : '0 2px 8px rgba(0, 0, 0, 0.3)',
+                  ? `0 0 15px ${colors.info}40, 0 0 30px ${colors.info}20`
+                  : '0 3px 12px rgba(0, 0, 0, 0.3)',
                 'text-shadow': showDiscussion() 
-                  ? `0 0 8px ${colors.info}80`
+                  ? `0 0 5px ${colors.info}60`
                   : 'none'
               }}
               title={showDiscussion() ? "Hide discussion" : "Join discussion"}
               onMouseEnter={(e) => {
                 if (!showDiscussion()) {
                   e.currentTarget.style.borderColor = `${colors.info}80`;
-                  e.currentTarget.style.boxShadow = `0 0 20px ${colors.info}60, 0 0 40px ${colors.info}30`;
+                  e.currentTarget.style.boxShadow = `0 0 15px ${colors.info}40, 0 0 30px ${colors.info}20`;
                   e.currentTarget.style.color = colors.info;
-                  e.currentTarget.style.textShadow = `0 0 8px ${colors.info}80`;
+                  e.currentTarget.style.textShadow = `0 0 5px ${colors.info}60`;
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!showDiscussion()) {
                   e.currentTarget.style.borderColor = `${colors.info}40`;
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 3px 12px rgba(0, 0, 0, 0.3)';
                   e.currentTarget.style.color = colors.body;
                   e.currentTarget.style.textShadow = 'none';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
             >
-              <i class="fas fa-comments mr-1"></i>
-              <span class="hidden sm:inline">{showDiscussion() ? 'Hide' : 'Discussion'}</span>
-              <span class="sm:hidden">💬</span>
+              <i class="fas fa-comments mr-2"></i>
+              <span>{showDiscussion() ? 'Hide Discussion' : 'Join Discussion'}</span>
             </button>
             
             <button
               onClick={() => console.log('Like track')}
-              class="relative overflow-hidden font-bold transition-all duration-300"
+              class="relative overflow-hidden font-bold transition-all duration-300 flex-1 min-w-[120px]"
               style={{
-                padding: '10px 24px',
-                fontSize: '13px',
+                padding: '14px 24px',
+                fontSize: '14px',
                 fontWeight: 'bold',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 border: `2px solid ${colors.error}40`,
                 background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
                 color: colors.body,
-                minWidth: '110px',
-                minHeight: '36px',
-                'box-shadow': '0 2px 8px rgba(0, 0, 0, 0.3)'
+                minHeight: '48px',
+                'box-shadow': '0 3px 12px rgba(0, 0, 0, 0.3)'
               }}
               title="Like this track"
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = `${colors.error}80`;
-                e.currentTarget.style.boxShadow = `0 0 20px ${colors.error}60, 0 0 40px ${colors.error}30`;
+                e.currentTarget.style.boxShadow = `0 0 15px ${colors.error}40, 0 0 30px ${colors.error}20`;
                 e.currentTarget.style.color = colors.error;
-                e.currentTarget.style.textShadow = `0 0 8px ${colors.error}80`;
+                e.currentTarget.style.textShadow = `0 0 5px ${colors.error}60`;
                 e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = `${colors.error}40`;
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.boxShadow = '0 3px 12px rgba(0, 0, 0, 0.3)';
                 e.currentTarget.style.color = colors.body;
                 e.currentTarget.style.textShadow = 'none';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              <i class="fas fa-heart mr-1"></i>
-              <span>Like</span>
+              <i class="fas fa-heart mr-2"></i>
+              <span>Like Track</span>
             </button>
           </div>
         </div>
