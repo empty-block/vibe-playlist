@@ -14,6 +14,11 @@ export default defineConfig(() => {
   server: {
     host: 'localhost', // For local development
     port: 3001,
+    hmr: {
+      port: 3002,
+      protocol: 'ws',
+      host: 'localhost'
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

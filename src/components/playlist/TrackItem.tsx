@@ -478,7 +478,10 @@ const TrackItem: Component<TrackItemProps> = (props) => {
               
               {/* JOIN DISCUSSION Button - PROMINENT POSITION for social discovery */}
               <button
-                  onClick={() => setShowDiscussion(!showDiscussion())}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDiscussion(!showDiscussion());
+                  }}
                   class="relative overflow-hidden font-bold transition-all duration-300 font-mono uppercase tracking-wide text-xs"
                   style={{
                     padding: '10px 20px',
@@ -528,7 +531,10 @@ const TrackItem: Component<TrackItemProps> = (props) => {
 
                 {/* Like Track Button - Next to JOIN button */}
                 <button
-                  onClick={() => console.log('Like track')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Like track');
+                  }}
                   class="relative overflow-hidden font-bold transition-all duration-300 font-mono uppercase tracking-wide text-xs"
                   style={{
                     padding: '10px 18px',
