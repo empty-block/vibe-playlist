@@ -105,17 +105,17 @@ const Player: Component<PlayerProps> = (props) => {
         <div class={`${isCompact() ? 'contents' : 'flex-1 p-4 flex flex-col overflow-y-auto'}`}>
           
           {/* Media Player Area - Source-specific component */}
-          <div class={`${isCompact() ? 'flex-shrink-0' : 'win95-panel p-2 mb-4'} relative`}>
+          <div class={`${isCompact() ? 'flex-shrink-0' : 'win95-panel p-3 mb-4'} relative`}>
             {props.mediaComponent}
           </div>
           
           {/* Track Info - Shared across all sources */}
           <div class={`${isCompact() ? 'flex-1 min-w-0' : 'mb-4'}`}>
-            <h3 class={`font-bold text-black leading-tight ${isCompact() ? 'text-xs sm:text-sm truncate' : 'text-lg mb-1'}`}>
+            <h3 class={`font-bold text-black leading-tight ${isCompact() ? 'text-xs sm:text-sm truncate' : 'text-xl mb-2'}`}>
               {currentTrack()?.title}
             </h3>
-            <p class={`text-gray-600 truncate ${isCompact() ? 'text-xs' : 'mb-2'}`}>{currentTrack()?.artist}</p>
-            <p class={`text-gray-500 ${isCompact() ? 'text-xs truncate hidden sm:block' : 'text-sm mb-3'}`}>
+            <p class={`text-gray-600 truncate ${isCompact() ? 'text-xs' : 'text-lg mb-2'}`}>{currentTrack()?.artist}</p>
+            <p class={`text-gray-500 ${isCompact() ? 'text-xs truncate hidden sm:block' : 'text-base mb-3'}`}>
               Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
             </p>
             
@@ -136,7 +136,7 @@ const Player: Component<PlayerProps> = (props) => {
           <div class={`${isCompact() ? 'flex items-center gap-1 sm:gap-2' : 'mb-4'}`}>
             <Show when={!isCompact()}>
               {/* Desktop Controls */}
-              <div class="flex flex-col items-center">
+              <div class="flex flex-col items-center w-full">
                 {/* Playback Progress Bar - For non-YouTube sources */}
                 <Show when={currentTrack()?.source !== 'youtube' && (props.currentTime || props.duration)}>
                   <div class="w-full mb-3">
@@ -155,8 +155,8 @@ const Player: Component<PlayerProps> = (props) => {
                   </div>
                 </Show>
 
-                {/* Main Control Buttons */}
-                <div class="flex items-center justify-center gap-4 mb-3">
+                {/* Main Control Buttons - Now properly centered */}
+                <div class="flex items-center justify-center gap-4 mb-3 w-full">
                   <button 
                     ref={prevButtonRef!}
                     onClick={handleSkipPrevious}
@@ -236,7 +236,7 @@ const Player: Component<PlayerProps> = (props) => {
                 >
                   <i class="fas fa-comment"></i>
                   <Show when={currentTrack()?.replies && currentTrack()!.replies > 0}>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center text-xs leading-none">
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
                       {currentTrack()?.replies}
                     </span>
                   </Show>

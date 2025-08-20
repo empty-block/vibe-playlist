@@ -160,7 +160,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
 
   return (
-    <div class={`bg-black rounded overflow-hidden ${isCompact() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-48'}`}>
+    <div class={`bg-black rounded overflow-hidden ${isCompact() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-64'}`}>
       <div 
         ref={(el) => {
           playerContainer = el;
