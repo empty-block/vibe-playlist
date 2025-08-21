@@ -397,7 +397,7 @@ The app follows a **DRY (Don't Repeat Yourself) principle** to eliminate duplica
 
 #### Usage Guidelines
 
-- **DO**: Use existing social components for likes, replies, shares across the app
+- **DO**: Use existing social components across the app
 - **DO**: Add variant props when the same component needs different styling
 - **DO**: Make components flexible with optional click handlers
 - **DON'T**: Duplicate social UI patterns - extend existing components instead
@@ -406,54 +406,11 @@ The app follows a **DRY (Don't Repeat Yourself) principle** to eliminate duplica
 #### When to Create New Components
 
 Create new reusable components when:
-- The same UI pattern appears 3+ times
+- The same UI pattern appears 2+ times
 - The pattern has clear variants (desktop vs mobile, large vs small)
 - The component encapsulates complex logic that shouldn't be duplicated
 
 Keep components straightforward - prefer simple, focused components over complex ones with many responsibilities.
-
-## 🎨 UI/UX Features & Design Patterns
-
-### HomePage (Main Feed)
-- **Playlist Selection**: Dropdown to switch between different playlist feeds
-- **Search & Sort**: Users can search tracks and sort by Recent/Likes/Comments
-- **Sort Implementation**: 
-  - Recent: Parses "X min ago" timestamps 
-  - Likes: Sorts by `track.likes` descending
-  - Comments: Sorts by `track.replies` descending
-- **ChatBot Integration**: Collapsible AI assistant sidebar
-
-### Create Page (Song Addition)
-**Core Concept**: Users "create" playlist entries rather than "share" content
-
-**Scalable Playlist Selection**:
-- **Quick Access**: Buttons for frequently used playlists (default + popular)
-- **Search**: Find playlists by name/description
-- **Filter by Type**: Personal/Collaborative/AI Curated
-- **Sort Options**: Recent, Popular (by member count), Alphabetical
-- **Results Counter**: "X of Y playlists" with clear filters button
-- **Scrollable List**: Handles large playlist collections gracefully
-
-**Form Design**:
-- **Song URL Input**: Accepts any platform (YouTube, Spotify, SoundCloud, etc.)
-- **Optional Comment**: User's take/reaction to the song
-- **Playlist Creation**: Inline creation without navigation
-
-**Visual Hierarchy**:
-- **Input Fields**: White background with gray borders for clear interactivity
-- **Containers**: Gray `win95-panel` backgrounds for structure
-- **Consistency**: All panels use same styling system
-
-### Win95 Design System
-- **Panels**: `win95-panel` class for consistent container styling
-- **Buttons**: `win95-button` class with hover states
-- **Navigation**: Tab-style navigation with active state indicators
-- **Typography**: Bold, high-contrast text optimized for retro aesthetic
-
-### Responsive Considerations
-- **Grid Layouts**: Mobile-first approach with `grid-cols-1 md:grid-cols-3`
-- **Flexible Containers**: `flex-wrap` for adaptive button groups
-- **Scrollable Areas**: `overflow-y-auto` with `max-height` for contained scrolling
 
 ## 🔄 State Management Patterns
 
@@ -473,6 +430,3 @@ Keep components straightforward - prefer simple, focused components over complex
 - **Track Continuity**: Seamless transitions between different audio sources
 
 ---
-
-*Last updated: December 2024*
-*This file should be updated whenever new development quirks or features are discovered.*
