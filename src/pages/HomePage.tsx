@@ -1,6 +1,6 @@
 import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
+import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack, setCurrentPlaylistId, setIsPlaying, playlistTracks, setPlayingPlaylistId } from '../stores/playlistStore';
 import TrackItem from '../components/playlist/TrackItem';
 import PlaylistHeader from '../components/playlist/PlaylistHeader';
 import DiscoveryBar from '../components/common/DiscoveryBar';
@@ -83,6 +83,7 @@ const HomePage: Component = () => {
     if (tracks.length > 0) {
       console.log('Playing playlist:', currentPlaylistId());
       setCurrentTrack(tracks[0]); // Play first track
+      setPlayingPlaylistId(currentPlaylistId()); // Track which playlist is playing
     }
   };
 
@@ -93,6 +94,7 @@ const HomePage: Component = () => {
     const tracks = playlistTracks[playlistId] || [];
     if (tracks.length > 0) {
       setCurrentTrack(tracks[0]);
+      setPlayingPlaylistId(playlistId); // Track which playlist is playing
     }
   };
 
@@ -155,7 +157,10 @@ const HomePage: Component = () => {
                   <TrackItem 
                     track={track} 
                     trackNumber={index() + 1}
-                    onPlay={() => setCurrentTrack(track)}
+                    onPlay={() => {
+                      setCurrentTrack(track);
+                      setPlayingPlaylistId(currentPlaylistId()); // Track which playlist is playing
+                    }}
                   />
                 )}
               </For>

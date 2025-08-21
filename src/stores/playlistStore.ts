@@ -1190,6 +1190,7 @@ const playlistSongs: Record<string, Track[]> = {
 
 // Signals and stores
 export const [currentPlaylistId, setCurrentPlaylistId] = createSignal<string>('90s_hits');
+export const [playingPlaylistId, setPlayingPlaylistId] = createSignal<string>('90s_hits'); // Tracks which playlist is actually playing
 export const [playlistTracks, setPlaylistTracks] = createStore<Record<string, Track[]>>(playlistSongs);
 export const [currentTrack, setCurrentTrack] = createSignal<Track | null>(null);
 export const [isPlaying, setIsPlaying] = createSignal(false);

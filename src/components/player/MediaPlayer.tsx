@@ -5,8 +5,7 @@ import YouTubeMedia from './YouTubeMedia';
 import SpotifyMedia from './SpotifyMedia';
 
 interface MediaPlayerProps {
-  isCompact?: () => boolean;
-  onForceCompact?: (force: boolean) => void;
+  // Simplified interface - no more compact/force compact props
 }
 
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
@@ -36,7 +35,6 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
       case 'youtube':
         return (
           <YouTubeMedia 
-            isCompact={props.isCompact}
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
           />
@@ -44,7 +42,6 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
       case 'spotify':
         return (
           <SpotifyMedia 
-            isCompact={props.isCompact}
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
           />
@@ -52,10 +49,10 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
       default:
         // Fallback for unknown sources
         return (
-          <div class={`bg-gray-800 rounded flex items-center justify-center ${props.isCompact?.() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-48'}`}>
+          <div class="bg-gray-800 rounded flex items-center justify-center w-48 h-44 sm:w-72 sm:h-52">
             <div class="text-gray-400 text-center">
-              <i class="fas fa-music text-4xl mb-2"></i>
-              <div class="text-sm">Unsupported Source</div>
+              <i class="fas fa-music text-5xl mb-3"></i>
+              <div class="text-xl">Unknown</div>
             </div>
           </div>
         );
@@ -65,11 +62,9 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   return (
     <Show when={currentTrack()}>
       <Player
-        isCompact={props.isCompact}
         mediaComponent={getMediaComponent()}
         onTogglePlay={onTogglePlay}
         playerReady={playerReady}
-        onForceCompact={props.onForceCompact}
       />
     </Show>
   );

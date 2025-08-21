@@ -3,7 +3,6 @@ import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playlistStor
 import { spotifyAccessToken } from '../../stores/authStore';
 
 interface SpotifyMediaProps {
-  isCompact?: () => boolean;
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
 }
@@ -22,7 +21,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
   
-  const isCompact = () => props.isCompact?.() ?? false;
+  // Always use compact size for bottom bar
 
   onMount(() => {
     console.log('SpotifyMedia onMount called');
@@ -155,24 +154,8 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   });
 
   return (
-    <div class={`bg-gradient-to-br from-green-900 to-black rounded overflow-hidden ${isCompact() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-48'} flex items-center justify-center`}>
-      {isCompact() ? (
-        <i class="fab fa-spotify text-green-400 text-2xl sm:text-4xl"></i>
-      ) : (
-        <div class="flex flex-col items-center justify-center text-center">
-          <div class="text-green-400 text-6xl mb-2">
-            <i class="fab fa-spotify"></i>
-          </div>
-          <div class="text-green-300 text-xs">
-            {playerReady() ? '🎵 Ready to Play' : '⏳ Connecting...'}
-          </div>
-          {deviceId() && (
-            <div class="text-green-200 text-xs mt-1 opacity-75">
-              Device: JAMZY Player
-            </div>
-          )}
-        </div>
-      )}
+    <div class="bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center">
+      <i class="fab fa-spotify text-green-400 text-6xl sm:text-8xl"></i>
     </div>
   );
 };

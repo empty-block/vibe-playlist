@@ -1,358 +1,305 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import { setCurrentTrack, playlists, setCurrentPlaylistId, setIsPlaying, playlistTracks } from '../stores/playlistStore';
+import { useNavigate } from '@solidjs/router';
+import { playlists, setCurrentPlaylistId } from '../stores/playlistStore';
 import DiscoveryBar from '../components/common/DiscoveryBar';
-import { pageEnter, staggeredFadeIn, buttonHover, magnetic, playButtonPulse } from '../utils/animations';
+import { pageEnter, staggeredFadeIn } from '../utils/animations';
 
 const DiscoverPage: Component = () => {
   const [searchQuery, setSearchQuery] = createSignal('');
-  let pageRef: HTMLDivElement;
+  const navigate = useNavigate();
+  let pageRef: HTMLDivElement | undefined;
 
   onMount(() => {
-    // Page entrance animation
     if (pageRef) {
       pageEnter(pageRef);
+      
+      // Simple staggered fade-in for sections
+      setTimeout(() => {
+        const sections = pageRef.querySelectorAll('.discover-section');
+        if (sections) {
+          staggeredFadeIn(sections);
+        }
+      }, 300);
     }
-    
-    // Animate sections with staggered fade-in
-    setTimeout(() => {
-      const sections = pageRef?.querySelectorAll('.discover-section');
-      if (sections) {
-        staggeredFadeIn(sections);
-      }
-      
-      // Add magnetic effect to user cards
-      const userCards = pageRef?.querySelectorAll('.user-card');
-      userCards?.forEach(card => magnetic(card as HTMLElement, 15));
-      
-      // Add magnetic effect to artist cards
-      const artistCards = pageRef?.querySelectorAll('.artist-card');
-      artistCards?.forEach(card => magnetic(card as HTMLElement, 10));
-    }, 300);
   });
 
-  const playHiddenGem = (title: string, artist: string, videoId: string) => {
-    const track = {
-      id: videoId,
-      title,
-      artist,
-      duration: '4:03',
-      videoId,
-      thumbnail: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-      addedBy: 'music_bot',
-      userAvatar: '🤖',
-      timestamp: 'just now',
-      comment: 'Discovered via Hidden Gems feature',
-      likes: 0,
-      replies: 0,
-      recasts: 0
-    };
-    setCurrentTrack(track);
-  };
-
-  const followUser = (username: string) => {
-    // Mock follow functionality - in real app would update user's following list
-    alert(`Now following ${username}! 🎵`);
-  };
-
-  const showUserProfile = (username: string) => {
-    // Navigate to profile page - in real app would load specific user's profile
-    window.location.hash = '#profile';
-  };
-
-  const handlePlayClick = (e: MouseEvent, title: string, artist: string, videoId: string) => {
-    const button = e.currentTarget as HTMLElement;
-    playButtonPulse(button);
-    setTimeout(() => playHiddenGem(title, artist, videoId), 200);
-  };
-
-  const handleButtonHover = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.enter(button);
-  };
-
-  const handleButtonLeave = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.leave(button);
-  };
-
   const handlePlaylistChange = (playlistId: string) => {
-    console.log('Switching to playlist from discover page:', playlistId);
     setCurrentPlaylistId(playlistId);
-    
-    // Navigate to home page to see the playlist (but don't auto-play)
-    window.location.hash = '#home';
+    // Redirect to player page to browse playlist without auto-playing
+    navigate('/player');
+  };
+
+  const handleSearch = () => {
+    // Search functionality placeholder
+    console.log('Searching for:', searchQuery());
   };
 
   return (
-    <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
-      <div class="p-6 mb-4">
-        <div class="text-center">
-          <h2 class="text-2xl font-bold text-black mb-2">
-            <i class="fas fa-compass text-blue-600 mr-2"></i>Discover New Music
-          </h2>
-          <p class="text-gray-700">Multiple ways to discover your next favorite track</p>
+    <div 
+      ref={pageRef!} 
+      class="min-h-screen"
+      style={{ 
+        opacity: '0',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
+      }}
+    >
+      <div class="p-6 max-w-7xl mx-auto">
+      {/* SIMPLIFIED DISCOVERY HEADER */}
+      <div 
+        class="relative text-center mb-12 p-8 rounded-xl overflow-hidden"
+        style={{
+          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+          border: '1px solid rgba(4, 202, 244, 0.2)',
+          'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
+        }}
+      >
+        {/* Subtle retro scan lines */}
+        <div 
+          class="absolute inset-0 pointer-events-none opacity-5"
+          style={{
+            background: `repeating-linear-gradient(
+              0deg,
+              transparent 0px,
+              transparent 3px,
+              rgba(4, 202, 244, 0.08) 4px,
+              rgba(4, 202, 244, 0.08) 5px
+            )`
+          }}
+        />
+        
+        {/* Status indicator */}
+        <div class="flex items-center justify-center gap-4 mb-8">
+          <div 
+            class="w-3 h-3 rounded-full animate-pulse"
+            style={{
+              background: '#00f92a',
+              'box-shadow': '0 0 8px rgba(0, 249, 42, 0.6)'
+            }}
+          />
+          <span 
+            class="text-xs font-mono uppercase tracking-widest"
+            style={{
+              color: '#04caf4',
+              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            DISCOVERY SYSTEM ONLINE
+          </span>
+        </div>
+        
+        <h1 
+          class="font-mono font-bold text-5xl lg:text-6xl"
+          style={{
+            color: '#f906d6',
+            'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
+            'font-family': 'Courier New, monospace',
+            'letter-spacing': '0.1em'
+          }}
+        >
+          DISCOVER
+        </h1>
+      </div>
+
+      {/* NEON SEARCH TERMINAL */}
+      <div 
+        class="discover-section mb-12 relative p-6 rounded-xl overflow-hidden"
+        style={{ 
+          opacity: '0',
+          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+          border: '1px solid rgba(0, 249, 42, 0.3)',
+          'box-shadow': `
+            inset 0 0 15px rgba(0, 0, 0, 0.8),
+            0 0 15px rgba(0, 249, 42, 0.1)
+          `
+        }}
+      >
+        {/* Scan lines for search */}
+        <div 
+          class="absolute inset-0 pointer-events-none opacity-8"
+          style={{
+            background: `repeating-linear-gradient(
+              0deg,
+              transparent 0px,
+              transparent 2px,
+              rgba(0, 249, 42, 0.08) 3px,
+              rgba(0, 249, 42, 0.08) 4px
+            )`
+          }}
+        />
+        
+        <div 
+          class="text-sm font-mono uppercase tracking-wide mb-4"
+          style={{
+            color: 'rgba(0, 249, 42, 0.7)',
+            'text-shadow': '0 0 3px rgba(0, 249, 42, 0.5)'
+          }}
+        >
+          <i class="fas fa-search mr-2"></i>
+          SEARCH DATABASE
+        </div>
+        
+        <div class="flex items-center gap-3 max-w-3xl mx-auto">
+          <input
+            type="text"
+            placeholder="ENTER SEARCH PARAMETERS..."
+            value={searchQuery()}
+            onInput={(e) => setSearchQuery(e.currentTarget.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+            class="flex-1 px-6 py-4 font-mono font-bold text-lg rounded"
+            style={{
+              background: 'rgba(0, 0, 0, 0.9)',
+              border: '2px solid rgba(0, 249, 42, 0.4)',
+              color: '#00f92a',
+              'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)',
+              'font-family': 'Courier New, monospace',
+              'min-height': '56px'
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#00f92a';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.4)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          />
+          <button 
+            onClick={handleSearch}
+            class="px-6 py-4 font-mono font-bold text-lg transition-all duration-300 rounded"
+            style={{
+              background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+              border: '2px solid rgba(0, 249, 42, 0.4)',
+              color: '#ffffff',
+              'font-family': 'Courier New, monospace',
+              'min-height': '56px',
+              'min-width': '56px'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#00f92a';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
+              e.currentTarget.style.color = '#00f92a';
+              e.currentTarget.style.textShadow = '0 0 10px rgba(0, 249, 42, 0.9)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+              e.currentTarget.style.boxShadow = 'none';
+              e.currentTarget.style.color = '#ffffff';
+              e.currentTarget.style.textShadow = 'none';
+            }}
+          >
+            <i class="fas fa-search"></i>
+          </button>
         </div>
       </div>
 
-      {/* Search Bar - Full Width Row */}
-      <div class="flex items-center gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Search playlists, artists, content..."
-          value={searchQuery()}
-          onInput={(e) => setSearchQuery(e.currentTarget.value)}
-          class="win95-panel px-3 py-2 text-sm flex-1"
-        />
-        <button class="win95-button px-3 py-2">
-          <i class="fas fa-search text-sm"></i>
-        </button>
-      </div>
-
-      {/* Discover New Playlists - Featured Section */}
-      <div class="discover-section p-6 mb-8" style={{ opacity: '0' }}>
-        <div class="mb-6">
-          <h3 class="text-2xl font-bold text-black mb-2">
-            <i class="fas fa-list-music text-blue-600 mr-2"></i>Discover New Playlists
-          </h3>
-          <p class="text-gray-600">Curated playlists tailored to your music taste</p>
+      {/* NEW DISCOVERIES */}
+      <div class="discover-section mb-16" style={{ opacity: '0' }}>
+        <div 
+          class="mb-6 pl-4 border-l-4"
+          style={{
+            'border-color': '#f906d6'
+          }}
+        >
+          <h2 
+            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            style={{
+              color: '#ffffff',
+              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            <i class="fas fa-sparkles mr-3 text-base" style={{ color: '#f906d6' }}></i>
+            NEW DISCOVERIES
+          </h2>
+          <p 
+            class="font-mono text-sm"
+            style={{
+              color: 'rgba(249, 6, 214, 0.7)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            FRESH SONIC ARCHIVES DETECTED
+          </p>
         </div>
         
         <DiscoveryBar
           playlists={Object.values(playlists)}
           onPlaylistClick={handlePlaylistChange}
         />
+      </div>
+
+      {/* TRENDING DATA */}
+      <div class="discover-section mb-16" style={{ opacity: '0' }}>
+        <div 
+          class="mb-6 pl-4 border-l-4"
+          style={{
+            'border-color': '#d1f60a'
+          }}
+        >
+          <h2 
+            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            style={{
+              color: '#ffffff',
+              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            <i class="fas fa-chart-line mr-3 text-base" style={{ color: '#d1f60a' }}></i>
+            TRENDING DATA
+          </h2>
+          <p 
+            class="font-mono text-sm"
+            style={{
+              color: 'rgba(211, 246, 10, 0.7)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            HIGH-FREQUENCY AUDIO STREAMS THIS CYCLE
+          </p>
+        </div>
         
-      </div>
-      
-      {/* Discover Similar Users */}
-      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-users text-blue-600 mr-2"></i>Discover Similar Users
-        </h3>
-        <p class="text-sm text-gray-600 mb-4">Find users with similar music taste to yours</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('grunge_kid_92')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-2xl">🎸</div>
-              <div>
-                <div class="font-bold text-black">grunge_kid_92</div>
-                <div class="text-sm text-gray-600">85% match</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">Loves: Nirvana, Pearl Jam, Soundgarden</div>
-          </div>
-          
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('synth_lover_85')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-2xl">🎹</div>
-              <div>
-                <div class="font-bold text-black">synth_lover_85</div>
-                <div class="text-sm text-gray-600">78% match</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">Loves: New Order, Depeche Mode, A-ha</div>
-          </div>
-          
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('indie_explorer')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-2xl">💎</div>
-              <div>
-                <div class="font-bold text-black">indie_explorer</div>
-                <div class="text-sm text-gray-600">72% match</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">Loves: Postal Service, Bon Iver, Arcade Fire</div>
-          </div>
-        </div>
+        <DiscoveryBar
+          playlists={Object.values(playlists).slice(0, 4)}
+          onPlaylistClick={handlePlaylistChange}
+        />
       </div>
 
-      {/* Discover Curators */}
-      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-crown text-yellow-600 mr-2"></i>Discover Top Curators
-        </h3>
-        <p class="text-sm text-gray-600 mb-4">Music experts who consistently share amazing tracks</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('grunge_master_93')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-3xl">🎸</div>
-              <div class="flex-1">
-                <div class="font-bold text-black">grunge_master_93</div>
-                <div class="text-sm text-gray-600">⭐ Elite Curator</div>
-                <div class="text-xs text-gray-500 mt-1">2.3k followers • 156 tracks shared</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">"Seattle sound specialist. Deep cuts and hidden gems from the grunge era."</div>
-          </div>
-          
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('vinyl_archaeologist')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-3xl">💿</div>
-              <div class="flex-1">
-                <div class="font-bold text-black">vinyl_archaeologist</div>
-                <div class="text-sm text-gray-600">🏆 Master Curator</div>
-                <div class="text-xs text-gray-500 mt-1">4.1k followers • 287 tracks shared</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">"Digging up rare pressings and forgotten classics. Vinyl-first approach to curation."</div>
-          </div>
-          
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('synth_prophet_85')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-3xl">🌈</div>
-              <div class="flex-1">
-                <div class="font-bold text-black">synth_prophet_85</div>
-                <div class="text-sm text-gray-600">⭐ Elite Curator</div>
-                <div class="text-xs text-gray-500 mt-1">1.8k followers • 203 tracks shared</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">"80s synthwave evangelist. Neon dreams and electronic nostalgia curator."</div>
-          </div>
-          
-          <div class="user-card win95-panel p-4 hover:bg-gray-50 cursor-pointer" onClick={() => showUserProfile('underground_oracle')}>
-            <div class="flex items-center gap-3 mb-3">
-              <div class="text-3xl">🔮</div>
-              <div class="flex-1">
-                <div class="font-bold text-black">underground_oracle</div>
-                <div class="text-sm text-gray-600">🏆 Master Curator</div>
-                <div class="text-xs text-gray-500 mt-1">3.7k followers • 412 tracks shared</div>
-              </div>
-            </div>
-            <div class="text-sm text-gray-700">"Your guide to the musical underground. Discovering tomorrow's classics today."</div>
-          </div>
+      {/* NEURAL MATCH */}
+      <div class="discover-section" style={{ opacity: '0' }}>
+        <div 
+          class="mb-6 pl-4 border-l-4"
+          style={{
+            'border-color': '#04caf4'
+          }}
+        >
+          <h2 
+            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            style={{
+              color: '#ffffff',
+              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            <i class="fas fa-brain mr-3 text-base" style={{ color: '#04caf4' }}></i>
+            NEURAL MATCH
+          </h2>
+          <p 
+            class="font-mono text-sm"
+            style={{
+              color: 'rgba(4, 202, 244, 0.7)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            AI-ANALYZED PERSONAL TASTE PROFILE
+          </p>
         </div>
+        
+        <DiscoveryBar
+          playlists={Object.values(playlists).slice(2, 6)}
+          onPlaylistClick={handlePlaylistChange}
+        />
       </div>
-
-      {/* Hidden Gems */}
-      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-gem text-blue-600 mr-2"></i>Hidden Gems
-        </h3>
-        <p class="text-sm text-gray-600 mb-4">Underrated tracks from your favorite artists</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer"
-               onClick={() => playHiddenGem('Frances Farmer Will Have Her Revenge on Seattle', 'Nirvana', 'P8lHLqOUvFY')}>
-            <div class="flex items-center gap-3">
-              <img src="https://img.youtube.com/vi/P8lHLqOUvFY/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
-              <div class="flex-1">
-                <h4 class="font-bold text-black text-sm">Frances Farmer Will Have Her Revenge on Seattle</h4>
-                <p class="text-sm text-gray-600">Nirvana • Deep cut</p>
-                <div class="text-xs text-gray-500 mt-1">💎 Only 12% of fans know this one</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer"
-               onClick={() => playHiddenGem('Bizarre Love Triangle', 'New Order', 'A8JNL6bwmls')}>
-            <div class="flex items-center gap-3">
-              <img src="https://img.youtube.com/vi/A8JNL6bwmls/mqdefault.jpg" class="w-16 h-12 object-cover rounded" />
-              <div class="flex-1">
-                <h4 class="font-bold text-black text-sm">Bizarre Love Triangle</h4>
-                <p class="text-sm text-gray-600">New Order • Rare find</p>
-                <div class="text-xs text-gray-500 mt-1">💎 Synthwave classic</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Discover Artists */}
-      <div class="discover-section p-6 mb-6" style={{ opacity: '0' }}>
-        <h3 class="text-xl font-bold text-black mb-4">
-          <i class="fas fa-microphone text-indigo-600 mr-2"></i>Discover Artists
-        </h3>
-        <p class="text-sm text-gray-600 mb-4">Explore new artists based on your taste</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=PJ" 
-                alt="Pearl Jam"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">Pearl Jam</div>
-                <div class="text-sm text-gray-600">Grunge • 92% match</div>
-                <div class="text-xs text-gray-500">Based on your love for Nirvana</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=SG" 
-                alt="Soundgarden"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">Soundgarden</div>
-                <div class="text-sm text-gray-600">Alternative • 88% match</div>
-                <div class="text-xs text-gray-500">Similar grunge energy</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=DM" 
-                alt="Depeche Mode"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">Depeche Mode</div>
-                <div class="text-sm text-gray-600">Synthwave • 85% match</div>
-                <div class="text-xs text-gray-500">Based on your synthwave interests</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=RH" 
-                alt="Radiohead"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">Radiohead</div>
-                <div class="text-sm text-gray-600">Alternative • 82% match</div>
-                <div class="text-xs text-gray-500">Experimental rock vibes</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=SP" 
-                alt="Smashing Pumpkins"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">Smashing Pumpkins</div>
-                <div class="text-sm text-gray-600">Alternative • 79% match</div>
-                <div class="text-xs text-gray-500">90s alternative rock</div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="artist-card win95-panel p-4 hover:bg-gray-50 cursor-pointer">
-            <div class="flex items-center gap-3 mb-3">
-              <img 
-                src="https://via.placeholder.com/60x60.png?text=PS" 
-                alt="Postal Service"
-                class="w-14 h-14 rounded-full object-cover border-2 border-gray-300"
-              />
-              <div>
-                <div class="font-bold text-black">The Postal Service</div>
-                <div class="text-sm text-gray-600">Indie Electronic • 76% match</div>
-                <div class="text-xs text-gray-500">Electronic indie fusion</div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

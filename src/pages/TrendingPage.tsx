@@ -1,5 +1,5 @@
 import { Component, createSignal, For, Show, onMount } from 'solid-js';
-import { pageEnter, staggeredFadeIn, buttonHover, slideIn } from '../utils/animations';
+import { pageEnter, staggeredFadeIn } from '../utils/animations';
 
 interface TrendingItem {
   id: string;
@@ -15,36 +15,54 @@ interface TrendingItem {
 const TrendingPage: Component = () => {
   const [currentCategory, setCurrentCategory] = createSignal<'playlists' | 'songs' | 'artists' | 'users'>('playlists');
   const [currentTimeframe, setCurrentTimeframe] = createSignal<'today' | 'week' | 'month' | 'all'>('today');
-  let pageRef: HTMLDivElement;
+  let pageRef: HTMLDivElement | undefined;
 
   onMount(() => {
-    // Page entrance animation
     if (pageRef) {
       pageEnter(pageRef);
-    }
-    
-    // Animate filter buttons with slide in
-    setTimeout(() => {
-      const filterButtons = pageRef?.querySelectorAll('.filter-button');
-      if (filterButtons) {
-        Array.from(filterButtons).forEach((button, index) => {
-          setTimeout(() => slideIn.fromLeft(button as HTMLElement), index * 50);
-        });
-      }
       
-      // Animate initial trending items
-      setTimeout(() => animateTrendingItems(), 500);
-    }, 300);
+      // Animate trending items on load
+      setTimeout(() => {
+        const trendingItems = pageRef.querySelectorAll('.trending-item');
+        if (trendingItems) {
+          staggeredFadeIn(trendingItems);
+        }
+      }, 300);
+    }
   });
 
-  // Animate trending items when data changes
-  const animateTrendingItems = () => {
-    setTimeout(() => {
-      const trendingItems = pageRef?.querySelectorAll('.trending-item');
-      if (trendingItems) {
-        staggeredFadeIn(trendingItems);
-      }
-    }, 100);
+  // Helper functions for neon color system
+  const getRankColor = (rank: number) => {
+    if (rank === 1) return '#d1f60a'; // neon-yellow (gold)
+    if (rank <= 3) return '#04caf4';   // neon-cyan (silver) 
+    if (rank <= 10) return '#00f92a';  // neon-green
+    return '#f906d6';                  // neon-pink
+  };
+
+  const getChangeIcon = (change: 'up' | 'down' | 'same') => {
+    switch (change) {
+      case 'up': return '↗️';
+      case 'down': return '↘️';
+      case 'same': return '➡️';
+    }
+  };
+
+  const getChangeGlowColor = (change: 'up' | 'down' | 'same') => {
+    switch (change) {
+      case 'up': return '#00f92a';    // neon-green
+      case 'down': return '#f906d6';  // neon-pink  
+      case 'same': return '#04caf4';  // neon-cyan
+    }
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons = {
+      playlists: '📂',
+      songs: '🎵', 
+      artists: '🎤',
+      users: '👤'
+    };
+    return icons[category as keyof typeof icons] || '';
   };
 
   const trendingData = {
@@ -96,184 +114,338 @@ const TrendingPage: Component = () => {
     }
   };
 
-  const getChangeIcon = (change: 'up' | 'down' | 'same') => {
-    switch (change) {
-      case 'up': return '↗️';
-      case 'down': return '↘️';
-      case 'same': return '➡️';
-    }
-  };
-
-  const getChangeColor = (change: 'up' | 'down' | 'same') => {
-    switch (change) {
-      case 'up': return 'text-blue-700';
-      case 'down': return 'text-red-600';
-      case 'same': return 'text-gray-500';
-    }
-  };
-
   const currentData = () => trendingData[currentCategory()][currentTimeframe()] || [];
 
   const handleCategoryChange = (category: 'playlists' | 'songs' | 'artists' | 'users') => {
     setCurrentCategory(category);
-    animateTrendingItems();
+    // Re-animate trending items when category changes
+    setTimeout(() => {
+      const trendingItems = pageRef?.querySelectorAll('.trending-item');
+      if (trendingItems) {
+        staggeredFadeIn(trendingItems);
+      }
+    }, 100);
   };
 
-  const handleTimeframeChange = (timeframe: 'today' | 'week' | 'month' | 'all') => {
-    setCurrentTimeframe(timeframe);
-    animateTrendingItems();
-  };
-
-  const handleButtonHover = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.enter(button);
-  };
-
-  const handleButtonLeave = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.leave(button);
+  const handleTimeframeChange = (e: Event) => {
+    const select = e.currentTarget as HTMLSelectElement;
+    setCurrentTimeframe(select.value as 'today' | 'week' | 'month' | 'all');
+    // Re-animate trending items when timeframe changes
+    setTimeout(() => {
+      const trendingItems = pageRef?.querySelectorAll('.trending-item');
+      if (trendingItems) {
+        staggeredFadeIn(trendingItems);
+      }
+    }, 100);
   };
 
   return (
-    <div ref={pageRef!} class="p-8" style={{ opacity: '0' }}>
-      <div class="p-6 mb-6">
-        <h2 class="text-2xl font-bold text-black mb-4">
-          <i class="fas fa-fire text-red-500 mr-2"></i>What's Trending
-        </h2>
-        <p class="text-gray-700">The hottest music, artists, and curators right now</p>
-      </div>
-      
-      {/* Filters */}
-      <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
-        {/* Category filters */}
-        <div class="flex gap-2">
-          <button
-            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'playlists' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleCategoryChange('playlists')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
+    <div 
+      ref={pageRef!} 
+      class="min-h-screen"
+      style={{ 
+        opacity: '0',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
+      }}
+    >
+      <div class="p-6 max-w-7xl mx-auto">
+        {/* CYBERPUNK TRENDING HEADER */}
+        <div 
+          class="relative text-center mb-12 p-8 rounded-xl overflow-hidden"
+          style={{
+            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+            border: '1px solid rgba(249, 6, 214, 0.2)',
+            'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
+          }}
+        >
+          {/* Scan lines */}
+          <div 
+            class="absolute inset-0 pointer-events-none opacity-5"
+            style={{
+              background: `repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(249, 6, 214, 0.08) 4px,
+                rgba(249, 6, 214, 0.08) 5px
+              )`
+            }}
+          />
+          
+          <h1 
+            class="font-mono font-bold text-5xl lg:text-6xl mb-4"
+            style={{
+              color: '#f906d6',
+              'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
+              'font-family': 'Courier New, monospace',
+              'letter-spacing': '0.1em'
+            }}
           >
-            🎵 Playlists
-          </button>
-          <button
-            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'songs' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleCategoryChange('songs')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
+            TRENDING
+          </h1>
+          
+          <p 
+            class="font-mono text-sm"
+            style={{
+              color: 'rgba(249, 6, 214, 0.7)',
+              'font-family': 'Courier New, monospace'
+            }}
           >
-            🎵 Songs
-          </button>
-          <button
-            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'artists' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleCategoryChange('artists')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            🎤 Artists
-          </button>
-          <button
-            class={`filter-button win95-button px-4 py-2 text-black ${currentCategory() === 'users' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleCategoryChange('users')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            👥 Users
-          </button>
+            HIGH-VELOCITY SONIC DATA STREAMS
+          </p>
         </div>
-        
-        {/* Time filters */}
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-bold text-gray-600">Timeframe:</span>
-          <button
-            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'today' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleTimeframeChange('today')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            Today
-          </button>
-          <button
-            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'week' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleTimeframeChange('week')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            This Week
-          </button>
-          <button
-            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'month' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleTimeframeChange('month')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            This Month
-          </button>
-          <button
-            class={`filter-button win95-button px-3 py-1 text-black text-sm ${currentTimeframe() === 'all' ? 'font-bold bg-blue-200' : ''}`}
-            onClick={() => handleTimeframeChange('all')}
-            onMouseEnter={handleButtonHover}
-            onMouseLeave={handleButtonLeave}
-            style={{ opacity: '0' }}
-          >
-            All Time
-          </button>
+
+        {/* CATEGORY FILTERS - TERMINAL TABS */}
+        <div 
+          class="mb-8 p-4 rounded-xl"
+          style={{
+            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+            border: '1px solid rgba(4, 202, 244, 0.2)',
+            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.6)'
+          }}
+        >
+          <div class="flex flex-wrap gap-2">
+            <For each={['playlists', 'songs', 'artists', 'users'] as const}>
+              {(category) => (
+                <button
+                  class="px-4 py-3 font-mono text-sm transition-all duration-300 rounded"
+                  style={{
+                    background: currentCategory() === category 
+                      ? 'rgba(4, 202, 244, 0.1)' 
+                      : 'transparent',
+                    border: `2px solid ${currentCategory() === category ? '#04caf4' : 'rgba(4, 202, 244, 0.2)'}`,
+                    color: currentCategory() === category ? '#04caf4' : 'rgba(4, 202, 244, 0.7)',
+                    'text-shadow': currentCategory() === category ? '0 0 8px rgba(4, 202, 244, 0.6)' : 'none',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                  onClick={() => handleCategoryChange(category)}
+                  onMouseEnter={(e) => {
+                    if (currentCategory() !== category) {
+                      e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.6)';
+                      e.currentTarget.style.color = 'rgba(4, 202, 244, 0.9)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentCategory() !== category) {
+                      e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.2)';
+                      e.currentTarget.style.color = 'rgba(4, 202, 244, 0.7)';
+                    }
+                  }}
+                >
+                  {getCategoryIcon(category)} {category.toUpperCase()}
+                </button>
+              )}
+            </For>
+          </div>
         </div>
-      </div>
-      
-      {/* Trending Items */}
-      <div class="space-y-4">
-        <For each={currentData()}>
-          {(item) => (
-            <div class="trending-item win95-panel p-4 hover:bg-gray-50 cursor-pointer transition-all" style={{ opacity: '0' }}>
-              <div class="flex items-center gap-4">
-                {/* Rank */}
-                <div class="flex items-center gap-2 w-16">
-                  <span class="text-2xl font-bold text-gray-600">#{item.rank}</span>
-                  <span class={`text-lg ${getChangeColor(item.change)}`}>
-                    {getChangeIcon(item.change)}
+
+        {/* TIMEFRAME DROPDOWN */}
+        <div 
+          class="mb-8 flex items-center gap-4 p-4 rounded-xl"
+          style={{
+            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+            border: '1px solid rgba(0, 249, 42, 0.2)',
+            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.6)'
+          }}
+        >
+          <span 
+            class="font-mono text-sm"
+            style={{
+              color: 'rgba(0, 249, 42, 0.7)',
+              'font-family': 'Courier New, monospace'
+            }}
+          >
+            <i class="fas fa-clock mr-2"></i>
+            TIMEFRAME:
+          </span>
+          
+          <div class="relative">
+            <select
+              value={currentTimeframe()}
+              onChange={handleTimeframeChange}
+              class="px-4 py-2 font-mono text-sm rounded cursor-pointer"
+              style={{
+                background: 'rgba(0, 0, 0, 0.9)',
+                border: '2px solid rgba(0, 249, 42, 0.4)',
+                color: '#00f92a',
+                'font-family': 'Courier New, monospace',
+                'text-shadow': '0 0 3px rgba(0, 249, 42, 0.6)'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#00f92a';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 249, 42, 0.4)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <option value="today">TODAY</option>
+              <option value="week">THIS WEEK</option>
+              <option value="month">THIS MONTH</option>
+              <option value="all">ALL TIME</option>
+            </select>
+          </div>
+        </div>
+
+        {/* TRENDING ITEMS */}
+        <div class="space-y-4">
+          <For each={currentData()}>
+            {(item) => (
+              <div 
+                class="trending-item relative p-6 rounded-xl cursor-pointer transition-all duration-300 group"
+                style={{
+                  opacity: '0',
+                  background: 'linear-gradient(145deg, rgba(10, 10, 10, 0.9), rgba(26, 26, 26, 0.9))',
+                  border: '1px solid rgba(4, 202, 244, 0.2)',
+                  'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.6)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#04caf4';
+                  e.currentTarget.style.boxShadow = '0 0 25px rgba(4, 202, 244, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.2)';
+                  e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(0, 0, 0, 0.6)';
+                }}
+              >
+                {/* Rank indicator with neon glow */}
+                <div 
+                  class="absolute left-0 top-0 bottom-0 w-16 flex items-center justify-center"
+                  style={{
+                    background: `linear-gradient(135deg, ${getRankColor(item.rank)}40 0%, transparent 100%)`
+                  }}
+                >
+                  <span 
+                    class="font-mono font-bold text-2xl"
+                    style={{
+                      color: getRankColor(item.rank),
+                      'text-shadow': `0 0 10px ${getRankColor(item.rank)}`,
+                      'font-family': 'Courier New, monospace'
+                    }}
+                  >
+                    #{item.rank}
                   </span>
                 </div>
                 
-                {/* Icon/Avatar */}
-                <Show when={item.icon || item.avatar}>
-                  <div class="text-3xl">{item.icon || item.avatar}</div>
-                </Show>
-                
-                {/* Content */}
-                <div class="flex-1">
-                  <h3 class="font-bold text-lg text-black">{item.title}</h3>
-                  <p class="text-sm text-gray-600">{item.subtitle}</p>
-                  <p class="text-sm text-blue-600 mt-1">{item.metric}</p>
-                </div>
-                
-                {/* Action Button - Only show for users */}
-                <Show when={currentCategory() === 'users'}>
-                  <div class="flex gap-2">
-                    <button class="win95-button px-3 py-1 text-sm">
-                      <i class="fas fa-user-plus mr-1"></i>Follow
-                    </button>
+                {/* Content area */}
+                <div class="ml-16 flex items-center gap-6">
+                  {/* Icon/Avatar with glow */}
+                  <Show when={item.icon || item.avatar}>
+                    <div 
+                      class="text-4xl"
+                      style={{
+                        filter: 'drop-shadow(0 0 8px rgba(4, 202, 244, 0.6))'
+                      }}
+                    >
+                      {item.icon || item.avatar}
+                    </div>
+                  </Show>
+                  
+                  {/* Text content */}
+                  <div class="flex-1">
+                    <h3 
+                      class="font-mono font-bold text-xl mb-1"
+                      style={{
+                        color: '#ffffff',
+                        'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
+                        'font-family': 'Courier New, monospace'
+                      }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p 
+                      class="font-mono text-sm mb-2"
+                      style={{
+                        color: 'rgba(4, 202, 244, 0.7)',
+                        'font-family': 'Courier New, monospace'
+                      }}
+                    >
+                      {item.subtitle}
+                    </p>
+                    <div 
+                      class="font-mono text-xs"
+                      style={{
+                        color: getRankColor(item.rank),
+                        'text-shadow': `0 0 4px ${getRankColor(item.rank)}`,
+                        'font-family': 'Courier New, monospace'
+                      }}
+                    >
+                      {item.metric}
+                    </div>
                   </div>
-                </Show>
+                  
+                  {/* Change indicator */}
+                  <div class="text-right">
+                    <div 
+                      class="text-2xl"
+                      style={{
+                        color: getChangeGlowColor(item.change),
+                        filter: `drop-shadow(0 0 6px ${getChangeGlowColor(item.change)})`
+                      }}
+                    >
+                      {getChangeIcon(item.change)}
+                    </div>
+                  </div>
+
+                  {/* Action Button - Only show for users */}
+                  <Show when={currentCategory() === 'users'}>
+                    <button 
+                      class="px-4 py-2 font-mono text-sm rounded transition-all duration-300"
+                      style={{
+                        background: 'rgba(59, 0, 253, 0.1)',
+                        border: '2px solid rgba(59, 0, 253, 0.3)',
+                        color: 'rgba(59, 0, 253, 0.8)',
+                        'font-family': 'Courier New, monospace'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = '#3b00fd';
+                        e.currentTarget.style.color = '#3b00fd';
+                        e.currentTarget.style.boxShadow = '0 0 15px rgba(59, 0, 253, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = 'rgba(59, 0, 253, 0.3)';
+                        e.currentTarget.style.color = 'rgba(59, 0, 253, 0.8)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <i class="fas fa-user-plus mr-2"></i>FOLLOW
+                    </button>
+                  </Show>
+                </div>
               </div>
-            </div>
-          )}
-        </For>
-      </div>
-      
-      {/* Empty State */}
-      <Show when={currentData().length === 0}>
-        <div class="p-8 text-center">
-          <i class="fas fa-chart-line text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-600">No trending data available for this timeframe.</p>
+            )}
+          </For>
         </div>
-      </Show>
+        
+        {/* Empty State */}
+        <Show when={currentData().length === 0}>
+          <div 
+            class="p-12 text-center rounded-xl"
+            style={{
+              background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+              border: '1px solid rgba(4, 202, 244, 0.2)'
+            }}
+          >
+            <i 
+              class="fas fa-chart-line text-6xl mb-6"
+              style={{
+                color: 'rgba(4, 202, 244, 0.5)',
+                filter: 'drop-shadow(0 0 10px rgba(4, 202, 244, 0.3))'
+              }}
+            ></i>
+            <p 
+              class="font-mono text-lg"
+              style={{
+                color: 'rgba(4, 202, 244, 0.7)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              NO TRENDING DATA AVAILABLE FOR THIS TIMEFRAME
+            </p>
+          </div>
+        </Show>
+      </div>
     </div>
   );
 };

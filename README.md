@@ -1,6 +1,6 @@
-# 🎵 VIBES 95 - Social Music Through Playlists
+# 🎵 Jamzy - Social Music Through Playlists
 
-VIBES 95 reimagines music sharing by treating **playlists as the fundamental unit** of musical expression. Built on Farcaster's social infrastructure with a nostalgic Windows 95 aesthetic, it turns every music interaction into playlist creation.
+Jamzy reimagines music sharing by treating **playlists as the fundamental unit** of musical expression. Built on Farcaster's social infrastructure with a nostalgic Windows 95 aesthetic, it turns every music interaction into playlist creation.
 
 ## 🎯 The Big Idea: Everything is a Playlist
 
@@ -41,9 +41,7 @@ This unified approach simplifies the mental model - users always think "where sh
 - **Native Social Features**: Likes, recasts, and replies work just like Farcaster
 
 ### 🎨 Nostalgic Design
-- **Windows 95 Aesthetic**: Authentic retro UI with pixel-perfect styling
 - **Neon 90s Colors**: Vibrant high-contrast palette inspired by 1990s design
-- **Familiar Interactions**: Classic buttons, panels, and navigation
 - **Modern Responsiveness**: Works beautifully on all devices
 - **Smooth Animations**: Subtle anime.js effects enhance the retro experience
 
@@ -54,29 +52,6 @@ Our neon 90s color scheme creates an authentic retro atmosphere:
 - **🔷 Neon Cyan** `#04caf4` - Interactive elements and highlights  
 - **🩷 Neon Pink** `#f906d6` - Accent colors and warnings
 - **💛 Neon Yellow** `#d1f60a` - Notifications and attention grabbers
-
-## 🚀 Try It Out
-
-**Live Demo**: [https://66403c95.vibe-playlist.pages.dev/](https://66403c95.vibe-playlist.pages.dev/)
-
-## 🎮 How It Works
-
-### 🏠 Browse Playlists (Home)
-- **Feed Experience**: See tracks from different playlists in your network
-- **Smart Sorting**: Sort by newest, most liked, or most commented
-- **Search Everything**: Find tracks across all playlists instantly
-- **AI Assistant**: Chat with DJ Bot for music recommendations
-
-### ➕ Create Playlist Entries (Create Page)
-- **Add Any Song**: Paste URLs from YouTube, Spotify, or SoundCloud
-- **Choose Destination**: Quick access to your favorite playlists
-- **Advanced Selection**: Search, filter, and sort through all your playlists
-- **Add Your Take**: Include comments about why you love the track
-
-### 👥 Playlist Types in Action
-- **Personal "My Jams"**: Your musical profile/feed on Farcaster
-- **Collaborative Playlists**: "Friday Bangers" with 12 friends contributing
-- **AI Discovery**: Algorithm finds tracks based on your taste graph
 
 ## 🛠️ For Developers
 
@@ -106,20 +81,6 @@ bun run dev
 - **Deployment**: Cloudflare Pages
 - **Component System**: Reusable social components following DRY principles
 
-### Component Architecture
-The app follows a **DRY (Don't Repeat Yourself) principle** with reusable social components:
-
-- **`SocialStats`**: Consistent likes/recasts/replies display across all contexts
-- **`SocialActions`**: Reusable action buttons (like, share, reply) with multiple variants
-- **`ReplyItem`**: Standardized reply formatting for desktop and mobile
-- **Responsive Player**: Single component that adapts from desktop sidebar to mobile bottom bar
-- **Social Modal**: Mobile-optimized overlay for full social experience in compact mode
-
-This architecture ensures:
-✅ **Consistency** - Same look/feel everywhere
-✅ **Maintainability** - Change once, update everywhere  
-✅ **Flexibility** - Components adapt to different contexts
-✅ **Mobile-first** - Responsive design with touch-friendly interactions
 
 ### Development Notes
 ⚠️ **Important**: There are specific setup quirks for YouTube/Spotify integration documented in [`CLAUDE.md`](./CLAUDE.md) - essential reading for developers.
@@ -129,54 +90,7 @@ Key issues:
 - Spotify auth requires `127.0.0.1` or HTTPS domains
 - Solution: Use Cloudflare tunnel for testing both features
 
-## 🎯 Product Vision
-
-VIBES 95 bridges nostalgic design with modern social music concepts:
-
-**Why Playlists?** Traditional social media treats music as disposable content. Playlists create persistent, collaborative spaces where music discoveries accumulate value over time.
-
-**Why Farcaster?** Decentralized social infrastructure means users own their data and relationships, while developers focus on innovative UX rather than building social plumbing.
-
-**Why Retro?** The Windows 95 aesthetic creates a unique, memorable experience that stands out in today's homogeneous design landscape while evoking the era when digital music culture began.
-
-## 🎪 Use Cases
-
-### Music Discovery Communities
-- **Genre-focused groups** create collaborative playlists
-- **AI algorithms** surface unexpected connections between tracks
-- **Social proof** through likes and comments drives discovery
-
-### Personal Music Curation
-- **Your profile becomes your playlist** - musical identity on Farcaster
-- **Cross-platform music** - YouTube finds, Spotify streams
-- **Historical record** of your musical journey over time
-
-### Event and Group Playlists
-- **Party planning** - collaborative "Friday Bangers" playlist
-- **Study groups** - shared "Focus Music" collections  
-- **Road trips** - group-curated "Drive Music" playlists
-
-## 🤝 Contributing
-
-We welcome contributions! Whether you're interested in:
-- 🎨 **Design**: Enhancing the Win95 aesthetic
-- 🎵 **Music Features**: New streaming service integrations
-- 🤖 **AI Curation**: Improving recommendation algorithms
-- 🌐 **Farcaster Integration**: Deeper social features
-
-See our [development setup](#-for-developers) and check [`CLAUDE.md`](./CLAUDE.md) for technical implementation details.
 
 ## 📜 License
 
 MIT License - feel free to remix this concept for your own projects!
-
-## 🙏 Acknowledgments
-
-- **Windows 95** for the iconic design language that defined an era
-- **Farcaster** for building decentralized social infrastructure
-- **YouTube & Spotify** for making cross-platform music possible
-- **The 90s music scene** for inspiring the vibe we're trying to recreate
-
----
-
-*Building the future of social music with a 90s aesthetic* 🎵✨

@@ -11,21 +11,11 @@ interface LayoutProps {
 
 const Layout: Component<LayoutProps> = (props) => {
   const [showTerminal, setShowTerminal] = createSignal(false);
-  const [isCompact, setIsCompact] = createSignal(window.innerWidth < 1024);
-  const [forceCompact, setForceCompact] = createSignal(false); // Default to right side when screen is large
 
   // Make showTerminal globally accessible for the close button
   (window as any).showTerminal = () => setShowTerminal(true);
 
-  // Handle responsive state
-  createEffect(() => {
-    const handleResize = () => {
-      setIsCompact(window.innerWidth < 1024);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  });
+  // Simplified layout - no responsive state needed
 
   return (
     <div class="h-screen relative overflow-hidden" style="background: linear-gradient(135deg, #04caf4 0%, #00f92a 100%);">
@@ -36,23 +26,17 @@ const Layout: Component<LayoutProps> = (props) => {
       <WindowsFrame onCloseClick={() => setShowTerminal(true)}>
         <Navigation />
         
-        <div class={`flex ${isCompact() || forceCompact() ? 'flex-col' : 'flex-row'} flex-1 overflow-hidden`}>
-          {/* Main Content - Takes full width */}
-          <div class="flex-1 overflow-y-auto min-w-0">
-            {props.children}
-          </div>
-          
-          {/* Player - Bottom horizontal on compact, side vertical on desktop */}
-          <Show when={currentTrack()}>
-            <div class={`${
-              isCompact() || forceCompact()
-                ? 'h-52 border-t-2 flex-shrink-0 pb-safe' 
-                : 'w-80 border-l-2'
-            } border-gray-300`}>
-              <MediaPlayer isCompact={() => isCompact() || forceCompact()} onForceCompact={setForceCompact} />
-            </div>
-          </Show>
+        {/* Main Content - Takes full width */}
+        <div class="flex-1 overflow-y-auto min-w-0">
+          {props.children}
         </div>
+        
+        {/* Player - Always bottom bar */}
+        <Show when={currentTrack()}>
+          <div class="h-60 border-t-2 border-gray-300 flex-shrink-0">
+            <MediaPlayer />
+          </div>
+        </Show>
       </WindowsFrame>
       
       {/* Terminal */}

@@ -1,36 +1,33 @@
 import { Component, Show, JSX, createSignal, For, onMount } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playlistStore';
+import { useNavigate } from '@solidjs/router';
+import { currentTrack, isPlaying, playingPlaylistId, setCurrentPlaylistId } from '../../stores/playlistStore';
 import SocialStats from '../social/SocialStats';
 import SocialActions from '../social/SocialActions';
 import ReplyItem from '../social/ReplyItem';
 import { playbackButtonHover } from '../../utils/animations';
 
 interface PlayerProps {
-  isCompact?: () => boolean;
   mediaComponent: JSX.Element;
   onTogglePlay: () => void;
   playerReady: () => boolean;
   currentTime?: () => number;
   duration?: () => number;
   onSeek?: (time: number) => void;
-  onForceCompact?: (force: boolean) => void;
 }
 
 const Player: Component<PlayerProps> = (props) => {
-  const isCompact = () => props.isCompact?.() ?? false;
-  
   // State
   const [newComment, setNewComment] = createSignal('');
   const [showAllReplies, setShowAllReplies] = createSignal(false);
-  const [showSocialModal, setShowSocialModal] = createSignal(false);
+  const [showDiscussionModal, setShowDiscussionModal] = createSignal(false);
+  const navigate = useNavigate();
   
   // Refs for animations
-  let playButtonRef: HTMLButtonElement;
-  let prevButtonRef: HTMLButtonElement;
-  let nextButtonRef: HTMLButtonElement;
-  let compactPlayButtonRef: HTMLButtonElement;
-  let compactPrevButtonRef: HTMLButtonElement;
-  let compactNextButtonRef: HTMLButtonElement;
+  let playButtonRef: HTMLButtonElement | undefined;
+  let prevButtonRef: HTMLButtonElement | undefined;
+  let nextButtonRef: HTMLButtonElement | undefined;
+  let joinButtonRef: HTMLButtonElement | undefined;
+  let likeButtonRef: HTMLButtonElement | undefined;
   
   // Handlers
   const handleSkipPrevious = () => {
@@ -51,6 +48,13 @@ const Player: Component<PlayerProps> = (props) => {
     // TODO: Implement comment posting
     setNewComment('');
   };
+
+  const handleGoToPlayingPlaylist = () => {
+    // Set the current playlist to the one that's actually playing
+    setCurrentPlaylistId(playingPlaylistId());
+    // Navigate to player page to show the playing playlist
+    navigate('/player');
+  };
   
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -60,304 +64,28 @@ const Player: Component<PlayerProps> = (props) => {
 
   // Set up button animations
   onMount(() => {
-    const buttons = [
-      playButtonRef,
-      prevButtonRef, 
-      nextButtonRef,
-      compactPlayButtonRef,
-      compactPrevButtonRef,
-      compactNextButtonRef
-    ];
+    const playbackButtons = [playButtonRef, prevButtonRef, nextButtonRef].filter(
+      (button): button is HTMLButtonElement => button !== undefined
+    );
 
-    buttons.forEach(button => {
-      if (button) {
-        button.addEventListener('mouseenter', () => {
-          playbackButtonHover.enter(button);
-        });
+    playbackButtons.forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        playbackButtonHover.enter(button);
+      });
 
-        button.addEventListener('mouseleave', () => {
-          playbackButtonHover.leave(button);
-        });
-      }
+      button.addEventListener('mouseleave', () => {
+        playbackButtonHover.leave(button);
+      });
     });
   });
 
-  // Desktop Player Component
-  const DesktopPlayer = () => (
-    <div class="h-full bg-gray-100 flex flex-col">
-      {/* Desktop Header */}
-      <div class="windows-titlebar p-2 flex justify-between items-center">
-        <span><i class="fas fa-play-circle mr-2"></i>Now Playing</span>
-        <button 
-          class="win95-button w-6 h-4 text-xs font-bold text-black"
-          onClick={() => props.onForceCompact?.(true)}
-          title="Minimize to compact player"
-        >
-          _
-        </button>
-      </div>
-
-      {/* Scrollable Content */}
-      <div class="flex-1 p-4 overflow-y-auto">
-        {/* Media Player */}
-        <div class="win95-panel p-3 mb-4">
-          {props.mediaComponent}
-        </div>
-        
-        {/* Track Info */}
-        <div class="mb-4">
-          <h3 class="font-bold text-black text-xl mb-2 leading-tight">
-            {currentTrack()?.title}
-          </h3>
-          <p class="text-gray-600 text-lg mb-2">{currentTrack()?.artist}</p>
-          <p class="text-gray-500 text-base mb-3">
-            Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
-          </p>
-          
-          {/* Song Comment */}
-          <div class="p-3 bg-blue-50 rounded border-l-4 border-blue-400 mb-4">
-            <p class="text-sm text-gray-700 italic font-medium">
-              "{currentTrack()?.comment}"
-            </p>
-            <p class="text-xs text-gray-500 mt-1">
-              {currentTrack()?.timestamp}
-            </p>
-          </div>
-        </div>
-        
-        {/* Progress Bar - For non-YouTube sources */}
-        <Show when={currentTrack()?.source !== 'youtube' && (props.currentTime || props.duration)}>
-          <div class="mb-3">
-            <div class="flex items-center gap-2 text-xs text-gray-600">
-              <span>{formatTime(props.currentTime?.() || 0)}</span>
-              <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
-                <div 
-                  class="bg-blue-500 h-full transition-all duration-200"
-                  style={{
-                    width: `${((props.currentTime?.() || 0) / (props.duration?.() || 1)) * 100}%`
-                  }}
-                ></div>
-              </div>
-              <span>{formatTime(props.duration?.() || 0)}</span>
-            </div>
-          </div>
-        </Show>
-
-        {/* Desktop Controls */}
-        <div class="flex flex-col items-center w-full mb-4">
-          <div class="flex items-center justify-center gap-4 mb-3">
-            <button 
-              ref={prevButtonRef!}
-              onClick={handleSkipPrevious}
-              class="win95-button w-12 h-12 flex items-center justify-center text-lg"
-              disabled={!props.playerReady()}
-            >
-              <i class="fas fa-step-backward"></i>
-            </button>
-            
-            <button 
-              ref={playButtonRef!}
-              onClick={props.onTogglePlay}
-              class="win95-button w-16 h-16 flex items-center justify-center text-2xl"
-              disabled={!props.playerReady()}
-            >
-              <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-            </button>
-            
-            <button 
-              ref={nextButtonRef!}
-              onClick={handleSkipNext}
-              class="win95-button w-12 h-12 flex items-center justify-center text-lg"
-              disabled={!props.playerReady()}
-            >
-              <i class="fas fa-step-forward"></i>
-            </button>
-          </div>
-          
-          {/* Player Status */}
-          <div class="lcd-text inline-block px-3 py-1 text-sm">
-            {props.playerReady() ? 
-              (isPlaying() ? '▶ PLAYING' : '⏸ PAUSED') : 
-              '⏳ LOADING...'
-            }
-          </div>
-        </div>
-        
-        {/* Track Stats */}
-        <div class="pt-4 border-t border-gray-400 mb-4">
-          <SocialStats
-            likes={currentTrack()?.likes || 0}
-            recasts={currentTrack()?.recasts || 0}
-            replies={currentTrack()?.replies || 0}
-            size="sm"
-            showLabels={false}
-          />
-        </div>
-
-        {/* Track Actions */}
-        <div class="mb-4">
-          <SocialActions
-            onLike={() => console.log('Like track')}
-            onAdd={() => console.log('Add to playlist')}
-            onShare={() => console.log('Share track')}
-            size="sm"
-            variant="buttons"
-          />
-        </div>
-        
-        {/* Replies Section */}
-        <div>
-          <h4 class="text-sm font-bold text-gray-700 mb-2">
-            <i class="fas fa-comments mr-1"></i>
-            Replies ({currentTrack()?.repliesData?.length || 0})
-          </h4>
-          
-          <div class="bg-gray-50 border-2 border-gray-300 rounded">
-            <Show when={currentTrack()?.repliesData && currentTrack()?.repliesData!.length > 0} fallback={
-              <div class="p-4 text-center text-gray-500 text-sm">
-                No replies yet. Be the first to comment!
-              </div>
-            }>
-              <For each={showAllReplies() ? currentTrack()?.repliesData : currentTrack()?.repliesData?.slice(0, 5)}>
-                {(reply) => (
-                  <ReplyItem
-                    reply={reply}
-                    variant="default"
-                    onLike={(replyId) => console.log('Like reply:', replyId)}
-                    onReply={(replyId) => console.log('Reply to:', replyId)}
-                  />
-                )}
-              </For>
-              
-              <Show when={currentTrack()?.repliesData && currentTrack()?.repliesData!.length > 5}>
-                <div class="p-2 border-t border-gray-300 bg-gray-50">
-                  <button
-                    onClick={() => setShowAllReplies(!showAllReplies())}
-                    class="w-full text-xs text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    {showAllReplies() 
-                      ? `Show less` 
-                      : `Show ${currentTrack()?.repliesData!.length - 5} more replies`}
-                  </button>
-                </div>
-              </Show>
-            </Show>
-          </div>
-          
-          {/* Comment Input */}
-          <div class="mt-3">
-            <div class="flex gap-2">
-              <input
-                type="text"
-                value={newComment()}
-                onInput={(e) => setNewComment(e.target.value)}
-                placeholder="Add your reply..."
-                class="flex-1 px-3 py-2 text-sm border-2 border-gray-300 rounded bg-white focus:border-blue-500 focus:outline-none"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddComment();
-                  }
-                }}
-              />
-              <button
-                onClick={handleAddComment}
-                disabled={!newComment().trim()}
-                class="win95-button px-3 py-2 text-xs disabled:opacity-50"
-              >
-                <i class="fas fa-paper-plane mr-1"></i>
-                Reply
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Compact Player Component
-  const CompactPlayer = () => (
-    <div class="h-full bg-gray-100 flex items-center px-4 gap-4">
-      {/* Media Player Area */}
-      <div class="flex-shrink-0">
-        {props.mediaComponent}
-      </div>
-      
-      {/* Track Info */}
-      <div class="flex-1 min-w-0">
-        <h3 class="font-bold text-black text-sm leading-tight truncate">
-          {currentTrack()?.title}
-        </h3>
-        <p class="text-gray-600 text-xs truncate">{currentTrack()?.artist}</p>
-        <p class="text-gray-500 text-xs truncate hidden sm:block">
-          Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
-        </p>
-      </div>
-      
-      {/* Compact Controls - Fixed and properly centered */}
-      <div class="flex items-center justify-center gap-2">
-        <button 
-          ref={compactPrevButtonRef!}
-          onClick={handleSkipPrevious}
-          class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
-          disabled={!props.playerReady()}
-          title="Previous track"
-        >
-          <i class="fas fa-step-backward"></i>
-        </button>
-        
-        <button 
-          ref={compactPlayButtonRef!}
-          onClick={props.onTogglePlay}
-          class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-sm sm:text-lg"
-          disabled={!props.playerReady()}
-        >
-          <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-        </button>
-        
-        <button 
-          ref={compactNextButtonRef!}
-          onClick={handleSkipNext}
-          class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
-          disabled={!props.playerReady()}
-          title="Next track"
-        >
-          <i class="fas fa-step-forward"></i>
-        </button>
-        
-        <button 
-          onClick={() => setShowSocialModal(true)}
-          class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm relative"
-          title="View comments and replies"
-        >
-          <i class="fas fa-comment"></i>
-          <Show when={currentTrack()?.replies && currentTrack()!.replies > 0}>
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none">
-              {currentTrack()?.replies}
-            </span>
-          </Show>
-        </button>
-        
-        <div class="hidden lg:block">
-          <button 
-            onClick={() => props.onForceCompact?.(false)}
-            class="win95-button w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xs sm:text-sm"
-            title="Expand to full player"
-          >
-            <i class="fas fa-expand-alt"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Social Modal Component
-  const SocialModal = () => (
+  // Discussion Modal Component
+  const DiscussionModal = () => (
     <div class="fixed inset-0 z-50 flex items-end justify-center p-4">
       {/* Backdrop */}
       <div 
         class="absolute inset-0 bg-black bg-opacity-50"
-        onClick={() => setShowSocialModal(false)}
+        onClick={() => setShowDiscussionModal(false)}
       ></div>
       
       {/* Modal Content */}
@@ -366,10 +94,10 @@ const Player: Component<PlayerProps> = (props) => {
         <div class="flex items-center justify-between p-3 border-b-2 border-gray-300 bg-gray-100">
           <h3 class="font-bold text-sm flex items-center gap-2">
             <i class="fas fa-comments"></i>
-            Comments & Replies
+            Join Discussion
           </h3>
           <button 
-            onClick={() => setShowSocialModal(false)}
+            onClick={() => setShowDiscussionModal(false)}
             class="win95-button w-6 h-6 text-xs font-bold flex items-center justify-center"
           >
             ×
@@ -409,7 +137,7 @@ const Player: Component<PlayerProps> = (props) => {
               Replies ({currentTrack()?.repliesData?.length || 0})
             </h4>
             
-            <Show when={currentTrack()?.repliesData && currentTrack()?.repliesData!.length > 0} fallback={
+            <Show when={currentTrack()?.repliesData && currentTrack()!.repliesData.length > 0} fallback={
               <div class="text-center text-gray-500 text-sm py-4">
                 No replies yet. Be the first to comment!
               </div>
@@ -426,7 +154,7 @@ const Player: Component<PlayerProps> = (props) => {
                   )}
                 </For>
                 
-                <Show when={currentTrack()?.repliesData && currentTrack()?.repliesData!.length > 5}>
+                <Show when={currentTrack()?.repliesData && currentTrack()!.repliesData.length > 5}>
                   <div class="text-center">
                     <button
                       onClick={() => setShowAllReplies(!showAllReplies())}
@@ -434,7 +162,7 @@ const Player: Component<PlayerProps> = (props) => {
                     >
                       {showAllReplies() 
                         ? `Show less` 
-                        : `Show ${currentTrack()?.repliesData!.length - 5} more replies`}
+                        : `Show ${(currentTrack()?.repliesData?.length || 0) - 5} more replies`}
                     </button>
                   </div>
                 </Show>
@@ -475,12 +203,363 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      {/* Main Player */}
-      {isCompact() ? <CompactPlayer /> : <DesktopPlayer />}
+      {/* Bottom Player Bar */}
+      <div class="h-full bg-gray-900 flex items-center px-8 gap-8 border-t border-gray-700">
+        
+        <div class="flex items-center gap-8 w-full max-w-7xl mx-auto relative z-10">
+          {/* LEFT SECTION (30%): Track Details */}
+          <div class="flex items-center gap-3 flex-shrink-0 relative" style={{
+            width: '30%',
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            'border-radius': '8px',
+            padding: '12px'
+          }}>
+            {/* Track Info - Clean Display Style */}
+            <div class="flex-1 min-w-0 relative" style={{
+              background: '#000',
+              border: '1px solid #333',
+              'border-radius': '4px',
+              padding: '8px'
+            }}>
+              <h3 class="font-bold text-lg sm:text-xl leading-tight truncate" style={{
+                color: '#04caf4',
+                'text-shadow': '0 0 4px rgba(4, 202, 244, 0.8)',
+                'font-family': 'monospace'
+              }}>
+                {currentTrack()?.title}
+              </h3>
+              <p class="text-base sm:text-lg truncate mt-1" style={{
+                color: '#00f92a',
+                'text-shadow': '0 0 4px rgba(0, 249, 42, 0.8)',
+                'font-family': 'monospace'
+              }}>
+                {currentTrack()?.artist}
+              </p>
+              <p class="text-sm sm:text-base truncate mt-1" style={{
+                color: '#d1f60a',
+                'text-shadow': '0 0 4px #d1f60a',
+                'font-family': 'monospace',
+                opacity: '0.8'
+              }}>
+                Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
+              </p>
+            </div>
+            
+            {/* Go to Playing Playlist Button */}
+            <button
+              onClick={handleGoToPlayingPlaylist}
+              class="flex-shrink-0 retro-social-button relative overflow-hidden font-bold transition-all duration-200"
+              style={{
+                width: '40px',
+                height: '40px',
+                fontSize: '10px',
+                fontWeight: 'bold',
+                borderRadius: '6px',
+                border: '2px solid #333',
+                'border-top': '2px solid #555',
+                'border-left': '2px solid #444',
+                background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
+                color: '#d1f60a',
+                'text-shadow': '0 0 4px rgba(211, 246, 10, 0.6)',
+                'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(211, 246, 10, 0.3)',
+                'font-family': 'monospace',
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center'
+              }}
+              title="View current playlist"
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(145deg, #d1f60a 0%, #cddc39 50%, #9e9d24 100%)';
+                e.currentTarget.style.color = '#000000';
+                e.currentTarget.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
+                e.currentTarget.style.borderTopColor = '#d1f60a';
+                e.currentTarget.style.borderLeftColor = '#cddc39';
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(211, 246, 10, 0.6)';
+                e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
+                e.currentTarget.style.color = '#d1f60a';
+                e.currentTarget.style.textShadow = '0 0 4px rgba(211, 246, 10, 0.6)';
+                e.currentTarget.style.borderTopColor = '#555';
+                e.currentTarget.style.borderLeftColor = '#444';
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(211, 246, 10, 0.3)';
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              }}
+            >
+              <i class="fas fa-list" style={{ fontSize: '14px' }}></i>
+            </button>
+          </div>
+
+          {/* CENTER SECTION (40%): Media Player Only - Clean Minimal Design */}
+          <div class="flex items-center justify-center relative" style={{
+            width: '40%',
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            'border-radius': '8px',
+            padding: '8px',
+            position: 'relative'
+          }}>
+            {/* Media Player - Clean Hero Element */}
+            <div class="flex-shrink-0">
+              {props.mediaComponent}
+            </div>
+          </div>
+
+          {/* RIGHT SECTION (30%): Two-Row Layout */}
+          <div class="flex flex-col justify-center gap-3 flex-shrink-0 relative" style={{
+            width: '30%',
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            'border-radius': '8px',
+            padding: '12px',
+            position: 'relative'
+          }}>
+            
+            {/* TOP ROW: Transport Controls */}
+            <div class="flex items-center justify-center gap-3 relative" style={{
+              background: '#0f0f0f',
+              border: '1px solid #444',
+              'border-radius': '8px',
+              padding: '8px',
+              'box-shadow': '0 1px 3px rgba(0,0,0,0.5)'
+            }}>
+              {/* Previous Button */}
+              <button 
+                ref={prevButtonRef!}
+                onClick={handleSkipPrevious}
+                class="transport-button"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  border: '1px solid #555',
+                  background: '#2a2a2a',
+                  color: '#d1f60a',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center',
+                  'font-size': '16px',
+                  transition: 'all 0.15s ease',
+                  cursor: 'pointer'
+                }}
+                disabled={!props.playerReady()}
+                title="Previous track"
+              >
+                <i class="fas fa-step-backward"></i>
+              </button>
+              
+              {/* Play/Pause Button */}
+              <button 
+                ref={playButtonRef!}
+                onClick={props.onTogglePlay}
+                class="transport-button play-button"
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '8px',
+                  border: '1px solid #555',
+                  background: isPlaying() ? '#00f92a' : '#3b00fd',
+                  color: '#ffffff',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center',
+                  'font-size': '18px',
+                  transition: 'all 0.15s ease',
+                  cursor: 'pointer'
+                }}
+                disabled={!props.playerReady()}
+              >
+                <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`} style={{
+                  marginLeft: isPlaying() ? '0' : '2px'
+                }}></i>
+              </button>
+              
+              {/* Next Button */}
+              <button 
+                ref={nextButtonRef!}
+                onClick={handleSkipNext}
+                class="transport-button"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  border: '1px solid #555',
+                  background: '#2a2a2a',
+                  color: '#d1f60a',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center',
+                  'font-size': '16px',
+                  transition: 'all 0.15s ease',
+                  cursor: 'pointer'
+                }}
+                disabled={!props.playerReady()}
+                title="Next track"
+              >
+                <i class="fas fa-step-forward"></i>
+              </button>
+            </div>
+
+            {/* BOTTOM ROW: Join and Like Buttons */}
+            <div class="flex items-center justify-center gap-2">
+              {/* Join Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowDiscussionModal(true);
+                }}
+                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
+                style={{
+                  width: '48px',
+                  height: '32px',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  borderRadius: '6px',
+                  border: '2px solid #333',
+                  'border-top': '2px solid #555',
+                  'border-left': '2px solid #444',
+                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
+                  color: '#04caf4',
+                  'text-shadow': '0 0 4px rgba(4, 202, 244, 0.6)',
+                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(4, 202, 244, 0.3)',
+                  'font-family': 'monospace',
+                  'white-space': 'nowrap',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center'
+                }}
+                title="Join discussion"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #04caf4 0%, #0288d1 50%, #01579b 100%)';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.8)';
+                  e.currentTarget.style.borderTopColor = '#04caf4';
+                  e.currentTarget.style.borderLeftColor = '#0288d1';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(4, 202, 244, 0.6)';
+                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
+                  e.currentTarget.style.color = '#04caf4';
+                  e.currentTarget.style.textShadow = '0 0 4px rgba(4, 202, 244, 0.6)';
+                  e.currentTarget.style.borderTopColor = '#555';
+                  e.currentTarget.style.borderLeftColor = '#444';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(4, 202, 244, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                }}
+              >
+                <i class="fas fa-comments" style={{ fontSize: '12px' }}></i>
+                <Show when={currentTrack()?.replies && currentTrack()!.replies > 0}>
+                  <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none" style={{
+                    'font-size': '8px',
+                    'box-shadow': '0 0 4px rgba(255,0,0,0.6)'
+                  }}>
+                    {currentTrack()?.replies}
+                  </div>
+                </Show>
+              </button>
+              
+              {/* Like Button */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Like track');
+                  // TODO: Implement like functionality
+                }}
+                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
+                style={{
+                  width: '48px',
+                  height: '32px',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  borderRadius: '6px',
+                  border: '2px solid #333',
+                  'border-top': '2px solid #555',
+                  'border-left': '2px solid #444',
+                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
+                  color: '#f906d6',
+                  'text-shadow': '0 0 4px rgba(249, 6, 214, 0.6)',
+                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(249, 6, 214, 0.3)',
+                  'font-family': 'monospace',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center'
+                }}
+                title="Like this track"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #f906d6 0%, #e91e63 50%, #ad1457 100%)';
+                  e.currentTarget.style.color = '#ffffff';
+                  e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.8)';
+                  e.currentTarget.style.borderTopColor = '#f906d6';
+                  e.currentTarget.style.borderLeftColor = '#e91e63';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(249, 6, 214, 0.6)';
+                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
+                  e.currentTarget.style.color = '#f906d6';
+                  e.currentTarget.style.textShadow = '0 0 4px rgba(249, 6, 214, 0.6)';
+                  e.currentTarget.style.borderTopColor = '#555';
+                  e.currentTarget.style.borderLeftColor = '#444';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(249, 6, 214, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                }}
+              >
+                <i class="fas fa-heart" style={{ fontSize: '12px' }}></i>
+                <Show when={currentTrack()?.likes && currentTrack()!.likes > 0}>
+                  <span class="ml-1" style={{ fontSize: '8px' }}>{currentTrack()?.likes}</span>
+                </Show>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Bar - For non-YouTube sources */}
+        <Show when={currentTrack()?.source !== 'youtube' && (props.currentTime || props.duration)}>
+          <div class="mt-3 max-w-7xl mx-auto px-8">
+            <div class="flex items-center gap-4" style={{
+              background: 'linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%)',
+              border: '2px solid #333',
+              'border-radius': '8px',
+              padding: '12px',
+              'box-shadow': 'inset 0 2px 4px rgba(0,0,0,0.8)'
+            }}>
+              <span style={{
+                color: '#04caf4',
+                'font-family': 'monospace',
+                'text-shadow': '0 0 4px #04caf4',
+                'font-size': '14px'
+              }}>{formatTime(props.currentTime?.() || 0)}</span>
+              <div class="flex-1 h-3 rounded-full overflow-hidden cursor-pointer" style={{
+                background: 'linear-gradient(180deg, #000 0%, #222 100%)',
+                border: '1px solid #444',
+                'box-shadow': 'inset 0 1px 3px rgba(0,0,0,0.8)'
+              }}>
+                <div 
+                  class="h-full transition-all duration-200"
+                  style={{
+                    width: `${((props.currentTime?.() || 0) / (props.duration?.() || 1)) * 100}%`,
+                    background: 'linear-gradient(90deg, #3b00fd 0%, #04caf4 50%, #00f92a 100%)',
+                    'box-shadow': '0 0 6px rgba(4, 202, 244, 0.8)'
+                  }}
+                ></div>
+              </div>
+              <span style={{
+                color: '#04caf4',
+                'font-family': 'monospace',
+                'text-shadow': '0 0 4px #04caf4',
+                'font-size': '14px'
+              }}>{formatTime(props.duration?.() || 0)}</span>
+            </div>
+          </div>
+        </Show>
+      </div>
       
-      {/* Social Modal - Only in compact mode */}
-      <Show when={isCompact() && showSocialModal()}>
-        <SocialModal />
+      {/* Discussion Modal */}
+      <Show when={showDiscussionModal()}>
+        <DiscussionModal />
       </Show>
     </Show>
   );

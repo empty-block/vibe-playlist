@@ -2,7 +2,6 @@ import { Component, createEffect, onMount, createSignal } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playlistStore';
 
 interface YouTubeMediaProps {
-  isCompact?: () => boolean;
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
 }
@@ -19,7 +18,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let playerContainer: HTMLDivElement | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   
-  const isCompact = () => props.isCompact?.() ?? false;
+  // Always use compact size for bottom bar
 
   onMount(() => {
     console.log('YouTubeMedia onMount called');
@@ -60,8 +59,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     
     try {
       player = new window.YT.Player(playerContainer, {
-        height: '240',
-        width: '320',
+        height: '180',
+        width: '300',
         videoId: 'hTWKbfoikeg',
         playerVars: {
           autoplay: 0,
@@ -160,7 +159,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
 
   return (
-    <div class={`bg-black rounded overflow-hidden ${isCompact() ? 'w-32 h-20 sm:w-40 sm:h-24' : 'w-full h-64'}`}>
+    <div class="bg-gray-900 rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52">
       <div 
         ref={(el) => {
           playerContainer = el;

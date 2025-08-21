@@ -1,6 +1,6 @@
 import { Component, createSignal, Show, createMemo, For, onMount } from 'solid-js';
 import { A } from '@solidjs/router';
-import { Track, currentTrack, Reply } from '../../stores/playlistStore';
+import { Track, currentTrack, Reply, isPlaying } from '../../stores/playlistStore';
 import { canPlayTrack, isSpotifyAuthenticated, initiateSpotifyAuth } from '../../stores/authStore';
 import ReplyItem from '../social/ReplyItem';
 import AnimatedButton from '../common/AnimatedButton';
@@ -424,15 +424,24 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                     <div 
                       class="font-mono font-bold text-sm px-3 py-2 rounded"
                       style={{
-                        color: isPlayable() ? '#00f92a' : '#ff4444',
-                        background: isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)',
-                        border: isPlayable() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(255, 68, 68, 0.3)',
-                        'text-shadow': isPlayable() 
-                          ? '0 0 5px rgba(0, 249, 42, 0.6)' 
-                          : '0 0 5px rgba(255, 68, 68, 0.6)'
+                        color: isCurrentTrack() 
+                          ? (isPlaying() ? '#00f92a' : '#d1f60a')
+                          : (isPlayable() ? '#00f92a' : '#ff4444'),
+                        background: isCurrentTrack() 
+                          ? (isPlaying() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(211, 246, 10, 0.1)')
+                          : (isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)'),
+                        border: isCurrentTrack() 
+                          ? (isPlaying() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(211, 246, 10, 0.3)')
+                          : (isPlayable() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(255, 68, 68, 0.3)'),
+                        'text-shadow': isCurrentTrack() 
+                          ? (isPlaying() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(211, 246, 10, 0.6)')
+                          : (isPlayable() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(255, 68, 68, 0.6)')
                       }}
                     >
-                      {isPlayable() ? 'READY' : 'AUTH REQ'}
+                      {isCurrentTrack() 
+                        ? (isPlaying() ? '▶ PLAYING' : '⏸ PAUSED')
+                        : (isPlayable() ? 'READY' : 'AUTH REQ')
+                      }
                     </div>
                   </div>
                 </div>
