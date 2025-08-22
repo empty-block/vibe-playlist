@@ -285,7 +285,7 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             {/* Horizontal Layout for Album Art + Track Info */}
             <div class="flex gap-4">
               {/* Album Art with Retro Frame */}
-              <div class="relative group flex-shrink-0 w-48">
+              <div class="relative group flex-shrink-0 w-40">
                 <div 
                   class="p-1 rounded-lg"
                   style={{
@@ -361,17 +361,8 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                   'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.8)'
                 }}
               >
-                {/* Track Title - LCD Style */}
+                {/* Track Title - Compact Layout */}
                 <div class="mb-3">
-                  <div 
-                    class="text-xs font-mono uppercase tracking-wide mb-1"
-                    style={{
-                      color: 'rgba(4, 202, 244, 0.6)',
-                      'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
-                    }}
-                  >
-                    TITLE
-                  </div>
                   <div 
                     class="font-mono font-bold leading-tight break-words"
                     style={{
@@ -387,17 +378,8 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                   </div>
                 </div>
 
-                {/* Artist - LCD Style */}
+                {/* Artist - Compact Layout */}
                 <div class="mb-3">
-                  <div 
-                    class="text-xs font-mono uppercase tracking-wide mb-1"
-                    style={{
-                      color: 'rgba(249, 6, 214, 0.6)',
-                      'text-shadow': '0 0 3px rgba(249, 6, 214, 0.4)'
-                    }}
-                  >
-                    ARTIST
-                  </div>
                   <div 
                     class="font-mono font-semibold break-words"
                     style={{
@@ -411,67 +393,39 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                   </div>
                 </div>
 
-                {/* Added By Info with Status on same row */}
-                <div class="flex items-start justify-between">
-                  <div class="flex-1">
-                    <div 
-                      class="text-xs font-mono uppercase tracking-wide mb-1"
-                      style={{
-                        color: 'rgba(4, 202, 244, 0.6)',
-                        'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
-                      }}
-                    >
-                      ADDED BY
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <A 
-                        href={`/profile/${props.track.addedBy}`}
-                        class="font-mono font-bold transition-all duration-300 text-sm hover:scale-105"
-                        style={{
-                          color: '#04caf4',
-                          'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
-                          'font-family': 'Courier New, monospace'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#00f92a';
-                          e.currentTarget.style.textShadow = '0 0 8px rgba(0, 249, 42, 0.8)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#04caf4';
-                          e.currentTarget.style.textShadow = '0 0 5px rgba(4, 202, 244, 0.6)';
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {props.track.addedBy}
-                      </A>
-                      <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-400">{props.track.timestamp}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Status Indicator - Aligned to right on same row */}
-                  <div 
-                    class="font-mono font-bold text-sm px-3 py-2 rounded ml-4"
+                {/* Added By Info - Single Row */}
+                <div class="flex items-center gap-3">
+                  <span 
+                    class="text-xs font-mono uppercase tracking-wide"
                     style={{
-                      color: isCurrentTrack() 
-                        ? (isPlaying() ? '#00f92a' : '#ff9b00')
-                        : (isPlayable() ? '#00f92a' : '#ff4444'),
-                      background: isCurrentTrack() 
-                        ? (isPlaying() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(211, 246, 10, 0.1)')
-                        : (isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)'),
-                      border: isCurrentTrack() 
-                        ? (isPlaying() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(211, 246, 10, 0.3)')
-                        : (isPlayable() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(255, 68, 68, 0.3)'),
-                      'text-shadow': isCurrentTrack() 
-                        ? (isPlaying() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(211, 246, 10, 0.6)')
-                        : (isPlayable() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(255, 68, 68, 0.6)')
+                      color: 'rgba(4, 202, 244, 0.6)',
+                      'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
                     }}
                   >
-                    {isCurrentTrack() 
-                      ? (isPlaying() ? '▶ PLAYING' : '⏸ PAUSED')
-                      : (isPlayable() ? 'READY' : 'AUTH REQ')
-                    }
-                  </div>
+                    ADDED BY
+                  </span>
+                  <A 
+                    href={`/profile/${props.track.addedBy}`}
+                    class="font-mono font-bold transition-all duration-300 text-sm hover:scale-105"
+                    style={{
+                      color: '#04caf4',
+                      'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
+                      'font-family': 'Courier New, monospace'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#00f92a';
+                      e.currentTarget.style.textShadow = '0 0 8px rgba(0, 249, 42, 0.8)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#04caf4';
+                      e.currentTarget.style.textShadow = '0 0 5px rgba(4, 202, 244, 0.6)';
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {props.track.addedBy}
+                  </A>
+                  <span class="text-xs text-gray-400">•</span>
+                  <span class="text-xs text-gray-400">{props.track.timestamp}</span>
                 </div>
 
                 {/* Spotify Connect Button - If needed */}
@@ -507,10 +461,12 @@ const TrackItem: Component<TrackItemProps> = (props) => {
             'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.7)'
           }}
         >
-          {/* Centered Action Buttons - More space for horizontal layout */}
-          <div class="flex flex-wrap items-center justify-center gap-4">
+          {/* Action Buttons with Status - Horizontal Layout */}
+          <div class="flex flex-wrap items-center justify-between gap-4">
             
-            {/* JOIN DISCUSSION Button - Wider */}
+            {/* Action Buttons Group - Left Side */}
+            <div class="flex items-center gap-4">
+              {/* JOIN DISCUSSION Button - Wider */}
             <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -602,7 +558,31 @@ const TrackItem: Component<TrackItemProps> = (props) => {
                 <i class="fas fa-heart mr-2"></i>
                 <span>LIKE TRACK</span>
               </button>
+            </div>
 
+            {/* Status Indicator - Right Side */}
+            <div 
+              class="font-mono font-bold text-sm px-3 py-2 rounded"
+              style={{
+                color: isCurrentTrack() 
+                  ? (isPlaying() ? '#00f92a' : '#ff9b00')
+                  : (isPlayable() ? '#00f92a' : '#ff4444'),
+                background: isCurrentTrack() 
+                  ? (isPlaying() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(211, 246, 10, 0.1)')
+                  : (isPlayable() ? 'rgba(0, 249, 42, 0.1)' : 'rgba(255, 68, 68, 0.1)'),
+                border: isCurrentTrack() 
+                  ? (isPlaying() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(211, 246, 10, 0.3)')
+                  : (isPlayable() ? '1px solid rgba(0, 249, 42, 0.3)' : '1px solid rgba(255, 68, 68, 0.3)'),
+                'text-shadow': isCurrentTrack() 
+                  ? (isPlaying() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(211, 246, 10, 0.6)')
+                  : (isPlayable() ? '0 0 5px rgba(0, 249, 42, 0.6)' : '0 0 5px rgba(255, 68, 68, 0.6)')
+              }}
+            >
+              {isCurrentTrack() 
+                ? (isPlaying() ? '▶ PLAYING' : '⏸ PAUSED')
+                : (isPlayable() ? 'READY' : 'AUTH REQ')
+              }
+            </div>
           </div>
         </div>
       </div>

@@ -279,44 +279,45 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               </h1>
             </div>
 
-            {/* Creator Info - Enhanced Typography */}
+            {/* Creator Info - Compact Single Row Layout */}
             <div style={{ marginBottom: 'var(--zen-space-md)' }}>
-              <div 
-                class="font-mono uppercase tracking-wide"
-                style={{
-                  'font-size': 'var(--zen-text-xs)',
-                  marginBottom: 'var(--zen-space-xs)',
-                  color: 'rgba(249, 6, 214, 0.6)',
-                  'text-shadow': '0 0 2px rgba(249, 6, 214, 0.3)'
-                }}
-              >
-                CREATED BY
+              <div class="flex items-center gap-3">
+                <span 
+                  class="font-mono uppercase tracking-wide"
+                  style={{
+                    'font-size': 'var(--zen-text-xs)',
+                    color: 'rgba(249, 6, 214, 0.6)',
+                    'text-shadow': '0 0 2px rgba(249, 6, 214, 0.3)'
+                  }}
+                >
+                  CREATED BY
+                </span>
+                <button 
+                  class="font-mono font-bold transition-all duration-200"
+                  style={{
+                    'font-size': 'var(--zen-text-md)', /* Clear hierarchy below title */
+                    color: '#f906d6',
+                    'text-shadow': '0 0 5px rgba(249, 6, 214, 0.5)',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#00f92a';
+                    e.currentTarget.style.textShadow = '0 0 8px rgba(0, 249, 42, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = '#f906d6';
+                    e.currentTarget.style.textShadow = '0 0 5px rgba(249, 6, 214, 0.5)';
+                  }}
+                  onClick={() => props.onCreatorClick(props.playlist.createdBy)}
+                >
+                  {props.playlist.createdBy}
+                </button>
               </div>
-              <button 
-                class="font-mono font-bold transition-all duration-200"
-                style={{
-                  'font-size': 'var(--zen-text-md)', /* Clear hierarchy below title */
-                  color: '#f906d6',
-                  'text-shadow': '0 0 5px rgba(249, 6, 214, 0.5)',
-                  'font-family': 'Courier New, monospace'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#00f92a';
-                  e.currentTarget.style.textShadow = '0 0 8px rgba(0, 249, 42, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#f906d6';
-                  e.currentTarget.style.textShadow = '0 0 5px rgba(249, 6, 214, 0.5)';
-                }}
-                onClick={() => props.onCreatorClick(props.playlist.createdBy)}
-              >
-                {props.playlist.createdBy}
-              </button>
             </div>
 
             {/* Playlist Description */}
             {props.playlist.description && (
-              <div style={{ marginBottom: 'var(--zen-space-md)' }}>
+              <div style={{ 'margin-bottom': 'var(--zen-space-md)' }}>
                 <p 
                   class="font-mono leading-relaxed"
                   style={{
