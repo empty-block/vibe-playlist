@@ -118,32 +118,93 @@ const HomePage: Component = () => {
 
   return (
     <div 
-      class="h-full flex"
-      style={{
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
+      class="min-h-screen"
+      style={{ 
+        background: '#0f0f0f'
       }}
     >
-      {/* Main Content - Playlist - Enhanced zen spacing */}
-      <div class="flex-1 overflow-y-auto" style={{ padding: 'var(--zen-space-sm) var(--zen-space-md)' }}>
-          {/* Enhanced Playlist Header with Conversation UI */}
-          <PlaylistHeader 
-            playlist={playlists[currentPlaylistId()]} 
-            onCreatorClick={handleCreatorClick}
-            searchQuery={searchQuery}
-            onSearchInput={setSearchQuery}
-            sortBy={sortBy}
-            onSortChange={(value) => setSortBy(value as SortOption)}
-            onReply={handleReply}
-            onAddTrack={handleAddTrack}
-            onPlayPlaylist={handlePlayPlaylist}
-          />
+      <div class="p-4 md:p-6 max-w-7xl mx-auto">
+        {/* PLAYLIST HEADER - Clean Section Style */}
+        <div 
+          class="mb-6 p-4 pl-6 border-l-4"
+          style={{
+            'border-color': '#00f92a'
+          }}
+        >
+          <h1 
+            class="font-bold text-2xl lg:text-3xl"
+            style={{
+              color: '#f906d6',
+              'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
+              'letter-spacing': '0.1em'
+            }}
+          >
+            {playlists[currentPlaylistId()]?.name || 'Loading...'}
+          </h1>
+        </div>
+
+        {/* Enhanced Playlist Header with Conversation UI */}
+        <PlaylistHeader 
+          playlist={playlists[currentPlaylistId()]} 
+          onCreatorClick={handleCreatorClick}
+          searchQuery={searchQuery}
+          onSearchInput={setSearchQuery}
+          sortBy={sortBy}
+          onSortChange={(value) => setSortBy(value as SortOption)}
+          onReply={handleReply}
+          onAddTrack={handleAddTrack}
+          onPlayPlaylist={handlePlayPlaylist}
+        />
+        
+        {/* TRACK LIST SECTION */}
+        <div 
+          class="mb-8"
+          style={{ 
+            'margin-bottom': '84px'
+          }}
+        >
+          <div 
+            class="mb-6 pl-4 border-l-4"
+            style={{
+              'border-color': '#04caf4'
+            }}
+          >
+            <h2 
+              class="font-bold text-lg md:text-xl lg:text-2xl mb-1"
+              style={{
+                color: '#ffffff'
+              }}
+            >
+              <i class="fas fa-music mr-3 text-base" style={{ color: '#04caf4' }}></i>
+              Tracks
+            </h2>
+          </div>
           
           {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="space-y-3" id="playlist-container" style={{ background: 'transparent' }}>
+          <div ref={trackContainerRef!} class="space-y-4" id="playlist-container">
             {filteredTracks().length === 0 ? (
-              <div class="text-center py-8 text-gray-500">
-                <i class="fas fa-search text-4xl mb-4"></i>
-                <p>No tracks found matching "{searchQuery()}"</p>
+              <div 
+                class="p-12 text-center rounded-lg"
+                style={{
+                  background: '#1a1a1a',
+                  border: '2px solid rgba(4, 202, 244, 0.2)'
+                }}
+              >
+                <i 
+                  class="fas fa-search text-6xl mb-6"
+                  style={{
+                    color: 'rgba(4, 202, 244, 0.5)',
+                    filter: 'drop-shadow(0 0 10px rgba(4, 202, 244, 0.3))'
+                  }}
+                ></i>
+                <p 
+                  class="text-lg"
+                  style={{
+                    color: 'rgba(4, 202, 244, 0.7)'
+                  }}
+                >
+                  No tracks found matching "{searchQuery()}"
+                </p>
               </div>
             ) : (
               <For each={filteredTracks()}>
@@ -160,151 +221,40 @@ const HomePage: Component = () => {
               </For>
             )}
           </div>
-      </div>
-      
-      {/* Discovery Console - Right Sidebar (Desktop only) - Cyberpunk Redesign */}
-      <div 
-        class="hidden lg:flex w-60 flex-shrink-0 flex-col"
-        style={{
-          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-          'border-left': '1px solid rgba(4, 202, 244, 0.3)',
-          'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.8)'
-        }}
-      >
-        {/* Console Header */}
-        <div 
-          class="relative p-4 border-b"
-          style={{
-            background: 'linear-gradient(145deg, #0d0d0d, #1d1d1d)',
-            'border-bottom-color': 'rgba(4, 202, 244, 0.3)',
-            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
-          }}
-        >
-          {/* Subtle scan lines */}
-          <div 
-            class="absolute inset-0 pointer-events-none opacity-5"
-            style={{
-              background: `repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 2px,
-                rgba(4, 202, 244, 0.1) 3px,
-                rgba(4, 202, 244, 0.1) 4px
-              )`
-            }}
-          />
-          
-          {/* Status indicator */}
-          <div class="flex items-center gap-2 mb-2">
-            <div 
-              class="w-2 h-2 rounded-full animate-pulse"
-              style={{
-                background: '#00f92a',
-                'box-shadow': '0 0 6px rgba(0, 249, 42, 0.6)'
-              }}
-            />
-            <span 
-              class="text-xs font-mono uppercase tracking-widest"
-              style={{
-                color: '#04caf4',
-                'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)',
-                'font-family': 'Courier New, monospace'
-              }}
-            >
-              DISCOVERY ONLINE
-            </span>
-          </div>
-          
-          <h3 
-            class="font-mono font-bold text-lg"
-            style={{
-              color: '#04caf4',
-              'text-shadow': '0 0 5px rgba(4, 202, 244, 0.7)',
-              'font-family': 'Courier New, monospace',
-              'letter-spacing': '0.1em'
-            }}
-          >
-            DISCOVER
-          </h3>
-          
-          <div class="text-xs font-mono mt-1" style={{ color: 'rgba(4, 202, 244, 0.6)' }}>
-            {Object.values(playlists).length} ARCHIVES DETECTED
-          </div>
         </div>
 
-        {/* All Playlists - Scrollable */}
-        <div class="flex-1 overflow-y-auto">
+        {/* DISCOVER MORE SECTION */}
+        <div class="mb-8">
           <div 
-            class="p-3 border-b"
+            class="mb-6 pl-4 border-l-4"
             style={{
-              'border-bottom-color': 'rgba(4, 202, 244, 0.2)',
-              'border-left': '3px solid #04caf4'
+              'border-color': '#f906d6'
             }}
           >
-            <div class="flex items-center gap-2 mb-3">
-              <i class="fas fa-list text-xs" style={{ color: '#04caf4' }}></i>
-              <span 
-                class="text-xs font-mono font-bold uppercase tracking-wide"
-                style={{
-                  color: '#04caf4',
-                  'text-shadow': '0 0 3px rgba(4, 202, 244, 0.6)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                ALL PLAYLISTS
-              </span>
-            </div>
+            <h2 
+              class="font-bold text-lg md:text-xl lg:text-2xl mb-1"
+              style={{
+                color: '#ffffff'
+              }}
+            >
+              <i class="fas fa-compass mr-3 text-base" style={{ color: '#f906d6' }}></i>
+              Discover More Playlists
+            </h2>
+            <p 
+              class="text-sm"
+              style={{
+                color: 'rgba(249, 6, 214, 0.7)'
+              }}
+            >
+              Explore other music collections
+            </p>
           </div>
           
-          <div class="p-3 space-y-3">
-            {Object.values(playlists).map((playlist) => (
-              <button
-                onClick={() => handlePlaylistChange(playlist.id)}
-                class="w-full text-left p-3 rounded transition-all duration-200"
-                style={{
-                  background: playlist.id === currentPlaylistId() 
-                    ? 'rgba(0, 249, 42, 0.1)' 
-                    : 'rgba(4, 202, 244, 0.05)',
-                  border: playlist.id === currentPlaylistId()
-                    ? '1px solid rgba(0, 249, 42, 0.4)'
-                    : '1px solid rgba(4, 202, 244, 0.2)'
-                }}
-                onMouseEnter={(e) => {
-                  if (playlist.id !== currentPlaylistId()) {
-                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.1)';
-                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.4)';
-                    e.currentTarget.style.transform = 'translateX(4px)';
-                    e.currentTarget.style.boxShadow = '0 0 10px rgba(4, 202, 244, 0.2)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (playlist.id !== currentPlaylistId()) {
-                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.05)';
-                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.2)';
-                    e.currentTarget.style.transform = 'translateX(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }
-                }}
-              >
-                <div class="font-mono font-bold text-sm truncate" style={{ 
-                  color: playlist.id === currentPlaylistId() ? '#00f92a' : '#04caf4',
-                  'font-family': 'Courier New, monospace'
-                }}>
-                  {playlist.name}
-                </div>
-                <div class="text-xs font-mono truncate mt-1" style={{ 
-                  color: 'rgba(255, 255, 255, 0.6)' 
-                }}>
-                  BY {playlist.createdBy}
-                </div>
-                <div class="text-xs font-mono truncate" style={{ 
-                  color: 'rgba(4, 202, 244, 0.7)' 
-                }}>
-                  {playlist.trackCount} TRACKS
-                </div>
-              </button>
-            ))}
-          </div>
+          {/* Discovery Bar Component */}
+          <DiscoveryBar
+            playlists={Object.values(playlists).filter(p => p.id !== currentPlaylistId())}
+            onPlaylistClick={handlePlaylistChange}
+          />
         </div>
       </div>
     </div>

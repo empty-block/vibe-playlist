@@ -46,35 +46,20 @@ const DiscoverPage: Component = () => {
       <div class="p-4 md:p-6 max-w-7xl mx-auto">
       {/* DISCOVERY HEADER */}
       <div 
-        class="text-center mb-8 p-8 rounded-lg"
+        class="mb-6 p-4 pl-6 border-l-4 flex items-center gap-3"
         style={{
-          background: '#1a1a1a',
-          border: '2px solid #333333'
+          'border-color': '#00f92a'
         }}
       >
-        
-        {/* Status indicator */}
-        <div class="flex items-center justify-center gap-3 md:gap-4 mb-6 md:mb-8">
-          <div 
-            class="w-3 h-3 rounded-full animate-pulse"
-            style={{
-              background: '#00f92a',
-              'box-shadow': '0 0 8px rgba(0, 249, 42, 0.6)'
-            }}
-          />
-          <span 
-            class="text-xs md:text-sm font-bold uppercase tracking-wide"
-            style={{
-              color: '#04caf4',
-              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)'
-            }}
-          >
-            Discovery Online
-          </span>
-        </div>
-        
+        <div 
+          class="w-3 h-3 rounded-full animate-pulse flex-shrink-0"
+          style={{
+            background: '#00f92a',
+            'box-shadow': '0 0 8px rgba(0, 249, 42, 0.6)'
+          }}
+        />
         <h1 
-          class="font-bold text-3xl lg:text-4xl"
+          class="font-bold text-2xl lg:text-3xl"
           style={{
             color: '#f906d6',
             'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
