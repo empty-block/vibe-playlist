@@ -2,14 +2,6 @@
 
 ## 🎨 Design Philosophy
 
-### Retro-Future Aesthetic
-Jamzy blends **90s nostalgia with modern usability**, creating a unique retro-digital aesthetic that feels both familiar and fresh:
-
-- **Windows 95 Heritage**: Chunky buttons, inset/outset borders, classic window chrome
-- **Digital Music Player DNA**: Inspired by early Winamp, iTunes, and portable MP3 players
-- **Digital Radio Interface**: Channel-surfing, frequency-tuning visual metaphors
-- **Modern Foundations**: Clean layouts, intuitive navigation, mobile-first responsive design
-
 ### Core Design Principles
 
 1. **Social-First Design**: Every interface element emphasizes community and conversation
@@ -52,42 +44,7 @@ Jamzy blends **90s nostalgia with modern usability**, creating a unique retro-di
 
 ## 🖼️ Component Design Language
 
-### Windows 95 Inspired Elements
-
-**Buttons**: Classic raised/pressed appearance
-```css
-/* Raised button state */
-border: 2px solid;
-border-color: #dfdfdf #808080 #808080 #dfdfdf;
-background: #c0c0c0;
-
-/* Pressed button state */
-border-color: #808080 #dfdfdf #dfdfdf #808080;
-background: #a0a0a0;
-```
-
-**Window Chrome**: Title bars, borders, frames
-```css
-/* Window title bar */
-background: linear-gradient(90deg, #000080 0%, #0000ff 100%);
-color: white;
-font-weight: bold;
-padding: 4px 8px;
-
-/* Window border */
-border: 2px solid;
-border-color: #dfdfdf #808080 #808080 #dfdfdf;
-```
-
-**Inset Areas**: Content containers, input fields
-```css
-/* Inset container */
-border: 2px solid;
-border-color: #808080 #dfdfdf #dfdfdf #808080;
-background: #f0f0f0;
-```
-
-### Modern Enhancements
+Retro inspired components with a modern touch.
 
 **Neon Glow Effects**: For interactive elements
 ```css
@@ -113,42 +70,6 @@ background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%)
 /* Accent gradient */
 background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%);
 ```
-
-## 🧩 Component Patterns
-
-### Social-First Interface Elements
-
-**User Profiles**: Always prominent and interactive
-- Avatar with neon border treatment
-- Username in neon orange for visibility
-- Quick access to user's playlist/jams
-- Social stats prominently displayed
-
-**Playlist Cards**: Central organizing metaphor
-- Retro "CD case" or "cassette" visual styling
-- Creator info prominently featured
-- Track count and social engagement metrics
-- Hover effects with neon glow
-
-**Track Items**: Social discussion threads
-- Thumbnail with play button overlay
-- Multiple contributor avatars for collaborative playlists
-- Reply/reaction counts prominently shown
-- Current playing state with animated neon border
-
-### Navigation & Layout
-
-**Windows 95 Window Manager**: Multiple "applications" within the interface
-- Taskbar with active window indicators
-- Window title bars with classic controls
-- Draggable/resizable panels (where appropriate)
-- Start menu-style navigation
-
-**Digital Music Player Layout**: Familiar audio interface patterns
-- Visualizer areas (animated waveforms, spectrum analyzers)
-- Transport controls (play/pause/skip) in familiar locations
-- Volume sliders and progress bars
-- Playlist panel always visible
 
 ## 📱 Responsive Design Philosophy
 
@@ -182,7 +103,7 @@ background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%
 ## 🔤 Typography
 
 ### Font Hierarchy
-- **Display**: Bold, chunky fonts for headers and branding
+- **Display**: Retro digital 90s fonts for headers and branding
 - **Interface**: Clean, readable fonts for UI text
 - **Monospace**: For technical information (timestamps, IDs)
 - **Retro Accent**: Pixel-perfect fonts for special retro elements
@@ -202,7 +123,6 @@ background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%
 - **Button Spacing**: 12px between button groups
 
 ### Retro Layout Principles
-- **Chunky Borders**: 2-4px borders for authentic feel
 - **Clear Separation**: Distinct visual boundaries between areas
 - **Information Density**: Balance retro aesthetics with modern readability
 - **Alignment**: Consistent left-alignment for easy scanning
@@ -227,11 +147,6 @@ background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%
 }
 ```
 
-### Retro Visual Elements
-- **Scan Lines**: Subtle CRT-style effects on video areas
-- **Pixelated Icons**: 16x16 or 32x32 pixel art for system icons
-- **Progress Indicators**: Chunky progress bars with neon fills
-- **Loading Animations**: Retro-style spinners and progress indicators
 
 ## 🎵 Music-Specific Design Elements
 
@@ -249,14 +164,13 @@ background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%
 
 ### Social Music Elements
 - **Contributor Avatars**: Stacked avatars showing playlist collaborators
-- **Reaction Buttons**: Heart, add, share with neon hover effects
+- **Reaction Buttons**: Heart, add with neon hover effects
 - **Comment Threads**: Nested replies with connector lines
-- **Live Activity**: Real-time indicators for what friends are playing
 
 ## 📋 Implementation Guidelines
 
 ### Code Organization
-- **Component Libraries**: Reusable social components (`/src/components/social/`)
+- **Component Libraries**: Reusable components (`/src/components/`)
 - **Design Tokens**: CSS custom properties for consistent theming
 - **Animation Utilities**: Centralized anime.js effects (`/src/utils/animations.ts`)
 - **Responsive Utilities**: Mobile-first CSS with desktop enhancements
@@ -273,19 +187,6 @@ background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%
 - **Device Testing**: Regular testing on mobile devices and various screen sizes
 - **User Testing**: Regular feedback sessions with target demographic
 
-## 🚀 Future Evolution
-
-### Planned Enhancements
-- **Customizable Themes**: User-selectable color schemes and retro styles
-- **Advanced Animations**: More sophisticated particle effects and transitions
-- **AR/VR Elements**: 3D visualizations and immersive music experiences
-- **Accessibility Improvements**: Enhanced screen reader support and voice navigation
-
-### Maintaining Design Integrity
-- **Design System Documentation**: Living style guide with interactive examples
-- **Component Library**: Storybook or similar for component documentation
-- **Design Reviews**: Regular reviews to ensure consistency across features
-- **User Feedback Integration**: Continuous improvement based on user research
 
 ---
 

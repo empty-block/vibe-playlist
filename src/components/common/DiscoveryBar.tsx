@@ -86,10 +86,10 @@ const DiscoveryBar: Component<DiscoveryBarProps> = (props) => {
               </div>
             </div>
 
-            {/* Medium Screen: 3-column grid */}
+            {/* Medium Screen: 4-column grid */}
             <div class="hidden lg:block xl:hidden">
-              <div class="grid grid-cols-3 gap-4 pb-4 px-4">
-                <For each={props.playlists.slice(0, 3)}>
+              <div class="grid grid-cols-4 gap-4 pb-4 px-4">
+                <For each={props.playlists.slice(0, 4)}>
                   {(playlist) => (
                     <div class="p-1">
                       <PlaylistCard

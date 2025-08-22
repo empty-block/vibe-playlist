@@ -40,35 +40,21 @@ const DiscoverPage: Component = () => {
       class="min-h-screen"
       style={{ 
         opacity: '0',
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
+        background: '#0f0f0f'
       }}
     >
-      <div class="p-6 max-w-7xl mx-auto">
-      {/* SIMPLIFIED DISCOVERY HEADER */}
+      <div class="p-4 md:p-6 max-w-7xl mx-auto">
+      {/* DISCOVERY HEADER */}
       <div 
-        class="relative text-center mb-12 p-8 rounded-xl overflow-hidden"
+        class="text-center mb-8 p-8 rounded-lg"
         style={{
-          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-          border: '1px solid rgba(4, 202, 244, 0.2)',
-          'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
+          background: '#1a1a1a',
+          border: '2px solid #333333'
         }}
       >
-        {/* Subtle retro scan lines */}
-        <div 
-          class="absolute inset-0 pointer-events-none opacity-5"
-          style={{
-            background: `repeating-linear-gradient(
-              0deg,
-              transparent 0px,
-              transparent 3px,
-              rgba(4, 202, 244, 0.08) 4px,
-              rgba(4, 202, 244, 0.08) 5px
-            )`
-          }}
-        />
         
         {/* Status indicator */}
-        <div class="flex items-center justify-center gap-4 mb-8">
+        <div class="flex items-center justify-center gap-3 md:gap-4 mb-6 md:mb-8">
           <div 
             class="w-3 h-3 rounded-full animate-pulse"
             style={{
@@ -77,83 +63,64 @@ const DiscoverPage: Component = () => {
             }}
           />
           <span 
-            class="text-xs font-mono uppercase tracking-widest"
+            class="text-xs md:text-sm font-bold uppercase tracking-wide"
             style={{
               color: '#04caf4',
-              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)',
-              'font-family': 'Courier New, monospace'
+              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)'
             }}
           >
-            DISCOVERY SYSTEM ONLINE
+            Discovery Online
           </span>
         </div>
         
         <h1 
-          class="font-mono font-bold text-5xl lg:text-6xl"
+          class="font-bold text-3xl lg:text-4xl"
           style={{
             color: '#f906d6',
             'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
-            'font-family': 'Courier New, monospace',
             'letter-spacing': '0.1em'
           }}
         >
-          DISCOVER
+          Discover Music
         </h1>
       </div>
 
-      {/* NEON SEARCH TERMINAL */}
+      {/* SEARCH TERMINAL */}
       <div 
-        class="discover-section mb-12 relative p-6 rounded-xl overflow-hidden"
+        class="discover-section relative p-6 rounded-xl overflow-hidden"
         style={{ 
           opacity: '0',
-          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-          border: '1px solid rgba(0, 249, 42, 0.3)',
-          'box-shadow': `
-            inset 0 0 15px rgba(0, 0, 0, 0.8),
-            0 0 15px rgba(0, 249, 42, 0.1)
-          `
+          'margin-bottom': '52px',
+          background: '#1a1a1a',
+          border: '2px solid rgba(0, 249, 42, 0.4)'
         }}
       >
-        {/* Scan lines for search */}
-        <div 
-          class="absolute inset-0 pointer-events-none opacity-8"
-          style={{
-            background: `repeating-linear-gradient(
-              0deg,
-              transparent 0px,
-              transparent 2px,
-              rgba(0, 249, 42, 0.08) 3px,
-              rgba(0, 249, 42, 0.08) 4px
-            )`
-          }}
-        />
         
         <div 
-          class="text-sm font-mono uppercase tracking-wide mb-4"
+          class="text-sm md:text-base font-bold uppercase tracking-wide mb-4"
           style={{
             color: 'rgba(0, 249, 42, 0.7)',
             'text-shadow': '0 0 3px rgba(0, 249, 42, 0.5)'
           }}
         >
           <i class="fas fa-search mr-2"></i>
-          SEARCH DATABASE
+          Search Database
         </div>
         
-        <div class="flex items-center gap-3 max-w-3xl mx-auto">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 max-w-3xl mx-auto">
           <input
             type="text"
             placeholder="ENTER SEARCH PARAMETERS..."
             value={searchQuery()}
             onInput={(e) => setSearchQuery(e.currentTarget.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            class="flex-1 px-6 py-4 font-mono font-bold text-lg rounded"
+            class="flex-1 px-4 md:px-6 py-3 md:py-4 font-bold text-base md:text-lg rounded"
             style={{
               background: 'rgba(0, 0, 0, 0.9)',
               border: '2px solid rgba(0, 249, 42, 0.4)',
               color: '#00f92a',
               'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)',
-              'font-family': 'Courier New, monospace',
-              'min-height': '56px'
+              'min-height': '48px'
             }}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = '#00f92a';
@@ -166,26 +133,22 @@ const DiscoverPage: Component = () => {
           />
           <button 
             onClick={handleSearch}
-            class="px-6 py-4 font-mono font-bold text-lg transition-all duration-300 rounded"
+            class="px-4 md:px-6 py-3 md:py-4 font-bold text-base md:text-lg transition-all duration-300 rounded"
             style={{
-              background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-              border: '2px solid rgba(0, 249, 42, 0.4)',
+              background: 'linear-gradient(135deg, #3b00fd 0%, #04caf4 100%)',
+              border: '2px solid #3b00fd',
               color: '#ffffff',
-              'font-family': 'Courier New, monospace',
-              'min-height': '56px',
-              'min-width': '56px'
+              'min-height': '48px',
+              'min-width': '48px',
+              'box-shadow': '0 0 10px rgba(59, 0, 253, 0.3)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#00f92a';
-              e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
-              e.currentTarget.style.color = '#00f92a';
-              e.currentTarget.style.textShadow = '0 0 10px rgba(0, 249, 42, 0.9)';
+              e.currentTarget.style.boxShadow = '0 0 20px rgba(59, 0, 253, 0.6)';
+              e.currentTarget.style.transform = 'scale(1.02)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
-              e.currentTarget.style.boxShadow = 'none';
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.textShadow = 'none';
+              e.currentTarget.style.boxShadow = '0 0 10px rgba(59, 0, 253, 0.3)';
+              e.currentTarget.style.transform = 'scale(1)';
             }}
           >
             <i class="fas fa-search"></i>
@@ -194,7 +157,10 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* NEW DISCOVERIES */}
-      <div class="discover-section mb-16" style={{ opacity: '0' }}>
+      <div class="discover-section" style={{ 
+        opacity: '0',
+        'margin-bottom': '84px' 
+      }}>
         <div 
           class="mb-6 pl-4 border-l-4"
           style={{
@@ -202,24 +168,21 @@ const DiscoverPage: Component = () => {
           }}
         >
           <h2 
-            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            class="font-bold text-lg md:text-xl lg:text-2xl mb-1"
             style={{
-              color: '#ffffff',
-              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
-              'font-family': 'Courier New, monospace'
+              color: '#ffffff'
             }}
           >
             <i class="fas fa-sparkles mr-3 text-base" style={{ color: '#f906d6' }}></i>
-            NEW DISCOVERIES
+            New Discoveries
           </h2>
           <p 
-            class="font-mono text-sm"
+            class="text-sm"
             style={{
-              color: 'rgba(249, 6, 214, 0.7)',
-              'font-family': 'Courier New, monospace'
+              color: 'rgba(249, 6, 214, 0.7)'
             }}
           >
-            FRESH SONIC ARCHIVES DETECTED
+            Fresh sonic archives detected
           </p>
         </div>
         
@@ -230,7 +193,10 @@ const DiscoverPage: Component = () => {
       </div>
 
       {/* TRENDING DATA */}
-      <div class="discover-section mb-16" style={{ opacity: '0' }}>
+      <div class="discover-section" style={{ 
+        opacity: '0',
+        'margin-bottom': '84px' 
+      }}>
         <div 
           class="mb-6 pl-4 border-l-4"
           style={{
@@ -238,24 +204,21 @@ const DiscoverPage: Component = () => {
           }}
         >
           <h2 
-            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            class="font-bold text-lg md:text-xl lg:text-2xl mb-1"
             style={{
-              color: '#ffffff',
-              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
-              'font-family': 'Courier New, monospace'
+              color: '#ffffff'
             }}
           >
             <i class="fas fa-chart-line mr-3 text-base" style={{ color: '#ff9b00' }}></i>
-            TRENDING DATA
+            Trending Data
           </h2>
           <p 
-            class="font-mono text-sm"
+            class="text-sm"
             style={{
-              color: 'rgba(211, 246, 10, 0.7)',
-              'font-family': 'Courier New, monospace'
+              color: 'rgba(255, 155, 0, 0.7)'
             }}
           >
-            HIGH-FREQUENCY AUDIO STREAMS THIS CYCLE
+            High-frequency audio streams this cycle
           </p>
         </div>
         
@@ -274,24 +237,21 @@ const DiscoverPage: Component = () => {
           }}
         >
           <h2 
-            class="font-mono font-bold text-xl lg:text-2xl mb-1"
+            class="font-bold text-lg md:text-xl lg:text-2xl mb-1"
             style={{
-              color: '#ffffff',
-              'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.8)',
-              'font-family': 'Courier New, monospace'
+              color: '#ffffff'
             }}
           >
             <i class="fas fa-brain mr-3 text-base" style={{ color: '#04caf4' }}></i>
-            NEURAL MATCH
+            Neural Match
           </h2>
           <p 
-            class="font-mono text-sm"
+            class="text-sm"
             style={{
-              color: 'rgba(4, 202, 244, 0.7)',
-              'font-family': 'Courier New, monospace'
+              color: 'rgba(4, 202, 244, 0.7)'
             }}
           >
-            AI-ANALYZED PERSONAL TASTE PROFILE
+            AI-analyzed personal taste profile
           </p>
         </div>
         
