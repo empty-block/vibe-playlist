@@ -33,7 +33,7 @@ const TrendingPage: Component = () => {
 
   // Helper functions for neon color system
   const getRankColor = (rank: number) => {
-    if (rank === 1) return '#d1f60a'; // neon-yellow (gold)
+    if (rank === 1) return '#ff9b00'; // neon-orange (gold)
     if (rank <= 3) return '#04caf4';   // neon-cyan (silver) 
     if (rank <= 10) return '#00f92a';  // neon-green
     return '#f906d6';                  // neon-pink

@@ -106,12 +106,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
   });
 
   return (
-    <div class="mb-4">
+    <div style={{ marginBottom: 'var(--zen-space-md)' }}>
       {/* MAIN PLAYLIST HEADER - RETRO DIGITAL DISPLAY */}
       <div 
         ref={headerRef!}
-        class="relative p-5 mb-5 rounded-xl overflow-hidden"
+        class="relative rounded-xl overflow-hidden"
         style={{
+          padding: 'var(--zen-space-lg)', /* More generous padding */
+          marginBottom: 'var(--zen-space-lg)',
           background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
           border: '2px solid rgba(4, 202, 244, 0.25)',
           'box-shadow': `
@@ -162,16 +164,37 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               PLAYLIST LOADED
             </span>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-3">
             <span 
               class="text-xs font-mono"
               style={{
-                color: '#d1f60a',
-                'text-shadow': '0 0 3px rgba(211, 246, 10, 0.4)'
+                color: '#ff9b00',
+                'text-shadow': '0 0 3px rgba(255, 155, 0, 0.4)'
               }}
             >
               {props.playlist.trackCount} TRACKS
             </span>
+            <span class="text-xs text-gray-400">•</span>
+            <button 
+              class="text-xs font-mono font-bold transition-all duration-200"
+              style={{
+                color: '#f906d6',
+                'text-shadow': '0 0 3px rgba(249, 6, 214, 0.6)',
+                'font-family': 'Courier New, monospace'
+              }}
+              title="See who liked this playlist"
+              onClick={() => console.log('Show who liked the playlist')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#00f92a';
+                e.currentTarget.style.textShadow = '0 0 6px rgba(0, 249, 42, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#f906d6';
+                e.currentTarget.style.textShadow = '0 0 3px rgba(249, 6, 214, 0.6)';
+              }}
+            >
+              ❤ {playlistLikes()} LIKES
+            </button>
             <span class="text-lg">🎵</span>
           </div>
         </div>
@@ -240,26 +263,29 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.6)'
             }}
           >
-            {/* Playlist Title - LCD Style */}
-            <div class="mb-5">
+            {/* Playlist Title - Enhanced Typography Scale */}
+            <div style={{ marginBottom: 'var(--zen-space-lg)' }}>
               <h1 
-                class="font-mono font-bold text-3xl lg:text-4xl leading-tight break-words"
+                class="font-mono font-bold leading-tight break-words"
                 style={{
+                  'font-size': 'var(--zen-text-lg)', /* More readable main title size */
                   color: '#04caf4',
                   'text-shadow': '0 0 5px rgba(4, 202, 244, 0.5)',
                   'font-family': 'Courier New, monospace'
                 }}
               >
                 {props.playlist.name}
-                <span class="ml-3 text-3xl lg:text-4xl">🎸</span>
+                <span style={{ marginLeft: 'var(--zen-space-sm)', fontSize: 'var(--zen-text-lg)' }}>🎸</span>
               </h1>
             </div>
 
-            {/* Creator Info - LCD Style */}
-            <div class="mb-4">
+            {/* Creator Info - Enhanced Typography */}
+            <div style={{ marginBottom: 'var(--zen-space-md)' }}>
               <div 
-                class="text-sm font-mono uppercase tracking-wide mb-2"
+                class="font-mono uppercase tracking-wide"
                 style={{
+                  'font-size': 'var(--zen-text-xs)',
+                  marginBottom: 'var(--zen-space-xs)',
                   color: 'rgba(249, 6, 214, 0.6)',
                   'text-shadow': '0 0 2px rgba(249, 6, 214, 0.3)'
                 }}
@@ -267,8 +293,9 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 CREATED BY
               </div>
               <button 
-                class="font-mono font-bold text-xl lg:text-2xl transition-all duration-200"
+                class="font-mono font-bold transition-all duration-200"
                 style={{
+                  'font-size': 'var(--zen-text-md)', /* Clear hierarchy below title */
                   color: '#f906d6',
                   'text-shadow': '0 0 5px rgba(249, 6, 214, 0.5)',
                   'font-family': 'Courier New, monospace'
@@ -287,13 +314,32 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               </button>
             </div>
 
-            {/* Compact Action Bar - Single horizontal line */}
-            <div class="flex flex-col sm:flex-row gap-4 items-center">
-              {/* Add Track Button */}
+            {/* Playlist Description */}
+            {props.playlist.description && (
+              <div style={{ marginBottom: 'var(--zen-space-md)' }}>
+                <p 
+                  class="font-mono leading-relaxed"
+                  style={{
+                    'font-size': 'var(--zen-text-sm)',
+                    color: '#ff9b00',
+                    'text-shadow': '0 0 3px rgba(255, 155, 0, 0.4)',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                >
+                  {props.playlist.description}
+                </p>
+              </div>
+            )}
+
+            {/* Enhanced Action Bar - Zen spacing and touch targets */}
+            <div class="flex flex-col sm:flex-row items-center" style={{ gap: 'var(--zen-space-md)' }}>
+              {/* Add Track Button - Enhanced touch target */}
               <button
                 onClick={handleAddTrack}
-                class="px-6 py-3 font-mono font-bold text-sm transition-all duration-300 w-full sm:w-auto"
+                class="zen-touch-target font-mono font-bold transition-all duration-300 w-full sm:w-auto"
                 style={{
+                  padding: 'var(--zen-space-sm) var(--zen-space-lg)',
+                  'font-size': 'var(--zen-text-xs)',
                   background: showReplyBox() 
                     ? 'linear-gradient(145deg, #1a4a1a, #2a2a2a)' 
                     : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
@@ -302,7 +348,6 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                     : '2px solid rgba(0, 249, 42, 0.4)',
                   color: showReplyBox() ? '#00f92a' : '#ffffff',
                   'border-radius': '6px',
-                  'min-height': '44px',
                   'font-family': 'Courier New, monospace',
                   'letter-spacing': '0.05em',
                   'box-shadow': showReplyBox() 
@@ -367,30 +412,6 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               >
                 <i class="fas fa-heart mr-2"></i>
                 LIKE
-              </button>
-              
-              {/* Simplified Likes Count Display */}
-              <button 
-                class="font-mono font-bold text-lg transition-all duration-200 px-3 py-2 rounded ml-auto"
-                style={{
-                  color: '#d1f60a',
-                  'text-shadow': '0 0 6px rgba(211, 246, 10, 0.6)',
-                  'font-family': 'Courier New, monospace',
-                  background: 'rgba(211, 246, 10, 0.08)',
-                  border: '1px solid rgba(211, 246, 10, 0.25)'
-                }}
-                title="See who liked this playlist"
-                onClick={() => console.log('Show who liked the playlist')}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 12px rgba(211, 246, 10, 0.4)';
-                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.background = 'rgba(211, 246, 10, 0.08)';
-                }}
-              >
-                ❤ {playlistLikes()}
               </button>
             </div>
           </div>
@@ -471,67 +492,37 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
         </div>
       </Show>
       
-      {/* RETRO SEARCH AND SORT CONTROLS */}
+      {/* COMPACT SEARCH AND SORT CONTROLS */}
       {props.searchQuery && props.onSearchInput && (
-        <div 
-          class="p-4 mb-4 rounded-xl overflow-hidden"
-          style={{
+        <div class="mb-4">
+          {/* Single Row Layout: Sort + Search - More Compact */}
+          <div class="flex flex-col lg:flex-row gap-4 p-4 rounded-lg" style={{
             background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-            border: '1px solid rgba(249, 6, 214, 0.2)',
-            'box-shadow': `
-              inset 0 0 15px rgba(0, 0, 0, 0.6),
-              inset 0 1px 0 rgba(255, 255, 255, 0.06),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.3),
-              0 0 10px rgba(249, 6, 214, 0.1)
-            `
-          }}
-        >
-          {/* Retro Scan Lines Effect */}
-          <div 
-            class="absolute inset-0 pointer-events-none opacity-6"
-            style={{
-              background: `repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 2px,
-                rgba(249, 6, 214, 0.05) 3px,
-                rgba(249, 6, 214, 0.05) 4px
-              )`
-            }}
-          />
-          
-
-          <div class="flex flex-col lg:flex-row gap-6">
-            {/* Sort Control - LCD Style */}
+            border: '1px solid rgba(249, 6, 214, 0.2)'
+          }}>
+            {/* Sort Control - Inline Label */}
             {props.sortBy && props.onSortChange && (
-              <div 
-                class="p-4 rounded-lg lg:min-w-64"
-                style={{
-                  background: 'rgba(0, 0, 0, 0.9)',
-                  border: '1px solid rgba(4, 202, 244, 0.3)',
-                  'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.8)'
-                }}
-              >
-                <div 
-                  class="text-sm font-mono uppercase tracking-wide mb-3"
+              <div class="flex flex-col lg:flex-row lg:items-center gap-3 lg:min-w-80">
+                <label 
+                  class="text-sm font-mono uppercase tracking-wide flex-shrink-0"
                   style={{
                     color: 'rgba(4, 202, 244, 0.6)',
                     'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)'
                   }}
                 >
-                  SORT ORDER
-                </div>
+                  SORT ORDER:
+                </label>
                 <select
                   value={props.sortBy()}
                   onChange={(e) => props.onSortChange!(e.currentTarget.value)}
-                  class="w-full px-4 py-3 font-mono font-bold text-base rounded"
+                  class="flex-1 px-4 py-2 font-mono font-bold text-base rounded"
                   style={{
                     background: 'rgba(0, 0, 0, 0.8)',
                     border: '2px solid rgba(4, 202, 244, 0.4)',
                     color: '#04caf4',
                     'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '52px'
+                    'min-height': '44px'
                   }}
                   title="Sort tracks"
                 >
@@ -542,38 +533,21 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
               </div>
             )}
             
-            {/* Search Control - LCD Style */}
-            <div 
-              class="flex-1 p-4 rounded-lg"
-              style={{
-                background: 'rgba(0, 0, 0, 0.9)',
-                border: '1px solid rgba(0, 249, 42, 0.3)',
-                'box-shadow': 'inset 0 0 10px rgba(0, 0, 0, 0.8)'
-              }}
-            >
-              <div 
-                class="text-sm font-mono uppercase tracking-wide mb-3"
-                style={{
-                  color: 'rgba(0, 249, 42, 0.6)',
-                  'text-shadow': '0 0 3px rgba(0, 249, 42, 0.4)'
-                }}
-              >
-                SEARCH TRACKS
-              </div>
-              <div class="flex gap-3">
+            {/* Search Control - No Label */}
+            <div class="flex gap-3 flex-1">
                 <input
                   type="text"
                   placeholder="ENTER SEARCH QUERY..."
                   value={props.searchQuery()}
                   onInput={(e) => props.onSearchInput!(e.currentTarget.value)}
-                  class="flex-1 px-4 py-3 font-mono font-bold text-base rounded"
+                  class="flex-1 px-4 py-2 font-mono font-bold text-base rounded"
                   style={{
                     background: 'rgba(0, 0, 0, 0.8)',
                     border: '2px solid rgba(0, 249, 42, 0.4)',
                     color: '#00f92a',
                     'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '52px'
+                    'min-height': '44px'
                   }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = '#00f92a';
@@ -585,14 +559,14 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                   }}
                 />
                 <button 
-                  class="px-5 py-3 font-mono font-bold text-base transition-all duration-300 rounded"
+                  class="px-4 py-2 font-mono font-bold text-base transition-all duration-300 rounded"
                   style={{
                     background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
                     border: '2px solid rgba(0, 249, 42, 0.4)',
                     color: '#ffffff',
                     'font-family': 'Courier New, monospace',
-                    'min-height': '52px',
-                    'min-width': '52px'
+                    'min-height': '44px',
+                    'min-width': '44px'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = '#00f92a';
@@ -610,7 +584,6 @@ const PlaylistHeader: Component<PlaylistHeaderProps> = (props) => {
                 >
                   <i class="fas fa-search"></i>
                 </button>
-              </div>
             </div>
           </div>
         </div>

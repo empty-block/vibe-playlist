@@ -134,8 +134,8 @@ const DiscoveryBar: Component<DiscoveryBarProps> = (props) => {
             <p 
               class="text-xs font-mono font-bold uppercase tracking-widest flex items-center justify-center gap-2"
               style={{
-                color: '#d1f60a',
-                'text-shadow': '0 0 3px rgba(211, 246, 10, 0.5)',
+                color: '#ff9b00',
+                'text-shadow': '0 0 3px rgba(255, 155, 0, 0.5)',
                 'font-family': 'Courier New, monospace'
               }}
             >

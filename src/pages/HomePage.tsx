@@ -117,20 +117,14 @@ const HomePage: Component = () => {
   });
 
   return (
-    <div class="h-full flex">
-      {/* Discovery Bar - Left Sidebar (Desktop only) - Fixed, no scroll */}
-      <div class="hidden lg:flex w-56 flex-shrink-0 bg-white">
-        <div class="p-3 flex flex-col h-full">
-          <DiscoveryBar
-            playlists={Object.values(playlists)}
-            onPlaylistClick={handlePlaylistChange}
-            variant="vertical"
-          />
-        </div>
-      </div>
-      
-      {/* Main Content - Playlist - THE ONLY SCROLLABLE AREA */}
-      <div class="flex-1 overflow-y-auto p-3 md:p-6">
+    <div 
+      class="h-full flex"
+      style={{
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
+      }}
+    >
+      {/* Main Content - Playlist - Enhanced zen spacing */}
+      <div class="flex-1 overflow-y-auto" style={{ padding: 'var(--zen-space-sm) var(--zen-space-md)' }}>
           {/* Enhanced Playlist Header with Conversation UI */}
           <PlaylistHeader 
             playlist={playlists[currentPlaylistId()]} 
@@ -145,7 +139,7 @@ const HomePage: Component = () => {
           />
           
           {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="space-y-3" id="playlist-container">
+          <div ref={trackContainerRef!} class="space-y-3" id="playlist-container" style={{ background: 'transparent' }}>
             {filteredTracks().length === 0 ? (
               <div class="text-center py-8 text-gray-500">
                 <i class="fas fa-search text-4xl mb-4"></i>
@@ -166,6 +160,152 @@ const HomePage: Component = () => {
               </For>
             )}
           </div>
+      </div>
+      
+      {/* Discovery Console - Right Sidebar (Desktop only) - Cyberpunk Redesign */}
+      <div 
+        class="hidden lg:flex w-60 flex-shrink-0 flex-col"
+        style={{
+          background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+          'border-left': '1px solid rgba(4, 202, 244, 0.3)',
+          'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.8)'
+        }}
+      >
+        {/* Console Header */}
+        <div 
+          class="relative p-4 border-b"
+          style={{
+            background: 'linear-gradient(145deg, #0d0d0d, #1d1d1d)',
+            'border-bottom-color': 'rgba(4, 202, 244, 0.3)',
+            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
+          }}
+        >
+          {/* Subtle scan lines */}
+          <div 
+            class="absolute inset-0 pointer-events-none opacity-5"
+            style={{
+              background: `repeating-linear-gradient(
+                0deg,
+                transparent 0px,
+                transparent 2px,
+                rgba(4, 202, 244, 0.1) 3px,
+                rgba(4, 202, 244, 0.1) 4px
+              )`
+            }}
+          />
+          
+          {/* Status indicator */}
+          <div class="flex items-center gap-2 mb-2">
+            <div 
+              class="w-2 h-2 rounded-full animate-pulse"
+              style={{
+                background: '#00f92a',
+                'box-shadow': '0 0 6px rgba(0, 249, 42, 0.6)'
+              }}
+            />
+            <span 
+              class="text-xs font-mono uppercase tracking-widest"
+              style={{
+                color: '#04caf4',
+                'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              DISCOVERY ONLINE
+            </span>
+          </div>
+          
+          <h3 
+            class="font-mono font-bold text-lg"
+            style={{
+              color: '#04caf4',
+              'text-shadow': '0 0 5px rgba(4, 202, 244, 0.7)',
+              'font-family': 'Courier New, monospace',
+              'letter-spacing': '0.1em'
+            }}
+          >
+            DISCOVER
+          </h3>
+          
+          <div class="text-xs font-mono mt-1" style={{ color: 'rgba(4, 202, 244, 0.6)' }}>
+            {Object.values(playlists).length} ARCHIVES DETECTED
+          </div>
+        </div>
+
+        {/* All Playlists - Scrollable */}
+        <div class="flex-1 overflow-y-auto">
+          <div 
+            class="p-3 border-b"
+            style={{
+              'border-bottom-color': 'rgba(4, 202, 244, 0.2)',
+              'border-left': '3px solid #04caf4'
+            }}
+          >
+            <div class="flex items-center gap-2 mb-3">
+              <i class="fas fa-list text-xs" style={{ color: '#04caf4' }}></i>
+              <span 
+                class="text-xs font-mono font-bold uppercase tracking-wide"
+                style={{
+                  color: '#04caf4',
+                  'text-shadow': '0 0 3px rgba(4, 202, 244, 0.6)',
+                  'font-family': 'Courier New, monospace'
+                }}
+              >
+                ALL PLAYLISTS
+              </span>
+            </div>
+          </div>
+          
+          <div class="p-3 space-y-3">
+            {Object.values(playlists).map((playlist) => (
+              <button
+                onClick={() => handlePlaylistChange(playlist.id)}
+                class="w-full text-left p-3 rounded transition-all duration-200"
+                style={{
+                  background: playlist.id === currentPlaylistId() 
+                    ? 'rgba(0, 249, 42, 0.1)' 
+                    : 'rgba(4, 202, 244, 0.05)',
+                  border: playlist.id === currentPlaylistId()
+                    ? '1px solid rgba(0, 249, 42, 0.4)'
+                    : '1px solid rgba(4, 202, 244, 0.2)'
+                }}
+                onMouseEnter={(e) => {
+                  if (playlist.id !== currentPlaylistId()) {
+                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.1)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.4)';
+                    e.currentTarget.style.transform = 'translateX(4px)';
+                    e.currentTarget.style.boxShadow = '0 0 10px rgba(4, 202, 244, 0.2)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (playlist.id !== currentPlaylistId()) {
+                    e.currentTarget.style.background = 'rgba(4, 202, 244, 0.05)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.2)';
+                    e.currentTarget.style.transform = 'translateX(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
+                }}
+              >
+                <div class="font-mono font-bold text-sm truncate" style={{ 
+                  color: playlist.id === currentPlaylistId() ? '#00f92a' : '#04caf4',
+                  'font-family': 'Courier New, monospace'
+                }}>
+                  {playlist.name}
+                </div>
+                <div class="text-xs font-mono truncate mt-1" style={{ 
+                  color: 'rgba(255, 255, 255, 0.6)' 
+                }}>
+                  BY {playlist.createdBy}
+                </div>
+                <div class="text-xs font-mono truncate" style={{ 
+                  color: 'rgba(4, 202, 244, 0.7)' 
+                }}>
+                  {playlist.trackCount} TRACKS
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

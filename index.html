@@ -45,7 +45,8 @@
             --secondary-color: #04caf4;   /* Neon cyan */
             --accent-color: #00f92a;      /* Bright green */
             --highlight-color: #f906d6;   /* Hot pink */
-            --warning-color: #d1f60a;     /* Neon yellow */
+            --emphasis-color: #ff9b00;    /* Neon orange - for text highlights */
+            --warning-color: #d1f60a;     /* Neon yellow - for warnings only */
             --success-color: #00f92a;     /* Bright green for success */
             --error-color: #f906d6;       /* Hot pink for errors */
             
@@ -262,6 +263,51 @@
 
         .neon-glow {
             animation: neon-pulse 2s ease-in-out infinite alternate;
+        }
+
+        /* ZEN DESIGN SYSTEM - Thoughtful spacing and typography */
+        :root {
+            /* Fibonacci Spacing Scale for Natural Breathing Room */
+            --zen-space-xs: 8px;      /* Tight spacing for related elements */
+            --zen-space-sm: 13px;     /* Comfortable spacing between components */
+            --zen-space-md: 21px;     /* Standard component padding */
+            --zen-space-lg: 34px;     /* Generous separation between sections */
+            --zen-space-xl: 55px;     /* Page-level margins and major spacing */
+            
+            /* Modular Typography Scale (1.333x Perfect Fourth) */
+            --zen-text-xs: 0.75rem;   /* 12px - metadata, timestamps */
+            --zen-text-sm: 1rem;      /* 16px - body text, artist names */
+            --zen-text-md: 1.333rem;  /* 21px - track titles, primary content */
+            --zen-text-lg: 1.777rem;  /* 28px - section headers */
+            --zen-text-xl: 2.369rem;  /* 38px - page titles */
+            
+            /* Touch Target Minimums for Accessibility */
+            --zen-touch-min: 44px;    /* Minimum interactive element size */
+            --zen-touch-comfortable: 52px; /* Comfortable touch target */
+            
+            /* Golden Ratio Proportions */
+            --zen-ratio-minor: 38.2%; /* Smaller section (sidebar, secondary content) */
+            --zen-ratio-major: 61.8%; /* Larger section (main content, primary focus) */
+            
+            /* Enhanced Color Opacity Scale */
+            --zen-alpha-subtle: 0.1;   /* Very light overlays */
+            --zen-alpha-light: 0.2;    /* Light backgrounds */
+            --zen-alpha-medium: 0.3;   /* Visible but not dominant */
+            --zen-alpha-strong: 0.5;   /* Clear visibility */
+        }
+        
+        /* Enhanced Touch Targets for Better Accessibility */
+        .zen-touch-target {
+            min-width: var(--zen-touch-min);
+            min-height: var(--zen-touch-min);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .zen-touch-comfortable {
+            min-width: var(--zen-touch-comfortable);
+            min-height: var(--zen-touch-comfortable);
         }
     </style>
 </head>

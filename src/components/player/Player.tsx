@@ -237,8 +237,8 @@ const Player: Component<PlayerProps> = (props) => {
                 {currentTrack()?.artist}
               </p>
               <p class="text-sm sm:text-base truncate mt-1" style={{
-                color: '#d1f60a',
-                'text-shadow': '0 0 4px #d1f60a',
+                color: '#ff9b00',
+                'text-shadow': '0 0 4px #ff9b00',
                 'font-family': 'monospace',
                 opacity: '0.8'
               }}>
@@ -260,9 +260,9 @@ const Player: Component<PlayerProps> = (props) => {
                 'border-top': '2px solid #555',
                 'border-left': '2px solid #444',
                 background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                color: '#d1f60a',
-                'text-shadow': '0 0 4px rgba(211, 246, 10, 0.6)',
-                'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(211, 246, 10, 0.3)',
+                color: '#ff9b00',
+                'text-shadow': '0 0 4px rgba(255, 155, 0, 0.6)',
+                'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)',
                 'font-family': 'monospace',
                 display: 'flex',
                 'align-items': 'center',
@@ -270,21 +270,21 @@ const Player: Component<PlayerProps> = (props) => {
               }}
               title="View current playlist"
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(145deg, #d1f60a 0%, #cddc39 50%, #9e9d24 100%)';
+                e.currentTarget.style.background = 'linear-gradient(145deg, #ff9b00 0%, #ff7c00 50%, #cc6600 100%)';
                 e.currentTarget.style.color = '#000000';
                 e.currentTarget.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
-                e.currentTarget.style.borderTopColor = '#d1f60a';
-                e.currentTarget.style.borderLeftColor = '#cddc39';
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(211, 246, 10, 0.6)';
+                e.currentTarget.style.borderTopColor = '#ff9b00';
+                e.currentTarget.style.borderLeftColor = '#ff7c00';
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(255, 155, 0, 0.6)';
                 e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
-                e.currentTarget.style.color = '#d1f60a';
-                e.currentTarget.style.textShadow = '0 0 4px rgba(211, 246, 10, 0.6)';
+                e.currentTarget.style.color = '#ff9b00';
+                e.currentTarget.style.textShadow = '0 0 4px rgba(255, 155, 0, 0.6)';
                 e.currentTarget.style.borderTopColor = '#555';
                 e.currentTarget.style.borderLeftColor = '#444';
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(211, 246, 10, 0.3)';
+                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)';
                 e.currentTarget.style.transform = 'translateY(0) scale(1)';
               }}
             >
@@ -336,7 +336,7 @@ const Player: Component<PlayerProps> = (props) => {
                   borderRadius: '6px',
                   border: '1px solid #555',
                   background: '#2a2a2a',
-                  color: '#d1f60a',
+                  color: '#ff9b00',
                   display: 'flex',
                   'align-items': 'center',
                   'justify-content': 'center',
@@ -387,7 +387,7 @@ const Player: Component<PlayerProps> = (props) => {
                   borderRadius: '6px',
                   border: '1px solid #555',
                   background: '#2a2a2a',
-                  color: '#d1f60a',
+                  color: '#ff9b00',
                   display: 'flex',
                   'align-items': 'center',
                   'justify-content': 'center',

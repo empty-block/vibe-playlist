@@ -312,16 +312,18 @@ The app uses a vibrant, high-contrast neon color scheme inspired by 1990s aesthe
 --neon-blue:   #3b00fd  /* Deep Blue/Violet - Primary brand color */
 --neon-green:  #00f92a  /* Bright Neon Green - Success, play states */
 --neon-cyan:   #04caf4  /* Bright Cyan/Aqua - Links, info, highlights */
---neon-pink:   #f906d6  /* Bright Neon Pink - Accent, warnings */
---neon-yellow: #d1f60a  /* Bright Neon Yellow - Attention, notifications */
+--neon-pink:   #f906d6  /* Bright Neon Pink - Accent, special emphasis */
+--neon-orange: #ff9b00  /* Bright Neon Orange - Text highlights, general emphasis */
+--neon-yellow: #d1f60a  /* Bright Neon Yellow - Warnings, alerts only */
 ```
 
 ### Usage Guidelines
 - **Primary Actions**: Use neon-blue (#3b00fd) for main CTAs
 - **Success States**: Use neon-green (#00f92a) for confirmations, play buttons
 - **Interactive Elements**: Use neon-cyan (#04caf4) for links and hover states
-- **Accent Elements**: Use neon-pink (#f906d6) sparingly for emphasis
-- **Notifications**: Use neon-yellow (#d1f60a) for alerts and badges
+- **Accent Elements**: Use neon-pink (#f906d6) sparingly for special emphasis
+- **Text Highlights**: Use neon-orange (#ff9b00) for readable text emphasis, active states
+- **Warnings Only**: Use neon-yellow (#d1f60a) exclusively for warnings and urgent alerts
 
 ### Implementation Examples
 ```typescript
@@ -335,9 +337,14 @@ style={{
   boxShadow: '0 0 20px #00f92a, 0 0 40px #00f92a'
 }}
 
-// Text highlights
+// Text highlights (improved readability)
 style={{
-  color: '#04caf4'
+  color: '#ff9b00'  // Neon orange for better readability
+}}
+
+// Warning states
+style={{
+  color: '#d1f60a'  // Neon yellow reserved for warnings
 }}
 ```
 

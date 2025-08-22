@@ -234,7 +234,7 @@ const DiscoverPage: Component = () => {
         <div 
           class="mb-6 pl-4 border-l-4"
           style={{
-            'border-color': '#d1f60a'
+            'border-color': '#ff9b00'
           }}
         >
           <h2 
@@ -245,7 +245,7 @@ const DiscoverPage: Component = () => {
               'font-family': 'Courier New, monospace'
             }}
           >
-            <i class="fas fa-chart-line mr-3 text-base" style={{ color: '#d1f60a' }}></i>
+            <i class="fas fa-chart-line mr-3 text-base" style={{ color: '#ff9b00' }}></i>
             TRENDING DATA
           </h2>
           <p 
