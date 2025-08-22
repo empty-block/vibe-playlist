@@ -203,316 +203,557 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      {/* Bottom Player Bar */}
-      <div class="h-full bg-gray-900 flex items-center px-8 gap-8 border-t border-gray-700">
+      {/* Bottom Player Bar - Enhanced Design */}
+      <div class="h-32 md:h-auto flex items-center px-4 md:px-8 gap-3 md:gap-6 border-t-2" style={{
+        background: 'linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%)',
+        borderTopColor: 'rgba(4, 202, 244, 0.4)'
+      }}>
         
-        <div class="flex items-center gap-8 w-full max-w-7xl mx-auto relative z-10">
-          {/* LEFT SECTION (30%): Track Details */}
-          <div class="flex items-center gap-3 flex-shrink-0 relative" style={{
-            width: '30%',
-            background: '#1a1a1a',
-            border: '1px solid #333',
-            'border-radius': '8px',
-            padding: '12px'
+        <div class="flex flex-col md:flex-row items-center gap-4 md:gap-6 w-full max-w-7xl mx-auto relative z-10 py-4 md:py-0">
+          {/* LEFT SECTION (35%): Hero Track Info */}
+          <div class="w-full md:w-[35%] md:flex-shrink-0 relative overflow-hidden" style={{
+            background: 'linear-gradient(135deg, rgba(0, 249, 42, 0.12) 0%, rgba(4, 202, 244, 0.08) 100%)',
+            border: '2px solid rgba(0, 249, 42, 0.6)',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: `
+              0 0 20px rgba(0, 249, 42, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1)
+            `
           }}>
-            {/* Track Info - Clean Display Style */}
-            <div class="flex-1 min-w-0 relative" style={{
-              background: '#000',
-              border: '1px solid #333',
-              'border-radius': '4px',
-              padding: '8px'
-            }}>
-              <h3 class="font-bold text-lg sm:text-xl leading-tight truncate" style={{
+            {/* Status Indicator */}
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-3 h-3 rounded-full animate-pulse" style={{
+                background: isPlaying() ? '#00f92a' : '#04caf4',
+                boxShadow: isPlaying() ? '0 0 8px #00f92a' : '0 0 8px #04caf4'
+              }}></div>
+              <span class="text-xs font-mono uppercase tracking-wide" style={{
                 color: '#04caf4',
-                'text-shadow': '0 0 4px rgba(4, 202, 244, 0.8)',
-                'font-family': 'monospace'
+                textShadow: '0 0 4px rgba(4, 202, 244, 0.8)',
+                letterSpacing: '0.1em'
+              }}>
+                {isPlaying() ? 'NOW PLAYING' : 'PAUSED'}
+              </span>
+              {/* Platform Badge */}
+              <div class="ml-auto px-2 py-1 text-xs font-mono rounded" style={{
+                background: currentTrack()?.source === 'youtube' ? 'rgba(255, 0, 0, 0.2)' : 'rgba(30, 215, 96, 0.2)',
+                color: currentTrack()?.source === 'youtube' ? '#ff0000' : '#1ed760',
+                border: `1px solid ${currentTrack()?.source === 'youtube' ? 'rgba(255, 0, 0, 0.4)' : 'rgba(30, 215, 96, 0.4)'}`
+              }}>
+                {currentTrack()?.source?.toUpperCase()}
+              </div>
+            </div>
+
+            {/* Enhanced Track Information */}
+            <div class="space-y-2">
+              <h3 class="font-bold leading-tight truncate" style={{
+                color: '#04caf4',
+                textShadow: '0 0 8px rgba(4, 202, 244, 0.8)',
+                fontFamily: 'Courier New, monospace',
+                fontSize: '24px'
               }}>
                 {currentTrack()?.title}
               </h3>
-              <p class="text-base sm:text-lg truncate mt-1" style={{
+              <p class="truncate" style={{
                 color: '#00f92a',
-                'text-shadow': '0 0 4px rgba(0, 249, 42, 0.8)',
-                'font-family': 'monospace'
+                textShadow: '0 0 6px rgba(0, 249, 42, 0.6)',
+                fontFamily: 'Courier New, monospace',
+                fontSize: '18px'
               }}>
                 {currentTrack()?.artist}
               </p>
-              <p class="text-sm sm:text-base truncate mt-1" style={{
-                color: '#ff9b00',
-                'text-shadow': '0 0 4px #ff9b00',
-                'font-family': 'monospace',
-                opacity: '0.8'
+              <p class="text-sm truncate italic" style={{
+                color: 'rgba(255, 155, 0, 0.8)',
+                fontFamily: 'Courier New, monospace'
               }}>
                 Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
               </p>
             </div>
           </div>
 
-          {/* CENTER SECTION (40%): Playback Controls */}
-          <div class="flex flex-col justify-center gap-3 flex-shrink-0 relative" style={{
-            width: '40%',
-            background: '#1a1a1a',
-            border: '1px solid #333',
-            'border-radius': '8px',
-            padding: '12px',
-            position: 'relative'
+          {/* CENTER SECTION (40%): Neon Command Center */}
+          <div class="w-full md:w-[40%] md:flex-shrink-0 relative" style={{
+            background: 'linear-gradient(135deg, rgba(59, 0, 253, 0.12) 0%, rgba(4, 202, 244, 0.08) 50%, rgba(0, 249, 42, 0.06) 100%)',
+            border: '2px solid rgba(4, 202, 244, 0.6)',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: `
+              0 0 15px rgba(4, 202, 244, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1),
+              inset 0 2px 4px rgba(0,0,0,0.8)
+            `
           }}>
             
-            {/* TOP ROW: Transport Controls */}
-            <div class="flex items-center justify-center gap-3 relative" style={{
-              background: '#0f0f0f',
-              border: '1px solid #444',
-              'border-radius': '8px',
-              padding: '8px',
-              'box-shadow': '0 1px 3px rgba(0,0,0,0.5)'
-            }}>
-              {/* Previous Button */}
-              <button 
-                ref={prevButtonRef!}
-                onClick={handleSkipPrevious}
-                class="transport-button"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '6px',
-                  border: '1px solid #555',
-                  background: '#2a2a2a',
-                  color: '#ff9b00',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center',
-                  'font-size': '16px',
-                  transition: 'all 0.15s ease',
-                  cursor: 'pointer'
-                }}
-                disabled={!props.playerReady()}
-                title="Previous track"
-              >
-                <i class="fas fa-step-backward"></i>
-              </button>
-              
-              {/* Play/Pause Button */}
-              <button 
-                ref={playButtonRef!}
-                onClick={props.onTogglePlay}
-                class="transport-button play-button"
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '8px',
-                  border: '1px solid #555',
-                  background: isPlaying() ? '#00f92a' : '#3b00fd',
-                  color: '#ffffff',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center',
-                  'font-size': '18px',
-                  transition: 'all 0.15s ease',
-                  cursor: 'pointer'
-                }}
-                disabled={!props.playerReady()}
-              >
-                <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`} style={{
-                  marginLeft: isPlaying() ? '0' : '2px'
-                }}></i>
-              </button>
-              
-              {/* Next Button */}
-              <button 
-                ref={nextButtonRef!}
-                onClick={handleSkipNext}
-                class="transport-button"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '6px',
-                  border: '1px solid #555',
-                  background: '#2a2a2a',
-                  color: '#ff9b00',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center',
-                  'font-size': '16px',
-                  transition: 'all 0.15s ease',
-                  cursor: 'pointer'
-                }}
-                disabled={!props.playerReady()}
-                title="Next track"
-              >
-                <i class="fas fa-step-forward"></i>
-              </button>
-              
-              {/* View Track List Button */}
-              <button
-                onClick={handleGoToPlayingPlaylist}
-                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  border: '2px solid #333',
-                  'border-top': '2px solid #555',
-                  'border-left': '2px solid #444',
-                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                  color: '#ff9b00',
-                  'text-shadow': '0 0 4px rgba(255, 155, 0, 0.6)',
-                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)',
-                  'font-family': 'monospace',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center'
-                }}
-                title="View current playlist"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #ff9b00 0%, #ff7c00 50%, #cc6600 100%)';
-                  e.currentTarget.style.color = '#000000';
-                  e.currentTarget.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
-                  e.currentTarget.style.borderTopColor = '#ff9b00';
-                  e.currentTarget.style.borderLeftColor = '#ff7c00';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(255, 155, 0, 0.6)';
-                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
-                  e.currentTarget.style.color = '#ff9b00';
-                  e.currentTarget.style.textShadow = '0 0 4px rgba(255, 155, 0, 0.6)';
-                  e.currentTarget.style.borderTopColor = '#555';
-                  e.currentTarget.style.borderLeftColor = '#444';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                }}
-              >
-                <i class="fas fa-list" style={{ fontSize: '14px' }}></i>
-              </button>
-            </div>
+            {/* Two-Row Layout: Transport Controls + Social Actions */}
+            <div class="flex flex-col gap-4">
+              {/* TOP ROW: Prominent Transport Controls */}
+              <div class="flex items-center justify-center gap-4">
+                {/* Previous Button - Neon Supporting Design */}
+                <button 
+                  ref={prevButtonRef!}
+                  onClick={handleSkipPrevious}
+                  class="win95-button"
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    border: '2px solid rgba(4, 202, 244, 0.5)',
+                    borderTop: '2px solid rgba(4, 202, 244, 0.7)',
+                    borderLeft: '2px solid rgba(4, 202, 244, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(4, 202, 244, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)',
+                    color: '#04caf4',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 6px rgba(4, 202, 244, 0.8)',
+                    boxShadow: `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(4, 202, 244, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  disabled={!props.playerReady()}
+                  title="Previous track"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(4, 202, 244, 0.2) 0%, rgba(4, 202, 244, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.9)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.2), 
+                      inset 0 -1px 3px rgba(0,0,0,0.5), 
+                      0 0 15px rgba(4, 202, 244, 0.7)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(4, 202, 244, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)';
+                    e.currentTarget.style.color = '#04caf4';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(4, 202, 244, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(4, 202, 244, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-step-backward"></i>
+                </button>
+                
+                {/* HERO Play/Pause Button - Multi-layer Neon Glow */}
+                <button 
+                  ref={playButtonRef!}
+                  onClick={props.onTogglePlay}
+                  class="win95-button"
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    border: '3px solid rgba(59, 0, 253, 0.8)',
+                    borderTop: '3px solid rgba(4, 202, 244, 0.9)',
+                    borderLeft: '3px solid rgba(0, 249, 42, 0.7)',
+                    background: isPlaying() 
+                      ? 'linear-gradient(145deg, rgba(0, 249, 42, 0.9) 0%, rgba(4, 202, 244, 0.8) 30%, rgba(59, 0, 253, 0.7) 70%, rgba(0, 0, 0, 0.3) 100%)'
+                      : 'linear-gradient(145deg, rgba(59, 0, 253, 0.9) 0%, rgba(4, 202, 244, 0.8) 30%, rgba(0, 249, 42, 0.7) 70%, rgba(0, 0, 0, 0.3) 100%)',
+                    color: '#ffffff',
+                    fontSize: '32px',
+                    fontWeight: 'bold',
+                    textShadow: `
+                      0 0 4px rgba(255,255,255,1),
+                      0 0 8px rgba(255,255,255,0.8),
+                      0 0 12px ${isPlaying() ? 'rgba(0, 249, 42, 0.8)' : 'rgba(59, 0, 253, 0.8)'}
+                    `,
+                    boxShadow: isPlaying() 
+                      ? `
+                        inset 0 3px 6px rgba(255,255,255,0.2), 
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        0 0 10px rgba(0, 249, 42, 0.6),
+                        0 0 20px rgba(4, 202, 244, 0.4),
+                        0 0 30px rgba(59, 0, 253, 0.3)
+                      `
+                      : `
+                        inset 0 3px 6px rgba(255,255,255,0.2), 
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        0 0 10px rgba(59, 0, 253, 0.6),
+                        0 0 20px rgba(4, 202, 244, 0.4),
+                        0 0 30px rgba(0, 249, 42, 0.3)
+                      `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '8px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    position: 'relative'
+                  }}
+                  disabled={!props.playerReady()}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.1)';
+                    e.currentTarget.style.boxShadow = isPlaying() 
+                      ? `
+                        inset 0 4px 8px rgba(255,255,255,0.3), 
+                        inset 0 -3px 6px rgba(0,0,0,0.6),
+                        0 0 15px rgba(0, 249, 42, 0.8),
+                        0 0 25px rgba(4, 202, 244, 0.6),
+                        0 0 35px rgba(59, 0, 253, 0.5),
+                        0 0 45px rgba(249, 6, 214, 0.3)
+                      `
+                      : `
+                        inset 0 4px 8px rgba(255,255,255,0.3), 
+                        inset 0 -3px 6px rgba(0,0,0,0.6),
+                        0 0 15px rgba(59, 0, 253, 0.8),
+                        0 0 25px rgba(4, 202, 244, 0.6),
+                        0 0 35px rgba(0, 249, 42, 0.5),
+                        0 0 45px rgba(249, 6, 214, 0.3)
+                      `;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = isPlaying() 
+                      ? `
+                        inset 0 3px 6px rgba(255,255,255,0.2), 
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        0 0 10px rgba(0, 249, 42, 0.6),
+                        0 0 20px rgba(4, 202, 244, 0.4),
+                        0 0 30px rgba(59, 0, 253, 0.3)
+                      `
+                      : `
+                        inset 0 3px 6px rgba(255,255,255,0.2), 
+                        inset 0 -2px 4px rgba(0,0,0,0.8),
+                        0 0 10px rgba(59, 0, 253, 0.6),
+                        0 0 20px rgba(4, 202, 244, 0.4),
+                        0 0 30px rgba(0, 249, 42, 0.3)
+                      `;
+                  }}
+                >
+                  <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`} style={{
+                    marginLeft: isPlaying() ? '0' : '4px'
+                  }}></i>
+                </button>
+                
+                {/* Next Button - Neon Supporting Design */}
+                <button 
+                  ref={nextButtonRef!}
+                  onClick={handleSkipNext}
+                  class="win95-button"
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    border: '2px solid rgba(4, 202, 244, 0.5)',
+                    borderTop: '2px solid rgba(4, 202, 244, 0.7)',
+                    borderLeft: '2px solid rgba(4, 202, 244, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(4, 202, 244, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)',
+                    color: '#04caf4',
+                    fontSize: '22px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 6px rgba(4, 202, 244, 0.8)',
+                    boxShadow: `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(4, 202, 244, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  disabled={!props.playerReady()}
+                  title="Next track"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(4, 202, 244, 0.2) 0%, rgba(4, 202, 244, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.9)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.2), 
+                      inset 0 -1px 3px rgba(0,0,0,0.5), 
+                      0 0 15px rgba(4, 202, 244, 0.7)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(4, 202, 244, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)';
+                    e.currentTarget.style.color = '#04caf4';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(4, 202, 244, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(4, 202, 244, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-step-forward"></i>
+                </button>
+                
+                {/* Playlist View Button - Orange Neon Accent */}
+                <button
+                  onClick={handleGoToPlayingPlaylist}
+                  class="win95-button"
+                  style={{
+                    width: '56px',
+                    height: '56px',
+                    border: '2px solid rgba(255, 155, 0, 0.5)',
+                    borderTop: '2px solid rgba(255, 155, 0, 0.7)',
+                    borderLeft: '2px solid rgba(255, 155, 0, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(255, 155, 0, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)',
+                    color: '#ff9b00',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 6px rgba(255, 155, 0, 0.8)',
+                    boxShadow: `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(255, 155, 0, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '6px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  title="View current playlist"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(255, 155, 0, 0.2) 0%, rgba(255, 155, 0, 0.1) 50%, rgba(0, 0, 0, 0.8) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 155, 0, 0.9)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.2), 
+                      inset 0 -1px 3px rgba(0,0,0,0.5), 
+                      0 0 15px rgba(255, 155, 0, 0.7)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(255, 155, 0, 0.08) 0%, rgba(0, 0, 0, 0.7) 50%, rgba(0, 0, 0, 0.9) 100%)';
+                    e.currentTarget.style.color = '#ff9b00';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(255, 155, 0, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 155, 0, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 2px 4px rgba(255,255,255,0.1), 
+                      inset 0 -1px 3px rgba(0,0,0,0.8), 
+                      0 0 8px rgba(255, 155, 0, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-list"></i>
+                </button>
+              </div>
 
-            {/* BOTTOM ROW: Social Buttons */}
-            <div class="flex items-center justify-center gap-2">
-              {/* Join Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDiscussionModal(true);
-                }}
-                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
-                style={{
-                  width: '48px',
-                  height: '32px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  border: '2px solid #333',
-                  'border-top': '2px solid #555',
-                  'border-left': '2px solid #444',
-                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                  color: '#04caf4',
-                  'text-shadow': '0 0 4px rgba(4, 202, 244, 0.6)',
-                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(4, 202, 244, 0.3)',
-                  'font-family': 'monospace',
-                  'white-space': 'nowrap',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center'
-                }}
-                title="Join discussion"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #04caf4 0%, #0288d1 50%, #01579b 100%)';
-                  e.currentTarget.style.color = '#ffffff';
-                  e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.8)';
-                  e.currentTarget.style.borderTopColor = '#04caf4';
-                  e.currentTarget.style.borderLeftColor = '#0288d1';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(4, 202, 244, 0.6)';
-                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
-                  e.currentTarget.style.color = '#04caf4';
-                  e.currentTarget.style.textShadow = '0 0 4px rgba(4, 202, 244, 0.6)';
-                  e.currentTarget.style.borderTopColor = '#555';
-                  e.currentTarget.style.borderLeftColor = '#444';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(4, 202, 244, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                }}
-              >
-                <i class="fas fa-comments" style={{ fontSize: '12px' }}></i>
-                <Show when={currentTrack()?.replies && currentTrack()!.replies > 0}>
-                  <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none" style={{
-                    'font-size': '8px',
-                    'box-shadow': '0 0 4px rgba(255,0,0,0.6)'
-                  }}>
-                    {currentTrack()?.replies}
-                  </div>
-                </Show>
-              </button>
-              
-              {/* Like Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log('Like track');
-                  // TODO: Implement like functionality
-                }}
-                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
-                style={{
-                  width: '48px',
-                  height: '32px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  borderRadius: '6px',
-                  border: '2px solid #333',
-                  'border-top': '2px solid #555',
-                  'border-left': '2px solid #444',
-                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                  color: '#f906d6',
-                  'text-shadow': '0 0 4px rgba(249, 6, 214, 0.6)',
-                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(249, 6, 214, 0.3)',
-                  'font-family': 'monospace',
-                  display: 'flex',
-                  'align-items': 'center',
-                  'justify-content': 'center'
-                }}
-                title="Like this track"
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #f906d6 0%, #e91e63 50%, #ad1457 100%)';
-                  e.currentTarget.style.color = '#ffffff';
-                  e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.8)';
-                  e.currentTarget.style.borderTopColor = '#f906d6';
-                  e.currentTarget.style.borderLeftColor = '#e91e63';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(249, 6, 214, 0.6)';
-                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
-                  e.currentTarget.style.color = '#f906d6';
-                  e.currentTarget.style.textShadow = '0 0 4px rgba(249, 6, 214, 0.6)';
-                  e.currentTarget.style.borderTopColor = '#555';
-                  e.currentTarget.style.borderLeftColor = '#444';
-                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(249, 6, 214, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                }}
-              >
-                <i class="fas fa-heart" style={{ fontSize: '12px' }}></i>
-                <Show when={currentTrack()?.likes && currentTrack()!.likes > 0}>
-                  <span class="ml-1" style={{ fontSize: '8px' }}>{currentTrack()?.likes}</span>
-                </Show>
-              </button>
+              {/* BOTTOM ROW: Enhanced Neon Social Actions */}
+              <div class="flex items-center justify-center gap-4">
+                {/* Like Button - Pink Neon */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Like track');
+                  }}
+                  class="win95-button"
+                  style={{
+                    width: '64px',
+                    height: '36px',
+                    border: '2px solid rgba(249, 6, 214, 0.5)',
+                    borderTop: '2px solid rgba(249, 6, 214, 0.7)',
+                    borderLeft: '2px solid rgba(249, 6, 214, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(249, 6, 214, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                    color: '#f906d6',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 4px rgba(249, 6, 214, 0.8)',
+                    boxShadow: `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(249, 6, 214, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '4px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                  title="Like this track"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(249, 6, 214, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(249, 6, 214, 0.8)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.2), 
+                      inset 0 -1px 2px rgba(0,0,0,0.5), 
+                      0 0 10px rgba(249, 6, 214, 0.6)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(249, 6, 214, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)';
+                    e.currentTarget.style.color = '#f906d6';
+                    e.currentTarget.style.textShadow = '0 0 4px rgba(249, 6, 214, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(249, 6, 214, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(249, 6, 214, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-heart"></i>
+                  <span>Like</span>
+                  <Show when={currentTrack()?.likes && currentTrack()!.likes > 0}>
+                    <span class="text-xs">({currentTrack()?.likes})</span>
+                  </Show>
+                </button>
+
+                {/* Add/Comment Button - Green Neon */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDiscussionModal(true);
+                  }}
+                  class="win95-button relative"
+                  style={{
+                    width: '64px',
+                    height: '36px',
+                    border: '2px solid rgba(0, 249, 42, 0.5)',
+                    borderTop: '2px solid rgba(0, 249, 42, 0.7)',
+                    borderLeft: '2px solid rgba(0, 249, 42, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(0, 249, 42, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                    color: '#00f92a',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 4px rgba(0, 249, 42, 0.8)',
+                    boxShadow: `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(0, 249, 42, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '4px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                  title="Join discussion"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(0, 249, 42, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.8)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.2), 
+                      inset 0 -1px 2px rgba(0,0,0,0.5), 
+                      0 0 10px rgba(0, 249, 42, 0.6)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(0, 249, 42, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)';
+                    e.currentTarget.style.color = '#00f92a';
+                    e.currentTarget.style.textShadow = '0 0 4px rgba(0, 249, 42, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(0, 249, 42, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-comments"></i>
+                  <span>Add</span>
+                  <Show when={currentTrack()?.replies && currentTrack()!.replies > 0}>
+                    <div class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none" style={{
+                      fontSize: '8px',
+                      boxShadow: '0 0 4px rgba(255,0,0,0.6)'
+                    }}>
+                      {currentTrack()?.replies}
+                    </div>
+                  </Show>
+                </button>
+
+                {/* Share Button - Orange Neon */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log('Share track');
+                  }}
+                  class="win95-button"
+                  style={{
+                    width: '64px',
+                    height: '36px',
+                    border: '2px solid rgba(255, 155, 0, 0.5)',
+                    borderTop: '2px solid rgba(255, 155, 0, 0.7)',
+                    borderLeft: '2px solid rgba(255, 155, 0, 0.6)',
+                    background: 'linear-gradient(145deg, rgba(255, 155, 0, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)',
+                    color: '#ff9b00',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    textShadow: '0 0 4px rgba(255, 155, 0, 0.8)',
+                    boxShadow: `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(255, 155, 0, 0.4)
+                    `,
+                    fontFamily: 'Courier New, monospace',
+                    borderRadius: '4px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
+                  }}
+                  title="Share this track"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(255, 155, 0, 0.15) 0%, rgba(0, 0, 0, 0.6) 100%)';
+                    e.currentTarget.style.color = '#ffffff';
+                    e.currentTarget.style.textShadow = '0 0 6px rgba(255,255,255,0.9)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 155, 0, 0.8)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.2), 
+                      inset 0 -1px 2px rgba(0,0,0,0.5), 
+                      0 0 10px rgba(255, 155, 0, 0.6)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'linear-gradient(145deg, rgba(255, 155, 0, 0.08) 0%, rgba(0, 0, 0, 0.7) 100%)';
+                    e.currentTarget.style.color = '#ff9b00';
+                    e.currentTarget.style.textShadow = '0 0 4px rgba(255, 155, 0, 0.8)';
+                    e.currentTarget.style.borderColor = 'rgba(255, 155, 0, 0.5)';
+                    e.currentTarget.style.boxShadow = `
+                      inset 0 1px 3px rgba(255,255,255,0.1), 
+                      inset 0 -1px 2px rgba(0,0,0,0.8), 
+                      0 0 6px rgba(255, 155, 0, 0.4)
+                    `;
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  }}
+                >
+                  <i class="fas fa-share"></i>
+                  <span>Share</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* RIGHT SECTION (30%): Video Embed */}
-          <div class="flex items-center justify-center relative overflow-hidden" style={{
-            width: '30%',
-            background: '#1a1a1a',
-            border: '1px solid #333',
-            'border-radius': '8px',
-            padding: '8px',
-            position: 'relative'
+          {/* RIGHT SECTION (25%): Video Embed */}
+          <div class="hidden md:flex items-center justify-center relative overflow-hidden md:w-[25%]" style={{
+            background: 'rgba(0, 0, 0, 0.7)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '8px'
           }}>
-            {/* Media Player - Clean Hero Element */}
-            <div class="w-full max-w-full flex-shrink-0" style={{
-              maxWidth: '100%'
-            }}>
+            {/* Media Player Container */}
+            <div class="w-full flex-shrink-0">
               {props.mediaComponent}
             </div>
           </div>
