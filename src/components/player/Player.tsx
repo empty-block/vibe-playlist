@@ -245,71 +245,11 @@ const Player: Component<PlayerProps> = (props) => {
                 Added by {currentTrack()?.userAvatar} {currentTrack()?.addedBy}
               </p>
             </div>
-            
-            {/* Go to Playing Playlist Button */}
-            <button
-              onClick={handleGoToPlayingPlaylist}
-              class="flex-shrink-0 retro-social-button relative overflow-hidden font-bold transition-all duration-200"
-              style={{
-                width: '40px',
-                height: '40px',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                borderRadius: '6px',
-                border: '2px solid #333',
-                'border-top': '2px solid #555',
-                'border-left': '2px solid #444',
-                background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                color: '#ff9b00',
-                'text-shadow': '0 0 4px rgba(255, 155, 0, 0.6)',
-                'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)',
-                'font-family': 'monospace',
-                display: 'flex',
-                'align-items': 'center',
-                'justify-content': 'center'
-              }}
-              title="View current playlist"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(145deg, #ff9b00 0%, #ff7c00 50%, #cc6600 100%)';
-                e.currentTarget.style.color = '#000000';
-                e.currentTarget.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
-                e.currentTarget.style.borderTopColor = '#ff9b00';
-                e.currentTarget.style.borderLeftColor = '#ff7c00';
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(255, 155, 0, 0.6)';
-                e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
-                e.currentTarget.style.color = '#ff9b00';
-                e.currentTarget.style.textShadow = '0 0 4px rgba(255, 155, 0, 0.6)';
-                e.currentTarget.style.borderTopColor = '#555';
-                e.currentTarget.style.borderLeftColor = '#444';
-                e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-              }}
-            >
-              <i class="fas fa-list" style={{ fontSize: '14px' }}></i>
-            </button>
           </div>
 
-          {/* CENTER SECTION (40%): Media Player Only - Clean Minimal Design */}
-          <div class="flex items-center justify-center relative" style={{
-            width: '40%',
-            background: '#1a1a1a',
-            border: '1px solid #333',
-            'border-radius': '8px',
-            padding: '8px',
-            position: 'relative'
-          }}>
-            {/* Media Player - Clean Hero Element */}
-            <div class="flex-shrink-0">
-              {props.mediaComponent}
-            </div>
-          </div>
-
-          {/* RIGHT SECTION (30%): Two-Row Layout */}
+          {/* CENTER SECTION (40%): Playback Controls */}
           <div class="flex flex-col justify-center gap-3 flex-shrink-0 relative" style={{
-            width: '30%',
+            width: '40%',
             background: '#1a1a1a',
             border: '1px solid #333',
             'border-radius': '8px',
@@ -400,9 +340,54 @@ const Player: Component<PlayerProps> = (props) => {
               >
                 <i class="fas fa-step-forward"></i>
               </button>
+              
+              {/* View Track List Button */}
+              <button
+                onClick={handleGoToPlayingPlaylist}
+                class="retro-social-button relative overflow-hidden font-bold transition-all duration-200"
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  borderRadius: '6px',
+                  border: '2px solid #333',
+                  'border-top': '2px solid #555',
+                  'border-left': '2px solid #444',
+                  background: 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
+                  color: '#ff9b00',
+                  'text-shadow': '0 0 4px rgba(255, 155, 0, 0.6)',
+                  'box-shadow': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)',
+                  'font-family': 'monospace',
+                  display: 'flex',
+                  'align-items': 'center',
+                  'justify-content': 'center'
+                }}
+                title="View current playlist"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #ff9b00 0%, #ff7c00 50%, #cc6600 100%)';
+                  e.currentTarget.style.color = '#000000';
+                  e.currentTarget.style.textShadow = '0 0 6px rgba(0,0,0,0.8)';
+                  e.currentTarget.style.borderTopColor = '#ff9b00';
+                  e.currentTarget.style.borderLeftColor = '#ff7c00';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(255, 155, 0, 0.6)';
+                  e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)';
+                  e.currentTarget.style.color = '#ff9b00';
+                  e.currentTarget.style.textShadow = '0 0 4px rgba(255, 155, 0, 0.6)';
+                  e.currentTarget.style.borderTopColor = '#555';
+                  e.currentTarget.style.borderLeftColor = '#444';
+                  e.currentTarget.style.boxShadow = 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -1px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255, 155, 0, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                }}
+              >
+                <i class="fas fa-list" style={{ fontSize: '14px' }}></i>
+              </button>
             </div>
 
-            {/* BOTTOM ROW: Join and Like Buttons */}
+            {/* BOTTOM ROW: Social Buttons */}
             <div class="flex items-center justify-center gap-2">
               {/* Join Button */}
               <button
@@ -512,6 +497,23 @@ const Player: Component<PlayerProps> = (props) => {
                   <span class="ml-1" style={{ fontSize: '8px' }}>{currentTrack()?.likes}</span>
                 </Show>
               </button>
+            </div>
+          </div>
+
+          {/* RIGHT SECTION (30%): Video Embed */}
+          <div class="flex items-center justify-center relative overflow-hidden" style={{
+            width: '30%',
+            background: '#1a1a1a',
+            border: '1px solid #333',
+            'border-radius': '8px',
+            padding: '8px',
+            position: 'relative'
+          }}>
+            {/* Media Player - Clean Hero Element */}
+            <div class="w-full max-w-full flex-shrink-0" style={{
+              maxWidth: '100%'
+            }}>
+              {props.mediaComponent}
             </div>
           </div>
         </div>
