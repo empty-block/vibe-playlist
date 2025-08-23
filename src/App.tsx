@@ -1,13 +1,13 @@
-import { Component, onMount } from 'solid-js';
-import { Router, Route } from '@solidjs/router';
+import { Component, onMount, Show } from 'solid-js';
+import { Router, Route, useNavigate } from '@solidjs/router';
 import Layout from './components/layout/Layout';
-import HomePage from './pages/HomePage';
-import SmartHomePage from './pages/SmartHomePage';
+import PlayerPage from './pages/PlayerPage';
+import LandingPage from './pages/LandingPage';
 import DiscoverPage from './pages/DiscoverPage';
 import TrendingPage from './pages/TrendingPage';
 import SharePage from './pages/SharePage';
 import ProfilePage from './pages/ProfilePage';
-import { initializeAuth, handleSpotifyCallback } from './stores/authStore';
+import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
 const App: Component = () => {
   onMount(async () => {
@@ -34,11 +34,28 @@ const App: Component = () => {
     await initializeAuth();
   });
 
+  // Create a root route component that handles auth routing
+  const RootRoute: Component = () => {
+    const navigate = useNavigate();
+    
+    onMount(() => {
+      // If authenticated, redirect to player
+      if (isAuthenticated()) {
+        navigate('/player');
+      }
+    });
+    
+    return (
+      <Show when={!isAuthenticated()} fallback={null}>
+        <LandingPage />
+      </Show>
+    );
+  };
+
   return (
     <Router root={Layout}>
-      <Route path="/" component={SmartHomePage} />
-      <Route path="/player" component={HomePage} />
-      <Route path="/home" component={HomePage} />
+      <Route path="/" component={RootRoute} />
+      <Route path="/player" component={PlayerPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />
       <Route path="/share" component={SharePage} />

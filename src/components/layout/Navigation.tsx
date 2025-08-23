@@ -6,20 +6,17 @@ const Navigation: Component = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    return location.pathname === path || (path === '/' && location.pathname === '/') || (path === '/player' && location.pathname === '/player');
+    // Special case: both '/' and '/player' should highlight Player tab
+    if (path === '/player') {
+      return location.pathname === '/' || location.pathname === '/player';
+    }
+    return location.pathname === path;
   };
   
   return (
     <div class="win95-panel p-1 border-b-2 overflow-x-auto">
       <div class="flex justify-between items-center text-black text-sm font-bold min-w-fit">
         <div class="flex gap-2 sm:gap-4 flex-shrink-0">
-          <A 
-            href="/" 
-            class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer whitespace-nowrap"
-            classList={{ 'bg-blue-600 text-white': isActive('/') }}
-          >
-            <i class="fas fa-home mr-1"></i>Home
-          </A>
           <A 
             href="/player" 
             class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer whitespace-nowrap"

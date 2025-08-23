@@ -1,70 +1,19 @@
-import { Component, For, createSignal, createMemo, onMount, createEffect } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { playlists, currentPlaylistId, getCurrentPlaylistTracks, setCurrentTrack, setCurrentPlaylistId, setIsPlaying, playlistTracks, setPlayingPlaylistId } from '../stores/playlistStore';
-import TrackItem from '../components/playlist/TrackItem';
+import { playlists, currentPlaylistId, setCurrentTrack, setCurrentPlaylistId, playlistTracks, setPlayingPlaylistId } from '../stores/playlistStore';
+import Playlist, { SortOption } from '../components/playlist/Playlist';
 import PlaylistHeader from '../components/playlist/PlaylistHeader';
 import DiscoveryBar from '../components/common/DiscoveryBar';
-import { staggeredFadeIn } from '../utils/animations';
 
-export type SortOption = 'recent' | 'likes' | 'comments';
-
-const HomePage: Component = () => {
+const PlayerPage: Component = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = createSignal('');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
-  
-  let trackContainerRef: HTMLDivElement;
 
   const handleCreatorClick = (creatorUsername: string) => {
     console.log('Navigate to creator profile:', creatorUsername);
-    // TODO: Implement navigation to creator profile
+    navigate(`/profile/${creatorUsername}`);
   };
-  
-  const filteredTracks = createMemo(() => {
-    let tracks = getCurrentPlaylistTracks();
-    
-    // Filter by search query
-    const query = searchQuery().toLowerCase();
-    if (query) {
-      tracks = tracks.filter(track => 
-        track.title.toLowerCase().includes(query) ||
-        track.artist.toLowerCase().includes(query) ||
-        track.comment.toLowerCase().includes(query) ||
-        track.addedBy.toLowerCase().includes(query)
-      );
-    }
-    
-    // Sort tracks
-    const sortOption = sortBy();
-    const sortedTracks = [...tracks].sort((a, b) => {
-      switch (sortOption) {
-        case 'recent':
-          // Parse timestamp for sorting (assuming "X min ago" format)
-          const getTimestamp = (timestamp: string) => {
-            const match = timestamp.match(/(\d+)\s*(min|hour|day)/);
-            if (!match) return 0;
-            const value = parseInt(match[1]);
-            const unit = match[2];
-            if (unit === 'min') return value;
-            if (unit === 'hour') return value * 60;
-            if (unit === 'day') return value * 1440;
-            return 0;
-          };
-          return getTimestamp(a.timestamp) - getTimestamp(b.timestamp);
-        
-        case 'likes':
-          return b.likes - a.likes;
-        
-        case 'comments':
-          return b.replies - a.replies;
-        
-        default:
-          return 0;
-      }
-    });
-    
-    return sortedTracks;
-  });
   
   const handleReply = () => {
     console.log('Text reply submitted for playlist:', currentPlaylistId());
@@ -98,23 +47,6 @@ const HomePage: Component = () => {
     }
   };
 
-  // Animate track items when they change
-  createEffect(() => {
-    const tracks = filteredTracks();
-    if (trackContainerRef && tracks.length > 0) {
-      // Small delay to ensure DOM has updated
-      setTimeout(() => {
-        const trackItems = trackContainerRef.querySelectorAll('.win95-button');
-        if (trackItems.length > 0) {
-          // Reset opacity for stagger animation
-          trackItems.forEach(item => {
-            (item as HTMLElement).style.opacity = '0';
-          });
-          staggeredFadeIn(trackItems);
-        }
-      }, 50);
-    }
-  });
 
   return (
     <div 
@@ -180,47 +112,11 @@ const HomePage: Component = () => {
             </h2>
           </div>
           
-          {/* Playlist tracks */}
-          <div ref={trackContainerRef!} class="space-y-4" id="playlist-container">
-            {filteredTracks().length === 0 ? (
-              <div 
-                class="p-12 text-center rounded-lg"
-                style={{
-                  background: '#1a1a1a',
-                  border: '2px solid rgba(4, 202, 244, 0.2)'
-                }}
-              >
-                <i 
-                  class="fas fa-search text-6xl mb-6"
-                  style={{
-                    color: 'rgba(4, 202, 244, 0.5)',
-                    filter: 'drop-shadow(0 0 10px rgba(4, 202, 244, 0.3))'
-                  }}
-                ></i>
-                <p 
-                  class="text-lg"
-                  style={{
-                    color: 'rgba(4, 202, 244, 0.7)'
-                  }}
-                >
-                  No tracks found matching "{searchQuery()}"
-                </p>
-              </div>
-            ) : (
-              <For each={filteredTracks()}>
-                {(track, index) => (
-                  <TrackItem 
-                    track={track} 
-                    trackNumber={index() + 1}
-                    onPlay={() => {
-                      setCurrentTrack(track);
-                      setPlayingPlaylistId(currentPlaylistId()); // Track which playlist is playing
-                    }}
-                  />
-                )}
-              </For>
-            )}
-          </div>
+          {/* Playlist Component */}
+          <Playlist 
+            searchQuery={searchQuery()} 
+            sortBy={sortBy()} 
+          />
         </div>
 
         {/* DISCOVER MORE SECTION */}
@@ -261,4 +157,4 @@ const HomePage: Component = () => {
   );
 };
 
-export default HomePage;
+export default PlayerPage;
