@@ -39,9 +39,9 @@ const Navigation: Component = () => {
             <i class="fas fa-fire mr-1"></i>Trending
           </A>
           <A 
-            href="/share" 
+            href="/create" 
             class="nav-link px-2 py-1 hover:bg-blue-600 hover:text-white cursor-pointer whitespace-nowrap"
-            classList={{ 'bg-blue-600 text-white': isActive('/share') }}
+            classList={{ 'bg-blue-600 text-white': isActive('/create') }}
           >
             <i class="fas fa-plus mr-1"></i>Create
           </A>

@@ -23,8 +23,8 @@ const PlayerPage: Component = () => {
   const handleAddTrack = () => {
     console.log('Track added to playlist:', currentPlaylistId());
     // TODO: Implement actual track addition to Farcaster
-    // For now, could also navigate to SharePage as fallback:
-    // navigate(`/share?playlist=${currentPlaylistId()}`);
+    // For now, could also navigate to CreatePage as fallback:
+    // navigate(`/create?playlist=${currentPlaylistId()}`);
   };
   
   const handlePlayPlaylist = () => {

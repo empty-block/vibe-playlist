@@ -5,7 +5,7 @@ import PlayerPage from './pages/PlayerPage';
 import LandingPage from './pages/LandingPage';
 import DiscoverPage from './pages/DiscoverPage';
 import TrendingPage from './pages/TrendingPage';
-import SharePage from './pages/SharePage';
+import CreatePage from './pages/CreatePage';
 import ProfilePage from './pages/ProfilePage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
@@ -58,7 +58,7 @@ const App: Component = () => {
       <Route path="/player" component={PlayerPage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />
-      <Route path="/share" component={SharePage} />
+      <Route path="/create" component={CreatePage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/profile/:username" component={ProfilePage} />
     </Router>
