@@ -1,39 +1,24 @@
-import { Component, createSignal, createMemo, For, onMount, Show } from 'solid-js';
+import { Component, createSignal, createMemo, onMount, Show } from 'solid-js';
 import { useSearchParams } from '@solidjs/router';
-import { pageEnter, typewriter, float, glitch, magnetic } from '../utils/animations';
+import { pageEnter, float, glitch } from '../utils/animations';
 import anime from 'animejs';
 import CreateChatInterface from '../components/chat/CreateChatInterface';
+import SongInputForm from '../components/common/SongInputForm';
+import PlaylistSelector, { PlaylistDestination } from '../components/playlist/PlaylistSelector';
+import PlaylistCreateForm from '../components/playlist/PlaylistCreateForm';
+import { PlaylistSortOption, PlaylistFilter } from '../components/playlist/PlaylistSearchFilter';
 
 export type PlaylistType = 'personal' | 'collaborative' | 'ai_curated';
-
-interface PlaylistDestination {
-  id: string;
-  name: string;
-  type: PlaylistType;
-  icon: string;
-  description: string;
-  memberCount?: number;
-  isDefault?: boolean;
-}
-
-export type PlaylistSortOption = 'recent' | 'popular' | 'alphabetical';
-export type PlaylistFilter = 'all' | 'personal' | 'collaborative' | 'ai_curated';
 
 const SharePage: Component = () => {
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = createSignal<'ai' | 'quick' | 'create'>('ai');
   const [songUrl, setSongUrl] = createSignal('');
   const [comment, setComment] = createSignal('');
-  const [selectedPlaylist, setSelectedPlaylist] = createSignal<string>('my_jams');
   const [selectedPlaylists, setSelectedPlaylists] = createSignal<string[]>(['my_jams']);
-  const [showNewPlaylistForm, setShowNewPlaylistForm] = createSignal(false);
-  const [newPlaylistName, setNewPlaylistName] = createSignal('');
-  const [newPlaylistType, setNewPlaylistType] = createSignal<PlaylistType>('collaborative');
 
   let pageRef: HTMLDivElement;
   let titleRef: HTMLHeadingElement;
-  let submitButtonRef: HTMLButtonElement;
-  let songInputRef: HTMLInputElement;
   let playlistSectionRef: HTMLDivElement;
   let tipsRef: HTMLDivElement;
 
@@ -55,7 +40,7 @@ const SharePage: Component = () => {
       const playlistExists = allPlaylistDestinations.find(p => p.id === mappedPlaylist);
       
       if (playlistExists) {
-        setSelectedPlaylist(mappedPlaylist);
+        setSelectedPlaylists([mappedPlaylist]);
       }
     }
 
@@ -74,32 +59,9 @@ const SharePage: Component = () => {
       });
     }
 
-    if (submitButtonRef) {
-      magnetic(submitButtonRef, 25);
-    }
+    // AnimatedButton components now handle their own animations
 
-    // Add subtle animations to other interactive elements
-    if (songInputRef) {
-      songInputRef.addEventListener('focus', () => {
-        anime({
-          targets: songInputRef,
-          scale: 1.02,
-          boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-          duration: 200,
-          easing: 'easeOutQuad'
-        });
-      });
-
-      songInputRef.addEventListener('blur', () => {
-        anime({
-          targets: songInputRef,
-          scale: 1,
-          boxShadow: '0 0 0 0px rgba(59, 130, 246, 0)',
-          duration: 200,
-          easing: 'easeOutQuad'
-        });
-      });
-    }
+    // TextInput components now handle their own focus animations
 
     // Animate sections with delayed entrance
     if (playlistSectionRef) {
@@ -278,41 +240,7 @@ const SharePage: Component = () => {
     setSelectedPlaylists(['my_jams']); // Reset to default
   };
 
-  const handleCreatePlaylist = () => {
-    if (!newPlaylistName().trim()) return;
-    
-    console.log('Creating new playlist:', newPlaylistName(), newPlaylistType());
-    // Here you'd integrate with your backend to create the playlist
-    const playlistName = newPlaylistName();
-    
-    // Show success message
-    alert(`✨ Playlist "${playlistName}" created!`);
-    
-    // Create mock playlist entry (in real app this would come from backend)
-    const newPlaylistId = `playlist_${Date.now()}`;
-    
-    // Reset form
-    setNewPlaylistName('');
-    setShowNewPlaylistForm(false);
-    
-    // Auto-redirect to Quick Add tab and pre-select the new playlist
-    setActiveTab('quick');
-    setSelectedPlaylists([newPlaylistId]);
-    
-    // Note: In real app, you'd add the new playlist to allPlaylistDestinations
-    // For now, we'll just select the default playlist as a demo
-    setTimeout(() => {
-      alert(`Switched to Quick Add! The new playlist would be pre-selected here.`);
-    }, 500);
-  };
 
-  const getPlaylistTypeLabel = (type: PlaylistType) => {
-    switch (type) {
-      case 'personal': return '👤 Personal';
-      case 'collaborative': return '👥 Collaborative';
-      case 'ai_curated': return '🤖 AI Curated';
-    }
-  };
 
   return (
     <div ref={pageRef!} class="p-4 h-full overflow-y-auto">
@@ -337,7 +265,7 @@ const SharePage: Component = () => {
                   : 'bg-gray-100 border-b-2 border-gray-300'
               }`}
               style={activeTab() === 'ai' ? {
-                borderBottom: '2px solid white'
+                'border-bottom': '2px solid white'
               } : {}}
             >
               <i class="fas fa-robot mr-2"></i>
@@ -351,7 +279,7 @@ const SharePage: Component = () => {
                   : 'bg-gray-100 border-b-2 border-gray-300'
               }`}
               style={activeTab() === 'quick' ? {
-                borderBottom: '2px solid white'
+                'border-bottom': '2px solid white'
               } : {}}
             >
               <i class="fas fa-bolt mr-2"></i>
@@ -365,7 +293,7 @@ const SharePage: Component = () => {
                   : 'bg-gray-100 border-b-2 border-gray-300'
               }`}
               style={activeTab() === 'create' ? {
-                borderBottom: '2px solid white'
+                'border-bottom': '2px solid white'
               } : {}}
             >
               <i class="fas fa-plus mr-2"></i>
@@ -391,247 +319,62 @@ const SharePage: Component = () => {
 
           {/* Quick Add Tab */}
           <Show when={activeTab() === 'quick'}>
-            {/* Song Input Section */}
-            <div class="win95-panel mb-6 p-4">
-            <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
-              <i class="fas fa-music"></i>
-              What's the track?
-            </h2>
-            
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-bold text-black mb-1">
-                  Song URL (YouTube, Spotify, SoundCloud, etc.)
-                </label>
-                <input
-                  ref={songInputRef!}
-                  type="text"
-                  placeholder="https://youtu.be/dQw4w9WgXcQ or https://open.spotify.com/track/..."
-                  value={songUrl()}
-                  onInput={(e) => setSongUrl(e.currentTarget.value)}
-                  class="w-full px-3 py-2 text-sm border-2 border-gray-400 bg-white"
-                />
-              </div>
-              
-              <div>
-                <label class="block text-sm font-bold text-black mb-1">
-                  Your take (optional)
-                </label>
-                <textarea
-                  placeholder="This song hits different... 🔥"
-                  value={comment()}
-                  onInput={(e) => setComment(e.currentTarget.value)}
-                  class="w-full px-3 py-2 text-sm resize-none border-2 border-gray-400 bg-white"
-                  rows="3"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Playlist Destination Section */}
-          <div ref={playlistSectionRef!} class="win95-panel mb-6 p-4">
-            <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
-              <i class="fas fa-list"></i>
-              Where to add it?
-            </h2>
-
-            {/* Search and Filter Controls */}
-            <div class="mb-4 p-3 win95-panel">
-              <div class="flex items-center justify-between mb-3">
-                <div class="text-sm text-gray-600">
-                  {filteredPlaylists().length} of {allPlaylistDestinations.length} playlists
-                </div>
-                {(playlistSearch() || playlistFilter() !== 'all' || playlistSort() !== 'recent') && (
-                  <button
-                    onClick={() => {
-                      setPlaylistSearch('');
-                      setPlaylistFilter('all');
-                      setPlaylistSort('recent');
-                    }}
-                    class="win95-button px-2 py-1 text-xs whitespace-nowrap"
-                  >
-                    <i class="fas fa-times mr-1"></i>
-                    <span class="hidden sm:inline">Clear Filters</span>
-                    <span class="sm:hidden">Clear</span>
-                  </button>
-                )}
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {/* Search */}
-                <div>
-                  <label class="block text-xs font-bold text-black mb-1">Search playlists</label>
-                  <input
-                    type="text"
-                    placeholder="Find playlists..."
-                    value={playlistSearch()}
-                    onInput={(e) => setPlaylistSearch(e.currentTarget.value)}
-                    class="w-full px-2 py-1 text-sm border-2 border-gray-400 bg-white"
-                  />
-                </div>
-                
-                {/* Sort */}
-                <div>
-                  <label class="block text-xs font-bold text-black mb-1">Sort by</label>
-                  <select
-                    value={playlistSort()}
-                    onChange={(e) => setPlaylistSort(e.currentTarget.value as PlaylistSortOption)}
-                    class="win95-panel w-full px-2 py-1 text-sm font-bold text-black"
-                  >
-                    <option value="recent">📅 Recent</option>
-                    <option value="popular">🔥 Popular</option>
-                    <option value="alphabetical">🔤 A-Z</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Playlist List */}
-            <div class="mb-2 flex items-center justify-between">
-              <span class="text-sm font-bold text-black">
-                Select playlists ({selectedPlaylists().length} selected)
-              </span>
-              <button
-                onClick={() => {
-                  if (selectedPlaylists().length === filteredPlaylists().length) {
-                    setSelectedPlaylists([]);
-                  } else {
-                    setSelectedPlaylists(filteredPlaylists().map(p => p.id));
-                  }
-                }}
-                class="win95-button px-2 py-1 text-xs"
-              >
-                {selectedPlaylists().length === filteredPlaylists().length ? 'Deselect All' : 'Select All'}
-              </button>
-            </div>
-            <div class="space-y-2 mb-4 max-h-64 overflow-y-auto">
-              {filteredPlaylists().length === 0 ? (
-                <div class="text-center py-4 text-gray-500">
-                  <i class="fas fa-search text-2xl mb-2"></i>
-                  <p>No playlists found matching your criteria</p>
-                </div>
-              ) : (
-                <For each={filteredPlaylists()}>
-                  {(playlist) => (
-                    <label class="flex items-center gap-3 p-3 win95-panel hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        value={playlist.id}
-                        checked={selectedPlaylists().includes(playlist.id)}
-                        onChange={(e) => {
-                          const id = e.currentTarget.value;
-                          if (e.currentTarget.checked) {
-                            setSelectedPlaylists(prev => [...prev, id]);
-                          } else {
-                            setSelectedPlaylists(prev => prev.filter(p => p !== id));
-                          }
-                        }}
-                        class="text-blue-600"
-                      />
-                      <div class="flex items-center gap-3 flex-1">
-                        <span class="text-2xl">{playlist.icon}</span>
-                        <div class="flex-1">
-                          <div class="font-bold text-black flex items-center gap-2">
-                            {playlist.name}
-                            {playlist.isDefault && (
-                              <span class="text-xs bg-blue-600 text-white px-1 rounded">DEFAULT</span>
-                            )}
-                          </div>
-                          <div class="text-sm text-gray-600 flex items-center gap-2">
-                            <span>{getPlaylistTypeLabel(playlist.type)}</span>
-                            {playlist.memberCount && (
-                              <span>• {playlist.memberCount} members</span>
-                            )}
-                          </div>
-                          <div class="text-sm text-gray-500">{playlist.description}</div>
-                        </div>
-                      </div>
-                    </label>
-                  )}
-                </For>
-              )}
-            </div>
-
-          </div>
-
-            {/* Share Button */}
-            <div class="text-center">
-            <button
-              ref={submitButtonRef!}
-              onClick={handleShare}
-              disabled={!songUrl().trim() || selectedPlaylists().length === 0}
-              class="win95-button px-8 py-3 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-              classList={{
-                'hover:bg-green-100': songUrl().trim(),
-                'cursor-not-allowed opacity-50': !songUrl().trim()
+            <SongInputForm
+              onSubmit={(data) => {
+                setSongUrl(data.songUrl);
+                setComment(data.comment);
+                // Auto-submit if playlists are selected
+                if (selectedPlaylists().length > 0) {
+                  handleShare();
+                }
               }}
-            >
-              <i class="fas fa-plus mr-2"></i>
-              Create the Vibes! 🎵
-            </button>
-            </div>
+              submitLabel="Create the Vibes! 🎵"
+              disabled={selectedPlaylists().length === 0}
+            />
+            
+            <PlaylistSelector
+              allPlaylists={allPlaylistDestinations}
+              filteredPlaylists={filteredPlaylists()}
+              selectedPlaylists={selectedPlaylists()}
+              onSelectionChange={setSelectedPlaylists}
+              searchValue={playlistSearch()}
+              onSearchChange={setPlaylistSearch}
+              filterValue={playlistFilter()}
+              onFilterChange={setPlaylistFilter}
+              sortValue={playlistSort()}
+              onSortChange={setPlaylistSort}
+              onClearFilters={() => {
+                setPlaylistSearch('');
+                setPlaylistFilter('all');
+                setPlaylistSort('recent');
+              }}
+            />
           </Show>
 
           {/* Create Playlist Tab */}
           <Show when={activeTab() === 'create'}>
-            <div class="win95-panel mb-6 p-6">
-              <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
-                <i class="fas fa-plus"></i>
-                Create New Playlist
-              </h2>
-              
-              <div class="space-y-4 max-w-md">
-                <div>
-                  <label class="block text-sm font-bold text-black mb-1">
-                    Playlist Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., 'Sunday Chill Vibes' or 'Workout Bangers'"
-                    value={newPlaylistName()}
-                    onInput={(e) => setNewPlaylistName(e.currentTarget.value)}
-                    class="w-full px-3 py-2 text-sm border-2 border-gray-400 bg-white"
-                  />
-                </div>
+            <PlaylistCreateForm
+              onCreatePlaylist={(name, type) => {
+                console.log('Creating new playlist:', name, type);
+                // Here you'd integrate with your backend to create the playlist
                 
-                <div>
-                  <label class="block text-sm font-bold text-black mb-1">
-                    Playlist Type
-                  </label>
-                  <select
-                    value={newPlaylistType()}
-                    onChange={(e) => setNewPlaylistType(e.currentTarget.value as PlaylistType)}
-                    class="win95-panel w-full px-3 py-2 text-sm font-bold text-black"
-                  >
-                    <option value="collaborative">👥 Collaborative - Others can add songs</option>
-                    <option value="personal">👤 Personal - Only you can add songs</option>
-                  </select>
-                </div>
+                // Show success message
+                alert(`✨ Playlist "${name}" created!`);
                 
-                <div class="win95-panel p-3 bg-blue-50">
-                  <div class="text-xs text-gray-600">
-                    <i class="fas fa-info-circle mr-1 text-blue-600"></i>
-                    <strong>Collaborative:</strong> Anyone can add tracks, perfect for group playlists<br/>
-                    <strong>Personal:</strong> Only you control what gets added
-                  </div>
-                </div>
+                // Create mock playlist entry (in real app this would come from backend)
+                const newPlaylistId = `playlist_${Date.now()}`;
                 
-                <button
-                  onClick={handleCreatePlaylist}
-                  disabled={!newPlaylistName().trim()}
-                  class="win95-button px-6 py-3 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed w-full"
-                  classList={{
-                    'hover:bg-green-100': newPlaylistName().trim(),
-                    'cursor-not-allowed opacity-50': !newPlaylistName().trim()
-                  }}
-                  style={newPlaylistName().trim() ? {
-                    background: 'linear-gradient(135deg, #00f92a 0%, #04caf4 100%)'
-                  } : {}}
-                >
-                  <i class="fas fa-plus mr-2"></i>
-                  Create Playlist! ✨
-                </button>
-              </div>
-            </div>
+                // Auto-redirect to Quick Add tab and pre-select the new playlist
+                setActiveTab('quick');
+                setSelectedPlaylists([newPlaylistId]);
+                
+                // Note: In real app, you'd add the new playlist to allPlaylistDestinations
+                // For now, we'll just select the default playlist as a demo
+                setTimeout(() => {
+                  alert(`Switched to Quick Add! The new playlist would be pre-selected here.`);
+                }, 500);
+              }}
+            />
           </Show>
 
           {/* Quick Tips */}
