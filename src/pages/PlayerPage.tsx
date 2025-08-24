@@ -28,11 +28,12 @@ const PlayerPage: Component = () => {
   };
   
   const handlePlayPlaylist = () => {
-    const tracks = playlistTracks();
+    const currentId = currentPlaylistId();
+    const tracks = playlistTracks[currentId || ''] || [];
     if (tracks.length > 0) {
-      console.log('Playing playlist:', currentPlaylistId());
+      console.log('Playing playlist:', currentId);
       setCurrentTrack(tracks[0]); // Play first track
-      setPlayingPlaylistId(currentPlaylistId()); // Track which playlist is playing
+      setPlayingPlaylistId(currentId); // Track which playlist is playing
     }
   };
 

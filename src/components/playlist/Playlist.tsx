@@ -58,6 +58,19 @@ const Playlist: Component<PlaylistProps> = (props) => {
     return sortedTracks;
   });
   
+  const handlePlayTrack = (track: any, index: number) => {
+    console.log('Playing track:', track.title, 'at index:', index);
+    const tracks = filteredTracks();
+    setCurrentTrack(track);
+    setPlayingPlaylistId(currentPlaylistId());
+    // Optionally set the playlist queue to play from this index
+    const remainingTracks = tracks.slice(index);
+    if (remainingTracks.length > 0) {
+      // The player will handle playing through the queue
+      console.log('Queue set with', remainingTracks.length, 'tracks');
+    }
+  };
+  
   onMount(() => {
     if (trackContainerRef) {
       staggeredFadeIn(trackContainerRef);
@@ -78,8 +91,8 @@ const Playlist: Component<PlaylistProps> = (props) => {
         {(track, index) => (
           <TrackItem 
             track={track} 
-            index={index()} 
-            playlistId={currentPlaylistId() || ''} 
+            trackNumber={index() + 1}
+            onPlay={() => handlePlayTrack(track, index())}
           />
         )}
       </For>
