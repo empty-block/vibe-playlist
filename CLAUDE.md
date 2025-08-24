@@ -15,6 +15,31 @@ JAMZY treats **playlists as the fundamental organizational unit** for all music 
 
 This unified model simplifies the mental model - users always think "where should this song go?" rather than complex sharing/posting concepts.
 
+### AI-as-Assistant Philosophy
+JAMZY's AI features are designed to **enhance human creativity, not replace it**. Throughout the application, AI serves as a supportive assistant that helps users express their musical vision more naturally and efficiently.
+
+**Key Principles:**
+- **Human-Driven Curation**: Users maintain full creative control over their playlists
+- **AI Suggests, Users Decide**: The AI provides options and explanations; users make all final choices
+- **Natural Language Interface**: Conversational UI eliminates manual searching and complex forms
+- **Creative Enhancement**: AI helps users discover and organize music they wouldn't find otherwise
+- **Transparent Reasoning**: AI suggestions include explanations for why tracks were recommended
+
+**Implementation Guidelines:**
+- Use conversational interfaces over traditional form inputs when possible
+- Always provide reasoning for AI suggestions ("This track has that same ethereal quality...")
+- Allow users to easily reject or modify AI suggestions
+- Frame AI interactions as collaborative ("Let's find some music that captures...")
+- Avoid language that suggests AI is making decisions ("I think you'd like..." vs "You might enjoy...")
+- Position AI as a helpful friend rather than an authoritative system
+
+**Examples in Practice:**
+- **Playlist Discovery**: Instead of separate "Artist Name" and "Track Name" fields, use chat interface: "Tell me about some Frank Ocean vibes for late night coding"
+- **Smart Suggestions**: AI presents tracks with reasoning: "This song captures that same ethereal quality you love in Bon Iver"
+- **Collaborative Language**: "Let's discover some music that captures the chill vibe" instead of "I will find music for you"
+
+This approach ensures technology serves creativity rather than constraining it, making music discovery feel like collaboration with a knowledgeable friend.
+
 ### Built on Farcaster Social Infrastructure
 - **Backend**: Leverages existing Farcaster protocol for user profiles, social interactions, posting
 - **Frontend Focus**: UI/UX layer that presents Farcaster content through playlist metaphor

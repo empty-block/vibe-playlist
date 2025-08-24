@@ -53,6 +53,25 @@ Our neon 90s color scheme creates an authentic retro atmosphere:
 - **🩷 Neon Pink** `#f906d6` - Accent colors and warnings
 - **💛 Neon Yellow** `#d1f60a` - Notifications and attention grabbers
 
+## 🤖 AI-as-Assistant Philosophy
+
+Jamzy's AI features are designed to **enhance human creativity, not replace it**. Our approach positions AI as a supportive assistant that helps users express their musical vision more naturally and efficiently.
+
+### Core Principles
+- **Human-Driven Curation**: Users maintain creative control over their playlists
+- **AI Suggests, Users Decide**: The AI provides options and explanations; users make the final choices
+- **Natural Language Interface**: Conversational UI eliminates manual searching and data entry
+- **Creative Enhancement**: AI helps users discover and organize music they wouldn't find otherwise
+- **Transparent Reasoning**: AI suggestions include explanations for why tracks were recommended
+
+### Implementation Examples
+- **Playlist Discovery**: Instead of complex search forms, users chat naturally ("I want some Frank Ocean vibes for late night coding")
+- **Smart Suggestions**: AI recommends tracks with reasoning ("This song has that same ethereal quality you love")
+- **Assisted Organization**: AI helps categorize and title playlists based on user preferences
+- **Discovery Enhancement**: AI finds similar artists and tracks to expand user's musical horizons
+
+This philosophy ensures that technology serves creativity rather than constraining it, making music discovery feel like collaboration with a knowledgeable friend rather than interaction with a search algorithm.
+
 ## 🛠️ For Developers
 
 ### Quick Start
