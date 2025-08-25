@@ -4,11 +4,12 @@
 
 ### Core Design Principles
 
-1. **Social-First Design**: Every interface element emphasizes community and conversation
-2. **Nostalgic but Functional**: Retro aesthetics never compromise usability
-3. **High-Quality Feel**: Professional polish with attention to detail
-4. **Playlist-Centric**: Everything revolves around playlists as the core organizational unit
-5. **Accessible Neon**: Vibrant colors that maintain proper contrast ratios
+1. **Conversation-Centric**: Every song is a conversation starter - design for thread-based interactions
+2. **Sharing-First Library Building**: Your collection grows through sharing, not adding - emphasize public discovery  
+3. **Human Curation Enhanced by AI**: AI suggests, humans decide - show AI reasoning transparently
+4. **Collections as Living Tags**: Playlists are dynamic, algorithmic, and community-driven
+5. **Retro Aesthetics with Social Purpose**: 90s nostalgia serves discovery and connection, not decoration
+6. **Farcaster-Native**: Design for decentralized social interactions and public conversations
 
 ## 🎯 Visual Identity
 
@@ -28,8 +29,6 @@
 --darker-bg: #0f0f0f    /* Deeper background areas */
 --light-text: #ffffff   /* Primary text */
 --muted-text: #cccccc   /* Secondary text */
---border-light: #333333 /* Subtle borders */
---border-bright: #666666 /* Prominent borders */
 ```
 
 ### Color Usage Guidelines
@@ -40,154 +39,229 @@
 - **Special Emphasis**: Neon pink sparingly for unique features, special callouts
 - **Text Highlights**: Neon orange for readable emphasis, active states, current selections
 - **Warnings Only**: Neon yellow exclusively for errors, warnings, urgent alerts
-- **Gradients**: Combine colors for depth (e.g., blue→cyan, green→cyan)
+
+## 💬 Conversation UI Patterns
+
+### Thread-Based Music Sharing
+- **Song Cards**: Always show reply count and conversation preview
+- **Thread Views**: Nested replies with clear visual hierarchy
+- **Contribution Indicators**: Visual cues showing who added songs to conversations
+- **Reply Prompts**: Encourage musical responses with contextual suggestions
+
+### Social Context Display
+- **Sharer Attribution**: Prominent display of who discovered/shared each track
+- **Conversation Starters**: Design templates for music discovery prompts  
+- **Community Indicators**: Show which songs sparked the most discussion
+- **Farcaster Integration**: Native Farcaster reply and engagement patterns
+
+## 🎵 Discovery & Collection Patterns
+
+### Library as Shared Identity
+- **Discovery Feed**: Chronological stream of community music shares
+- **Personal Collections**: User's musical identity through their shares
+- **Tag-Based Playlists**: Dynamic collections based on user-generated tags
+- **Algorithmic Collections**: AI-generated playlists with transparent reasoning
+
+### AI-Enhanced Discovery
+- **Suggestion Cards**: AI recommendations with clear "why this song?" explanations
+- **Natural Language Search**: Conversational search interface ("find me chill 90s indie")
+- **Contextual Prompts**: AI-generated conversation starters for sharing
+- **Human-AI Collaboration**: Show how AI builds on human curation
+
+## 🤖 AI-as-Assistant Design Patterns
+
+### Transparent AI Interactions
+- **Reasoning Display**: Always show why AI suggested something
+- **Human Override**: Easy ways to modify or reject AI suggestions
+- **Learning Feedback**: UI for training AI on user preferences
+
+### Conversational AI Elements
+- **Chat Interfaces**: Terminal/messenger styling for AI interactions
+- **Progressive Disclosure**: Reveal AI capabilities gradually
+- **Natural Language Inputs**: Free-form text with smart parsing
+- **Suggestion Previews**: Show AI options before committing
 
 ## 🖼️ Component Design Language
 
-Retro inspired components with a modern touch.
+### Retro-Modern Components
+- **Window Chrome**: 90s OS-inspired frames for major sections
+- **Neon Glow Effects**: Interactive feedback with animated shadows
+- **Gradient Backgrounds**: Depth through color transitions
+- **Chunky Controls**: Touch-friendly retro buttons and sliders
 
-**Neon Glow Effects**: For interactive elements
-```css
-/* Hover glow */
-box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan);
-transition: box-shadow 0.3s ease;
+### Social Elements
+- **Contributor Avatars**: Stacked avatars showing conversation participants
+- **Reaction Buttons**: Heart, reply, share with neon hover effects
+- **Comment Threads**: Nested replies with connector lines
+- **Discovery Badges**: Visual indicators for trending conversations
 
-/* Current/active item glow */
-box-shadow: 
-  0 0 10px var(--neon-green),
-  0 0 20px var(--neon-green),
-  0 0 40px var(--neon-green);
+### Reusable Social Components
+
+**`SocialStats.tsx`** - Unified display for likes/recasts/replies
+```typescript
+<SocialStats
+  likes={track.likes}
+  recasts={track.recasts} 
+  replies={track.replies}
+  size="sm|md|lg"
+  showLabels={true|false}
+  interactive={true}  // Makes buttons clickable
+  onLikeClick={() => handleLike()}
+  onRepliesClick={() => showReplies()}
+/>
 ```
 
-**Gradient Backgrounds**: For depth and visual interest
-```css
-/* Primary gradient */
-background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-cyan) 100%);
-
-/* Success gradient */
-background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%);
-
-/* Accent gradient */
-background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-orange) 100%);
+**`SocialActions.tsx`** - Reusable action buttons
+```typescript
+<SocialActions
+  onLike={() => likeTrack()}
+  onAdd={() => addToPlaylist()}
+  onShare={() => shareTrack()}
+  size="sm|md|lg"
+  variant="buttons|links"  // Win95 buttons or simple links
+/>
 ```
 
-## 📱 Responsive Design Philosophy
-
-### Mobile-First Retro
-- **Touch-Friendly**: All interactive elements minimum 44px touch targets
-- **Thumb-Driven**: Primary actions within easy thumb reach
-- **Simplified Chrome**: Reduce window decorations on small screens
-- **Gesture Support**: Swipe gestures for playlist navigation
-
-### Desktop Enhancement
-- **Full Window Chrome**: Complete Windows 95 aesthetic on larger screens
-- **Multi-Panel Layouts**: Utilize screen real estate effectively
-- **Hover States**: Rich hover interactions with neon effects
-- **Keyboard Shortcuts**: Full keyboard navigation support
+**`ReplyItem.tsx`** - Standardized reply formatting
+```typescript
+<ReplyItem
+  reply={replyData}
+  variant="default|compact|modal"  // Different contexts
+  onLike={(id) => likeReply(id)}
+  onReply={(id) => replyTo(id)}
+/>
+```
 
 ## ⚡ Animation & Interaction
 
-### Hardware-Accelerated Animations (anime.js)
-- **Smooth Transitions**: 60fps animations using `transform` properties
-- **Neon Glow Effects**: Animated box-shadow for interactive feedback
-- **Scale & Hover**: Subtle scale transforms on hover (1.05x max)
-- **Staggered Entrances**: Playlist items animate in with delays
-- **Particle Effects**: Burst animations on significant interactions
+### Animation System (anime.js v3.2.1)
+The app uses **anime.js v3.2.1** for smooth, hardware-accelerated animations. All animation utilities are centralized in `src/utils/animations.ts`.
 
-### Interaction Patterns
-- **Click Feedback**: Immediate visual response to all clicks
-- **Loading States**: Animated loading indicators with neon styling
-- **Success Feedback**: Green glow pulse for successful actions
-- **Error Handling**: Yellow neon flash for errors, with clear messaging
+**Version Requirements**:
+- **Use v3.2.1**: Stable version with reliable module imports
+- **Avoid v4.x**: Has module export issues in our build setup
+- **Installation**: `bun add animejs@3.2.1`
+
+### Core Animation Patterns
+
+**Player Controls**: Gradient hover effects with icon color changes
+```typescript
+// Player buttons get gradient backgrounds + white icons on hover
+playbackButtonHover.enter(buttonElement);
+```
+
+**Track Interactions**:
+- Hover scale effects with proper container padding
+- Current track gets neon blue border with multi-layer glow
+- Particle burst effects on play button clicks
+- Magnetic effects on thumbnails
+
+**Page Transitions**: Staggered fade-ins, page entrance animations, floating elements
+
+### Animation Architecture
+- **Centralized utilities**: All animations in `src/utils/animations.ts`
+- **Ref-based**: Uses SolidJS refs for direct DOM manipulation
+- **Hardware acceleration**: `transform: translateZ(0)` for smooth performance
+- **CSS transition override**: `transition: 'none'` to prevent conflicts
+
+### Implementation Patterns
+```typescript
+// Always disable CSS transitions for anime.js elements
+element.style.transition = 'none';
+
+// Reset transforms after animations complete
+complete: () => {
+  element.style.transform = 'translateZ(0)';
+}
+
+// Proper cleanup in leave animations
+leave: (element) => {
+  element.style.background = '';
+  element.style.color = '';
+}
+```
+
+### Critical Layout Considerations
+- **Container padding**: Track containers need `px-2` for hover scale effects
+- **Border visibility**: Current track uses `border-4` + multi-layer shadows
+- **Stagger conflicts**: Don't mix individual item animations with container staggered animations
+
+### Interaction Feedback
+- **Click Response**: Immediate visual confirmation with particle bursts
+- **Loading States**: Animated indicators with personality
+- **Success Feedback**: Green glow pulse for completed actions
+- **Error Handling**: Clear messaging with recovery suggestions
 
 ## 🔤 Typography
 
 ### Font Hierarchy
-- **Display**: Retro digital 90s fonts for headers and branding
-- **Interface**: Clean, readable fonts for UI text
-- **Monospace**: For technical information (timestamps, IDs)
-- **Retro Accent**: Pixel-perfect fonts for special retro elements
+- **Display**: Retro digital fonts for headers and branding
+- **Interface**: Clean, readable system fonts for UI text
+- **Monospace**: Terminal-style fonts for AI interactions
+- **Social Text**: Optimized for conversation readability
 
 ### Text Treatment
-- **Neon Text**: Use neon colors with subtle glow effects
-- **Readable Contrast**: Ensure all text meets WCAG AA standards
-- **Hierarchy**: Clear size and weight progression
-- **Interactive Text**: Hover effects on clickable text
+- **Neon Accents**: Selective use of color with glow effects
+- **Readable Contrast**: WCAG AA compliance minimum
+- **Clear Hierarchy**: Distinct sizes for navigation levels
+- **Interactive Cues**: Hover states for clickable text
 
-## 📐 Spacing & Layout
+## 📐 Layout Principles
 
-### Grid System
-- **8px Base Unit**: All spacing in multiples of 8px
-- **Component Padding**: 16px standard, 8px compact, 24px spacious
-- **Content Margins**: 24px between major sections
-- **Button Spacing**: 12px between button groups
+### Grid & Spacing
+- **8px Base Unit**: Consistent spacing multiples
+- **Content Zones**: Clear separation between social and player areas
+- **Responsive Scaling**: Mobile-first with desktop enhancement
+- **Thread Nesting**: Visual indent system for conversation depth
 
-### Retro Layout Principles
-- **Clear Separation**: Distinct visual boundaries between areas
-- **Information Density**: Balance retro aesthetics with modern readability
-- **Alignment**: Consistent left-alignment for easy scanning
+### Information Architecture
+- **Discovery First**: Feed and collections prominent
+- **Player Persistent**: Always accessible transport controls
+- **Social Context**: User attribution visible at all times
+- **AI Assistant**: Accessible but not intrusive
 
 ## ✨ Special Effects & Polish
 
 ### Neon Glow System
-```css
-/* Subtle glow */
-.glow-subtle { box-shadow: 0 0 10px currentColor; }
+- Apply glows purposefully to highlight social interactions
+- Use color-coded glows for different interaction types
+- Animate glow intensity for state changes
+- Reserve intense glows for special achievements
 
-/* Medium glow */
-.glow-medium { box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+### Retro Polish
+- **CRT Effects**: Subtle scan lines for nostalgic feel
+- **Pixel Accents**: Dotted borders and pixelated icons
+- **Terminal Styling**: Monospace fonts and cursor blinks for AI
+- **Cassette Metaphors**: Loading bars as tape reels
 
-/* Intense glow */
-.glow-intense { 
-  box-shadow: 
-    0 0 10px currentColor,
-    0 0 20px currentColor,
-    0 0 40px currentColor,
-    0 0 80px currentColor;
-}
-```
+## 📱 Responsive Considerations
 
+### Mobile-First Social
+- **Touch Targets**: Minimum 44px for all interactive elements
+- **Swipe Gestures**: Navigate between collections and threads
+- **Simplified Chrome**: Focus on content over decoration
+- **Quick Actions**: Thumb-accessible sharing and reactions
 
-## 🎵 Music-Specific Design Elements
+### Desktop Enhancements
+- **Multi-Panel Views**: Side-by-side discovery and player
+- **Keyboard Navigation**: Full keyboard support for power users
+- **Rich Previews**: Hover cards with song details
+- **Drag & Drop**: Reorder collections and build playlists
 
-### Player Interface
-- **Transport Controls**: Large, thumb-friendly play/pause/skip buttons
-- **Progress Bar**: Chunky, draggable with neon fill
-- **Volume Control**: Vertical slider matching retro audio equipment
-- **Track Info**: Prominent display with scrolling text for long titles
+## 🎯 Quality Standards
 
-### Playlist Visualization
-- **Track Numbers**: Retro digital display font
-- **Duration Display**: MM:SS format with monospace font
-- **Waveform Display**: Animated visualization during playback
-- **Album Art**: Prominent with neon border treatment
+### Performance
+- **60fps Animations**: Hardware acceleration required
+- **Lazy Loading**: Progressive content loading
+- **Optimized Images**: Responsive artwork delivery
+- **Minimal Reflows**: Batch DOM updates
 
-### Social Music Elements
-- **Contributor Avatars**: Stacked avatars showing playlist collaborators
-- **Reaction Buttons**: Heart, add with neon hover effects
-- **Comment Threads**: Nested replies with connector lines
-
-## 📋 Implementation Guidelines
-
-### Code Organization
-- **Component Libraries**: Reusable components (`/src/components/`)
-- **Design Tokens**: CSS custom properties for consistent theming
-- **Animation Utilities**: Centralized anime.js effects (`/src/utils/animations.ts`)
-- **Responsive Utilities**: Mobile-first CSS with desktop enhancements
-
-### Quality Standards
-- **Performance**: All animations 60fps, lazy loading for images
-- **Accessibility**: Keyboard navigation, screen reader support, color contrast
-- **Progressive Enhancement**: Works without JavaScript, enhanced with it
-- **Cross-Browser**: Consistent experience across modern browsers
-
-### Testing Approach
-- **Visual Regression**: Automated screenshot testing for UI consistency
-- **Interaction Testing**: Automated testing of hover states and animations
-- **Device Testing**: Regular testing on mobile devices and various screen sizes
-- **User Testing**: Regular feedback sessions with target demographic
-
+### Accessibility
+- **Keyboard Navigation**: Full functionality without mouse
+- **Screen Readers**: Semantic HTML and ARIA labels
+- **Color Contrast**: WCAG AA minimum compliance
+- **Focus Indicators**: Clear visual focus states
 
 ---
 
-*This document should be referenced by all contributors when implementing new features or modifying existing interfaces. The goal is to maintain a cohesive, high-quality user experience that honors both retro aesthetics and modern usability standards.*
+*These guidelines focus on Jamzy's unique identity as a social music discovery platform where every song starts a conversation and sharing builds your library. When implementing new features, prioritize human connection, conversation threading, and AI that enhances rather than replaces human creativity.*
