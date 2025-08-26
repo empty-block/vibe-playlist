@@ -1,6 +1,7 @@
 import { Component, createSignal, createEffect, onMount, For, Show } from 'solid-js';
 import anime from 'animejs';
 import type { VibeType } from './VibeSelector';
+import { mockDataService } from '../../data/mockData';
 
 interface Message {
   id: string;
@@ -116,33 +117,24 @@ const ConversationCreator: Component<ConversationCreatorProps> = (props) => {
     // Remove loading message
     setMessages(prev => prev.filter(m => m.id !== loadingMessage.id));
 
-    // Generate AI response with track suggestions
-    const mockTracks: TrackSuggestion[] = [
-      {
-        id: '1',
-        title: 'Midnight City',
-        artist: 'M83',
-        source: 'youtube',
-        sourceId: 'dX3k_QDnzHE',
-        reasoning: 'Perfect synth-driven anthem that captures that nostalgic electronic vibe'
-      },
-      {
-        id: '2', 
-        title: 'Time to Dance',
-        artist: 'The Sounds',
-        source: 'youtube',
-        sourceId: 'F_6IjeprfEs',
-        reasoning: 'High-energy track with retro-futuristic sound'
-      },
-      {
-        id: '3',
-        title: 'Digital Love',
-        artist: 'Daft Punk',
-        source: 'youtube', 
-        sourceId: 'QOngRDVtEQI',
-        reasoning: 'Classic electronic love song with incredible production'
-      }
-    ];
+    // Get actual track suggestions from our centralized data
+    // For now, just grab a few tracks that match the vibe from our database
+    // In a real app, this would be AI-generated based on user input
+    const allTracks = await mockDataService.getAllTracks();
+    const synthTracks = allTracks.filter(track => 
+      track.addedBy === 'synth_prophet_85' || 
+      track.artist.toLowerCase().includes('m83') ||
+      track.artist.toLowerCase().includes('daft punk')
+    ).slice(0, 3);
+
+    const mockTracks: TrackSuggestion[] = synthTracks.map(track => ({
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      source: track.source,
+      sourceId: track.sourceId,
+      reasoning: `${track.comment.slice(0, 50)}...` // Use the user's comment as reasoning
+    }));
 
     const aiResponse = `Great choice! Based on "${userMessage}", I found some tracks that should fit perfectly. These all have that electronic/synth vibe with emotional depth. Want to add any of these to your playlist?`;
 

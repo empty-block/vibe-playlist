@@ -1,5 +1,6 @@
 import { Component, createSignal, For, Show, onMount } from 'solid-js';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
+import { mockDataService } from '../data/mockData';
 import anime from 'animejs';
 
 interface TrendingItem {
@@ -19,18 +20,21 @@ const TrendingPage: Component = () => {
   const [isLoading, setIsLoading] = createSignal(false);
   let pageRef: HTMLDivElement | undefined;
 
-  onMount(() => {
+  onMount(async () => {
     if (pageRef) {
       pageEnter(pageRef);
-      
-      // Animate trending items on load
-      setTimeout(() => {
-        const trendingItems = pageRef.querySelectorAll('.trending-item');
-        if (trendingItems) {
-          staggeredFadeIn(trendingItems);
-        }
-      }, 300);
     }
+    
+    // Load initial trending data
+    await loadTrendingData();
+    
+    // Animate trending items on load
+    setTimeout(() => {
+      const trendingItems = pageRef?.querySelectorAll('.trending-item');
+      if (trendingItems) {
+        staggeredFadeIn(trendingItems);
+      }
+    }, 300);
   });
 
   // Helper functions for neon color system with improved hierarchy
@@ -52,60 +56,25 @@ const TrendingPage: Component = () => {
     return icons[category as keyof typeof icons] || '';
   };
 
-  const trendingData = {
-    playlists: {
-      today: [
-        { id: '1', rank: 1, change: 'up' as const, title: '90s Grunge Revival', subtitle: 'curated by grunge_master_93', metric: '+45% plays today', icon: '🎸' },
-        { id: '2', rank: 2, change: 'down' as const, title: 'Synthwave Nights', subtitle: 'curated by neon_dreams_85', metric: '+32% plays today', icon: '🌈' },
-        { id: '3', rank: 3, change: 'same' as const, title: 'Chill Indie Vibes', subtitle: 'curated by indie_explorer', metric: '+28% plays today', icon: '🌙' },
-        { id: '4', rank: 4, change: 'up' as const, title: 'Underground Hip-Hop', subtitle: 'curated by beat_digger', metric: '+25% plays today', icon: '🎤' }
-      ],
-      week: [
-        { id: '1', rank: 1, change: 'same' as const, title: '90s Grunge Revival', subtitle: 'curated by grunge_master_93', metric: '2.1M plays this week', icon: '🎸' },
-        { id: '2', rank: 2, change: 'up' as const, title: 'Y2K Throwbacks', subtitle: 'curated by millennium_kid', metric: '1.8M plays this week', icon: '💿' }
-      ]
-    },
-    songs: {
-      today: [
-        { id: '1', rank: 1, change: 'up' as const, title: 'Smells Like Teen Spirit', subtitle: 'Nirvana', metric: '45K plays today' },
-        { id: '2', rank: 2, change: 'down' as const, title: 'Blue Monday', subtitle: 'New Order', metric: '38K plays today' },
-        { id: '3', rank: 3, change: 'up' as const, title: 'Midnight City', subtitle: 'M83', metric: '35K plays today' }
-      ],
-      week: [
-        { id: '1', rank: 1, change: 'same' as const, title: 'Smells Like Teen Spirit', subtitle: 'Nirvana', metric: '312K plays this week' },
-        { id: '2', rank: 2, change: 'up' as const, title: 'Take On Me', subtitle: 'a-ha', metric: '287K plays this week' }
-      ]
-    },
-    artists: {
-      today: [
-        { id: '1', rank: 1, change: 'up' as const, title: 'Nirvana', subtitle: '3 tracks trending', metric: '+52% plays today' },
-        { id: '2', rank: 2, change: 'same' as const, title: 'New Order', subtitle: '2 tracks trending', metric: '+41% plays today' },
-        { id: '3', rank: 3, change: 'up' as const, title: 'M83', subtitle: '1 track trending', metric: '+35% plays today' }
-      ],
-      week: [
-        { id: '1', rank: 1, change: 'same' as const, title: 'Nirvana', subtitle: '5 tracks in top 100', metric: '892K total plays' },
-        { id: '2', rank: 2, change: 'up' as const, title: 'The Killers', subtitle: '3 tracks in top 100', metric: '654K total plays' }
-      ]
-    },
-    users: {
-      today: [
-        { id: '1', rank: 1, change: 'up' as const, title: 'grunge_master_93', subtitle: '⭐ Elite Curator', metric: '+125% engagement', avatar: '🎸' },
-        { id: '2', rank: 2, change: 'down' as const, title: 'synth_prophet_85', subtitle: '🏆 Master Curator', metric: '+98% engagement', avatar: '🌈' },
-        { id: '3', rank: 3, change: 'up' as const, title: 'underground_oracle', subtitle: '💎 Hidden Gems Expert', metric: '+87% engagement', avatar: '🔮' },
-        { id: '4', rank: 4, change: 'same' as const, title: 'vinyl_archaeologist', subtitle: '📀 Rare Finds Specialist', metric: '+76% engagement', avatar: '💿' }
-      ],
-      week: [
-        { id: '1', rank: 1, change: 'same' as const, title: 'grunge_master_93', subtitle: '2.3K followers • 156 tracks shared', metric: '45K total interactions', avatar: '🎸' },
-        { id: '2', rank: 2, change: 'up' as const, title: 'underground_oracle', subtitle: '3.7K followers • 412 tracks shared', metric: '38K total interactions', avatar: '🔮' }
-      ]
+  const [trendingData, setTrendingData] = createSignal<TrendingItem[]>([]);
+
+  // Load trending data from mock service
+  const loadTrendingData = async () => {
+    try {
+      const data = await mockDataService.getTrendingData(currentCategory(), currentTimeframe());
+      setTrendingData(data);
+    } catch (error) {
+      console.error('Failed to load trending data:', error);
+      setTrendingData([]);
     }
   };
 
-  const currentData = () => trendingData[currentCategory()][currentTimeframe()] || [];
+  const currentData = () => trendingData();
 
-  const handleCategoryChange = (category: 'playlists' | 'songs' | 'artists' | 'users') => {
+  const handleCategoryChange = async (category: 'playlists' | 'songs' | 'artists' | 'users') => {
     setIsLoading(true);
     setCurrentCategory(category);
+    await loadTrendingData();
     // Re-animate trending items when category changes
     setTimeout(() => {
       const trendingItems = pageRef?.querySelectorAll('.trending-item');
@@ -116,10 +85,11 @@ const TrendingPage: Component = () => {
     }, 100);
   };
 
-  const handleTimeframeChange = (e: Event) => {
+  const handleTimeframeChange = async (e: Event) => {
     const select = e.currentTarget as HTMLSelectElement;
     setIsLoading(true);
     setCurrentTimeframe(select.value as 'today' | 'week' | 'month' | 'all');
+    await loadTrendingData();
     // Re-animate trending items when timeframe changes
     setTimeout(() => {
       const trendingItems = pageRef?.querySelectorAll('.trending-item');
