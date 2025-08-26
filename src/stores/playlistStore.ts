@@ -30,6 +30,9 @@ export interface Track {
   repliesData?: Reply[]; // Actual reply objects
   // Keep videoId for backward compatibility during transition
   videoId?: string;
+  // Filter-specific flags for ProfilePage
+  isLiked?: boolean;
+  isConversation?: boolean;
 }
 
 export interface Playlist {

@@ -10,6 +10,7 @@
 4. **Collections as Living Tags**: Playlists are dynamic, algorithmic, and community-driven
 5. **Retro Aesthetics with Social Purpose**: 90s nostalgia serves discovery and connection, not decoration
 6. **Farcaster-Native**: Design for decentralized social interactions and public conversations
+7. **Professional High-quality Look**: AVOID tacky designs and do not lean too much into skeumorphism or overly literal designs
 
 ## 🎯 Visual Identity
 

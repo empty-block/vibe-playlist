@@ -5,6 +5,7 @@ import { currentUser } from '../stores/authStore';
 import { pageEnter, staggeredFadeIn, buttonHover, slideIn, float, magnetic, counterAnimation } from '../utils/animations';
 
 export type SortOption = 'recent' | 'likes' | 'comments';
+export type FilterOption = 'all' | 'shared' | 'conversations' | 'liked';
 
 interface UserProfile {
   username: string;
@@ -20,9 +21,14 @@ interface UserProfile {
 
 const ProfilePage: Component = () => {
   const params = useParams();
-  const [currentTab, setCurrentTab] = createSignal<'playlists' | 'added' | 'liked' | 'replied'>('added');
+  const [activeFilter, setActiveFilter] = createSignal<FilterOption>('all');
   const [sortBy, setSortBy] = createSignal<SortOption>('recent');
+  const [showShareInterface, setShowShareInterface] = createSignal(false);
+  const [shareText, setShareText] = createSignal('');
+  const [trackUrl, setTrackUrl] = createSignal('');
+  const [isSharing, setIsSharing] = createSignal(false);
   let pageRef: HTMLDivElement;
+  let shareTextareaRef: HTMLTextAreaElement;
 
   onMount(() => {
     // Page entrance animation
@@ -198,23 +204,28 @@ const ProfilePage: Component = () => {
   const userProfile = () => getUserProfile(username());
 
   const getCurrentTracks = createMemo(() => {
-    let tracks;
-    switch (currentTab()) {
-      case 'playlists':
-        // TODO: Return user's created playlists
-        tracks = [];
+    let tracks: Track[] = [];
+    const profile = userProfile();
+    
+    // Filter tracks based on active filter
+    switch (activeFilter()) {
+      case 'all':
+        // Combine all tracks with metadata about their source
+        tracks = [
+          ...profile.sharedTracks,
+          ...profile.likedTracks.map(t => ({ ...t, isLiked: true })),
+          ...profile.repliedTracks.map(t => ({ ...t, isConversation: true }))
+        ];
         break;
-      case 'added': 
-        tracks = userProfile().sharedTracks;
+      case 'shared':
+        tracks = profile.sharedTracks;
         break;
-      case 'liked': 
-        tracks = userProfile().likedTracks;
+      case 'conversations':
+        tracks = profile.repliedTracks;
         break;
-      case 'replied': 
-        tracks = userProfile().repliedTracks;
+      case 'liked':
+        tracks = profile.likedTracks;
         break;
-      default: 
-        tracks = [];
     }
 
     // Sort tracks based on selected option
@@ -249,19 +260,9 @@ const ProfilePage: Component = () => {
     return sortedTracks;
   });
 
-  const getTabTitle = () => {
-    switch (currentTab()) {
-      case 'playlists': return `Playlists Created by ${userProfile().username}`;
-      case 'added': return `Songs Added by ${userProfile().username}`;
-      case 'liked': return `Tracks Liked by ${userProfile().username}`;
-      case 'replied': return `Tracks Replied to by ${userProfile().username}`;
-      default: return '';
-    }
-  };
-
-  const handleTabChange = (tab: 'playlists' | 'added' | 'liked' | 'replied') => {
-    setCurrentTab(tab);
-    // Animate track items when switching tabs
+  const handleFilterChange = (filter: FilterOption) => {
+    setActiveFilter(filter);
+    // Animate track items when switching filters
     setTimeout(() => {
       const trackItems = pageRef?.querySelectorAll('.track-item');
       if (trackItems) {
@@ -270,14 +271,53 @@ const ProfilePage: Component = () => {
     }, 100);
   };
 
-  const handleButtonHover = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.enter(button);
-  };
-
-  const handleButtonLeave = (e: MouseEvent) => {
-    const button = e.currentTarget as HTMLElement;
-    buttonHover.leave(button);
+  const handleQuickShare = async () => {
+    if (!shareText().trim() && !trackUrl().trim()) return;
+    
+    setIsSharing(true);
+    
+    // Extract track ID from URL if provided
+    const extractTrackId = (text: string): string => {
+      const youtubeMatch = text.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+      if (youtubeMatch) return youtubeMatch[1];
+      
+      const spotifyMatch = text.match(/spotify\.com\/track\/([^?\s]+)/);
+      if (spotifyMatch) return spotifyMatch[1];
+      
+      return 'demo-track-id';
+    };
+    
+    // Simulate adding to library
+    const newTrack: Track = {
+      id: Date.now().toString(),
+      title: 'New Track',
+      artist: 'Artist',
+      duration: '3:45',
+      source: 'youtube' as const,
+      sourceId: trackUrl() ? extractTrackId(trackUrl()) : 'demo-id',
+      videoId: trackUrl() ? extractTrackId(trackUrl()) : 'demo-id',
+      thumbnail: 'https://img.youtube.com/vi/demo-id/mqdefault.jpg',
+      addedBy: currentUser().username,
+      userAvatar: currentUser().avatar,
+      timestamp: 'just now',
+      comment: shareText(),
+      likes: 0,
+      replies: 0,
+      recasts: 0
+    };
+    
+    console.log('Adding track to library:', newTrack);
+    
+    // Reset form and close interface
+    setTimeout(() => {
+      setShareText('');
+      setTrackUrl('');
+      setShowShareInterface(false);
+      setIsSharing(false);
+      
+      // Refresh the tracks list
+      handleFilterChange(activeFilter());
+    }, 1000);
   };
 
   return (
@@ -289,9 +329,9 @@ const ProfilePage: Component = () => {
         background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
       }}
     >
-      {/* PROFILE HEADER - Terminal Database Entry */}
+      {/* SIMPLIFIED PROFILE HEADER */}
       <div 
-        class="profile-section relative p-8 mb-8 rounded-xl overflow-hidden"
+        class="profile-section relative p-6 mb-6 rounded-xl overflow-hidden"
         style={{ 
           opacity: '0',
           background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
@@ -299,45 +339,10 @@ const ProfilePage: Component = () => {
           'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
         }}
       >
-        {/* Scan lines effect */}
-        <div 
-          class="absolute inset-0 pointer-events-none opacity-5"
-          style={{
-            background: `repeating-linear-gradient(
-              0deg,
-              transparent 0px,
-              transparent 3px,
-              rgba(249, 6, 214, 0.08) 4px,
-              rgba(249, 6, 214, 0.08) 5px
-            )`
-          }}
-        />
-        
-        {/* Status indicator */}
-        <div class="flex items-center gap-2 mb-6">
+        <div class="flex items-center gap-6">
+          {/* Compact Avatar */}
           <div 
-            class="w-2 h-2 rounded-full animate-pulse"
-            style={{
-              background: '#00f92a',
-              'box-shadow': '0 0 6px rgba(0, 249, 42, 0.6)'
-            }}
-          />
-          <span 
-            class="text-xs font-mono uppercase tracking-widest"
-            style={{
-              color: '#04caf4',
-              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.5)',
-              'font-family': 'Courier New, monospace'
-            }}
-          >
-            USER PROFILE ACTIVE
-          </span>
-        </div>
-        
-        <div class="flex items-start gap-8">
-          {/* Avatar with neon glow */}
-          <div 
-            class="profile-avatar text-7xl p-4 rounded-lg"
+            class="profile-avatar text-5xl p-3 rounded-lg"
             style={{
               background: 'rgba(249, 6, 214, 0.1)',
               border: '2px solid rgba(249, 6, 214, 0.4)',
@@ -348,353 +353,240 @@ const ProfilePage: Component = () => {
           </div>
           
           <div class="flex-1">
-            {/* Username with neon text */}
-            <h2 
-              class="font-mono font-bold text-4xl mb-3"
-              style={{
-                color: '#f906d6',
-                'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
-                'font-family': 'Courier New, monospace',
-                'letter-spacing': '0.05em'
-              }}
-            >
-              {userProfile().username}
-            </h2>
-            
-            {/* Bio with terminal styling */}
-            <p 
-              class="font-mono text-sm mb-6"
-              style={{
-                color: 'rgba(255, 255, 255, 0.8)',
-                'font-family': 'Courier New, monospace'
-              }}
-            >
-              {userProfile().bio}
-            </p>
-            
-            {/* Stats Grid - Terminal Readouts */}
-            <div class="grid grid-cols-3 gap-6 mb-6">
-              <div 
-                class="p-3 rounded"
-                style={{
-                  background: 'rgba(0, 249, 42, 0.1)',
-                  border: '1px solid rgba(0, 249, 42, 0.3)'
-                }}
-              >
-                <div 
-                  class="stat-number font-mono font-bold text-2xl"
+            <div class="flex items-center justify-between">
+              <div>
+                {/* Username with library label */}
+                <h2 
+                  class="font-mono font-bold text-2xl mb-1"
                   style={{
-                    color: '#00f92a',
-                    'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)',
+                    color: '#f906d6',
+                    'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
                     'font-family': 'Courier New, monospace'
                   }}
                 >
-                  {userProfile().songsCount}
-                </div>
-                <div 
-                  class="text-xs font-mono uppercase"
+                  {isCurrentUser() ? 'My Library' : `${userProfile().username}'s Library`}
+                </h2>
+                
+                {/* Compact bio */}
+                <p 
+                  class="font-mono text-sm"
                   style={{
-                    color: 'rgba(0, 249, 42, 0.7)',
+                    color: 'rgba(255, 255, 255, 0.7)',
                     'font-family': 'Courier New, monospace'
                   }}
                 >
-                  SONGS ADDED
-                </div>
+                  {userProfile().bio}
+                </p>
               </div>
               
-              <div 
-                class="p-3 rounded"
-                style={{
-                  background: 'rgba(4, 202, 244, 0.1)',
-                  border: '1px solid rgba(4, 202, 244, 0.3)'
-                }}
-              >
-                <div 
-                  class="stat-number font-mono font-bold text-2xl"
-                  style={{
-                    color: '#04caf4',
-                    'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
-                    'font-family': 'Courier New, monospace'
-                  }}
-                >
-                  {userProfile().songsLiked}
-                </div>
-                <div 
-                  class="text-xs font-mono uppercase"
-                  style={{
-                    color: 'rgba(4, 202, 244, 0.7)',
-                    'font-family': 'Courier New, monospace'
-                  }}
-                >
-                  SONGS LIKED
-                </div>
-              </div>
-              
-              <div 
-                class="p-3 rounded"
-                style={{
-                  background: 'rgba(255, 155, 0, 0.1)',
-                  border: '1px solid rgba(255, 155, 0, 0.3)'
-                }}
-              >
-                <div 
-                  class="stat-number font-mono font-bold text-2xl"
-                  style={{
-                    color: '#ff9b00',
-                    'text-shadow': '0 0 5px rgba(255, 155, 0, 0.6)',
-                    'font-family': 'Courier New, monospace'
-                  }}
-                >
-                  {userProfile().playlistsCreated}
-                </div>
-                <div 
-                  class="text-xs font-mono uppercase"
-                  style={{
-                    color: 'rgba(255, 155, 0, 0.7)',
-                    'font-family': 'Courier New, monospace'
-                  }}
-                >
-                  PLAYLISTS
-                </div>
+              {/* Compact stats */}
+              <div class="flex items-center gap-4 mt-3">
+                <span class="font-mono text-xs" style={{ color: '#00f92a' }}>
+                  <span class="font-bold">{userProfile().songsCount}</span> tracks
+                </span>
+                <span class="font-mono text-xs" style={{ color: '#04caf4' }}>
+                  <span class="font-bold">{userProfile().repliedTracks.length}</span> conversations
+                </span>
+                <span class="font-mono text-xs" style={{ color: '#ff9b00' }}>
+                  <span class="font-bold">{userProfile().playlistsCreated}</span> collections
+                </span>
               </div>
             </div>
             
-            {/* Follow button for other users */}
-            <Show when={!isCurrentUser()}>
-              <button 
-                class="px-6 py-3 font-mono font-bold text-sm uppercase tracking-wide transition-all duration-300 rounded"
-                style={{
-                  background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                  border: '2px solid rgba(0, 249, 42, 0.4)',
-                  color: '#00f92a',
-                  'font-family': 'Courier New, monospace',
-                  'text-shadow': '0 0 5px rgba(0, 249, 42, 0.4)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = '#00f92a';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                <i class="fas fa-user-plus mr-2"></i>FOLLOW USER
-              </button>
-            </Show>
+            {/* Action buttons */}
+            <div class="flex items-center gap-2">
+              <Show when={isCurrentUser()}>
+                <button 
+                  onClick={() => setShowShareInterface(!showShareInterface())}
+                  class="px-4 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
+                  style={{
+                    background: showShareInterface() ? 'rgba(0, 249, 42, 0.2)' : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+                    border: '2px solid rgba(0, 249, 42, 0.4)',
+                    color: '#00f92a',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#00f92a';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <i class={`fas fa-${showShareInterface() ? 'times' : 'plus'} mr-2`}></i>
+                  {showShareInterface() ? 'CANCEL' : 'ADD TRACK'}
+                </button>
+              </Show>
+              
+              <Show when={!isCurrentUser()}>
+                <button 
+                  class="px-4 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
+                  style={{
+                    background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+                    border: '2px solid rgba(0, 249, 42, 0.4)',
+                    color: '#00f92a',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#00f92a';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <i class="fas fa-user-plus mr-2"></i>FOLLOW
+                </button>
+              </Show>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* USER LIBRARY TABS - Terminal Interface */}
+      {/* SHARE INTERFACE - Only for own library */}
+      <Show when={isCurrentUser() && showShareInterface()}>
+        <div 
+          class="profile-section relative p-6 mb-6 rounded-xl overflow-hidden"
+          style={{ 
+            opacity: '1',
+            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
+            border: '2px solid rgba(0, 249, 42, 0.4)',
+            'box-shadow': '0 0 30px rgba(0, 249, 42, 0.3)'
+          }}
+        >
+          <div class="space-y-4">
+            <textarea
+              ref={shareTextareaRef!}
+              value={shareText()}
+              onInput={(e) => setShareText(e.currentTarget.value)}
+              placeholder="What are you listening to? Share a thought, mood, or just drop a track..."
+              class="w-full bg-transparent text-white placeholder-gray-500 resize-none outline-none font-mono text-sm"
+              rows="3"
+              style={{ 'font-family': 'Courier New, monospace' }}
+            />
+            
+            <div class="flex gap-3">
+              <input
+                type="text"
+                value={trackUrl()}
+                onInput={(e) => setTrackUrl(e.currentTarget.value)}
+                placeholder="Paste track URL (YouTube, Spotify, SoundCloud)"
+                class="flex-1 bg-black/50 text-white px-3 py-2 rounded border border-gray-700 focus:border-green-500 outline-none font-mono text-xs"
+                style={{ 'font-family': 'Courier New, monospace' }}
+              />
+              
+              <button
+                onClick={handleQuickShare}
+                disabled={(!shareText().trim() && !trackUrl().trim()) || isSharing()}
+                class="px-6 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded disabled:opacity-50"
+                style={{
+                  background: 'linear-gradient(135deg, #00f92a 0%, #04caf4 100%)',
+                  color: 'black',
+                  'font-family': 'Courier New, monospace'
+                }}
+              >
+                {isSharing() ? 'ADDING...' : 'ADD TO LIBRARY'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Show>
+
+      {/* FILTER BAR - Mobile-friendly horizontal scroll */}
       <div 
-        class="profile-section relative mb-6 rounded-xl overflow-hidden"
+        class="profile-section relative mb-6 p-4 rounded-xl overflow-x-auto"
         style={{ 
-          opacity: '0',
+          opacity: '1',
           background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
           border: '1px solid rgba(4, 202, 244, 0.3)',
           'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
         }}
       >
-        {/* Scan lines for tabs */}
-        <div 
-          class="absolute inset-0 pointer-events-none opacity-3"
-          style={{
-            background: `repeating-linear-gradient(
-              0deg,
-              transparent 0px,
-              transparent 2px,
-              rgba(4, 202, 244, 0.05) 3px,
-              rgba(4, 202, 244, 0.05) 4px
-            )`
-          }}
-        />
-        
-        <div class="flex">
-          <button
-            class={`relative px-6 py-4 font-mono font-bold text-sm uppercase tracking-wide transition-all duration-300 flex-1`}
-            style={{
-              background: currentTab() === 'playlists' 
-                ? 'rgba(249, 6, 214, 0.15)' 
-                : 'transparent',
-              'border-right': '1px solid rgba(4, 202, 244, 0.2)',
-              'border-bottom': currentTab() === 'playlists' 
-                ? '2px solid #f906d6' 
-                : '2px solid transparent',
-              color: currentTab() === 'playlists' ? '#f906d6' : 'rgba(255, 255, 255, 0.6)',
-              'text-shadow': currentTab() === 'playlists' ? '0 0 5px rgba(249, 6, 214, 0.6)' : 'none',
-              'font-family': 'Courier New, monospace'
-            }}
-            onClick={() => handleTabChange('playlists')}
-            onMouseEnter={(e) => {
-              if (currentTab() !== 'playlists') {
-                e.currentTarget.style.background = 'rgba(249, 6, 214, 0.08)';
-                e.currentTarget.style.color = '#f906d6';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentTab() !== 'playlists') {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-              }
-            }}
-          >
-            <i class="fas fa-list mr-2"></i>PLAYLISTS ({userProfile().playlistsCreated})
-          </button>
+        <div class="flex items-center justify-between gap-4 min-w-max">
+          <div class="flex gap-2">
+            <button
+              onClick={() => handleFilterChange('all')}
+              class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
+              style={{
+                background: activeFilter() === 'all' ? 'rgba(0, 249, 42, 0.2)' : 'transparent',
+                border: `1px solid ${activeFilter() === 'all' ? '#00f92a' : 'rgba(4, 202, 244, 0.3)'}`,
+                color: activeFilter() === 'all' ? '#00f92a' : 'rgba(255, 255, 255, 0.6)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              ALL
+            </button>
+            
+            <button
+              onClick={() => handleFilterChange('shared')}
+              class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
+              style={{
+                background: activeFilter() === 'shared' ? 'rgba(0, 249, 42, 0.2)' : 'transparent',
+                border: `1px solid ${activeFilter() === 'shared' ? '#00f92a' : 'rgba(4, 202, 244, 0.3)'}`,
+                color: activeFilter() === 'shared' ? '#00f92a' : 'rgba(255, 255, 255, 0.6)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              SHARED ({userProfile().sharedTracks.length})
+            </button>
+            
+            <button
+              onClick={() => handleFilterChange('conversations')}
+              class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
+              style={{
+                background: activeFilter() === 'conversations' ? 'rgba(249, 6, 214, 0.2)' : 'transparent',
+                border: `1px solid ${activeFilter() === 'conversations' ? '#f906d6' : 'rgba(4, 202, 244, 0.3)'}`,
+                color: activeFilter() === 'conversations' ? '#f906d6' : 'rgba(255, 255, 255, 0.6)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              CONVERSATIONS ({userProfile().repliedTracks.length})
+            </button>
+            
+            <button
+              onClick={() => handleFilterChange('liked')}
+              class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
+              style={{
+                background: activeFilter() === 'liked' ? 'rgba(4, 202, 244, 0.2)' : 'transparent',
+                border: `1px solid ${activeFilter() === 'liked' ? '#04caf4' : 'rgba(4, 202, 244, 0.3)'}`,
+                color: activeFilter() === 'liked' ? '#04caf4' : 'rgba(255, 255, 255, 0.6)',
+                'font-family': 'Courier New, monospace'
+              }}
+            >
+              <i class="fas fa-heart mr-1"></i>LIKED
+            </button>
+          </div>
           
-          <button
-            class={`relative px-6 py-4 font-mono font-bold text-sm uppercase tracking-wide transition-all duration-300 flex-1`}
+          <select
+            value={sortBy()}
+            onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
+            class="px-3 py-1 font-mono text-xs rounded transition-all duration-300"
             style={{
-              background: currentTab() === 'added' 
-                ? 'rgba(0, 249, 42, 0.15)' 
-                : 'transparent',
-              'border-right': '1px solid rgba(4, 202, 244, 0.2)',
-              'border-bottom': currentTab() === 'added' 
-                ? '2px solid #00f92a' 
-                : '2px solid transparent',
-              color: currentTab() === 'added' ? '#00f92a' : 'rgba(255, 255, 255, 0.6)',
-              'text-shadow': currentTab() === 'added' ? '0 0 5px rgba(0, 249, 42, 0.6)' : 'none',
+              background: 'rgba(0, 0, 0, 0.8)',
+              border: '1px solid rgba(4, 202, 244, 0.4)',
+              color: '#04caf4',
               'font-family': 'Courier New, monospace'
             }}
-            onClick={() => handleTabChange('added')}
-            onMouseEnter={(e) => {
-              if (currentTab() !== 'added') {
-                e.currentTarget.style.background = 'rgba(0, 249, 42, 0.08)';
-                e.currentTarget.style.color = '#00f92a';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentTab() !== 'added') {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-              }
-            }}
           >
-            <i class="fas fa-music mr-2"></i>SONGS ADDED ({userProfile().sharedTracks.length})
-          </button>
-          
-          <button
-            class={`relative px-6 py-4 font-mono font-bold text-sm uppercase tracking-wide transition-all duration-300 flex-1`}
-            style={{
-              background: currentTab() === 'liked' 
-                ? 'rgba(4, 202, 244, 0.15)' 
-                : 'transparent',
-              'border-right': '1px solid rgba(4, 202, 244, 0.2)',
-              'border-bottom': currentTab() === 'liked' 
-                ? '2px solid #04caf4' 
-                : '2px solid transparent',
-              color: currentTab() === 'liked' ? '#04caf4' : 'rgba(255, 255, 255, 0.6)',
-              'text-shadow': currentTab() === 'liked' ? '0 0 5px rgba(4, 202, 244, 0.6)' : 'none',
-              'font-family': 'Courier New, monospace'
-            }}
-            onClick={() => handleTabChange('liked')}
-            onMouseEnter={(e) => {
-              if (currentTab() !== 'liked') {
-                e.currentTarget.style.background = 'rgba(4, 202, 244, 0.08)';
-                e.currentTarget.style.color = '#04caf4';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentTab() !== 'liked') {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-              }
-            }}
-          >
-            <i class="fas fa-heart mr-2"></i>LIKED ({userProfile().likedTracks.length})
-          </button>
-          
-          <button
-            class={`relative px-6 py-4 font-mono font-bold text-sm uppercase tracking-wide transition-all duration-300 flex-1`}
-            style={{
-              background: currentTab() === 'replied' 
-                ? 'rgba(255, 155, 0, 0.15)' 
-                : 'transparent',
-              'border-bottom': currentTab() === 'replied' 
-                ? '2px solid #ff9b00' 
-                : '2px solid transparent',
-              color: currentTab() === 'replied' ? '#ff9b00' : 'rgba(255, 255, 255, 0.6)',
-              'text-shadow': currentTab() === 'replied' ? '0 0 5px rgba(255, 155, 0, 0.6)' : 'none',
-              'font-family': 'Courier New, monospace'
-            }}
-            onClick={() => handleTabChange('replied')}
-            onMouseEnter={(e) => {
-              if (currentTab() !== 'replied') {
-                e.currentTarget.style.background = 'rgba(255, 155, 0, 0.08)';
-                e.currentTarget.style.color = '#ff9b00';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentTab() !== 'replied') {
-                e.currentTarget.style.background = 'transparent';
-                e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)';
-              }
-            }}
-          >
-            <i class="fas fa-comment mr-2"></i>REPLIED ({userProfile().repliedTracks.length})
-          </button>
+            <option value="recent">RECENT</option>
+            <option value="likes">POPULAR</option>
+            <option value="comments">ACTIVE</option>
+          </select>
         </div>
       </div>
 
-      {/* TAB CONTENT - Terminal Data Display */}
+      {/* TRACK LIST */}
       <div 
         class="profile-section relative p-6 rounded-xl overflow-hidden"
         style={{ 
-          opacity: '0',
+          opacity: '1',
           background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
           border: '1px solid rgba(4, 202, 244, 0.2)',
           'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
         }}
-      >
-        {/* Content Header */}
-        <div class="flex items-center justify-between mb-6">
-          <h3 
-            class="font-mono font-bold text-lg"
-            style={{
-              color: '#04caf4',
-              'text-shadow': '0 0 5px rgba(4, 202, 244, 0.6)',
-              'font-family': 'Courier New, monospace',
-              'letter-spacing': '0.05em'
-            }}
-          >
-            {getTabTitle()}
-          </h3>
-          <div class="flex items-center gap-3">
-            <span 
-              class="text-xs font-mono uppercase"
-              style={{
-                color: 'rgba(4, 202, 244, 0.7)',
-                'font-family': 'Courier New, monospace'
-              }}
-            >
-              SORT BY:
-            </span>
-            <select
-              value={sortBy()}
-              onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
-              class="px-3 py-1 font-mono text-xs rounded transition-all duration-300"
-              style={{
-                background: 'rgba(0, 0, 0, 0.8)',
-                border: '1px solid rgba(4, 202, 244, 0.4)',
-                color: '#04caf4',
-                'font-family': 'Courier New, monospace'
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#04caf4';
-                e.currentTarget.style.boxShadow = '0 0 10px rgba(4, 202, 244, 0.4)';
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.4)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <option value="recent">RECENT</option>
-              <option value="likes">LIKES</option>
-              <option value="comments">COMMENTS</option>
-            </select>
-          </div>
-        </div>
-        
+      >        
         <Show 
           when={getCurrentTracks().length > 0} 
           fallback={
@@ -705,8 +597,31 @@ const ProfilePage: Component = () => {
                 'font-family': 'Courier New, monospace'
               }}
             >
-              <i class="fas fa-database text-4xl mb-4" style={{ color: 'rgba(4, 202, 244, 0.3)' }}></i>
-              <p class="font-mono uppercase text-sm">NO DATA IN THIS CATEGORY</p>
+              <Show 
+                when={isCurrentUser() && activeFilter() === 'all'}
+                fallback={
+                  <>
+                    <i class="fas fa-music text-4xl mb-4" style={{ color: 'rgba(4, 202, 244, 0.3)' }}></i>
+                    <p class="font-mono uppercase text-sm mb-2">NO TRACKS IN THIS FILTER</p>
+                    <p class="font-mono text-xs opacity-60">Try a different filter or check back later</p>
+                  </>
+                }
+              >
+                <i class="fas fa-plus-circle text-4xl mb-4" style={{ color: 'rgba(0, 249, 42, 0.3)' }}></i>
+                <p class="font-mono uppercase text-sm mb-2">YOUR LIBRARY IS EMPTY</p>
+                <p class="font-mono text-xs opacity-60 mb-4">Start building your music library</p>
+                <button
+                  onClick={() => setShowShareInterface(true)}
+                  class="px-6 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
+                  style={{
+                    background: 'linear-gradient(135deg, #00f92a 0%, #04caf4 100%)',
+                    color: 'black',
+                    'font-family': 'Courier New, monospace'
+                  }}
+                >
+                  ADD YOUR FIRST TRACK
+                </button>
+              </Show>
             </div>
           }
         >
@@ -809,11 +724,14 @@ const ProfilePage: Component = () => {
                         </span>
                         <span>•</span>
                         <span>{track.timestamp}</span>
-                        <Show when={currentTab() === 'replied'}>
-                          <span style={{ color: '#ff9b00' }}>• REPLIED</span>
+                        <Show when={track.isConversation}>
+                          <span style={{ color: '#f906d6' }}>• CONVERSATION</span>
                         </Show>
-                        <Show when={currentTab() === 'liked'}>
+                        <Show when={track.isLiked}>
                           <span style={{ color: '#04caf4' }}>• LIKED</span>
+                        </Show>
+                        <Show when={!track.isConversation && !track.isLiked}>
+                          <span style={{ color: '#00f92a' }}>• SHARED</span>
                         </Show>
                       </div>
                       
