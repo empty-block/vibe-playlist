@@ -254,7 +254,8 @@ export const mockTrackSubmissions: Track[] = [
     comment: 'This song changed everything. Peak 90s grunge energy! 🔥',
     likes: 89,
     replies: 23,
-    recasts: 45
+    recasts: 45,
+    tags: ['grunge', '90s', 'alternative', 'rock']
   },
   {
     id: 'track_2', 
@@ -270,7 +271,8 @@ export const mockTrackSubmissions: Track[] = [
     comment: 'Another Nirvana classic. Kurt\'s guitar tone is unmatched.',
     likes: 67,
     replies: 18,
-    recasts: 32
+    recasts: 32,
+    tags: ['nirvana', 'grunge', 'classic']
   },
   {
     id: 'track_3',

@@ -28,6 +28,7 @@ export interface Track {
   likes: number;
   replies: number;
   recasts: number;
+  tags?: string[]; // New tags field
   repliesData?: Reply[]; // Actual reply objects
   // Keep videoId for backward compatibility during transition
   videoId?: string;

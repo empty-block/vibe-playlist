@@ -7,6 +7,10 @@ import DiscoverPage from './pages/DiscoverPage';
 import TrendingPage from './pages/TrendingPage';
 import CreatePage from './pages/CreatePage';
 import ProfilePage from './pages/ProfilePage';
+import LibraryPage from './pages/LibraryPage';
+import ListenPage from './pages/ListenPage';
+import CuratePage from './pages/CuratePage';
+import MePage from './pages/MePage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
 const App: Component = () => {
@@ -39,9 +43,9 @@ const App: Component = () => {
     const navigate = useNavigate();
     
     onMount(() => {
-      // If authenticated, redirect to player
+      // If authenticated, redirect to library (new home)
       if (isAuthenticated()) {
-        navigate('/player');
+        navigate('/library');
       }
     });
     
@@ -55,12 +59,21 @@ const App: Component = () => {
   return (
     <Router root={Layout}>
       <Route path="/" component={RootRoute} />
-      <Route path="/player" component={PlayerPage} />
+      
+      {/* New primary navigation routes */}
+      <Route path="/library" component={LibraryPage} />
+      <Route path="/listen" component={ListenPage} />
+      <Route path="/curate" component={CuratePage} />
+      <Route path="/me/:username" component={MePage} />
+      <Route path="/me" component={MePage} />
+      
+      {/* Legacy routes with redirects for backwards compatibility */}
+      <Route path="/player" component={ListenPage} />
+      <Route path="/create" component={CuratePage} />
+      <Route path="/profile/:username" component={MePage} />
+      <Route path="/profile" component={MePage} />
       <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />
-      <Route path="/create" component={CreatePage} />
-      <Route path="/profile" component={ProfilePage} />
-      <Route path="/profile/:username" component={ProfilePage} />
     </Router>
   );
 };

@@ -10,8 +10,9 @@ export const [currentUser, setCurrentUser] = createSignal({
 
 // General authentication state (mock - for demo purposes)
 // In real app this would check Farcaster authentication
+// DEFAULT TO TRUE FOR DEVELOPMENT
 export const [isAuthenticated, setIsAuthenticated] = createSignal(
-  localStorage.getItem('demo_authenticated') === 'true'
+  localStorage.getItem('demo_authenticated') !== 'false' // Default to true unless explicitly set to false
 );
 
 // Demo function to toggle authentication for testing

@@ -1,0 +1,181 @@
+/* Clean Library Table with Subtle Jamzy Touches */
+
+.retro-music-terminal {
+  background: linear-gradient(to bottom, #1e293b, #0f172a);
+  border: 2px solid rgba(4, 202, 244, 0.3);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(4, 202, 244, 0.1);
+  overflow: hidden;
+}
+
+/* Clean Header */
+.retro-terminal-header {
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  border-bottom: 1px solid rgba(4, 202, 244, 0.3);
+  padding: 24px 32px;
+}
+
+.retro-terminal-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #04caf4;
+  text-shadow: 0 1px 2px rgba(4, 202, 244, 0.3);
+  margin-bottom: 8px;
+}
+
+.retro-terminal-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.retro-track-counter {
+  background: rgba(0, 249, 42, 0.1);
+  border: 1px solid rgba(0, 249, 42, 0.3);
+  border-radius: 8px;
+  padding: 12px 20px;
+  color: #00f92a;
+  text-shadow: 0 1px 2px rgba(0, 249, 42, 0.3);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Clean Data Grid */
+.retro-data-grid {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Clean Headers */
+.retro-grid-header {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  border-bottom: 2px solid rgba(4, 202, 244, 0.4);
+}
+
+.retro-grid-header-cell {
+  padding: 16px 20px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #04caf4;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 2px rgba(4, 202, 244, 0.3);
+  border-right: 1px solid rgba(4, 202, 244, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retro-grid-header-cell:hover {
+  color: #ffffff;
+  background: rgba(4, 202, 244, 0.1);
+}
+
+.retro-sort-indicator {
+  display: inline-block;
+  margin-left: 6px;
+  color: #00f92a;
+  font-size: 12px;
+}
+
+/* Clean Rows */
+.retro-grid-row {
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.6) 0%, 
+    rgba(15, 23, 42, 0.8) 100%
+  );
+  border-bottom: 1px solid rgba(4, 202, 244, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.retro-grid-row:hover {
+  background: linear-gradient(135deg, 
+    rgba(4, 202, 244, 0.08) 0%, 
+    rgba(0, 249, 42, 0.05) 100%
+  );
+  border-bottom-color: rgba(4, 202, 244, 0.3);
+}
+
+.retro-grid-row.current-track {
+  border-left: 4px solid #00f92a;
+  background: linear-gradient(135deg, 
+    rgba(0, 249, 42, 0.1) 0%, 
+    rgba(4, 202, 244, 0.05) 100%
+  );
+}
+
+.retro-grid-cell {
+  padding: 16px 20px;
+  border-right: 1px solid rgba(4, 202, 244, 0.05);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Clean Typography */
+.retro-track-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.retro-track-artist {
+  font-size: 14px;
+  color: #04caf4;
+  margin-bottom: 4px;
+}
+
+.retro-track-duration {
+  font-size: 12px;
+  color: #f906d6;
+  font-weight: 500;
+}
+
+.retro-user-name {
+  font-size: 14px;
+  color: #f906d6;
+  font-weight: 500;
+}
+
+.retro-timestamp {
+  font-size: 13px;
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+/* Clean Platform Badges */
+.retro-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.retro-platform-badge.youtube {
+  border-color: rgba(255, 0, 0, 0.5);
+  color: #ff4444;
+}
+
+.retro-platform-badge.spotify {
+  border-color: rgba(0, 249, 42, 0.5);
+  color: #00f92a;
+}
+
+.retro-platform-badge.soundcloud {
+  border-color: rgba(255, 102, 0, 0.5);
+  color: #ff6600;
+}
+
+.retro-platform-badge.bandcamp {
+  border-color: rgba(4, 202, 244, 0.5);
+  color: #04caf4;
+}
