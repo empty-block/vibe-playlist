@@ -5,6 +5,7 @@ import RetroTooltip from '../ui/RetroTooltip';
 
 interface LibraryTableRowProps {
   track: Track;
+  trackNumber: number;
 }
 
 const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
@@ -116,6 +117,19 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
       onMouseLeave={() => setIsHovered(false)}
       onDblClick={handlePlayTrack}
     >
+      {/* Track Number Column */}
+      <td class="retro-grid-cell w-12 text-center">
+        <span 
+          class="font-mono text-sm font-bold"
+          style={{
+            color: isCurrentTrack() ? '#00f92a' : 'rgba(204, 204, 204, 0.8)',
+            'text-shadow': isCurrentTrack() ? '0 0 3px rgba(0, 249, 42, 0.6)' : 'none'
+          }}
+        >
+          {String(props.trackNumber).padStart(2, '0')}
+        </span>
+      </td>
+
       {/* Track Column */}
       <td class="retro-grid-cell">
         <div class="flex items-center gap-3">
@@ -191,13 +205,13 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         <Show 
           when={props.track.comment && isCommentTruncated()} 
           fallback={
-            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 max-w-[250px] font-mono">
+            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
               {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
             </div>
           }
         >
           <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
-            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 max-w-[250px] font-mono cursor-help">
+            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
               {props.track.comment}
             </div>
           </RetroTooltip>

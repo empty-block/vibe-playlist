@@ -23,6 +23,13 @@ const LibraryTableHeader: Component = () => {
   return (
     <thead class="retro-grid-header">
       <tr>
+        {/* Track Number Column */}
+        <th class="retro-grid-header-cell w-12 text-center">
+          <div class="flex items-center justify-center">
+            #
+          </div>
+        </th>
+
         {/* Track Column */}
         <th 
           class={`retro-grid-header-cell ${getSortClass('track')}`}
