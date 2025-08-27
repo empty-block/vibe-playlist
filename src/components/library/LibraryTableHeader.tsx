@@ -62,6 +62,13 @@ const LibraryTableHeader: Component = () => {
           </div>
         </th>
 
+        {/* Context Column - Not sortable */}
+        <th class="retro-grid-header-cell">
+          <div class="flex items-center gap-2">
+            Context
+          </div>
+        </th>
+
         {/* When Column */}
         <th 
           class={`retro-grid-header-cell ${getSortClass('timestamp')}`}
@@ -88,25 +95,28 @@ const LibraryTableHeader: Component = () => {
           </div>
         </th>
 
-        {/* Context Column - Not sortable */}
-        <th class="retro-grid-header-cell">
-          Context
-        </th>
-
-        {/* Tags Column - Not sortable */}
-        <th class="retro-grid-header-cell">
-          Tags
-        </th>
-
-        {/* Community Column */}
+        {/* Replies Column */}
         <th 
-          class={`retro-grid-header-cell ${getSortClass('engagement')}`}
-          onClick={() => handleSort('engagement')}
+          class={`retro-grid-header-cell ${getSortClass('replies')}`}
+          onClick={() => handleSort('replies')}
         >
           <div class="flex items-center gap-2">
-            Community
-            <span class={`retro-sort-indicator ${sortState.column === 'engagement' ? 'opacity-100' : 'opacity-40'}`}>
-              {getSortIcon('engagement')}
+            Replies
+            <span class={`retro-sort-indicator ${sortState.column === 'replies' ? 'opacity-100' : 'opacity-40'}`}>
+              {getSortIcon('replies')}
+            </span>
+          </div>
+        </th>
+
+        {/* Likes Column */}
+        <th 
+          class={`retro-grid-header-cell ${getSortClass('likes')}`}
+          onClick={() => handleSort('likes')}
+        >
+          <div class="flex items-center gap-2">
+            Likes
+            <span class={`retro-sort-indicator ${sortState.column === 'likes' ? 'opacity-100' : 'opacity-40'}`}>
+              {getSortIcon('likes')}
             </span>
           </div>
         </th>

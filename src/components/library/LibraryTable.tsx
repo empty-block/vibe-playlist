@@ -41,6 +41,9 @@ const LibraryTable: Component = () => {
               </div>
             </td>
             <td class="table-cell p-4">
+              <div class="w-20 h-3 bg-slate-700 rounded"></div>
+            </td>
+            <td class="table-cell p-4">
               <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-slate-700 rounded-full"></div>
                 <div class="w-16 h-3 bg-slate-700 rounded"></div>
@@ -63,10 +66,15 @@ const LibraryTable: Component = () => {
               <div class="w-32 h-8 bg-slate-700 rounded"></div>
             </td>
             <td class="table-cell p-4">
-              <div class="flex gap-1">
-                <div class="w-6 h-6 bg-slate-700 rounded"></div>
-                <div class="w-6 h-6 bg-slate-700 rounded"></div>
-                <div class="w-6 h-6 bg-slate-700 rounded"></div>
+              <div class="flex gap-1 items-center">
+                <div class="w-4 h-4 bg-slate-700 rounded"></div>
+                <div class="w-6 h-3 bg-slate-700 rounded"></div>
+              </div>
+            </td>
+            <td class="table-cell p-4">
+              <div class="flex gap-1 items-center">
+                <div class="w-4 h-4 bg-slate-700 rounded"></div>
+                <div class="w-6 h-3 bg-slate-700 rounded"></div>
               </div>
             </td>
           </tr>
@@ -78,7 +86,7 @@ const LibraryTable: Component = () => {
   const EmptyState = () => (
     <tbody>
       <tr>
-        <td colSpan={7} class="text-center py-16">
+        <td colSpan={8} class="text-center py-16">
           <div class="text-cyan-400/60 text-lg mb-4">🎵</div>
           <div class="text-white/70 text-lg font-semibold mb-2">No tracks found</div>
           <div class="text-white/50 text-sm">Try adjusting your filters or check back later</div>
@@ -90,7 +98,7 @@ const LibraryTable: Component = () => {
   const ErrorState = () => (
     <tbody>
       <tr>
-        <td colSpan={7} class="text-center py-16">
+        <td colSpan={8} class="text-center py-16">
           <div class="text-red-400/60 text-lg mb-4">⚠️</div>
           <div class="text-red-400 text-lg font-semibold mb-2">Error Loading Library</div>
           <div class="text-white/50 text-sm mb-4">{loadingError()}</div>

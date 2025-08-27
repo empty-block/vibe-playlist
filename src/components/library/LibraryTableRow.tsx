@@ -1,6 +1,7 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createSignal, Show, onMount, createEffect } from 'solid-js';
 import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playlistStore';
 import SocialStats from '../social/SocialStats';
+import RetroTooltip from '../ui/RetroTooltip';
 
 interface LibraryTableRowProps {
   track: Track;
@@ -8,6 +9,38 @@ interface LibraryTableRowProps {
 
 const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   const [isHovered, setIsHovered] = createSignal(false);
+  const [isTitleTruncated, setIsTitleTruncated] = createSignal(false);
+  const [isArtistTruncated, setIsArtistTruncated] = createSignal(false);
+  const [isCommentTruncated, setIsCommentTruncated] = createSignal(false);
+  
+  let titleRef: HTMLDivElement | undefined;
+  let artistRef: HTMLDivElement | undefined;
+  let commentRef: HTMLDivElement | undefined;
+  
+  const checkTruncation = () => {
+    if (titleRef) {
+      setIsTitleTruncated(titleRef.scrollWidth > titleRef.clientWidth);
+    }
+    if (artistRef) {
+      setIsArtistTruncated(artistRef.scrollWidth > artistRef.clientWidth);
+    }
+    if (commentRef) {
+      setIsCommentTruncated(commentRef.scrollHeight > commentRef.clientHeight);
+    }
+  };
+  
+  onMount(() => {
+    checkTruncation();
+    // Check again on window resize
+    window.addEventListener('resize', checkTruncation);
+    return () => window.removeEventListener('resize', checkTruncation);
+  });
+  
+  createEffect(() => {
+    // Re-check when props change
+    props.track;
+    setTimeout(checkTruncation, 0);
+  });
 
   const handlePlayTrack = () => {
     setCurrentTrack(props.track);
@@ -106,22 +139,41 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
               </div>
             )}
           </div>
-          <div>
-            <div class="retro-track-title line-clamp-1">
-              {props.track.title}
-            </div>
-            <div class="retro-track-duration">
-              {props.track.duration}
-            </div>
+          <div class="min-w-0 flex-1">
+            <Show 
+              when={isTitleTruncated()} 
+              fallback={
+                <div ref={titleRef} class="retro-track-title truncate">
+                  {props.track.title}
+                </div>
+              }
+            >
+              <RetroTooltip content={props.track.title} delay={200}>
+                <div ref={titleRef} class="retro-track-title truncate cursor-help">
+                  {props.track.title}
+                </div>
+              </RetroTooltip>
+            </Show>
           </div>
         </div>
       </td>
 
       {/* Artist Column */}
       <td class="retro-grid-cell">
-        <div class="retro-track-artist line-clamp-1">
-          {props.track.artist}
-        </div>
+        <Show 
+          when={isArtistTruncated()} 
+          fallback={
+            <div ref={artistRef} class="retro-track-artist truncate">
+              {props.track.artist}
+            </div>
+          }
+        >
+          <RetroTooltip content={props.track.artist} delay={200}>
+            <div ref={artistRef} class="retro-track-artist truncate cursor-help">
+              {props.track.artist}
+            </div>
+          </RetroTooltip>
+        </Show>
       </td>
 
       {/* Shared By Column */}
@@ -132,6 +184,24 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
             {props.track.addedBy}
           </span>
         </div>
+      </td>
+
+      {/* Context Column */}
+      <td class="retro-grid-cell">
+        <Show 
+          when={props.track.comment && isCommentTruncated()} 
+          fallback={
+            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 max-w-[250px] font-mono">
+              {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
+            </div>
+          }
+        >
+          <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
+            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 max-w-[250px] font-mono cursor-help">
+              {props.track.comment}
+            </div>
+          </RetroTooltip>
+        </Show>
       </td>
 
       {/* When Column */}
@@ -149,35 +219,19 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         </div>
       </td>
 
-      {/* Context Column */}
+      {/* Replies Column */}
       <td class="retro-grid-cell">
-        <div class="text-sm text-white/60 line-clamp-2 max-w-[200px] font-mono">
-          {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
+        <div class="flex items-center gap-1 text-sm font-mono">
+          <span class="text-blue-400">💬</span>
+          <span class="text-blue-400">{props.track.replies}</span>
         </div>
       </td>
 
-      {/* Tags Column */}
+      {/* Likes Column */}
       <td class="retro-grid-cell">
-        <div class="flex flex-wrap gap-1">
-          {props.track.tags?.map((tag) => (
-            <span class="px-2 py-1 text-xs bg-purple-500/20 border border-purple-500/40 text-purple-400 rounded font-mono">
-              #{tag}
-            </span>
-          )) || <span class="text-gray-500 italic text-xs">No tags</span>}
-        </div>
-      </td>
-
-      {/* Community Column (simplified - just likes and replies) */}
-      <td class="retro-grid-cell">
-        <div class="flex items-center gap-4 text-sm font-mono">
-          <div class="flex items-center gap-1">
-            <span class="text-red-400">❤</span>
-            <span class="text-red-400">{props.track.likes}</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="text-blue-400">💬</span>
-            <span class="text-blue-400">{props.track.replies}</span>
-          </div>
+        <div class="flex items-center gap-1 text-sm font-mono">
+          <span class="text-red-400">❤</span>
+          <span class="text-red-400">{props.track.likes}</span>
         </div>
       </td>
     </tr>

@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store';
 import { Track } from './playlistStore';
 import { mockDataService } from '../data/mockData';
 
-export type SortColumn = 'track' | 'artist' | 'sharedBy' | 'timestamp' | 'platform' | 'engagement';
+export type SortColumn = 'track' | 'artist' | 'sharedBy' | 'timestamp' | 'platform' | 'engagement' | 'likes' | 'replies';
 export type SortDirection = 'asc' | 'desc';
 export type FilterPlatform = 'all' | 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
@@ -113,6 +113,12 @@ export const sortedTracks = createMemo(() => {
         const aEngagement = a.likes + a.recasts + a.replies;
         const bEngagement = b.likes + b.recasts + b.replies;
         comparison = aEngagement - bEngagement;
+        break;
+      case 'likes':
+        comparison = a.likes - b.likes;
+        break;
+      case 'replies':
+        comparison = a.replies - b.replies;
         break;
       case 'timestamp':
         const aDate = new Date(a.timestamp);
