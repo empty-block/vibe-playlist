@@ -1,16 +1,20 @@
 # Jamzy Design Guidelines
 
 ## 🎨 Design Philosophy
+Jamzy is a social music discovery app that is inspired by retro design, combined with a futuristic cyberpunk look.
 
 ### Core Design Principles
+## Retro Inspired, Modern Tech
+Jamzy is designed by retro tech and design, especially from the 90s and 00s. Retro computer UIs, digital radio interfaces, CDs, portable CD players, iPods, early music software like iTunes, Grooveshark, Limewire, etc.
 
-1. **Conversation-Centric**: Every song is a conversation starter - design for thread-based interactions
-2. **Sharing-First Library Building**: Your collection grows through sharing, not adding - emphasize public discovery  
-3. **Human Curation Enhanced by AI**: AI suggests, humans decide - show AI reasoning transparently
-4. **Collections as Living Tags**: Playlists are dynamic, algorithmic, and community-driven
-5. **Retro Aesthetics with Social Purpose**: 90s nostalgia serves discovery and connection, not decoration
-6. **Farcaster-Native**: Design for decentralized social interactions and public conversations
-7. **Professional High-quality Look**: AVOID tacky designs and do not lean too much into skeumorphism or overly literal designs
+But Jamzy also embraces modern tech and best practices, and aims for a fast, accessible, lightweight feel in both its UI and technical architecture. 
+
+This leads to a futuristic, fast, cyberpunk inspired interface, with retro nods and touches. 
+
+## (Fun) Details Matter
+Details are critical, and every part of the design is though through for both usability and visual style. 
+
+Designs should contain subtle fun, small details (and sometimes even Easter eggs) that aim to delight the user. 
 
 ## 🎯 Visual Identity
 
@@ -40,98 +44,6 @@
 - **Special Emphasis**: Neon pink sparingly for unique features, special callouts
 - **Text Highlights**: Neon orange for readable emphasis, active states, current selections
 - **Warnings Only**: Neon yellow exclusively for errors, warnings, urgent alerts
-
-## 💬 Conversation UI Patterns
-
-### Thread-Based Music Sharing
-- **Song Cards**: Always show reply count and conversation preview
-- **Thread Views**: Nested replies with clear visual hierarchy
-- **Contribution Indicators**: Visual cues showing who added songs to conversations
-- **Reply Prompts**: Encourage musical responses with contextual suggestions
-
-### Social Context Display
-- **Sharer Attribution**: Prominent display of who discovered/shared each track
-- **Conversation Starters**: Design templates for music discovery prompts  
-- **Community Indicators**: Show which songs sparked the most discussion
-- **Farcaster Integration**: Native Farcaster reply and engagement patterns
-
-## 🎵 Discovery & Collection Patterns
-
-### Library as Shared Identity
-- **Discovery Feed**: Chronological stream of community music shares
-- **Personal Collections**: User's musical identity through their shares
-- **Tag-Based Playlists**: Dynamic collections based on user-generated tags
-- **Algorithmic Collections**: AI-generated playlists with transparent reasoning
-
-### AI-Enhanced Discovery
-- **Suggestion Cards**: AI recommendations with clear "why this song?" explanations
-- **Natural Language Search**: Conversational search interface ("find me chill 90s indie")
-- **Contextual Prompts**: AI-generated conversation starters for sharing
-- **Human-AI Collaboration**: Show how AI builds on human curation
-
-## 🤖 AI-as-Assistant Design Patterns
-
-### Transparent AI Interactions
-- **Reasoning Display**: Always show why AI suggested something
-- **Human Override**: Easy ways to modify or reject AI suggestions
-- **Learning Feedback**: UI for training AI on user preferences
-
-### Conversational AI Elements
-- **Chat Interfaces**: Terminal/messenger styling for AI interactions
-- **Progressive Disclosure**: Reveal AI capabilities gradually
-- **Natural Language Inputs**: Free-form text with smart parsing
-- **Suggestion Previews**: Show AI options before committing
-
-## 🖼️ Component Design Language
-
-### Retro-Modern Components
-- **Window Chrome**: 90s OS-inspired frames for major sections
-- **Neon Glow Effects**: Interactive feedback with animated shadows
-- **Gradient Backgrounds**: Depth through color transitions
-- **Chunky Controls**: Touch-friendly retro buttons and sliders
-
-### Social Elements
-- **Contributor Avatars**: Stacked avatars showing conversation participants
-- **Reaction Buttons**: Heart, reply, share with neon hover effects
-- **Comment Threads**: Nested replies with connector lines
-- **Discovery Badges**: Visual indicators for trending conversations
-
-### Reusable Social Components
-
-**`SocialStats.tsx`** - Unified display for likes/recasts/replies
-```typescript
-<SocialStats
-  likes={track.likes}
-  recasts={track.recasts} 
-  replies={track.replies}
-  size="sm|md|lg"
-  showLabels={true|false}
-  interactive={true}  // Makes buttons clickable
-  onLikeClick={() => handleLike()}
-  onRepliesClick={() => showReplies()}
-/>
-```
-
-**`SocialActions.tsx`** - Reusable action buttons
-```typescript
-<SocialActions
-  onLike={() => likeTrack()}
-  onAdd={() => addToPlaylist()}
-  onShare={() => shareTrack()}
-  size="sm|md|lg"
-  variant="buttons|links"  // Win95 buttons or simple links
-/>
-```
-
-**`ReplyItem.tsx`** - Standardized reply formatting
-```typescript
-<ReplyItem
-  reply={replyData}
-  variant="default|compact|modal"  // Different contexts
-  onLike={(id) => likeReply(id)}
-  onReply={(id) => replyTo(id)}
-/>
-```
 
 ## ⚡ Animation & Interaction
 
@@ -233,7 +145,6 @@ leave: (element) => {
 - **CRT Effects**: Subtle scan lines for nostalgic feel
 - **Pixel Accents**: Dotted borders and pixelated icons
 - **Terminal Styling**: Monospace fonts and cursor blinks for AI
-- **Cassette Metaphors**: Loading bars as tape reels
 
 ## 📱 Responsive Considerations
 

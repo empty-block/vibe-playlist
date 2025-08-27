@@ -348,3 +348,285 @@
     padding: 6px 10px;
   }
 }
+
+/* ========================================
+   PERSONAL LIBRARY STYLES
+   ======================================== */
+
+/* Personal Library Container */
+.retro-music-terminal.personal-library {
+  border: 2px solid rgba(249, 6, 214, 0.3);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(249, 6, 214, 0.1);
+}
+
+/* Personal Header Styling */
+.personal-grid-header .retro-grid-header-cell {
+  color: #f906d6;
+  text-shadow: 0 1px 2px rgba(249, 6, 214, 0.3);
+}
+
+.personal-grid-header .retro-grid-header-cell:hover {
+  color: #ffffff;
+  background: rgba(249, 6, 214, 0.1);
+}
+
+/* Personal Track Row Styling */
+.personal-track-row {
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.6) 0%, 
+    rgba(15, 23, 42, 0.8) 100%
+  );
+}
+
+.personal-track-row:hover {
+  background: linear-gradient(135deg, 
+    rgba(249, 6, 214, 0.08) 0%, 
+    rgba(168, 85, 247, 0.05) 100%
+  );
+  border-bottom-color: rgba(249, 6, 214, 0.3);
+}
+
+/* Special styling for tracks you've shared */
+.personal-track-shared {
+  border-left: 3px solid rgba(249, 6, 214, 0.6);
+  background: linear-gradient(90deg, 
+    rgba(249, 6, 214, 0.05) 0%, 
+    transparent 10%
+  );
+}
+
+.personal-track-shared:hover {
+  background: linear-gradient(90deg, 
+    rgba(249, 6, 214, 0.1) 0%, 
+    rgba(168, 85, 247, 0.03) 15%,
+    transparent 30%
+  );
+}
+
+/* Personal Data Grid Column Adjustments for 8 columns: # | Track | Artist | My Interaction | Context | When | Platform | Replies | Likes */
+.personal-data-grid th:nth-child(4),
+.personal-data-grid td:nth-child(4) {
+  width: 120px;        /* My Interaction column */
+  min-width: 120px;
+}
+
+.personal-data-grid th:nth-child(5),
+.personal-data-grid td:nth-child(5) {
+  width: 200px;        /* Context column - wider for comments */
+  min-width: 200px;
+}
+
+.personal-data-grid th:nth-child(6),
+.personal-data-grid td:nth-child(6) {
+  width: 80px;         /* When column */
+  min-width: 80px;
+}
+
+.personal-data-grid th:nth-child(7),
+.personal-data-grid td:nth-child(7) {
+  width: 120px;        /* Platform column */
+  min-width: 120px;
+}
+
+.personal-data-grid th:nth-child(8),
+.personal-data-grid td:nth-child(8) {
+  width: 80px;         /* Replies column */
+  min-width: 80px;
+  text-align: center;
+}
+
+.personal-data-grid th:nth-child(9),
+.personal-data-grid td:nth-child(9) {
+  width: 70px;         /* Likes column */
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Personal Filter Bar */
+.personal-filter-bar {
+  border-bottom: 1px solid rgba(249, 6, 214, 0.3);
+}
+
+/* Personal Search Input */
+.personal-filter-bar .search-input {
+  border-color: rgba(249, 6, 214, 0.3);
+}
+
+.personal-filter-bar .search-input:focus {
+  border-color: #f906d6;
+  box-shadow: 0 0 10px rgba(249, 6, 214, 0.2);
+}
+
+.personal-filter-bar .search-input::placeholder {
+  color: rgba(249, 6, 214, 0.5);
+}
+
+/* Personal Track Counter */
+.personal-library .retro-track-counter {
+  background: rgba(249, 6, 214, 0.1);
+  border-color: rgba(249, 6, 214, 0.3);
+  color: #f906d6;
+  text-shadow: 0 1px 2px rgba(249, 6, 214, 0.3);
+}
+
+/* ========================================
+   TERMINAL INTERFACE STYLES
+   ======================================== */
+
+/* Terminal Status Bar */
+.terminal-status-bar {
+  font-family: 'Courier New', monospace;
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  border-color: rgba(249, 6, 214, 0.3);
+  box-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.3),
+    0 0 20px rgba(249, 6, 214, 0.1);
+}
+
+/* Terminal Window */
+.terminal-window {
+  font-family: 'Courier New', monospace;
+  background: linear-gradient(to bottom, rgba(30, 41, 59, 0.6), rgba(0, 0, 0, 0.8));
+  border-color: rgba(249, 6, 214, 0.3);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Terminal Preview Cards */
+.terminal-preview-card {
+  background: linear-gradient(135deg, 
+    rgba(30, 41, 59, 0.4) 0%, 
+    rgba(15, 23, 42, 0.6) 100%
+  );
+  border: 1px solid rgba(249, 6, 214, 0.2);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.terminal-preview-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(249, 6, 214, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.terminal-preview-card:active {
+  transform: translateY(0);
+}
+
+/* Cyberpunk Add Button */
+.cyberpunk-add-btn {
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #00f92a;
+  color: #00f92a;
+  text-shadow: 0 0 8px rgba(0, 249, 42, 0.6);
+  box-shadow: 
+    0 0 10px rgba(0, 249, 42, 0.3),
+    inset 0 0 10px rgba(0, 249, 42, 0.1);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyberpunk-add-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 249, 42, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cyberpunk-add-btn:hover::before {
+  left: 100%;
+}
+
+.cyberpunk-add-btn:hover {
+  background: rgba(0, 249, 42, 0.1);
+  border-color: #00ff41;
+  color: #00ff41;
+  text-shadow: 0 0 12px rgba(0, 249, 42, 0.8);
+  box-shadow: 
+    0 0 20px rgba(0, 249, 42, 0.5),
+    0 0 40px rgba(0, 249, 42, 0.2),
+    inset 0 0 20px rgba(0, 249, 42, 0.1);
+  transform: translateY(-1px);
+}
+
+.cyberpunk-add-btn:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 0 15px rgba(0, 249, 42, 0.4),
+    inset 0 0 15px rgba(0, 249, 42, 0.2);
+}
+
+/* Terminal Typography */
+.terminal-status-bar .text-pink-400 {
+  color: #f906d6;
+  text-shadow: 0 0 10px rgba(249, 6, 214, 0.5);
+}
+
+.terminal-window .text-green-400 {
+  color: #00f92a;
+  text-shadow: 0 0 8px rgba(0, 249, 42, 0.4);
+}
+
+.terminal-window .text-blue-400 {
+  color: #04caf4;
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
+}
+
+.terminal-window .text-purple-400 {
+  color: #a855f7;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+}
+
+.terminal-window .text-red-400 {
+  color: #f87171;
+  text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+}
+
+/* Terminal Animation Effects */
+.terminal-preview-card .text-xs {
+  transition: all 0.2s ease;
+}
+
+.terminal-preview-card:hover .text-xs {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Responsive Terminal Design */
+@media (max-width: 768px) {
+  .terminal-status-bar {
+    padding: 12px 16px;
+  }
+  
+  .terminal-status-bar .flex {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  
+  .terminal-window {
+    padding: 16px;
+  }
+  
+  .terminal-preview-card {
+    padding: 12px;
+  }
+  
+  .terminal-action-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+}
