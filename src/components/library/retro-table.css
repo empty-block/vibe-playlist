@@ -306,6 +306,25 @@
   }
 }
 
+/* Shuffle Button Animations */
+@keyframes shuffle-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 12px rgba(0, 249, 42, 0.3), 0 0 24px rgba(0, 249, 42, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 16px rgba(0, 249, 42, 0.4), 0 0 32px rgba(0, 249, 42, 0.15);
+  }
+}
+
+.shuffle-btn.shuffle-active {
+  animation: shuffle-pulse 2s ease-in-out infinite;
+}
+
+/* Hover states */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
+}
+
 /* Simple Mobile Adjustments - Just keep the basic styling */
 @media (max-width: 768px) {
   .retro-expand-button {
@@ -321,5 +340,11 @@
   /* Make the table container more touch-friendly on mobile */
   .retro-grid-cell {
     padding: 12px 16px;
+  }
+
+  /* Mobile shuffle button */
+  .shuffle-btn {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 }

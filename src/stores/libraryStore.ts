@@ -37,6 +37,20 @@ export const [filters, setFilters] = createStore<LibraryFilters>({
 export const [currentPage, setCurrentPage] = createSignal(1);
 export const [itemsPerPage] = createSignal(50);
 
+// Shuffle
+export const [isShuffled, setIsShuffled] = createSignal(false);
+export const [shuffledOrder, setShuffledOrder] = createSignal<number[]>([]);
+
+// Utility function to shuffle array using Fisher-Yates algorithm
+const shuffleArray = <T>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 // Computed filtered and sorted tracks
 export const filteredTracks = createMemo(() => {
   let tracks = allTracks();
@@ -91,6 +105,13 @@ export const filteredTracks = createMemo(() => {
 
 export const sortedTracks = createMemo(() => {
   const tracks = [...filteredTracks()];
+  
+  // If shuffled, return tracks in shuffled order
+  if (isShuffled() && shuffledOrder().length === tracks.length) {
+    return shuffledOrder().map(index => tracks[index]);
+  }
+  
+  // Otherwise, apply normal sorting
   const { column, direction } = sortState;
   
   tracks.sort((a, b) => {
@@ -162,6 +183,10 @@ export const updateSort = (column: SortColumn) => {
     column,
     direction: prev.column === column && prev.direction === 'asc' ? 'desc' : 'asc'
   }));
+  
+  // Clear shuffle state when user manually sorts
+  setIsShuffled(false);
+  setShuffledOrder([]);
 };
 
 export const updateFilters = (newFilters: Partial<LibraryFilters>) => {
@@ -176,5 +201,20 @@ export const resetFilters = () => {
     dateRange: 'all',
     minEngagement: 0
   });
+  setCurrentPage(1);
+  
+  // Also reset shuffle state
+  setIsShuffled(false);
+  setShuffledOrder([]);
+};
+
+export const shuffleTracks = () => {
+  // Always shuffle - generate new random indices for current filtered tracks
+  const trackCount = filteredTracks().length;
+  const indices = Array.from({ length: trackCount }, (_, i) => i);
+  setShuffledOrder(shuffleArray(indices));
+  setIsShuffled(true);
+  
+  // Reset to first page when shuffle happens
   setCurrentPage(1);
 };
