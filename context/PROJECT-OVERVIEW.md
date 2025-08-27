@@ -20,13 +20,9 @@ This prcoess of sharing music on Farcaster and other social media is intriguingl
 
 ## The Collective Library
 
-## Public by Default
+At its core, Jamzy is a public music library that's collectively curated by all of Jamzy's users.
 
-On Jamzy you build your library through sharing, not the other way around. Every public share becomes part of your musica library (aka your musical identity) and contributes to the community's discovery ecosystem.
-
-Everyone's library, likes, and replies are inherently public and open, which allows for new experiences and interesting combinations of human and algorithmic curation. Since the data is publicly available on Farcaster, it is relatively easy to organize it into a database and create algorithms and/or AI agents that can help supplement human curation, and further facilitate discovery.
-
-By extracting and organizing all the music people naturally share across these platforms on Farcaster, Jamzy enables human-centered music discovery and preserve the social context of music sharing. 
+Every time a Jamzy user shares a new track, that track automatically gets added to that user's library as well as the collective Jamzy library. All Jamzy music libraries are inherently public, and therefore can be openly shared and combined. 
 
 ## Every Track is a Conversation
 
@@ -35,7 +31,15 @@ By extracting and organizing all the music people naturally share across these p
 - When someone shares a song, they're simultaenously posting on Farcaster, aka they're starting a new conversation thread
 - People can reply to the thread with their thoughts or even share more songs
 - Anyone can contribute by replying with their song suggestions
-- Threads can be used to effectively start playlists, by including a prompt like "What is your favrote 90s song? Mine is xyz" for example
+
+## Public by Default
+
+On Jamzy you build your library through sharing, not the other way around. Every public share becomes part of your music library and contributes to the community's discovery ecosystem.
+
+Everyone's library, likes, and replies are built on top of Farcaster, which means Jamzy interactions are inherently public and open. 
+
+By extracting and organizing all the music people naturally share across these platforms on Farcaster, as well as music shared though the Jamzy interface (which are also posted on Farcaster, under the hood) Jamzy enables human-centered music discovery and preserve the social context of music sharing. Since the data is publicly available on Farcaster, it's possible to pull it into a database and create algorithms and/or AI agents that can help supplement human curation, and further facilitate discovery.
+
 
 ## Tags & Playlists
 Tracks in the Jamzy library can be organized into collections (aka playlists) by using tags. You can tag a group of songs with any arbitrary tag, which turns them into a playable playlist. This can also be defined with further data filters, like shared between dates x and y, or has at least X number of likes, etc. Therefore, Jamzy playlists can essentially be thought of as a combination of different tags and filters. This allows for the creation of an effectively endless amount of playlists, and also has the benefit of the playlists inherently being "smart," aka they update automatically when tags are added to new tracks. 

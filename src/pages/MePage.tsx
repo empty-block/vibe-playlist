@@ -2,6 +2,7 @@ import { Component, createSignal, onMount } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
 import PersonalLibraryTable, { PersonalTrack, PersonalFilterType } from '../components/library/PersonalLibraryTable';
+import AddButton from '../components/shared/AddButton';
 
 const MePage: Component = () => {
   const params = useParams();
@@ -229,35 +230,42 @@ const MePage: Component = () => {
               
               {/* Stats Output */}
               <div class="text-xs space-y-1 pl-4 border-l-2 border-pink-400/30 ml-4">
-                <div class="flex items-center gap-6">
-                  <span 
-                    class="text-green-400 cursor-pointer hover:text-green-300 transition-colors" 
-                    onClick={() => handleStatClick('all')}
-                    title="View all tracks"
-                  >
-                    📊 {tracks().length} total_tracks
-                  </span>
-                  <span 
-                    class="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors"
-                    onClick={() => handleStatClick('conversations')}
-                    title="Filter conversations"
-                  >
-                    💬 {stats.conversations} conversations
-                  </span>
-                  <span 
-                    class="text-purple-400 cursor-pointer hover:text-purple-300 transition-colors"
-                    onClick={() => handleStatClick('shared')}
-                    title="Filter shared tracks"
-                  >
-                    🎵 {stats.shared} shared_tracks
-                  </span>
-                  <span 
-                    class="text-cyan-400 cursor-pointer hover:text-cyan-300 transition-colors"
-                    onClick={() => handleStatClick('liked')}
-                    title="Filter liked tracks"
-                  >
-                    ❤️ {stats.liked} liked_tracks
-                  </span>
+                <div class="flex items-center justify-between flex-wrap gap-3">
+                  <div class="flex items-center gap-3 sm:gap-6 flex-wrap">
+                    <span 
+                      class="text-green-400 cursor-pointer hover:text-green-300 transition-colors whitespace-nowrap" 
+                      onClick={() => handleStatClick('all')}
+                      title="View all tracks"
+                    >
+                      📊 {tracks().length} <span class="hidden sm:inline">total_tracks</span><span class="sm:hidden">tracks</span>
+                    </span>
+                    <span 
+                      class="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors whitespace-nowrap hidden sm:inline"
+                      onClick={() => handleStatClick('conversations')}
+                      title="Filter conversations"
+                    >
+                      💬 {stats.conversations} conversations
+                    </span>
+                    <span 
+                      class="text-purple-400 cursor-pointer hover:text-purple-300 transition-colors whitespace-nowrap"
+                      onClick={() => handleStatClick('shared')}
+                      title="Filter shared tracks"
+                    >
+                      🎵 {stats.shared} <span class="hidden sm:inline">shared_tracks</span><span class="sm:hidden">shared</span>
+                    </span>
+                    <span 
+                      class="text-cyan-400 cursor-pointer hover:text-cyan-300 transition-colors whitespace-nowrap"
+                      onClick={() => handleStatClick('liked')}
+                      title="Filter liked tracks"
+                    >
+                      ❤️ {stats.liked} <span class="hidden sm:inline">liked_tracks</span><span class="sm:hidden">liked</span>
+                    </span>
+                  </div>
+                  
+                  <AddButton onClick={() => navigate('/curate')} class="px-3 py-1.5 text-xs flex-shrink-0 whitespace-nowrap">
+                    <span class="hidden sm:inline">+ Add Music</span>
+                    <span class="sm:hidden text-base">+</span>
+                  </AddButton>
                 </div>
               </div>
             </div>
