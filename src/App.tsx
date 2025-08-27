@@ -8,9 +8,8 @@ import TrendingPage from './pages/TrendingPage';
 import CreatePage from './pages/CreatePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
-import ListenPage from './pages/ListenPage';
-import CuratePage from './pages/CuratePage';
 import MePage from './pages/MePage';
+import CommunityPage from './pages/CommunityPage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
 const App: Component = () => {
@@ -62,17 +61,12 @@ const App: Component = () => {
       
       {/* New primary navigation routes */}
       <Route path="/library" component={LibraryPage} />
-      <Route path="/listen" component={ListenPage} />
-      <Route path="/curate" component={CuratePage} />
+      <Route path="/discover" component={DiscoverPage} />
+      <Route path="/community" component={CommunityPage} />
       <Route path="/me/:username" component={MePage} />
       <Route path="/me" component={MePage} />
-      
-      {/* Legacy routes with redirects for backwards compatibility */}
-      <Route path="/player" component={ListenPage} />
-      <Route path="/create" component={CuratePage} />
       <Route path="/profile/:username" component={MePage} />
       <Route path="/profile" component={MePage} />
-      <Route path="/discover" component={DiscoverPage} />
       <Route path="/trending" component={TrendingPage} />
     </Router>
   );

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
 import PersonalLibraryTable, { PersonalTrack, PersonalFilterType } from '../components/library/PersonalLibraryTable';
 import AddButton from '../components/shared/AddButton';
+import { currentUser } from '../stores/authStore';
 
 const MePage: Component = () => {
   const params = useParams();
@@ -12,11 +13,10 @@ const MePage: Component = () => {
   const [currentFilter, setCurrentFilter] = createSignal<PersonalFilterType>('all');
   let pageRef: HTMLDivElement | undefined;
   
-  // Simulated user data - in real app would come from authStore
-  const currentUser = {
-    username: params.username || 'jamzy_user',
-    displayName: 'Music Curator',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jamzy',
+  // Get user data from auth store, with fallback stats
+  const user = currentUser();
+  const userWithStats = {
+    ...user,
     followers: 156,
     following: 89,
     curationScore: 92,
@@ -203,8 +203,8 @@ const MePage: Component = () => {
               {/* Profile Avatar */}
               <div class="relative">
                 <img 
-                  src={currentUser.avatar}
-                  alt={currentUser.displayName}
+                  src={userWithStats.avatar}
+                  alt={userWithStats.displayName}
                   class="w-20 h-20 rounded-full border-3 border-pink-400/60 shadow-2xl shadow-pink-400/20"
                 />
               </div>
@@ -212,10 +212,10 @@ const MePage: Component = () => {
               {/* Profile Details */}
               <div class="flex-1">
                 <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-1">
-                  {currentUser.displayName}
+                  {userWithStats.displayName}
                 </h1>
-                <p class="text-white/60 font-mono text-sm mb-3">@{currentUser.username}</p>
-                <div class="text-xs text-white/40 font-mono">{currentUser.joinDate}</div>
+                <p class="text-white/60 font-mono text-sm mb-3">@{userWithStats.username}</p>
+                <div class="text-xs text-white/40 font-mono">{userWithStats.joinDate}</div>
               </div>
             </div>
 
@@ -223,7 +223,7 @@ const MePage: Component = () => {
             <div class="font-mono text-sm space-y-2">
               {/* Command Prompt */}
               <div class="text-white/70">
-                <span class="text-pink-400">jamzy@{currentUser.username}</span>
+                <span class="text-pink-400">jamzy@{userWithStats.username}</span>
                 <span class="text-white/60">:~/music_library$ </span>
                 <span class="text-green-400">ls -la --stats personal_tracks/</span>
               </div>
@@ -275,7 +275,7 @@ const MePage: Component = () => {
         {/* Personal Music Library */}
         <div class="me-section personal-library-section">
           <PersonalLibraryTable 
-            userId={currentUser.username}
+            userId={userWithStats.username}
             tracks={tracks()}
             isLoading={isLoading()}
             currentFilter={currentFilter()}

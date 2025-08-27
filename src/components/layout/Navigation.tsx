@@ -11,12 +11,6 @@ const Navigation: Component = () => {
     if (path === '/library') {
       return location.pathname === '/' || location.pathname === '/library';
     }
-    if (path === '/listen') {
-      return location.pathname === '/listen' || location.pathname === '/player';
-    }
-    if (path === '/curate') {
-      return location.pathname === '/curate' || location.pathname === '/create';
-    }
     if (path === '/me') {
       return location.pathname === '/me' || location.pathname.startsWith('/profile');
     }
@@ -45,27 +39,30 @@ const Navigation: Component = () => {
         {/* Secondary Navigation - Center */}
         <div class="flex gap-4 flex-1 justify-center">
           <A 
-            href="/listen" 
+            href="/discover" 
             class="secondary-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
             classList={{ 
-              'text-green-400 bg-green-400/10 border border-green-400': isActive('/listen'),
-              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/listen')
+              'text-green-400 bg-green-400/10 border border-green-400': isActive('/discover'),
+              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/discover')
             }}
           >
-            <i class="fas fa-headphones mr-1"></i>Listen
+            <i class="fas fa-compass mr-1"></i>Discover
           </A>
           
           <A 
-            href="/curate" 
+            href="/community" 
             class="secondary-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
             classList={{ 
-              'text-green-400 bg-green-400/10 border border-green-400': isActive('/curate'),
-              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/curate')
+              'text-purple-400 bg-purple-400/10 border border-purple-400': isActive('/community'),
+              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/community')
             }}
           >
-            <i class="fas fa-palette mr-1"></i>Curate
+            <i class="fas fa-users mr-1"></i>Community
           </A>
         </div>
+
+        {/* Spacer (reduced since we have center content) */}
+        <div class="flex-1"></div>
         
         {/* Profile - Right Side */}
         <div class="flex-shrink-0 ml-6">
