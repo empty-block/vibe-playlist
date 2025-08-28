@@ -9,17 +9,7 @@ const LibraryPage: Component = () => {
   let pageRef: HTMLDivElement | undefined;
 
   onMount(() => {
-    if (pageRef) {
-      pageEnter(pageRef);
-      
-      // Apply animations to library components
-      setTimeout(() => {
-        const libraryElements = pageRef.querySelectorAll('.library-section');
-        if (libraryElements) {
-          staggeredFadeIn(libraryElements);
-        }
-      }, 300);
-    }
+    // Remove slow page animations - content loads immediately
   });
 
   return (

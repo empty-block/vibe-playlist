@@ -74,7 +74,9 @@ playbackButtonHover.enter(buttonElement);
 - Particle burst effects on play button clicks
 - Magnetic effects on thumbnails
 
-**Page Transitions**: Staggered fade-ins, page entrance animations, floating elements
+**Content Animations**: Individual element animations, hover effects, interactive feedback
+- ❌ **AVOID**: Page-level fade-ins or entrance animations (makes app feel slow)
+- ✅ **PREFER**: Content-specific animations that enhance interaction
 
 ### Animation Architecture
 - **Centralized utilities**: All animations in `src/utils/animations.ts`

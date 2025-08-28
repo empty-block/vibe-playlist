@@ -27,17 +27,7 @@ const DiscoverPage: Component = () => {
     // Initialize discover data
     await initializeDiscoverData();
     
-    if (pageRef) {
-      pageEnter(pageRef);
-      
-      // Staggered fade-in for sections with longer delays
-      setTimeout(() => {
-        const sections = pageRef!.querySelectorAll('.discover-section');
-        if (sections) {
-          staggeredFadeIn(sections);
-        }
-      }, 500);
-    }
+    // Remove slow page animations - just show content immediately
   });
 
   const handleSearch = () => {
@@ -55,12 +45,11 @@ const DiscoverPage: Component = () => {
     <div 
       ref={pageRef!} 
       class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800"
-      style={{ opacity: '0' }}
     >
       <div class="p-4 md:p-6 max-w-7xl mx-auto">
         
         {/* DISCOVERY HEADER */}
-        <div class="discover-section mb-8" style={{ opacity: '0' }}>
+        <div class="discover-section mb-8">
           <div class="text-center mb-8">
             <div class="flex items-center justify-center gap-4 mb-4">
               <div class="w-4 h-4 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 animate-pulse shadow-lg shadow-green-400/50"></div>
@@ -107,25 +96,31 @@ const DiscoverPage: Component = () => {
         </div>
 
         {/* TRENDING THIS WEEK SECTION */}
-        <TrendingSection 
-          tracks={trendingTracks()} 
-          isLoading={isTrendingLoading()} 
-        />
+        <div class="discover-section">
+          <TrendingSection 
+            tracks={trendingTracks()} 
+            isLoading={isTrendingLoading()} 
+          />
+        </div>
 
         {/* DISCOVERY GRID DASHBOARD */}
-        <DiscoveryGrid 
-          isLoading={isFreshLoading()}
-          trendingTracks={trendingTracks()}
-          freshTracks={freshTracks()}
-        />
+        <div class="discover-section">
+          <DiscoveryGrid 
+            isLoading={isFreshLoading()}
+            trendingTracks={trendingTracks()}
+            freshTracks={freshTracks()}
+          />
+        </div>
 
 
         {/* GENRE EXPLORER SECTION */}
-        <GenreExplorer 
-          genres={genreTags()} 
-          isLoading={isGenresLoading()}
-          onGenreClick={handleGenreClick}
-        />
+        <div class="discover-section">
+          <GenreExplorer 
+            genres={genreTags()} 
+            isLoading={isGenresLoading()}
+            onGenreClick={handleGenreClick}
+          />
+        </div>
 
       </div>
     </div>

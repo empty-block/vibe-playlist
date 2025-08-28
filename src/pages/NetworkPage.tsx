@@ -36,29 +36,18 @@ const NetworkPage: Component = () => {
     // Initialize community data
     await initializeCommunityData();
     
-    if (pageRef) {
-      pageEnter(pageRef);
-      
-      // Staggered fade-in for sections
-      setTimeout(() => {
-        const sections = pageRef!.querySelectorAll('.community-section');
-        if (sections) {
-          staggeredFadeIn(sections);
-        }
-      }, 300);
-    }
+    // Remove slow page animations - just show content immediately
   });
 
   return (
     <div 
       ref={pageRef!} 
       class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800"
-      style={{ opacity: '0' }}
     >
       <div class="max-w-7xl mx-auto p-4 md:p-6">
         
         {/* Community Header */}
-        <div class="community-section mb-8" style={{ opacity: '0' }}>
+        <div class="community-section mb-8">
           <div class="text-center mb-6">
             <div class="flex items-center justify-center gap-4 mb-4">
               <div class="w-4 h-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 animate-pulse shadow-lg shadow-purple-400/50"></div>
@@ -74,14 +63,14 @@ const NetworkPage: Component = () => {
         </div>
 
         {/* Network Analytics Dashboard */}
-        <div class="community-section" style={{ opacity: '0' }}>
+        <div class="community-section">
           <NetworkAnalytics 
             isLoading={isNetworkLoading()} 
           />
         </div>
 
         {/* Live Activity Pulse Bar */}
-        <div class="community-section" style={{ opacity: '0' }}>
+        <div class="community-section">
           <LiveActivityPulse 
             activities={liveActivities()} 
             isLoading={isActivitiesLoading()} 
@@ -89,7 +78,7 @@ const NetworkPage: Component = () => {
         </div>
 
         {/* Featured Curators Section (moved from Discovery) */}
-        <div class="community-section mb-8" style={{ opacity: '0' }}>
+        <div class="community-section mb-8">
           <CuratorSpotlights 
             curators={featuredCurators()} 
             isLoading={isCuratorsLoading()} 
@@ -101,7 +90,7 @@ const NetworkPage: Component = () => {
           
           {/* Main Feed - Active Conversations */}
           <div class="lg:col-span-2">
-            <div class="community-section" style={{ opacity: '0' }}>
+            <div class="community-section">
               <div class="mb-6">
                 <div class="flex items-center gap-3 mb-2">
                   <i class="fas fa-comments text-purple-400"></i>
@@ -123,7 +112,7 @@ const NetworkPage: Component = () => {
 
           {/* Sidebar - Discovery */}
           <div class="lg:col-span-1">
-            <div class="community-section" style={{ opacity: '0' }}>
+            <div class="community-section">
               <div class="mb-6">
                 <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-2">
                   Discover & Connect
@@ -146,7 +135,7 @@ const NetworkPage: Component = () => {
         </div>
 
         {/* Community Features Footer */}
-        <div class="community-section mt-12" style={{ opacity: '0' }}>
+        <div class="community-section mt-12">
           <div class="bg-gradient-to-r from-slate-800/60 to-slate-700/40 border-2 border-cyan-400/20 rounded-xl p-6 text-center">
             <h3 class="text-cyan-300 font-bold text-lg mb-2">
               Build Your Music Network

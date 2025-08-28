@@ -144,17 +144,7 @@ const MePage: Component = () => {
       setIsLoading(false);
     }
 
-    // Apply animations
-    if (pageRef) {
-      pageEnter(pageRef);
-      
-      setTimeout(() => {
-        const sections = pageRef!.querySelectorAll('.me-section');
-        if (sections) {
-          staggeredFadeIn(sections);
-        }
-      }, 300);
-    }
+    // Remove slow page animations - content loads immediately
   });
 
   // Calculate personal stats
