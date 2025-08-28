@@ -9,7 +9,7 @@ import CreatePage from './pages/CreatePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
 import MePage from './pages/MePage';
-import CommunityPage from './pages/CommunityPage';
+import NetworkPage from './pages/NetworkPage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
 const App: Component = () => {
@@ -62,7 +62,7 @@ const App: Component = () => {
       {/* New primary navigation routes */}
       <Route path="/library" component={LibraryPage} />
       <Route path="/discover" component={DiscoverPage} />
-      <Route path="/community" component={CommunityPage} />
+      <Route path="/network" component={NetworkPage} />
       <Route path="/me/:username" component={MePage} />
       <Route path="/me" component={MePage} />
       <Route path="/profile/:username" component={MePage} />

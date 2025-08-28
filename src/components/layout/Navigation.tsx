@@ -50,14 +50,14 @@ const Navigation: Component = () => {
           </A>
           
           <A 
-            href="/community" 
+            href="/network" 
             class="secondary-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
             classList={{ 
-              'text-purple-400 bg-purple-400/10 border border-purple-400': isActive('/community'),
-              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/community')
+              'text-purple-400 bg-purple-400/10 border border-purple-400': isActive('/network'),
+              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/network')
             }}
           >
-            <i class="fas fa-users mr-1"></i>Community
+            <i class="fas fa-network-wired mr-1"></i>Network
           </A>
         </div>
 

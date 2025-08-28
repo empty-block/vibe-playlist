@@ -11,6 +11,11 @@ But Jamzy also embraces modern tech and best practices, and aims for a fast, acc
 
 This leads to a futuristic, fast, cyberpunk inspired interface, with retro nods and touches. 
 
+## Info Dense, Visually Engaging
+Jamzy is built on top of a rich database, and Jamzy's UI should be relatively data dense. Screen real estate is valuable, and it's important to use screen space wisely in order to maximize the amount of useful info.
+
+But at the same time, its key that the UI is visually pleasing and engaging. It should feature images (where applicable) and not be too text heavy. So it strikes a balance of being infomation dense, without being too overwhelming.
+
 ## (Fun) Details Matter
 Details are critical, and every part of the design is though through for both usability and visual style. 
 

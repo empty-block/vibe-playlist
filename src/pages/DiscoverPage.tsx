@@ -4,19 +4,16 @@ import { pageEnter, staggeredFadeIn } from '../utils/animations';
 
 // New discover components
 import TrendingSection from '../components/discover/TrendingSection';
-import FreshDropsSection from '../components/discover/FreshDropsSection';
-import CuratorSpotlights from '../components/discover/CuratorSpotlights';
 import GenreExplorer from '../components/discover/GenreExplorer';
+import DiscoveryGrid from '../components/discover/DiscoveryGrid';
 
 // Discover store
 import {
   trendingTracks,
   freshTracks,
-  featuredCurators,
   genreTags,
   isTrendingLoading,
   isFreshLoading,
-  isCuratorsLoading,
   isGenresLoading,
   initializeDiscoverData
 } from '../stores/discoverStore';
@@ -115,17 +112,13 @@ const DiscoverPage: Component = () => {
           isLoading={isTrendingLoading()} 
         />
 
-        {/* FRESH DROPS SECTION */}
-        <FreshDropsSection 
-          tracks={freshTracks()} 
-          isLoading={isFreshLoading()} 
+        {/* DISCOVERY GRID DASHBOARD */}
+        <DiscoveryGrid 
+          isLoading={isFreshLoading()}
+          trendingTracks={trendingTracks()}
+          freshTracks={freshTracks()}
         />
 
-        {/* CURATOR SPOTLIGHTS SECTION */}
-        <CuratorSpotlights 
-          curators={featuredCurators()} 
-          isLoading={isCuratorsLoading()} 
-        />
 
         {/* GENRE EXPLORER SECTION */}
         <GenreExplorer 
