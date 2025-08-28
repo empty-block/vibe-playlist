@@ -4,8 +4,6 @@ import { A, useLocation } from '@solidjs/router';
 const Navigation: Component = () => {
   const location = useLocation();
   
-  // Remove navigation store interference completely
-  
   const isActive = (path: string) => {
     // Handle legacy routes
     if (path === '/library') {
@@ -18,67 +16,89 @@ const Navigation: Component = () => {
   };
   
   return (
-    <div class="win95-panel p-1 border-b-2 overflow-x-auto bg-gradient-to-r from-slate-800 to-slate-700">
-      <div class="flex items-center text-white text-sm font-bold min-w-fit">
-        
-        {/* Library as Primary Home Tab - Left Side */}
-        <div class="flex-shrink-0 mr-6">
+    <nav class="jamzy-terminal-nav relative bg-black border-b border-neon-cyan h-16 overflow-hidden">
+      {/* Scan line overlay */}
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent via-neon-cyan/5 to-transparent pointer-events-none scan-lines"></div>
+      
+      <div class="h-full flex items-center px-6 font-display text-sm tracking-wide">
+        {/* Library - Primary Section */}
+        <div class="flex-shrink-0">
           <A 
             href="/library" 
-            class="home-tab px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 inline-flex items-center"
+            class="jamzy-nav-primary px-4 py-2 border transition-all duration-300 transform inline-flex items-center
+                   focus:outline-none focus:ring-2 focus:ring-neon-cyan"
             classList={{ 
-              'bg-gradient-to-r from-blue-600 to-cyan-500 shadow-lg shadow-cyan-500/30 border-2 border-green-400': isActive('/library'),
-              'bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500': !isActive('/library')
+              'bg-neon-blue/10 border-neon-blue text-neon-blue glow-neon-blue': isActive('/library'),
+              'border-gray-600 text-gray-400 hover:border-neon-blue/50 hover:text-neon-blue/80 hover:-translate-y-px': !isActive('/library')
             }}
           >
-            <i class="fas fa-home mr-2 text-lg"></i>
-            <span class="font-black text-lg">Library</span>
+            <span class="mr-3 text-base">🏠</span>
+            <span class="font-bold uppercase tracking-wider">Library</span>
           </A>
         </div>
         
-        {/* Secondary Navigation - Center */}
-        <div class="flex gap-4 flex-1 justify-center">
+        {/* Separator */}
+        <div class="w-px h-6 bg-gray-700 mx-8"></div>
+        
+        {/* Secondary Navigation */}
+        <div class="flex gap-8 flex-1">
           <A 
             href="/discover" 
-            class="secondary-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
+            class="jamzy-nav-secondary py-2 transition-all duration-300 transform inline-flex items-center relative
+                   focus:outline-none focus:ring-2 focus:ring-neon-cyan"
             classList={{ 
-              'text-green-400 bg-green-400/10 border border-green-400': isActive('/discover'),
-              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/discover')
+              'text-neon-cyan after:bg-neon-cyan after:glow-neon-cyan': isActive('/discover'),
+              'text-gray-400 hover:text-neon-cyan/80 hover:-translate-y-px after:bg-neon-cyan/30': !isActive('/discover')
             }}
+            style="position: relative"
           >
-            <i class="fas fa-compass mr-1"></i>Discover
+            <span class="mr-2">🔍</span>
+            <span class="font-medium uppercase tracking-wide">Discover</span>
+            <div class={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 ${
+              isActive('/discover') ? 'bg-neon-cyan glow-neon-cyan' : 'bg-transparent'
+            }`}></div>
           </A>
           
           <A 
             href="/network" 
-            class="secondary-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
+            class="jamzy-nav-secondary py-2 transition-all duration-300 transform inline-flex items-center relative
+                   focus:outline-none focus:ring-2 focus:ring-neon-cyan"
             classList={{ 
-              'text-purple-400 bg-purple-400/10 border border-purple-400': isActive('/network'),
-              'text-gray-300 hover:text-cyan-400 hover:bg-cyan-400/10': !isActive('/network')
+              'text-neon-cyan': isActive('/network'),
+              'text-gray-400 hover:text-neon-cyan/80 hover:-translate-y-px': !isActive('/network')
             }}
           >
-            <i class="fas fa-network-wired mr-1"></i>Network
+            <span class="mr-2">🌐</span>
+            <span class="font-medium uppercase tracking-wide">Network</span>
+            <div class={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 ${
+              isActive('/network') ? 'bg-neon-cyan glow-neon-cyan' : 'bg-transparent'
+            }`}></div>
           </A>
         </div>
-
-        {/* Spacer (reduced since we have center content) */}
+        
+        {/* Spacer */}
         <div class="flex-1"></div>
         
-        {/* Profile - Right Side */}
-        <div class="flex-shrink-0 ml-6">
+        {/* Profile - Special Section */}
+        <div class="flex-shrink-0">
           <A 
             href="/me" 
-            class="profile-nav-link px-3 py-2 rounded cursor-pointer transition-all duration-200 inline-flex items-center"
+            class="jamzy-nav-profile px-3 py-2 border transition-all duration-300 transform inline-flex items-center
+                   focus:outline-none focus:ring-2 focus:ring-neon-cyan"
             classList={{ 
-              'text-pink-400 bg-pink-400/10 border border-pink-400': isActive('/me'),
-              'text-pink-400/70 hover:text-pink-400 hover:bg-pink-400/10': !isActive('/me')
+              'border-neon-pink text-neon-pink bg-neon-pink/5 glow-neon-pink': isActive('/me'),
+              'border-gray-600 text-gray-400 hover:border-neon-pink/50 hover:text-neon-pink/80 hover:-translate-y-px': !isActive('/me')
             }}
           >
-            <i class="fas fa-user mr-1"></i>Me
+            <span class="mr-2">👤</span>
+            <span class="font-medium uppercase tracking-wide">Profile</span>
           </A>
         </div>
       </div>
-    </div>
+      
+      {/* Terminal cursor effect (optional - can be animated) */}
+      <div class="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-4 bg-neon-cyan animate-pulse opacity-70"></div>
+    </nav>
   );
 };
 
