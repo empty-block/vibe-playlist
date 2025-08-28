@@ -42,88 +42,216 @@ const DiscoverPage: Component = () => {
   };
 
   return (
-    <div 
+    <main 
       ref={pageRef!} 
-      class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800"
+      style={{
+        'min-height': '100vh',
+        'background': 'var(--dark-bg)'
+      }}
+      role="main"
+      aria-label="Music discovery page"
     >
-      <div class="p-4 md:p-6 max-w-7xl mx-auto">
+      <div style={{
+        'padding': 'var(--space-4) var(--space-6)',
+        'max-width': 'var(--container-2xl)',
+        'margin': '0 auto'
+      }}>
         
         {/* DISCOVERY HEADER */}
-        <div class="discover-section mb-8">
-          <div class="text-center mb-8">
-            <div class="flex items-center justify-center gap-4 mb-4">
-              <div class="w-4 h-4 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 animate-pulse shadow-lg shadow-green-400/50"></div>
-              <h1 class="font-bold text-3xl lg:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-cyan-400 to-blue-400 font-mono tracking-wider">
+        <header style={{'margin-bottom': 'var(--space-8)'}} role="banner">
+          <div style={{'text-align': 'center', 'margin-bottom': 'var(--space-8)'}}>
+            <div style={{
+              'display': 'flex',
+              'align-items': 'center',
+              'justify-content': 'center',
+              'gap': 'var(--space-4)',
+              'margin-bottom': 'var(--space-4)'
+            }}>
+              <div style={{
+                'width': 'var(--space-4)',
+                'height': 'var(--space-4)',
+                'background': 'linear-gradient(to right, var(--neon-green), var(--neon-cyan))',
+                'animation': 'pulse 2s infinite',
+                'box-shadow': '0 0 8px var(--neon-green)'
+              }}></div>
+              <h1 style={{
+                'font-weight': 'bold',
+                'font-size': 'var(--text-2xl)',
+                'color': 'transparent',
+                'background': 'linear-gradient(to right, var(--neon-green), var(--neon-cyan), var(--neon-blue))',
+                'background-clip': 'text',
+                '-webkit-background-clip': 'text',
+                'font-family': 'var(--font-display)',
+                'letter-spacing': '0.1em'
+              }}>
                 DISCOVER_MUSIC.EXE
               </h1>
-              <div class="w-4 h-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-400 animate-pulse shadow-lg shadow-cyan-400/50"></div>
+              <div style={{
+                'width': 'var(--space-4)',
+                'height': 'var(--space-4)',
+                'background': 'linear-gradient(to right, var(--neon-cyan), var(--neon-blue))',
+                'animation': 'pulse 2s infinite',
+                'box-shadow': '0 0 8px var(--neon-cyan)'
+              }}></div>
             </div>
-            <p class="text-green-300/70 font-mono text-lg">
+            <p style={{
+              'color': 'var(--neon-green)',
+              'opacity': '0.7',
+              'font-family': 'var(--font-display)',
+              'font-size': 'var(--text-lg)'
+            }}>
               Neural music discovery protocol activated
             </p>
           </div>
 
           {/* ENHANCED SEARCH TERMINAL */}
-          <div class="retro-music-terminal bg-gradient-to-b from-slate-900/60 to-black/60 border-2 border-green-400/30 rounded-xl p-6 max-w-4xl mx-auto">
-            <div class="terminal-header mb-4">
-              <div class="text-green-400 font-mono text-sm uppercase tracking-wide flex items-center gap-2">
+          <div style={{
+            'background': 'linear-gradient(to bottom, rgba(26, 26, 26, 0.6), rgba(15, 15, 15, 0.6))',
+            'border': '2px solid var(--neon-cyan)',
+            'border-opacity': '0.3',
+            'padding': 'var(--space-6)',
+            'max-width': 'var(--container-lg)',
+            'margin': '0 auto'
+          }}>
+            <div style={{'margin-bottom': 'var(--space-4)'}}>
+              <div style={{
+                'color': 'var(--neon-cyan)',
+                'font-family': 'var(--font-display)',
+                'font-size': 'var(--text-sm)',
+                'text-transform': 'uppercase',
+                'letter-spacing': '0.05em',
+                'display': 'flex',
+                'align-items': 'center',
+                'gap': 'var(--space-2)'
+              }}>
                 <i class="fas fa-search"></i>
                 <span>Search Database</span>
-                <div class="flex-1 border-b border-green-400/30"></div>
-                <span class="text-green-400/60">v2.1.3</span>
+                <div style={{
+                  'flex': '1',
+                  'border-bottom': '1px solid var(--neon-cyan)',
+                  'opacity': '0.3'
+                }}></div>
+                <span style={{
+                  'color': 'var(--neon-cyan)',
+                  'opacity': '0.6'
+                }}>v2.1.3</span>
               </div>
             </div>
             
-            <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+            <div style={{
+              'display': 'flex',
+              'flex-direction': 'column',
+              'align-items': 'stretch',
+              'gap': 'var(--space-3)'
+            }}>
               <input
                 type="text"
                 placeholder="ENTER SEARCH PARAMETERS..."
                 value={searchQuery()}
                 onInput={(e) => setSearchQuery(e.currentTarget.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                class="flex-1 px-6 py-4 font-mono text-lg bg-black/80 border-2 border-green-400/40 text-green-400 rounded-lg focus:border-green-400 focus:shadow-lg focus:shadow-green-400/20 transition-all duration-300"
-                style={{ 'text-shadow': '0 0 5px rgba(0, 249, 42, 0.6)' }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+                aria-label="Search for music tracks, artists, or genres"
+                role="searchbox"
+                style={{
+                  'flex': '1',
+                  'padding': 'var(--space-4) var(--space-6)',
+                  'font-family': 'var(--font-display)',
+                  'font-size': 'var(--text-lg)',
+                  'background': 'rgba(15, 15, 15, 0.8)',
+                  'border': '2px solid var(--neon-cyan)',
+                  'border-opacity': '0.4',
+                  'color': 'var(--neon-cyan)',
+                  'text-shadow': '0 0 5px var(--neon-cyan)',
+                  'transition': 'all 300ms ease'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--neon-cyan)';
+                  e.currentTarget.style.boxShadow = '0 0 8px rgba(4, 202, 244, 0.3)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderOpacity = '0.4';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               />
               <button 
                 onClick={handleSearch}
-                class="px-6 py-4 font-bold text-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
+                aria-label="Search database for music content"
+                role="button"
+                tabIndex={0}
+                style={{
+                  'padding': 'var(--space-4) var(--space-6)',
+                  'font-family': 'var(--font-interface)',
+                  'font-size': 'var(--text-lg)',
+                  'font-weight': 'bold',
+                  'background': 'var(--neon-blue)',
+                  'color': 'var(--light-text)',
+                  'border': 'none',
+                  'cursor': 'pointer',
+                  'transition': 'all 200ms ease',
+                  'transform': 'translateZ(0)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 12px rgba(59, 0, 253, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateZ(0)';
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.filter = 'brightness(0.9)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.filter = 'none';
+                }}
               >
-                <i class="fas fa-search mr-2"></i>
+                <i class="fas fa-search" style={{'margin-right': 'var(--space-2)'}}></i>
                 SCAN
               </button>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* TRENDING THIS WEEK SECTION */}
-        <div class="discover-section">
+        <section style={{'margin-bottom': 'var(--space-8)'}} aria-label="Trending tracks this week">
           <TrendingSection 
             tracks={trendingTracks()} 
             isLoading={isTrendingLoading()} 
           />
-        </div>
+        </section>
 
         {/* DISCOVERY GRID DASHBOARD */}
-        <div class="discover-section">
+        <section style={{'margin-bottom': 'var(--space-8)'}} aria-label="Discovery dashboard with fresh and trending content">
           <DiscoveryGrid 
             isLoading={isFreshLoading()}
             trendingTracks={trendingTracks()}
             freshTracks={freshTracks()}
           />
-        </div>
-
+        </section>
 
         {/* GENRE EXPLORER SECTION */}
-        <div class="discover-section">
+        <section style={{'margin-bottom': 'var(--space-8)'}} aria-label="Explore music by genre">
           <GenreExplorer 
             genres={genreTags()} 
             isLoading={isGenresLoading()}
             onGenreClick={handleGenreClick}
           />
-        </div>
+        </section>
 
       </div>
-    </div>
+    </main>
   );
 };
 

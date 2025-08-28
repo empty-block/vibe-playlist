@@ -1,25 +1,89 @@
 # Jamzy Design Guidelines
 
-## 🎨 Design Philosophy
-Jamzy is a social music discovery app that is inspired by retro design, combined with a futuristic cyberpunk look.
-
-### Core Design Principles
-## Retro Inspired, Modern Tech
-Jamzy is designed by retro tech and design, especially from the 90s and 00s. Retro computer UIs, digital radio interfaces, CDs, portable CD players, iPods, early music software like iTunes, Grooveshark, Limewire, etc.
+## 🎨 Core Design Principles
+### Retro UI, Modern Style
+Jamzy is designed by retro tech and design, especially from the 90s and 00s. Early digital music libraries like Grooveshark, iTunes, Napster, Limeware, etc. Classic Mac OS GUI's, Windows 95, iPods, portable CD Players, digital radio UI, etc.
 
 But Jamzy also embraces modern tech and best practices, and aims for a fast, accessible, lightweight feel in both its UI and technical architecture. 
 
-This leads to a futuristic, fast, cyberpunk inspired interface, with retro nods and touches. 
+So Jamzy's retro UI is partnered with a futuristic cyberpunk style. This is highlighted by a neon color palette that evokes cyberpunk as well as 90s nostalgia.
 
-## Info Dense, Visually Engaging
+#### Implementation Guidelines:
+**Visual Elements to Include:**
+- Sharp, angular borders (avoid rounded corners except for buttons)
+- High contrast color transitions using the neon palette
+- Monospace fonts for data-heavy sections (track lists, metadata)
+- Grid-based layouts reminiscent of early music software
+- Terminal-style input fields with cursor animations
+
+**Modern UX Patterns to Apply:**
+- Instant feedback on all interactions (<100ms response)
+- Progressive disclosure of complex features
+- Mobile-first responsive behavior
+- Accessibility-compliant focus indicators (2px neon-cyan outline)
+
+### Info Dense, Visually Engaging
 Jamzy is built on top of a rich database, and Jamzy's UI should be relatively data dense. Screen real estate is valuable, and it's important to use screen space wisely in order to maximize the amount of useful info.
 
 But at the same time, its key that the UI is visually pleasing and engaging. It should feature images (where applicable) and not be too text heavy. So it strikes a balance of being infomation dense, without being too overwhelming.
 
-## (Fun) Details Matter
+#### Implementation Guidelines:
+**Information Density Rules:**
+- Maximum 3 hierarchy levels per content block
+- Use thumbnails/avatars to break up text (minimum 32px)
+- Group related data with subtle borders or background changes
+- Prioritize scannable layouts over paragraph text
+
+**Visual Engagement Requirements:**
+- Include imagery in 80%+ of content blocks
+- Use color coding for different content types
+- Apply hover animations to all interactive elements
+- Balance white space - minimum 16px between major sections
+
+### (Fun) Details Matter
 Details are critical, and every part of the design is though through for both usability and visual style. 
 
-Designs should contain subtle fun, small details (and sometimes even Easter eggs) that aim to delight the user. 
+Designs should contain subtle fun, small details (and sometimes even Easter eggs) that aim to delight the user.
+
+#### Implementation Guidelines:
+**Required Polish Elements:**
+- Subtle glow effects on hover (2-4px blur radius)
+- Custom loading animations (no generic spinners)
+- Micro-animations for state changes (200-300ms duration)
+- Personality in empty states and error messages
+- Sound-reactive visual elements where appropriate 
+
+## ⚡ Quick Reference for AI Agents
+
+### Essential Variables
+```css
+/* Colors (copy-paste ready) */
+--neon-blue: #3b00fd; --neon-green: #00f92a; --neon-cyan: #04caf4;
+--neon-pink: #f906d6; --neon-orange: #ff9b00; --neon-yellow: #d1f60a;
+--dark-bg: #1a1a1a; --darker-bg: #0f0f0f; --light-text: #ffffff; --muted-text: #cccccc;
+
+/* Spacing (8px base) */
+--space-1: 4px; --space-2: 8px; --space-4: 16px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
+
+/* Typography */
+--text-2xl: 32px; --text-xl: 24px; --text-lg: 20px; --text-base: 16px; --text-sm: 14px; --text-xs: 12px;
+
+/* Fonts */
+--font-display: 'JetBrains Mono', monospace; --font-interface: -apple-system, sans-serif;
+```
+
+### Component Quick Decisions
+- **Sequential content** → List View (56px rows, 48px thumbnails)
+- **Visual content** → Grid View (1:1 aspect ratio, 44px targets)  
+- **Social posts** → Card Layout (640px max width, user header)
+- **Data tables** → Table Layout (sticky headers, alternating rows)
+
+### State Quick Guide
+- **Hover** → 8px glow + translateY(-1px)
+- **Focus** → 2px neon-cyan outline
+- **Loading** → Animated neon-blue gradient
+- **Error** → neon-yellow border + 10% background
+- **Success** → neon-green glow pulse (500ms)
 
 ## 🎯 Visual Identity
 
@@ -114,44 +178,285 @@ leave: (element) => {
 
 ## 🔤 Typography
 
-### Font Hierarchy
-- **Display**: Retro digital fonts for headers and branding
-- **Interface**: Clean, readable system fonts for UI text
-- **Monospace**: Terminal-style fonts for AI interactions
-- **Social Text**: Optimized for conversation readability
+### Font Implementation
+```css
+/* Font Stacks */
+--font-display: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Courier New', monospace;
+--font-interface: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', system-ui, sans-serif;
+--font-monospace: 'Fira Code', 'JetBrains Mono', 'SF Mono', monospace;
+--font-social: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+```
 
-### Text Treatment
-- **Neon Accents**: Selective use of color with glow effects
-- **Readable Contrast**: WCAG AA compliance minimum
-- **Clear Hierarchy**: Distinct sizes for navigation levels
-- **Interactive Cues**: Hover states for clickable text
+### Size Scale (8px base unit)
+```css
+/* Typography Scale */
+--text-2xl: 32px;    /* 2rem - Page headers, hero text */
+--text-xl: 24px;     /* 1.5rem - Section headers */
+--text-lg: 20px;     /* 1.25rem - Subsection headers */
+--text-base: 16px;   /* 1rem - Body text, buttons */
+--text-sm: 14px;     /* 0.875rem - Labels, captions */
+--text-xs: 12px;     /* 0.75rem - Metadata, timestamps */
+--text-2xs: 10px;    /* 0.625rem - Fine print only */
+```
+
+### Font Usage Guidelines
+- **Display (--font-display)**: Page titles, brand elements, data tables
+- **Interface (--font-interface)**: Navigation, buttons, form labels
+- **Monospace (--font-monospace)**: Code blocks, terminal UI, precise data
+- **Social (--font-social)**: Comments, usernames, conversation text
+
+### Text Treatment Implementation
+- **Neon Accents**: `text-shadow: 0 0 8px currentColor` on hover
+- **Readable Contrast**: Minimum 4.5:1 ratio (use `--light-text` on dark backgrounds)
+- **Interactive Cues**: Underline on hover for links, color change for buttons
+- **Hierarchy Enforcement**: Use size scale consistently, avoid custom sizes
 
 ## 📐 Layout Principles
 
-### Grid & Spacing
-- **8px Base Unit**: Consistent spacing multiples
-- **Content Zones**: Clear separation between social and player areas
-- **Responsive Scaling**: Mobile-first with desktop enhancement
-- **Thread Nesting**: Visual indent system for conversation depth
+### Spacing System (8px base unit)
+```css
+/* Spacing Scale */
+--space-px: 1px;     /* Borders, dividers */
+--space-0: 0px;      /* Reset spacing */
+--space-1: 4px;      /* 0.25rem - Icon spacing, tight gaps */
+--space-2: 8px;      /* 0.5rem - Element padding, small gaps */
+--space-3: 12px;     /* 0.75rem - Form element spacing */
+--space-4: 16px;     /* 1rem - Component spacing */
+--space-5: 20px;     /* 1.25rem - Medium gaps */
+--space-6: 24px;     /* 1.5rem - Section gaps */
+--space-8: 32px;     /* 2rem - Major breaks */
+--space-10: 40px;    /* 2.5rem - Large sections */
+--space-12: 48px;    /* 3rem - Page sections */
+--space-16: 64px;    /* 4rem - Major page breaks */
+```
 
-### Information Architecture
-- **Discovery First**: Feed and collections prominent
-- **Player Persistent**: Always accessible transport controls
-- **Social Context**: User attribution visible at all times
-- **AI Assistant**: Accessible but not intrusive
+### Container System
+```css
+/* Container Widths */
+--container-sm: 640px;   /* Mobile landscape */
+--container-md: 768px;   /* Tablet */
+--container-lg: 1024px;  /* Desktop */
+--container-xl: 1280px;  /* Large desktop */
+--container-2xl: 1536px; /* Ultra-wide */
+
+/* Content Zones */
+--sidebar-width: 280px;  /* Navigation sidebar */
+--player-height: 80px;   /* Bottom player bar */
+--header-height: 64px;   /* Top navigation */
+```
+
+### Grid & Spacing Implementation
+- **8px Base Unit**: All spacing must be multiples of 8px (use spacing scale variables)
+- **Content Zones**: Use CSS Grid with named areas for major layout sections
+- **Responsive Scaling**: Mobile-first breakpoints at 640px, 768px, 1024px, 1280px
+- **Thread Nesting**: 24px left indent per conversation level (max 3 levels)
+
+### Information Architecture Requirements
+- **Discovery First**: Feed takes 60% of main content width on desktop
+- **Player Persistent**: Fixed bottom position, 80px height, full width
+- **Social Context**: User avatar + name visible in all social content blocks
+- **AI Assistant**: Slide-in panel, 320px width, right-aligned
+
+## 🎯 Component Selection Guide
+
+### Layout Pattern Decision Tree
+
+**For Sequential Content (tracks, playlists, comments):**
+- Use **List View** with consistent row height (56px minimum)
+- Include thumbnail (48x48px), title, subtitle, actions
+- Apply hover effects with `--space-2` padding for scale room
+
+**For Visual Content (albums, artists, users):**
+- Use **Grid View** with aspect ratios (1:1 for albums, 3:4 for artists)
+- Minimum touch target 44px, grid gap `--space-4`
+- Include overlay text with gradient background for readability
+
+**For Mixed Content (social posts, activity feed):**
+- Use **Card Layout** with `--space-4` padding, subtle border
+- Header (user info) + content + actions structure
+- Maximum width 640px for readability
+
+**For Data Comparison (library management, stats):**
+- Use **Table Layout** with sticky headers
+- Alternating row colors using `--darker-bg`
+- Sortable columns with arrow indicators
+
+### Button Hierarchy Implementation
+```css
+/* Primary Actions (Play, Save, Share) */
+.btn-primary {
+  background: var(--neon-blue);
+  color: var(--light-text);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 4px;
+}
+
+/* Secondary Actions (Like, Comment) */
+.btn-secondary {
+  background: transparent;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  padding: var(--space-2) var(--space-4);
+}
+
+/* Tertiary Actions (Edit, Delete) */
+.btn-tertiary {
+  background: transparent;
+  color: var(--muted-text);
+  padding: var(--space-1) var(--space-2);
+}
+```
+
+## 🎛️ State Visualization Guide
+
+### Interactive States Implementation
+```css
+/* Default State */
+.interactive {
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+/* Hover State */
+.interactive:hover {
+  box-shadow: 0 0 8px rgba(59, 0, 253, 0.3); /* neon-blue glow */
+  transform: translateY(-1px);
+}
+
+/* Active/Pressed State */
+.interactive:active {
+  transform: translateY(0);
+  filter: brightness(0.9);
+}
+
+/* Focus State (keyboard navigation) */
+.interactive:focus {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+  box-shadow: 0 0 4px var(--neon-cyan);
+}
+
+/* Disabled State */
+.interactive:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+```
+
+### Content States
+**Loading State:**
+```css
+.loading {
+  background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+  background-size: 200% 100%;
+  animation: pulse-loading 1.5s infinite;
+}
+
+@keyframes pulse-loading {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -200% 0; }
+}
+```
+
+**Empty State:**
+- Use muted text with helpful suggestions
+- Include relevant icon (48px minimum)
+- Provide clear next action with primary button
+
+**Error State:**
+```css
+.error {
+  border: 1px solid var(--neon-yellow);
+  background: rgba(209, 246, 10, 0.1);
+  padding: var(--space-4);
+  border-radius: 4px;
+}
+```
+
+**Success State:**
+```css
+.success {
+  animation: success-glow 500ms ease-out;
+}
+
+@keyframes success-glow {
+  0% { box-shadow: 0 0 0 rgba(0, 249, 42, 0.6); }
+  50% { box-shadow: 0 0 20px rgba(0, 249, 42, 0.6); }
+  100% { box-shadow: 0 0 0 rgba(0, 249, 42, 0); }
+}
+```
+
+## 📋 Information Hierarchy Templates
+
+### Music Track Display Template
+```html
+<div class="track-item">
+  <img class="track-thumbnail" /> <!-- 48x48px -->
+  <div class="track-info">
+    <h3 class="track-title">{{ title }}</h3>     <!-- text-base, light-text -->
+    <p class="track-artist">{{ artist }}</p>     <!-- text-sm, neon-cyan, clickable -->
+    <span class="track-meta">{{ album }} • {{ duration }}</span> <!-- text-xs, muted-text -->
+  </div>
+  <div class="track-actions">
+    <!-- Play, add, share buttons -->
+  </div>
+</div>
+```
+
+### Social Content Display Template
+```html
+<div class="social-item">
+  <header class="social-header">
+    <img class="user-avatar" />                  <!-- 32x32px -->
+    <span class="username">{{ username }}</span> <!-- text-sm, neon-orange, clickable -->
+    <time class="timestamp">{{ time }}</time>    <!-- text-xs, muted-text -->
+  </header>
+  <main class="social-content">
+    <p class="user-action">{{ action }}</p>      <!-- text-base, light-text -->
+    <div class="referenced-track">              <!-- Indented 24px -->
+      <!-- Track template here -->
+    </div>
+  </main>
+</div>
+```
+
+### Form Layout Template
+```html
+<form class="form-layout">
+  <div class="form-group">                      <!-- margin-bottom: space-4 -->
+    <label class="form-label">{{ label }}</label> <!-- text-sm, light-text -->
+    <input class="form-input" />                <!-- padding: space-2, border: neon-cyan -->
+    <span class="form-help">{{ helpText }}</span> <!-- text-xs, muted-text -->
+  </div>
+</form>
+```
 
 ## ✨ Special Effects & Polish
 
-### Neon Glow System
-- Apply glows purposefully to highlight social interactions
-- Use color-coded glows for different interaction types
-- Animate glow intensity for state changes
-- Reserve intense glows for special achievements
+### Neon Glow System Implementation
+```css
+/* Social Interaction Glows */
+.social-like:hover { box-shadow: 0 0 12px rgba(0, 249, 42, 0.4); }
+.social-comment:hover { box-shadow: 0 0 12px rgba(4, 202, 244, 0.4); }
+.social-share:hover { box-shadow: 0 0 12px rgba(249, 6, 214, 0.4); }
 
-### Retro Polish
-- **CRT Effects**: Subtle scan lines for nostalgic feel
-- **Pixel Accents**: Dotted borders and pixelated icons
-- **Terminal Styling**: Monospace fonts and cursor blinks for AI
+/* Achievement Glows (intense) */
+.achievement {
+  animation: achievement-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes achievement-glow {
+  from { box-shadow: 0 0 20px var(--neon-pink); }
+  to { box-shadow: 0 0 40px var(--neon-pink); }
+}
+```
+
+### Retro Polish Implementation
+- **CRT Effects**: `background-image: repeating-linear-gradient(0deg, transparent, rgba(0,0,0,0.03) 2px)`
+- **Pixel Accents**: `border-style: dotted` for vintage borders
+- **Terminal Styling**: Use `--font-monospace` with blinking cursor animation
 
 ## 📱 Responsive Considerations
 
@@ -167,19 +472,47 @@ leave: (element) => {
 - **Rich Previews**: Hover cards with song details
 - **Drag & Drop**: Reorder collections and build playlists
 
-## 🎯 Quality Standards
+## ✅ Pre-Implementation Checklist
 
-### Performance
-- **60fps Animations**: Hardware acceleration required
-- **Lazy Loading**: Progressive content loading
-- **Optimized Images**: Responsive artwork delivery
-- **Minimal Reflows**: Batch DOM updates
+### Before You Start
+- [ ] Read Quick Reference section for essential variables
+- [ ] Identify content type (sequential, visual, social, data)
+- [ ] Choose appropriate layout pattern from Component Selection Guide
+- [ ] Confirm color usage follows neon palette guidelines
 
-### Accessibility
-- **Keyboard Navigation**: Full functionality without mouse
-- **Screen Readers**: Semantic HTML and ARIA labels
-- **Color Contrast**: WCAG AA minimum compliance
-- **Focus Indicators**: Clear visual focus states
+### During Implementation
+- [ ] Use spacing scale variables (never custom pixel values)
+- [ ] Apply proper typography scale (--text-* variables)
+- [ ] Include all interactive states (hover, focus, active, disabled)
+- [ ] Add loading and error states for dynamic content
+- [ ] Test with keyboard navigation
+
+### After Implementation
+- [ ] Verify 60fps animations (use browser dev tools)
+- [ ] Check color contrast meets 4.5:1 ratio minimum
+- [ ] Test responsive behavior at 640px, 768px, 1024px breakpoints
+- [ ] Validate semantic HTML and ARIA labels
+- [ ] Confirm focus indicators are visible and distinctive
+
+### Performance Requirements
+- **Animations**: Hardware accelerated (`transform`, `opacity` only)
+- **Images**: WebP format with responsive sizes
+- **Interactions**: <100ms response time for all user actions
+- **Loading**: Progressive content loading, skeleton states
+
+### Accessibility Requirements
+- **Keyboard Navigation**: Tab order logical, no mouse-only functions
+- **Screen Readers**: Meaningful `alt` text, `aria-label` where needed
+- **Color Contrast**: 4.5:1 minimum, 7:1 preferred for small text
+- **Focus States**: 2px neon-cyan outline, never `outline: none`
+
+### Common Mistakes to Avoid
+- ❌ Custom spacing values (use `--space-*` variables)
+- ❌ Rounded corners (conflicts with retro aesthetic)
+- ❌ Generic loading spinners (create custom animations)
+- ❌ Yellow for non-warning content (reserved for alerts)
+- ❌ Mixing animation libraries (stick to anime.js v3.2.1)
+- ❌ Missing hover states on interactive elements
 
 ---
 

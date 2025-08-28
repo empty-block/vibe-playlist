@@ -40,20 +40,70 @@
     <script src="tailwind-config.js"></script>
     <style>
         :root {
-            /* Neon 90s Color Palette */
-            --primary-color: #3b00fd;     /* Deep blue/purple - primary */
-            --secondary-color: #04caf4;   /* Neon cyan */
-            --accent-color: #00f92a;      /* Bright green */
-            --highlight-color: #f906d6;   /* Hot pink */
-            --emphasis-color: #ff9b00;    /* Neon orange - for text highlights */
-            --warning-color: #d1f60a;     /* Neon yellow - for warnings only */
-            --success-color: #00f92a;     /* Bright green for success */
-            --error-color: #f906d6;       /* Hot pink for errors */
+            /* JAMZY DESIGN SYSTEM - Neon 90s Color Palette */
+            --neon-blue: #3b00fd;     /* Deep Blue/Violet - Primary brand, main CTAs */
+            --neon-green: #00f92a;    /* Bright Green - Success states, play buttons */
+            --neon-cyan: #04caf4;     /* Bright Cyan - Links, info, interactive elements */
+            --neon-pink: #f906d6;     /* Bright Pink - Special emphasis, accents */
+            --neon-orange: #ff9b00;   /* Orange - Text highlights, active states */
+            --neon-yellow: #d1f60a;   /* Yellow - Warnings and alerts ONLY */
             
-            /* Gradient combinations */
-            --gradient-primary: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-color) 100%);
-            --gradient-secondary: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --gradient-accent: linear-gradient(135deg, var(--highlight-color) 0%, var(--warning-color) 100%);
+            /* Supporting Colors */
+            --dark-bg: #1a1a1a;       /* Primary background */
+            --darker-bg: #0f0f0f;     /* Deeper background areas */
+            --light-text: #ffffff;    /* Primary text */
+            --muted-text: #cccccc;    /* Secondary text */
+            
+            /* Legacy color mappings for backward compatibility */
+            --primary-color: var(--neon-blue);
+            --secondary-color: var(--neon-cyan);
+            --accent-color: var(--neon-green);
+            --highlight-color: var(--neon-pink);
+            --emphasis-color: var(--neon-orange);
+            --warning-color: var(--neon-yellow);
+            --success-color: var(--neon-green);
+            --error-color: var(--neon-pink);
+            
+            /* Spacing System (8px base unit) */
+            --space-px: 1px;     /* Borders, dividers */
+            --space-0: 0px;      /* Reset spacing */
+            --space-1: 4px;      /* 0.25rem - Icon spacing, tight gaps */
+            --space-2: 8px;      /* 0.5rem - Element padding, small gaps */
+            --space-3: 12px;     /* 0.75rem - Form element spacing */
+            --space-4: 16px;     /* 1rem - Component spacing */
+            --space-5: 20px;     /* 1.25rem - Medium gaps */
+            --space-6: 24px;     /* 1.5rem - Section gaps */
+            --space-8: 32px;     /* 2rem - Major breaks */
+            --space-10: 40px;    /* 2.5rem - Large sections */
+            --space-12: 48px;    /* 3rem - Page sections */
+            --space-16: 64px;    /* 4rem - Major page breaks */
+            
+            /* Typography Scale (8px base unit) */
+            --text-2xl: 32px;    /* 2rem - Page headers, hero text */
+            --text-xl: 24px;     /* 1.5rem - Section headers */
+            --text-lg: 20px;     /* 1.25rem - Subsection headers */
+            --text-base: 16px;   /* 1rem - Body text, buttons */
+            --text-sm: 14px;     /* 0.875rem - Labels, captions */
+            --text-xs: 12px;     /* 0.75rem - Metadata, timestamps */
+            --text-2xs: 10px;    /* 0.625rem - Fine print only */
+            
+            /* Font Stacks */
+            --font-display: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Courier New', monospace;
+            --font-interface: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', system-ui, sans-serif;
+            --font-monospace: 'Fira Code', 'JetBrains Mono', 'SF Mono', monospace;
+            --font-social: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            
+            /* Container System */
+            --container-sm: 640px;   /* Mobile landscape */
+            --container-md: 768px;   /* Tablet */
+            --container-lg: 1024px;  /* Desktop */
+            --container-xl: 1280px;  /* Large desktop */
+            --container-2xl: 1536px; /* Ultra-wide */
+            
+            /* Content Zones */
+            --sidebar-width: 280px;  /* Navigation sidebar */
+            --player-height: 80px;   /* Bottom player bar */
+            --header-height: 64px;   /* Top navigation */
         }
         
         @keyframes blink {
@@ -263,6 +313,73 @@
 
         .neon-glow {
             animation: neon-pulse 2s ease-in-out infinite alternate;
+        }
+
+        /* DESIGN SYSTEM ANIMATIONS */
+        @keyframes pulse-loading {
+            0%, 100% { background-position: 200% 0; }
+            50% { background-position: -200% 0; }
+        }
+
+        @keyframes success-glow {
+            0% { box-shadow: 0 0 0 rgba(0, 249, 42, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(0, 249, 42, 0.6); }
+            100% { box-shadow: 0 0 0 rgba(0, 249, 42, 0); }
+        }
+
+        @keyframes achievement-glow {
+            from { box-shadow: 0 0 20px var(--neon-pink); }
+            to { box-shadow: 0 0 40px var(--neon-pink); }
+        }
+
+        /* DESIGN SYSTEM CLASSES */
+        .loading {
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+            background-size: 200% 100%;
+            animation: pulse-loading 1.5s infinite;
+        }
+
+        .success {
+            animation: success-glow 500ms ease-out;
+        }
+
+        .achievement {
+            animation: achievement-glow 2s ease-in-out infinite alternate;
+        }
+
+        .interactive {
+            transition: all 200ms ease;
+            cursor: pointer;
+        }
+
+        .interactive:hover {
+            box-shadow: 0 0 8px rgba(59, 0, 253, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .interactive:active {
+            transform: translateY(0);
+            filter: brightness(0.9);
+        }
+
+        .interactive:focus {
+            outline: 2px solid var(--neon-cyan);
+            outline-offset: 2px;
+            box-shadow: 0 0 4px var(--neon-cyan);
+        }
+
+        .interactive:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error {
+            border: 1px solid var(--neon-yellow);
+            background: rgba(209, 246, 10, 0.1);
+            padding: var(--space-4);
+            border-radius: 4px;
         }
 
         /* ZEN DESIGN SYSTEM - Thoughtful spacing and typography */
