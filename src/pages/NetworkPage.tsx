@@ -1,166 +1,672 @@
-import { Component, onMount } from 'solid-js';
-import { pageEnter, staggeredFadeIn } from '../utils/animations';
+import { Component, onMount, createSignal, Show } from 'solid-js';
+import anime from 'animejs';
 
-// Community components
-import LiveActivityPulse from '../components/community/LiveActivityPulse';
-import ActiveConversations from '../components/community/ActiveConversations';
-import CommunitySidebar from '../components/community/CommunitySidebar';
-import CuratorSpotlights from '../components/discover/CuratorSpotlights';
-import NetworkAnalytics from '../components/network/NetworkAnalytics';
+// Network components
+import NetworkSelector from '../components/network/NetworkSelector';
+import NetworkMetrics from '../components/network/NetworkMetrics';
 
-// Community store
+// Network store
 import {
-  activeConversations,
-  liveActivities,
-  networkActivity,
-  communityPlaylists,
-  curatorSuggestions,
-  isConversationsLoading,
-  isActivitiesLoading,
-  isNetworkLoading,
-  isPlaylistsLoading,
-  isSuggestionsLoading,
-  initializeCommunityData
-} from '../stores/communityStore';
-
-// Import from discover store for curators
-import {
-  featuredCurators,
-  isCuratorsLoading
-} from '../stores/discoverStore';
+  selectedNetwork,
+  setSelectedNetwork,
+  networkData,
+  networkStats,
+  isLoading,
+  fetchNetworkData
+} from '../stores/networkStore';
 
 const NetworkPage: Component = () => {
   let pageRef: HTMLDivElement | undefined;
-
-  onMount(async () => {
-    // Initialize community data
-    await initializeCommunityData();
-    
-    // Remove slow page animations - just show content immediately
+  const [showBootSequence, setShowBootSequence] = createSignal(true);
+  
+  onMount(() => {
+    // Faster boot sequence animation
+    setTimeout(() => {
+      setShowBootSequence(false);
+      
+      // Animate page elements in with faster timing
+      if (pageRef) {
+        anime({
+          targets: pageRef.querySelectorAll('.network-element'),
+          opacity: [0, 1],
+          translateY: [15, 0],
+          delay: anime.stagger(60),
+          duration: 500,
+          easing: 'easeOutExpo'
+        });
+      }
+    }, 400);
   });
-
+  
+  const handleNetworkChange = async (networkId: string) => {
+    setSelectedNetwork(networkId);
+    await fetchNetworkData(networkId);
+  };
+  
   return (
     <div 
-      ref={pageRef!} 
-      class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800"
+      ref={pageRef!}
+      class="min-h-screen bg-[#0f0f0f] relative overflow-hidden"
     >
-      <div class="max-w-7xl mx-auto p-4 md:p-6">
-        
-        {/* Community Header */}
-        <div class="community-section mb-8">
-          <div class="text-center mb-6">
-            <div class="flex items-center justify-center gap-4 mb-4">
-              <div class="w-4 h-4 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 animate-pulse shadow-lg shadow-purple-400/50"></div>
-              <h1 class="font-bold text-3xl lg:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 font-mono tracking-wider">
-                NETWORK_HUB.EXE
-              </h1>
-              <div class="w-4 h-4 rounded-full bg-gradient-to-r from-pink-400 to-cyan-400 animate-pulse shadow-lg shadow-pink-400/50"></div>
-            </div>
-            <p class="text-purple-300/70 font-mono text-lg">
-              Curator discovery & network intelligence system
-            </p>
-          </div>
-        </div>
-
-        {/* Network Analytics Dashboard */}
-        <div class="community-section">
-          <NetworkAnalytics 
-            isLoading={isNetworkLoading()} 
-          />
-        </div>
-
-        {/* Live Activity Pulse Bar */}
-        <div class="community-section">
-          <LiveActivityPulse 
-            activities={liveActivities()} 
-            isLoading={isActivitiesLoading()} 
-          />
-        </div>
-
-        {/* Featured Curators Section (moved from Discovery) */}
-        <div class="community-section mb-8">
-          <CuratorSpotlights 
-            curators={featuredCurators()} 
-            isLoading={isCuratorsLoading()} 
-          />
-        </div>
-
-        {/* Main Content Layout */}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Main Feed - Active Conversations */}
-          <div class="lg:col-span-2">
-            <div class="community-section">
-              <div class="mb-6">
-                <div class="flex items-center gap-3 mb-2">
-                  <i class="fas fa-comments text-purple-400"></i>
-                  <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
-                    Active Conversations
-                  </h2>
-                </div>
-                <p class="text-purple-300/70 font-mono">
-                  Join the music discussion happening right now
-                </p>
-              </div>
-
-              <ActiveConversations 
-                conversations={activeConversations()} 
-                isLoading={isConversationsLoading()} 
-              />
-            </div>
-          </div>
-
-          {/* Sidebar - Discovery */}
-          <div class="lg:col-span-1">
-            <div class="community-section">
-              <div class="mb-6">
-                <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-2">
-                  Discover & Connect
-                </h2>
-                <p class="text-cyan-300/70 font-mono text-sm">
-                  Expand your musical network
-                </p>
-              </div>
-
-              <CommunitySidebar 
-                networkActivity={networkActivity()}
-                communityPlaylists={communityPlaylists()}
-                curatorSuggestions={curatorSuggestions()}
-                isNetworkLoading={isNetworkLoading()}
-                isPlaylistsLoading={isPlaylistsLoading()}
-                isSuggestionsLoading={isSuggestionsLoading()}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Community Features Footer */}
-        <div class="community-section mt-12">
-          <div class="bg-gradient-to-r from-slate-800/60 to-slate-700/40 border-2 border-cyan-400/20 rounded-xl p-6 text-center">
-            <h3 class="text-cyan-300 font-bold text-lg mb-2">
-              Build Your Music Network
-            </h3>
-            <p class="text-cyan-200/70 mb-4">
-              Every track is a conversation starter. Connect with curators who share your taste.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4">
-              <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                <i class="fas fa-search mr-2"></i>
-                Find Curators
-              </button>
-              <button class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                <i class="fas fa-plus mr-2"></i>
-                Start Discussion
-              </button>
-              <button class="px-4 py-2 bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-400 hover:to-cyan-400 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                <i class="fas fa-list mr-2"></i>
-                Create Playlist
-              </button>
-            </div>
-          </div>
-        </div>
-
+      {/* Subtle grid overlay for depth */}
+      <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(4, 202, 244, 0.03) 2px, rgba(4, 202, 244, 0.03) 4px);"></div>
+        <div class="absolute inset-0" style="background-image: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(4, 202, 244, 0.03) 2px, rgba(4, 202, 244, 0.03) 4px);"></div>
       </div>
+      
+      {/* Boot sequence overlay */}
+      <Show when={showBootSequence()}>
+        <div class="fixed inset-0 bg-[#0f0f0f] z-50 flex items-center justify-center">
+          <div class="text-center">
+            <div class="mb-8">
+              <div class="text-[#04caf4] font-mono text-lg mb-4 animate-pulse tracking-wider">
+                JAMZY NETWORK MATRIX v2.0.1
+              </div>
+              <div class="text-[#00f92a] font-mono text-sm space-y-2">
+                <div class="opacity-0 animate-[fadeIn_0.2s_ease-in_forwards]">
+                  [OK] LOADING NETWORK MODULES...
+                </div>
+                <div class="opacity-0 animate-[fadeIn_0.2s_ease-in_0.15s_forwards]">
+                  [OK] ESTABLISHING NODE CONNECTIONS...
+                </div>
+                <div class="opacity-0 animate-[fadeIn_0.2s_ease-in_0.3s_forwards]">
+                  [OK] CALCULATING NETWORK TOPOLOGY...
+                </div>
+                <div class="opacity-0 animate-[fadeIn_0.2s_ease-in_0.45s_forwards]">
+                  [OK] READY.
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-center">
+              <div class="inline-block animate-spin h-6 w-6 border-2 border-[#04caf4] border-t-transparent"></div>
+            </div>
+          </div>
+        </div>
+      </Show>
+      
+      {/* Main content */}
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 py-8">
+        
+        {/* Primary Header - Significantly Reduced Size */}
+        <div class="network-element mb-6 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2">
+            <div class="w-3 h-3 bg-[#04caf4] animate-pulse"></div>
+            <h1 class="font-mono text-xl lg:text-2xl text-[#04caf4] tracking-wider font-bold" 
+                style="text-shadow: 0 0 15px rgba(4, 202, 244, 0.4)">
+              NETWORK_MATRIX.EXE
+            </h1>
+            <div class="w-3 h-3 bg-[#f906d6] animate-pulse"></div>
+          </div>
+          <p class="text-[#04caf4]/70 font-mono text-xs tracking-wide">
+            Musical connections visualization
+          </p>
+        </div>
+        
+        {/* Network Selector */}
+        <div class="network-element mb-6">
+          <NetworkSelector 
+            selectedNetwork={selectedNetwork()}
+            onNetworkChange={handleNetworkChange}
+          />
+        </div>
+        
+        {/* Network Intelligence Dashboard */}
+        <div class="network-element mb-6">
+          <div class="bg-[#1a1a1a] border-2 border-[#04caf4]/30 p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-[#04caf4] flex items-center justify-center">
+                  <i class="fas fa-chart-network text-black text-xs"></i>
+                </div>
+                <h2 class="text-[#04caf4] font-mono text-base font-bold tracking-wider">
+                  NETWORK INTELLIGENCE
+                </h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                <span class="text-[#00f92a]/80 font-mono text-xs">LIVE</span>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="text-center bg-[#04caf4]/10 border border-[#04caf4]/30 p-3">
+                <div class="text-[#04caf4] font-mono text-lg font-bold">147</div>
+                <div class="text-[#04caf4]/60 font-mono text-xs">NODES</div>
+              </div>
+              <div class="text-center bg-[#f906d6]/10 border border-[#f906d6]/30 p-3">
+                <div class="text-[#f906d6] font-mono text-lg font-bold">2.8K</div>
+                <div class="text-[#f906d6]/60 font-mono text-xs">SHARES</div>
+              </div>
+              <div class="text-center bg-[#00f92a]/10 border border-[#00f92a]/30 p-3">
+                <div class="text-[#00f92a] font-mono text-lg font-bold">89%</div>
+                <div class="text-[#00f92a]/60 font-mono text-xs">HEALTH</div>
+              </div>
+              <div class="text-center bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
+                <div class="text-[#ff9b00] font-mono text-lg font-bold">+23%</div>
+                <div class="text-[#ff9b00]/60 font-mono text-xs">GROWTH</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Three-Column Information Grid */}
+        <div class="network-element mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Network Insights - Orange Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#ff9b00]/30 p-5">
+            <h3 class="text-[#ff9b00] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#ff9b00] flex items-center justify-center">
+                <i class="fas fa-lightbulb text-black"></i>
+              </div>
+              NETWORK INSIGHTS
+            </h3>
+            <div class="space-y-3">
+              <div class="bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
+                <p class="text-[#ff9b00] font-mono font-bold text-sm">PEAK ACTIVITY</p>
+                <p class="text-[#ff9b00]/80 font-mono text-xs mt-1">Network most active 8-10 PM</p>
+              </div>
+              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3">
+                <p class="text-[#04caf4] font-mono font-bold text-sm">GENRE SPREAD</p>
+                <p class="text-[#04caf4]/80 font-mono text-xs mt-1">12 distinct genre clusters</p>
+              </div>
+              <div class="bg-[#00f92a]/10 border border-[#00f92a]/30 p-3">
+                <p class="text-[#00f92a] font-mono font-bold text-sm">GROWTH TREND</p>
+                <p class="text-[#00f92a]/80 font-mono text-xs mt-1">+15% network expansion</p>
+              </div>
+              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3">
+                <p class="text-[#f906d6] font-mono font-bold text-sm">INFLUENCE SCORE</p>
+                <p class="text-[#f906d6]/80 font-mono text-xs mt-1">Top 8% network position</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Live Network Stats - Blue Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#3b00fd]/30 p-5">
+            <h3 class="text-[#3b00fd] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#3b00fd] flex items-center justify-center">
+                <i class="fas fa-chart-bar text-white"></i>
+              </div>
+              LIVE STATISTICS
+            </h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="text-center bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-4">
+                <div class="text-[#3b00fd] font-mono text-2xl font-bold">2.8K</div>
+                <div class="text-[#3b00fd]/80 font-mono text-xs">TOTAL SHARES</div>
+              </div>
+              <div class="text-center bg-[#04caf4]/10 border border-[#04caf4]/30 p-4">
+                <div class="text-[#04caf4] font-mono text-2xl font-bold">147</div>
+                <div class="text-[#04caf4]/80 font-mono text-xs">ACTIVE USERS</div>
+              </div>
+              <div class="text-center bg-[#00f92a]/10 border border-[#00f92a]/30 p-4">
+                <div class="text-[#00f92a] font-mono text-2xl font-bold">89%</div>
+                <div class="text-[#00f92a]/80 font-mono text-xs">ENGAGEMENT</div>
+              </div>
+              <div class="text-center bg-[#f906d6]/10 border border-[#f906d6]/30 p-4">
+                <div class="text-[#f906d6] font-mono text-2xl font-bold">48K</div>
+                <div class="text-[#f906d6]/80 font-mono text-xs">REACH</div>
+              </div>
+            </div>
+            <div class="mt-4 bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
+              <div class="flex justify-between items-center">
+                <span class="text-[#ff9b00] font-mono text-sm font-bold">NETWORK VELOCITY</span>
+                <span class="text-[#ff9b00] font-mono text-xl">+23.4%</span>
+              </div>
+              <div class="text-[#ff9b00]/80 font-mono text-xs mt-1">Connections/hour growth rate</div>
+            </div>
+          </div>
+          
+          {/* Network Tools - Green Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#00f92a]/30 p-5">
+            <h3 class="text-[#00f92a] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#00f92a] flex items-center justify-center">
+                <i class="fas fa-tools text-black"></i>
+              </div>
+              NETWORK TOOLS
+            </h3>
+            <div class="space-y-3">
+              <button class="w-full py-3 px-4 bg-[#04caf4]/20 border-2 border-[#04caf4]/40 text-[#04caf4] font-mono text-sm hover:bg-[#04caf4]/30 transition-all text-left">
+                <i class="fas fa-search mr-3"></i>
+                FIND SIMILAR CURATORS
+              </button>
+              <button class="w-full py-3 px-4 bg-[#f906d6]/20 border-2 border-[#f906d6]/40 text-[#f906d6] font-mono text-sm hover:bg-[#f906d6]/30 transition-all text-left">
+                <i class="fas fa-share-alt mr-3"></i>
+                SHARE NETWORK PROFILE
+              </button>
+              <button class="w-full py-3 px-4 bg-[#00f92a]/20 border-2 border-[#00f92a]/40 text-[#00f92a] font-mono text-sm hover:bg-[#00f92a]/30 transition-all text-left">
+                <i class="fas fa-download mr-3"></i>
+                EXPORT NETWORK DATA
+              </button>
+              <button class="w-full py-3 px-4 bg-[#ff9b00]/20 border-2 border-[#ff9b00]/40 text-[#ff9b00] font-mono text-sm hover:bg-[#ff9b00]/30 transition-all text-left">
+                <i class="fas fa-cogs mr-3"></i>
+                ADVANCED ANALYSIS
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* New Trending & Connections Section - Three Component Grid */}
+        <div class="network-element mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* 1. TRENDING ARTISTS - Cyan Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#04caf4]/30 p-5">
+            <h3 class="text-[#04caf4] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#04caf4] flex items-center justify-center">
+                <i class="fas fa-fire text-black"></i>
+              </div>
+              TRENDING ARTISTS
+            </h3>
+            <div class="space-y-3">
+              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3 hover:bg-[#04caf4]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#04caf4]/30 flex items-center justify-center">
+                    <i class="fas fa-music text-[#04caf4] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#04caf4] font-mono font-bold text-sm truncate">NEON_DREAMS</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+12%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#04caf4]/70 font-mono text-xs">2.4K followers</p>
+                      <div class="w-12 h-1 bg-[#04caf4]/30">
+                        <div class="w-9 h-1 bg-[#04caf4] group-hover:animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3 hover:bg-[#04caf4]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#04caf4]/30 flex items-center justify-center">
+                    <i class="fas fa-headphones text-[#04caf4] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#04caf4] font-mono font-bold text-sm truncate">CYBER_SOUND</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+8%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#04caf4]/70 font-mono text-xs">1.8K followers</p>
+                      <div class="w-12 h-1 bg-[#04caf4]/30">
+                        <div class="w-7 h-1 bg-[#04caf4] group-hover:animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3 hover:bg-[#04caf4]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#04caf4]/30 flex items-center justify-center">
+                    <i class="fas fa-wave-square text-[#04caf4] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#04caf4] font-mono font-bold text-sm truncate">RETRO_PULSE</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+5%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#04caf4]/70 font-mono text-xs">1.2K followers</p>
+                      <div class="w-12 h-1 bg-[#04caf4]/30">
+                        <div class="w-6 h-1 bg-[#04caf4] group-hover:animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3 hover:bg-[#04caf4]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#04caf4]/30 flex items-center justify-center">
+                    <i class="fas fa-microphone text-[#04caf4] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#04caf4] font-mono font-bold text-sm truncate">SYNTH_WIZARD</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-minus text-[#ff9b00] text-xs"></i>
+                        <span class="text-[#ff9b00] font-mono text-xs">-2%</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#04caf4]/70 font-mono text-xs">980 followers</p>
+                      <div class="w-12 h-1 bg-[#04caf4]/30">
+                        <div class="w-5 h-1 bg-[#04caf4] group-hover:animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 2. TRENDING TRACKS - Pink Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#f906d6]/30 p-5">
+            <h3 class="text-[#f906d6] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#f906d6] flex items-center justify-center">
+                <i class="fas fa-chart-line text-black"></i>
+              </div>
+              TRENDING TRACKS
+            </h3>
+            <div class="space-y-3">
+              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3 hover:bg-[#f906d6]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#f906d6]/30 flex items-center justify-center relative">
+                    <i class="fas fa-play text-[#f906d6] text-xs"></i>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#00f92a] animate-pulse"></div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#f906d6] font-mono font-bold text-sm truncate">Digital Nights</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+47</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#f906d6]/70 font-mono text-xs">NEON_DREAMS • 3:24</p>
+                      <p class="text-[#f906d6]/70 font-mono text-xs">1.2K shares</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3 hover:bg-[#f906d6]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#f906d6]/30 flex items-center justify-center relative">
+                    <i class="fas fa-play text-[#f906d6] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#f906d6] font-mono font-bold text-sm truncate">Cyber Cascade</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+32</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#f906d6]/70 font-mono text-xs">CYBER_SOUND • 4:12</p>
+                      <p class="text-[#f906d6]/70 font-mono text-xs">890 shares</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3 hover:bg-[#f906d6]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#f906d6]/30 flex items-center justify-center">
+                    <i class="fas fa-play text-[#f906d6] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#f906d6] font-mono font-bold text-sm truncate">Neon Velocity</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-arrow-up text-[#00f92a] text-xs"></i>
+                        <span class="text-[#00f92a] font-mono text-xs">+28</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#f906d6]/70 font-mono text-xs">RETRO_PULSE • 2:58</p>
+                      <p class="text-[#f906d6]/70 font-mono text-xs">756 shares</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3 hover:bg-[#f906d6]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#f906d6]/30 flex items-center justify-center">
+                    <i class="fas fa-play text-[#f906d6] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#f906d6] font-mono font-bold text-sm truncate">Synthetic Dreams</p>
+                      <div class="flex items-center gap-1">
+                        <i class="fas fa-minus text-[#ff9b00] text-xs"></i>
+                        <span class="text-[#ff9b00] font-mono text-xs">-5</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#f906d6]/70 font-mono text-xs">SYNTH_WIZARD • 5:17</p>
+                      <p class="text-[#f906d6]/70 font-mono text-xs">623 shares</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 3. TOP CONNECTIONS - Blue Theme */}
+          <div class="bg-[#1a1a1a] border-2 border-[#3b00fd]/30 p-5">
+            <h3 class="text-[#3b00fd] font-mono text-lg font-bold mb-4 flex items-center gap-3">
+              <div class="w-8 h-8 bg-[#3b00fd] flex items-center justify-center">
+                <i class="fas fa-users text-white"></i>
+              </div>
+              TOP CONNECTIONS
+            </h3>
+            <div class="space-y-3">
+              <div class="bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-3 hover:bg-[#3b00fd]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#3b00fd]/30 flex items-center justify-center relative">
+                    <i class="fas fa-user text-[#3b00fd] text-xs"></i>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#00f92a] rounded-full"></div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#3b00fd] font-mono font-bold text-sm truncate">BEAT_MATRIX</p>
+                      <span class="text-[#00f92a] font-mono text-lg font-bold">96%</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#3b00fd]/70 font-mono text-xs">12 mutual • 47 shared</p>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                        <span class="text-[#00f92a] font-mono text-xs">ACTIVE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-3 hover:bg-[#3b00fd]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#3b00fd]/30 flex items-center justify-center relative">
+                    <i class="fas fa-user text-[#3b00fd] text-xs"></i>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#00f92a] rounded-full"></div>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#3b00fd] font-mono font-bold text-sm truncate">SOUND_ARCHITECT</p>
+                      <span class="text-[#04caf4] font-mono text-lg font-bold">91%</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#3b00fd]/70 font-mono text-xs">8 mutual • 34 shared</p>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                        <span class="text-[#00f92a] font-mono text-xs">ACTIVE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-3 hover:bg-[#3b00fd]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#3b00fd]/30 flex items-center justify-center">
+                    <i class="fas fa-user text-[#3b00fd] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#3b00fd] font-mono font-bold text-sm truncate">VIBE_CURATOR</p>
+                      <span class="text-[#f906d6] font-mono text-lg font-bold">87%</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#3b00fd]/70 font-mono text-xs">6 mutual • 28 shared</p>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 bg-[#ff9b00] opacity-70"></div>
+                        <span class="text-[#ff9b00] font-mono text-xs">IDLE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-3 hover:bg-[#3b00fd]/20 transition-all cursor-pointer group">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 bg-[#3b00fd]/30 flex items-center justify-center">
+                    <i class="fas fa-user text-[#3b00fd] text-xs"></i>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <p class="text-[#3b00fd] font-mono font-bold text-sm truncate">RHYTHM_SAGE</p>
+                      <span class="text-[#ff9b00] font-mono text-lg font-bold">83%</span>
+                    </div>
+                    <div class="flex items-center justify-between mt-1">
+                      <p class="text-[#3b00fd]/70 font-mono text-xs">4 mutual • 21 shared</p>
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 border-2 border-gray-400"></div>
+                        <span class="text-gray-400 font-mono text-xs">OFFLINE</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        {/* Network Topology Data Table - Yellow Theme */}
+        <div class="network-element">
+          <div class="bg-[#1a1a1a] border-2 border-[#d1f60a]/30 p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#d1f60a] flex items-center justify-center">
+                  <i class="fas fa-table text-black text-lg"></i>
+                </div>
+                <h2 class="text-[#d1f60a] font-mono text-2xl font-bold tracking-wider">
+                  NETWORK TOPOLOGY DATA
+                </h2>
+              </div>
+              <div class="flex items-center gap-3">
+                <button class="text-[#d1f60a]/60 hover:text-[#d1f60a] transition-colors">
+                  <i class="fas fa-filter"></i>
+                </button>
+                <button class="text-[#d1f60a]/60 hover:text-[#d1f60a] transition-colors">
+                  <i class="fas fa-sort"></i>
+                </button>
+                <button class="text-[#d1f60a]/60 hover:text-[#d1f60a] transition-colors">
+                  <i class="fas fa-expand"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full font-mono">
+                <thead>
+                  <tr class="border-b-2 border-[#d1f60a]/40">
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">USER</th>
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">CONNECTIONS</th>
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">INFLUENCE</th>
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">GENRE FOCUS</th>
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">STATUS</th>
+                    <th class="text-left py-4 text-[#d1f60a] font-bold text-sm tracking-wider">MATCH %</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
+                    <td class="py-4 text-white font-mono font-bold">MusicLover42</td>
+                    <td class="py-4 text-[#04caf4] font-mono">47</td>
+                    <td class="py-4 text-[#00f92a] font-mono">HIGH</td>
+                    <td class="py-4 text-[#3b00fd] font-mono">ELECTRONIC</td>
+                    <td class="py-4">
+                      <div class="w-3 h-3 bg-[#00f92a]"></div>
+                    </td>
+                    <td class="py-4 text-[#d1f60a] font-mono font-bold">92%</td>
+                  </tr>
+                  <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
+                    <td class="py-4 text-white font-mono font-bold">VinylCollector</td>
+                    <td class="py-4 text-[#04caf4] font-mono">38</td>
+                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#3b00fd] font-mono">ROCK/JAZZ</td>
+                    <td class="py-4">
+                      <div class="w-3 h-3 bg-[#00f92a]"></div>
+                    </td>
+                    <td class="py-4 text-[#d1f60a] font-mono font-bold">87%</td>
+                  </tr>
+                  <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
+                    <td class="py-4 text-white font-mono font-bold">BeatExplorer</td>
+                    <td class="py-4 text-[#04caf4] font-mono">32</td>
+                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#3b00fd] font-mono">HIP-HOP</td>
+                    <td class="py-4">
+                      <div class="w-3 h-3 bg-[#ff9b00] opacity-70"></div>
+                    </td>
+                    <td class="py-4 text-[#d1f60a] font-mono font-bold">84%</td>
+                  </tr>
+                  <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
+                    <td class="py-4 text-white font-mono font-bold">SynthMaster</td>
+                    <td class="py-4 text-[#04caf4] font-mono">29</td>
+                    <td class="py-4 text-red-400 font-mono">LOW</td>
+                    <td class="py-4 text-[#3b00fd] font-mono">SYNTHWAVE</td>
+                    <td class="py-4">
+                      <div class="w-3 h-3 border-2 border-gray-400"></div>
+                    </td>
+                    <td class="py-4 text-[#d1f60a] font-mono font-bold">81%</td>
+                  </tr>
+                  <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
+                    <td class="py-4 text-white font-mono font-bold">RetroWave</td>
+                    <td class="py-4 text-[#04caf4] font-mono">25</td>
+                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#3b00fd] font-mono">SYNTHWAVE</td>
+                    <td class="py-4">
+                      <div class="w-3 h-3 bg-[#00f92a]"></div>
+                    </td>
+                    <td class="py-4 text-[#d1f60a] font-mono font-bold">78%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-6 flex items-center justify-between">
+              <p class="text-[#d1f60a]/80 font-mono text-sm">
+                Showing 5 of 147 network connections
+              </p>
+              <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-[#00f92a]"></div>
+                  <span class="text-[#00f92a] font-mono text-sm">ACTIVE</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-[#ff9b00] opacity-70"></div>
+                  <span class="text-[#ff9b00] font-mono text-sm">IDLE</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 border-2 border-gray-400"></div>
+                  <span class="text-gray-400 font-mono text-sm">OFFLINE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 };
