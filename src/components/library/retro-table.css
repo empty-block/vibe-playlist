@@ -1,338 +1,484 @@
-/* Clean Library Table with Subtle Jamzy Touches */
+/* CYBERPUNK TERMINAL LIBRARY STYLES - Updated to match LibraryPage aesthetic */
 
-/* Library Header Styling */
-.library-header {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  backdrop-filter: blur(8px);
-  border-left: 2px solid rgba(4, 202, 244, 0.3);
-  border-right: 2px solid rgba(4, 202, 244, 0.3);
-  border-top: 2px solid rgba(4, 202, 244, 0.3);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+/* Terminal Typography Base */
+* {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
 }
 
-/* Add Track Button Enhanced */
-.add-track-btn {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(0, 249, 42, 0.3);
-  backdrop-filter: blur(4px);
-}
-
-.add-track-btn:hover {
-  box-shadow: 
-    0 0 20px rgba(0, 249, 42, 0.4),
-    0 0 40px rgba(4, 202, 244, 0.2),
-    0 4px 16px rgba(0, 0, 0, 0.3);
-  border-color: rgba(0, 249, 42, 0.6);
-}
-
-.add-track-btn:active {
-  box-shadow: 
-    0 0 12px rgba(0, 249, 42, 0.6),
-    inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Mobile Responsive Adjustments */
-@media (max-width: 640px) {
-  .library-header {
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
-    margin: 0 -1rem;
-  }
-}
+/* ========================================
+   MAIN TERMINAL CONTAINER
+   ======================================== */
 
 .retro-music-terminal {
-  background: linear-gradient(to bottom, #1e293b, #0f172a);
-  border: 2px solid rgba(244, 114, 182, 0.3);
-  border-radius: 12px;
+  background: #0d0d0d;
+  border: 2px solid rgba(4, 202, 244, 0.3);
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.3),
-    0 0 10px rgba(244, 114, 182, 0.1);
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(4, 202, 244, 0.1),
+    inset 0 0 30px rgba(4, 202, 244, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Terminal Window Header */
+.retro-terminal-header {
+  background: #1a1a1a;
+  border-bottom: 2px solid rgba(4, 202, 244, 0.3);
+  padding: 20px 24px;
+  position: relative;
   overflow: hidden;
 }
 
-/* Clean Header */
-.retro-terminal-header {
-  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  border-bottom: 1px solid rgba(244, 114, 182, 0.3);
-  padding: 24px 32px;
+/* Scanning line animation across header */
+.retro-terminal-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(4, 202, 244, 0.8), transparent);
+  animation: headerScan 3s ease-in-out infinite;
+}
+
+@keyframes headerScan {
+  0%, 100% { left: -100%; opacity: 0; }
+  50% { left: 100%; opacity: 1; }
 }
 
 .retro-terminal-title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
-  color: #f472b6;
-  text-shadow: 0 1px 2px rgba(244, 114, 182, 0.3);
-  margin-bottom: 8px;
+  color: #04caf4;
+  text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
 }
 
 .retro-terminal-subtitle {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
+  color: rgba(4, 202, 244, 0.7);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
+/* Terminal Track Counter */
 .retro-track-counter {
   background: rgba(0, 249, 42, 0.1);
-  border: 1px solid rgba(0, 249, 42, 0.3);
-  border-radius: 8px;
+  border: 2px solid rgba(0, 249, 42, 0.3);
   padding: 12px 20px;
   color: #00f92a;
-  text-shadow: 0 1px 2px rgba(0, 249, 42, 0.3);
-  font-weight: 600;
-  font-size: 16px;
+  text-shadow: 0 0 8px rgba(0, 249, 42, 0.4);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Clean Data Grid with horizontal scroll */
+.retro-track-counter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(0, 249, 42, 0.1), transparent);
+  animation: counterFlicker 2s ease-in-out infinite;
+}
+
+@keyframes counterFlicker {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* ========================================
+   TERMINAL DATA GRID
+   ======================================== */
+
 .retro-data-grid {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
-  min-width: 1000px; /* Minimum table width to ensure all columns are visible */
-  background: rgba(0, 0, 0, 0.2);
+  min-width: 1000px;
+  background: #0d0d0d;
+  position: relative;
 }
 
-/* Column widths for 9 columns in new order: # | Track | Artist | Shared By | Context | When | Platform | Replies | Likes */
+/* Column widths remain the same as original */
 .retro-data-grid th:nth-child(1),
 .retro-data-grid td:nth-child(1) {
-  width: 50px;         /* # - Narrow for 2-3 digit numbers */
+  width: 50px;
   min-width: 50px;
   text-align: center;
 }
 
 .retro-data-grid th:nth-child(2),
 .retro-data-grid td:nth-child(2) {
-  width: 160px !important;        /* Track - Bigger than artist (120px) but not too wide */
+  width: 160px !important;
   min-width: 160px !important;
   max-width: 160px !important;
 }
 
 .retro-data-grid th:nth-child(3),
 .retro-data-grid td:nth-child(3) {
-  width: 120px;        /* Artist - Same as before */
+  width: 120px;
   min-width: 120px;
 }
 
 .retro-data-grid th:nth-child(4),
 .retro-data-grid td:nth-child(4) {
-  width: 110px;        /* Shared By - Reduced from 140px to 110px */
+  width: 110px;
   min-width: 110px;
 }
 
 .retro-data-grid th:nth-child(5),
 .retro-data-grid td:nth-child(5) {
-  width: 320px;        /* Context - Increased from 280px to 320px */
+  width: 320px;
   min-width: 320px;
 }
 
 .retro-data-grid th:nth-child(6),
 .retro-data-grid td:nth-child(6) {
-  width: 80px;         /* When - Same as before */
+  width: 80px;
   min-width: 80px;
 }
 
 .retro-data-grid th:nth-child(7),
 .retro-data-grid td:nth-child(7) {
-  width: 120px;        /* Platform - Same as before */
+  width: 120px;
   min-width: 120px;
 }
 
 .retro-data-grid th:nth-child(8),
 .retro-data-grid td:nth-child(8) {
-  width: 80px;         /* Replies - Same as before */
+  width: 80px;
   min-width: 80px;
   text-align: center;
 }
 
 .retro-data-grid th:nth-child(9),
 .retro-data-grid td:nth-child(9) {
-  width: 70px;         /* Likes - Same as before */
+  width: 70px;
   min-width: 70px;
   text-align: center;
 }
 
-/* Clean Headers */
+/* Terminal Table Headers */
 .retro-grid-header {
-  background: linear-gradient(135deg, #475569 0%, #334155 100%);
-  border-bottom: 2px solid rgba(244, 114, 182, 0.4);
+  background: #1a1a1a;
+  border-bottom: 2px solid rgba(4, 202, 244, 0.4);
+  position: relative;
+}
+
+/* Animated scanning line across table headers */
+.retro-grid-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 249, 42, 0.8), transparent);
+  animation: tableScan 4s ease-in-out infinite;
+}
+
+@keyframes tableScan {
+  0%, 100% { left: -100%; opacity: 0; }
+  50% { left: 100%; opacity: 1; }
 }
 
 .retro-grid-header-cell {
   padding: 16px 20px;
   font-weight: 700;
-  font-size: 13px;
-  color: #f472b6;
+  font-size: 11px;
+  color: #04caf4;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-shadow: 0 1px 2px rgba(244, 114, 182, 0.3);
-  border-right: 1px solid rgba(244, 114, 182, 0.1);
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
+  border-right: 1px solid rgba(4, 202, 244, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .retro-grid-header-cell:hover {
   color: #ffffff;
-  background: rgba(244, 114, 182, 0.1);
+  background: rgba(4, 202, 244, 0.1);
+  text-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
 }
 
 .retro-sort-indicator {
   display: inline-block;
   margin-left: 6px;
   color: #00f92a;
-  font-size: 12px;
+  font-size: 10px;
+  text-shadow: 0 0 6px rgba(0, 249, 42, 0.6);
 }
 
-/* Clean Rows */
+/* Terminal Table Rows */
 .retro-grid-row {
   background: linear-gradient(135deg, 
-    rgba(30, 41, 59, 0.6) 0%, 
-    rgba(15, 23, 42, 0.8) 100%
+    rgba(13, 13, 13, 0.9) 0%, 
+    rgba(26, 26, 26, 0.6) 100%
   );
   border-bottom: 1px solid rgba(4, 202, 244, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+}
+
+.retro-grid-row:nth-child(even) {
+  background: linear-gradient(135deg, 
+    rgba(26, 26, 26, 0.4) 0%, 
+    rgba(13, 13, 13, 0.8) 100%
+  );
 }
 
 .retro-grid-row:hover {
   background: linear-gradient(135deg, 
-    rgba(244, 114, 182, 0.08) 0%, 
-    rgba(168, 85, 247, 0.05) 100%
+    rgba(4, 202, 244, 0.08) 0%, 
+    rgba(0, 249, 42, 0.05) 100%
   );
-  border-bottom-color: rgba(244, 114, 182, 0.3);
+  border-bottom-color: rgba(4, 202, 244, 0.3);
+  box-shadow: inset 0 0 20px rgba(4, 202, 244, 0.1);
 }
 
 .retro-grid-row.current-track {
   border-left: 4px solid #00f92a;
   background: linear-gradient(135deg, 
     rgba(0, 249, 42, 0.1) 0%, 
-    rgba(244, 114, 182, 0.05) 100%
+    rgba(4, 202, 244, 0.05) 100%
   );
+  box-shadow: inset 0 0 15px rgba(0, 249, 42, 0.1);
 }
 
 .retro-grid-cell {
   padding: 16px 20px;
-  border-right: 1px solid rgba(244, 114, 182, 0.05);
-  font-size: 14px;
+  border-right: 1px solid rgba(4, 202, 244, 0.05);
+  font-size: 13px;
   line-height: 1.4;
 }
 
-/* Clean Typography */
+/* ========================================
+   TERMINAL TYPOGRAPHY
+   ======================================== */
+
 .retro-track-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
   margin-bottom: 4px;
 }
 
 .retro-track-artist {
-  font-size: 14px;
-  color: #06b6d4;
+  font-size: 12px;
+  color: #04caf4;
+  text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
   margin-bottom: 4px;
 }
 
 .retro-track-duration {
-  font-size: 12px;
+  font-size: 11px;
   color: #f906d6;
   font-weight: 500;
+  text-shadow: 0 0 6px rgba(249, 6, 214, 0.4);
 }
 
 .retro-user-name {
-  font-size: 14px;
+  font-size: 12px;
   color: #f906d6;
   font-weight: 500;
+  text-shadow: 0 0 6px rgba(249, 6, 214, 0.4);
 }
 
 .retro-timestamp {
-  font-size: 13px;
+  font-size: 11px;
   color: #fbbf24;
   font-weight: 500;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
 }
 
-/* Clean Platform Badges */
+/* ========================================
+   TERMINAL PLATFORM BADGES
+   ======================================== */
+
 .retro-platform-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 12px;
-  background: rgba(0, 0, 0, 0.4);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.6);
   border: 1px solid;
-  border-radius: 16px;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.retro-platform-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.3s ease;
+}
+
+.retro-platform-badge:hover::before {
+  left: 100%;
 }
 
 .retro-platform-badge.youtube {
-  border-color: rgba(255, 0, 0, 0.5);
+  border-color: rgba(255, 68, 68, 0.5);
   color: #ff4444;
+  text-shadow: 0 0 6px rgba(255, 68, 68, 0.4);
 }
 
 .retro-platform-badge.spotify {
   border-color: rgba(0, 249, 42, 0.5);
   color: #00f92a;
+  text-shadow: 0 0 6px rgba(0, 249, 42, 0.4);
 }
 
 .retro-platform-badge.soundcloud {
   border-color: rgba(255, 102, 0, 0.5);
   color: #ff6600;
+  text-shadow: 0 0 6px rgba(255, 102, 0, 0.4);
 }
 
 .retro-platform-badge.bandcamp {
   border-color: rgba(4, 202, 244, 0.5);
   color: #04caf4;
+  text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
 }
 
-/* Utility Classes for Truncation Indicators */
-.text-neon-cyan {
-  color: #04caf4;
-}
+/* ========================================
+   TERMINAL INTERACTIVE ELEMENTS
+   ======================================== */
 
-.cursor-help {
-  cursor: help;
-}
-
-/* Tooltip Animation */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* Expandable Row Styles */
-.retro-expandable-row {
-  background: transparent;
-}
-
+/* Expand Button Terminal Styling */
 .retro-expand-button-container {
   display: flex;
   justify-content: center;
   padding: 8px 0;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid rgba(4, 202, 244, 0.1);
 }
 
 .retro-expand-button {
   display: flex;
   align-items: center;
-  background: rgba(4, 202, 244, 0.1);
-  border: 1px solid rgba(4, 202, 244, 0.3);
-  border-radius: 20px;
+  background: #0d0d0d;
+  border: 2px solid rgba(4, 202, 244, 0.3);
   padding: 6px 12px;
   color: #04caf4;
-  font-family: 'Courier New', monospace;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.1em;
   cursor: pointer;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
+}
+
+.retro-expand-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(4, 202, 244, 0.2), transparent);
+  transition: left 0.4s ease;
+}
+
+.retro-expand-button:hover::before {
+  left: 100%;
 }
 
 .retro-expand-button:hover {
-  background: rgba(4, 202, 244, 0.2);
-  border-color: rgba(4, 202, 244, 0.5);
-  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+  background: rgba(4, 202, 244, 0.1);
+  border-color: rgba(4, 202, 244, 0.6);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.3);
+  text-shadow: 0 0 10px rgba(4, 202, 244, 0.6);
 }
 
+/* ========================================
+   PERSONAL LIBRARY TERMINAL VARIANT
+   ======================================== */
+
+.retro-music-terminal.personal-library {
+  border: 2px solid rgba(249, 6, 214, 0.3);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(249, 6, 214, 0.1),
+    inset 0 0 30px rgba(249, 6, 214, 0.05);
+}
+
+.personal-grid-header {
+  border-bottom: 2px solid rgba(249, 6, 214, 0.4);
+}
+
+.personal-grid-header .retro-grid-header-cell {
+  color: #f906d6;
+  text-shadow: 0 0 8px rgba(249, 6, 214, 0.4);
+  border-right: 1px solid rgba(249, 6, 214, 0.2);
+}
+
+.personal-grid-header .retro-grid-header-cell:hover {
+  color: #ffffff;
+  background: rgba(249, 6, 214, 0.1);
+  text-shadow: 0 0 12px rgba(249, 6, 214, 0.6);
+}
+
+.personal-track-row:hover {
+  background: linear-gradient(135deg, 
+    rgba(249, 6, 214, 0.08) 0%, 
+    rgba(168, 85, 247, 0.05) 100%
+  );
+  border-bottom-color: rgba(249, 6, 214, 0.3);
+  box-shadow: inset 0 0 20px rgba(249, 6, 214, 0.1);
+}
+
+.personal-track-shared {
+  border-left: 3px solid rgba(249, 6, 214, 0.6);
+  background: linear-gradient(90deg, 
+    rgba(249, 6, 214, 0.05) 0%, 
+    transparent 10%
+  );
+}
+
+.personal-library .retro-track-counter {
+  background: rgba(249, 6, 214, 0.1);
+  border-color: rgba(249, 6, 214, 0.3);
+  color: #f906d6;
+  text-shadow: 0 0 8px rgba(249, 6, 214, 0.4);
+}
+
+/* ========================================
+   TERMINAL ANIMATIONS
+   ======================================== */
+
+@keyframes terminalFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.95; }
+}
+
+.retro-music-terminal {
+  animation: terminalFlicker 3s ease-in-out infinite;
+}
+
+/* Expand content animation */
 .retro-expanded-content {
   animation: expandIn 0.3s ease-out;
 }
@@ -348,327 +494,30 @@
   }
 }
 
-/* Shuffle Button Animations */
-@keyframes shuffle-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 12px rgba(0, 249, 42, 0.3), 0 0 24px rgba(0, 249, 42, 0.1);
-  }
-  50% { 
-    box-shadow: 0 0 16px rgba(0, 249, 42, 0.4), 0 0 32px rgba(0, 249, 42, 0.15);
-  }
-}
+/* ========================================
+   RESPONSIVE TERMINAL DESIGN
+   ======================================== */
 
-.shuffle-btn.shuffle-active {
-  animation: shuffle-pulse 2s ease-in-out infinite;
-}
-
-/* Hover states */
-.hover\:scale-102:hover {
-  transform: scale(1.02);
-}
-
-/* Simple Mobile Adjustments - Just keep the basic styling */
 @media (max-width: 768px) {
-  .retro-expand-button {
-    padding: 8px 16px;
-    font-size: 10px;
+  .retro-terminal-header {
+    padding: 16px 20px;
   }
   
-  .retro-expanded-content {
-    margin: 0 8px 8px 8px;
-    padding: 16px;
+  .retro-terminal-title {
+    font-size: 18px;
   }
   
-  /* Make the table container more touch-friendly on mobile */
   .retro-grid-cell {
     padding: 12px 16px;
   }
-
-  /* Mobile shuffle button */
-  .shuffle-btn {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-}
-
-/* ========================================
-   PERSONAL LIBRARY STYLES
-   ======================================== */
-
-/* Personal Library Container */
-.retro-music-terminal.personal-library {
-  border: 2px solid rgba(249, 6, 214, 0.3);
-  box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.3),
-    0 0 10px rgba(249, 6, 214, 0.1);
-}
-
-/* Personal Header Styling */
-.personal-grid-header .retro-grid-header-cell {
-  color: #f906d6;
-  text-shadow: 0 1px 2px rgba(249, 6, 214, 0.3);
-}
-
-.personal-grid-header .retro-grid-header-cell:hover {
-  color: #ffffff;
-  background: rgba(249, 6, 214, 0.1);
-}
-
-/* Personal Track Row Styling */
-.personal-track-row {
-  background: linear-gradient(135deg, 
-    rgba(30, 41, 59, 0.6) 0%, 
-    rgba(15, 23, 42, 0.8) 100%
-  );
-}
-
-.personal-track-row:hover {
-  background: linear-gradient(135deg, 
-    rgba(249, 6, 214, 0.08) 0%, 
-    rgba(168, 85, 247, 0.05) 100%
-  );
-  border-bottom-color: rgba(249, 6, 214, 0.3);
-}
-
-/* Special styling for tracks you've shared */
-.personal-track-shared {
-  border-left: 3px solid rgba(249, 6, 214, 0.6);
-  background: linear-gradient(90deg, 
-    rgba(249, 6, 214, 0.05) 0%, 
-    transparent 10%
-  );
-}
-
-.personal-track-shared:hover {
-  background: linear-gradient(90deg, 
-    rgba(249, 6, 214, 0.1) 0%, 
-    rgba(168, 85, 247, 0.03) 15%,
-    transparent 30%
-  );
-}
-
-/* Personal Data Grid Column Adjustments for 8 columns: # | Track | Artist | My Interaction | Context | When | Platform | Replies | Likes */
-.personal-data-grid th:nth-child(4),
-.personal-data-grid td:nth-child(4) {
-  width: 120px;        /* My Interaction column */
-  min-width: 120px;
-}
-
-.personal-data-grid th:nth-child(5),
-.personal-data-grid td:nth-child(5) {
-  width: 200px;        /* Context column - wider for comments */
-  min-width: 200px;
-}
-
-.personal-data-grid th:nth-child(6),
-.personal-data-grid td:nth-child(6) {
-  width: 80px;         /* When column */
-  min-width: 80px;
-}
-
-.personal-data-grid th:nth-child(7),
-.personal-data-grid td:nth-child(7) {
-  width: 120px;        /* Platform column */
-  min-width: 120px;
-}
-
-.personal-data-grid th:nth-child(8),
-.personal-data-grid td:nth-child(8) {
-  width: 80px;         /* Replies column */
-  min-width: 80px;
-  text-align: center;
-}
-
-.personal-data-grid th:nth-child(9),
-.personal-data-grid td:nth-child(9) {
-  width: 70px;         /* Likes column */
-  min-width: 70px;
-  text-align: center;
-}
-
-/* Personal Filter Bar */
-.personal-filter-bar {
-  border-bottom: 1px solid rgba(249, 6, 214, 0.3);
-}
-
-/* Personal Search Input */
-.personal-filter-bar .search-input {
-  border-color: rgba(249, 6, 214, 0.3);
-}
-
-.personal-filter-bar .search-input:focus {
-  border-color: #f906d6;
-  box-shadow: 0 0 10px rgba(249, 6, 214, 0.2);
-}
-
-.personal-filter-bar .search-input::placeholder {
-  color: rgba(249, 6, 214, 0.5);
-}
-
-/* Personal Track Counter */
-.personal-library .retro-track-counter {
-  background: rgba(249, 6, 214, 0.1);
-  border-color: rgba(249, 6, 214, 0.3);
-  color: #f906d6;
-  text-shadow: 0 1px 2px rgba(249, 6, 214, 0.3);
-}
-
-/* ========================================
-   TERMINAL INTERFACE STYLES
-   ======================================== */
-
-/* Terminal Status Bar */
-.terminal-status-bar {
-  font-family: 'Courier New', monospace;
-  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-  border-color: rgba(249, 6, 214, 0.3);
-  box-shadow: 
-    0 2px 10px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(249, 6, 214, 0.1);
-}
-
-/* Terminal Window */
-.terminal-window {
-  font-family: 'Courier New', monospace;
-  background: linear-gradient(to bottom, rgba(30, 41, 59, 0.6), rgba(0, 0, 0, 0.8));
-  border-color: rgba(249, 6, 214, 0.3);
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-/* Terminal Preview Cards */
-.terminal-preview-card {
-  background: linear-gradient(135deg, 
-    rgba(30, 41, 59, 0.4) 0%, 
-    rgba(15, 23, 42, 0.6) 100%
-  );
-  border: 1px solid rgba(249, 6, 214, 0.2);
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-  text-align: left;
-}
-
-.terminal-preview-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(249, 6, 214, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.terminal-preview-card:active {
-  transform: translateY(0);
-}
-
-/* Cyberpunk Add Button */
-.cyberpunk-add-btn {
-  font-family: 'Courier New', monospace;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #00f92a;
-  color: #00f92a;
-  text-shadow: 0 0 8px rgba(0, 249, 42, 0.6);
-  box-shadow: 
-    0 0 10px rgba(0, 249, 42, 0.3),
-    inset 0 0 10px rgba(0, 249, 42, 0.1);
-  letter-spacing: 0.5px;
-  position: relative;
-  overflow: hidden;
-}
-
-.cyberpunk-add-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 249, 42, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.cyberpunk-add-btn:hover::before {
-  left: 100%;
-}
-
-.cyberpunk-add-btn:hover {
-  background: rgba(0, 249, 42, 0.1);
-  border-color: #00ff41;
-  color: #00ff41;
-  text-shadow: 0 0 12px rgba(0, 249, 42, 0.8);
-  box-shadow: 
-    0 0 20px rgba(0, 249, 42, 0.5),
-    0 0 40px rgba(0, 249, 42, 0.2),
-    inset 0 0 20px rgba(0, 249, 42, 0.1);
-  transform: translateY(-1px);
-}
-
-.cyberpunk-add-btn:active {
-  transform: translateY(0);
-  box-shadow: 
-    0 0 15px rgba(0, 249, 42, 0.4),
-    inset 0 0 15px rgba(0, 249, 42, 0.2);
-}
-
-/* Terminal Typography */
-.terminal-status-bar .text-pink-400 {
-  color: #f906d6;
-  text-shadow: 0 0 10px rgba(249, 6, 214, 0.5);
-}
-
-.terminal-window .text-green-400 {
-  color: #00f92a;
-  text-shadow: 0 0 8px rgba(0, 249, 42, 0.4);
-}
-
-.terminal-window .text-blue-400 {
-  color: #04caf4;
-  text-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
-}
-
-.terminal-window .text-purple-400 {
-  color: #a855f7;
-  text-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
-}
-
-.terminal-window .text-red-400 {
-  color: #f87171;
-  text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
-}
-
-/* Terminal Animation Effects */
-.terminal-preview-card .text-xs {
-  transition: all 0.2s ease;
-}
-
-.terminal-preview-card:hover .text-xs {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* Responsive Terminal Design */
-@media (max-width: 768px) {
-  .terminal-status-bar {
-    padding: 12px 16px;
+  
+  .retro-platform-badge {
+    font-size: 9px;
+    padding: 3px 6px;
   }
   
-  .terminal-status-bar .flex {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
-  }
-  
-  .terminal-window {
-    padding: 16px;
-  }
-  
-  .terminal-preview-card {
-    padding: 12px;
-  }
-  
-  .terminal-action-btn {
+  .retro-expand-button {
     padding: 8px 12px;
-    font-size: 11px;
+    font-size: 9px;
   }
 }
