@@ -28,6 +28,7 @@ const ProfilePage: Component = () => {
   const [shareText, setShareText] = createSignal('');
   const [trackUrl, setTrackUrl] = createSignal('');
   const [isSharing, setIsSharing] = createSignal(false);
+  const [activityFilter, setActivityFilter] = createSignal<'shared' | 'liked' | 'replied'>('shared');
   let pageRef: HTMLDivElement;
   let shareTextareaRef: HTMLTextAreaElement;
 
@@ -126,17 +127,6 @@ const ProfilePage: Component = () => {
         float(avatar as HTMLElement);
       }
       
-      // Animate stats with counter animation
-      const statsNumbers = pageRef?.querySelectorAll('.stat-number');
-      statsNumbers?.forEach((stat, index) => {
-        const targetNumber = parseInt(stat.textContent || '0');
-        if (targetNumber > 0) {
-          setTimeout(() => {
-            counterAnimation(stat as HTMLElement, 0, targetNumber);
-          }, index * 200);
-        }
-      });
-      
       // Animate sections
       const sections = pageRef?.querySelectorAll('.profile-section');
       if (sections) {
@@ -154,12 +144,12 @@ const ProfilePage: Component = () => {
 
     let tracks: Track[] = [];
     
-    // Filter tracks based on active filter
-    switch (activeFilter()) {
+    // Filter tracks based on activity filter instead of old filter logic
+    switch (activityFilter()) {
       case 'shared':
         tracks = profile.sharedTracks;
         break;
-      case 'conversations':
+      case 'replied':
         tracks = profile.repliedTracks;
         break;
       case 'liked':
@@ -199,8 +189,8 @@ const ProfilePage: Component = () => {
     return sortedTracks;
   });
 
-  const handleFilterChange = (filter: FilterOption) => {
-    setActiveFilter(filter);
+  const handleActivityChange = (activity: 'shared' | 'liked' | 'replied') => {
+    setActivityFilter(activity);
     // Animate track items when switching filters
     setTimeout(() => {
       const trackItems = pageRef?.querySelectorAll('.track-item');
@@ -255,496 +245,362 @@ const ProfilePage: Component = () => {
       setIsSharing(false);
       
       // Refresh the tracks list
-      handleFilterChange(activeFilter());
+      handleActivityChange(activityFilter());
     }, 1000);
   };
 
   return (
     <div 
       ref={pageRef!} 
-      class="min-h-screen p-8 pb-20" 
-      style={{ 
-        opacity: '1',
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)'
-      }}
+      class="min-h-screen bg-black relative overflow-hidden"
     >
-      {/* Show loading state while profile is loading */}
-      <Show 
-        when={userProfile()}
-        fallback={
-          <div 
-            class="profile-section relative p-6 mb-6 rounded-xl overflow-hidden"
-            style={{ 
-              opacity: '1',
-              background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-              border: '1px solid rgba(249, 6, 214, 0.3)',
-              'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
-            }}
-          >
-            <div class="flex items-center justify-center py-12">
-              <div 
-                class="text-center"
-                style={{
-                  color: 'rgba(4, 202, 244, 0.5)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                <i class="fas fa-spinner fa-spin text-4xl mb-4" style={{ color: 'rgba(4, 202, 244, 0.7)' }}></i>
-                <p class="font-mono uppercase text-sm">LOADING PROFILE...</p>
-              </div>
-            </div>
-          </div>
-        }
-      >
-        {/* SIMPLIFIED PROFILE HEADER */}
-        <div 
-          class="profile-section relative p-6 mb-6 rounded-xl overflow-hidden"
-          style={{ 
-            opacity: '1',
-            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-            border: '1px solid rgba(249, 6, 214, 0.3)',
-            'box-shadow': 'inset 0 0 20px rgba(0, 0, 0, 0.6)'
-          }}
-        >
-          <div class="flex items-center gap-6">
-            {/* Compact Avatar */}
-            <div 
-              class="profile-avatar text-5xl p-3 rounded-lg"
-              style={{
-                background: 'rgba(249, 6, 214, 0.1)',
-                border: '2px solid rgba(249, 6, 214, 0.4)',
-                'box-shadow': '0 0 20px rgba(249, 6, 214, 0.3)'
-              }}
-            >
-              {userProfile()!.avatar}
-            </div>
-            
-            <div class="flex-1">
-              <div class="flex items-center justify-between">
-                <div>
-                  {/* Username with library label */}
-                  <h2 
-                    class="font-mono font-bold text-2xl mb-1"
-                    style={{
-                      color: '#f906d6',
-                      'text-shadow': '0 0 8px rgba(249, 6, 214, 0.7)',
-                      'font-family': 'Courier New, monospace'
-                    }}
-                  >
-                    {isCurrentUser() ? 'My Library' : `${userProfile()!.username}'s Library`}
-                  </h2>
-                  
-                  {/* Compact bio */}
-                  <p 
-                    class="font-mono text-sm"
-                    style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      'font-family': 'Courier New, monospace'
-                    }}
-                  >
-                    {userProfile()!.bio}
-                  </p>
-                </div>
-                
-                {/* Compact stats */}
-                <div class="flex items-center gap-4 mt-3">
-                  <span class="font-mono text-xs" style={{ color: '#00f92a' }}>
-                    <span class="font-bold">{userProfile()!.songsCount}</span> tracks
-                  </span>
-                  <span class="font-mono text-xs" style={{ color: '#04caf4' }}>
-                    <span class="font-bold">{userProfile()!.repliedTracks.length}</span> conversations
-                  </span>
-                  <span class="font-mono text-xs" style={{ color: '#ff9b00' }}>
-                    <span class="font-bold">{userProfile()!.playlistsCreated}</span> collections
-                  </span>
-                </div>
-              </div>
-              
-              {/* Action buttons */}
-              <div class="flex items-center gap-2">
-                <Show when={isCurrentUser()}>
-                  <button 
-                    onClick={() => setShowShareInterface(!showShareInterface())}
-                    class="px-4 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
-                    style={{
-                      background: showShareInterface() ? 'rgba(0, 249, 42, 0.2)' : 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                      border: '2px solid rgba(0, 249, 42, 0.4)',
-                      color: '#00f92a',
-                      'font-family': 'Courier New, monospace'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#00f92a';
-                      e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <i class={`fas fa-${showShareInterface() ? 'times' : 'plus'} mr-2`}></i>
-                    {showShareInterface() ? 'CANCEL' : 'ADD TRACK'}
-                  </button>
-                </Show>
-                
-                <Show when={!isCurrentUser()}>
-                  <button 
-                    class="px-4 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
-                    style={{
-                      background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                      border: '2px solid rgba(0, 249, 42, 0.4)',
-                      color: '#00f92a',
-                      'font-family': 'Courier New, monospace'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#00f92a';
-                      e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.8)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <i class="fas fa-user-plus mr-2"></i>FOLLOW
-                  </button>
-                </Show>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Cyberpunk Grid Background */}
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute inset-0" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(4, 202, 244, 0.1) 30px, rgba(4, 202, 244, 0.1) 32px);"></div>
+        <div class="absolute inset-0" style="background-image: repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(4, 202, 244, 0.1) 30px, rgba(4, 202, 244, 0.1) 32px);"></div>
+      </div>
 
-        {/* SHARE INTERFACE - Only for own library */}
-        <Show when={isCurrentUser() && showShareInterface()}>
+      <div class="relative z-10 max-w-[1400px] mx-auto p-8">
+        
+        {/* Show loading state while profile is loading */}
+        <Show 
+          when={userProfile()}
+          fallback={
+            <div 
+              class="profile-section relative p-8 mb-8 bg-[#0d0d0d] border-2 border-[#04caf4]/30 overflow-hidden"
+              style="box-shadow: inset 0 0 30px rgba(4, 202, 244, 0.1);"
+            >
+              <div class="flex items-center justify-center py-12">
+                <div 
+                  class="text-center text-[#04caf4]/50 font-mono"
+                  style="font-family: 'JetBrains Mono', monospace;"
+                >
+                  <i class="fas fa-spinner fa-spin text-4xl mb-4 text-[#04caf4]/70"></i>
+                  <p class="text-xs uppercase tracking-wider">LOADING PROFILE...</p>
+                </div>
+              </div>
+            </div>
+          }
+        >
+          {/* ZEN CYBERPUNK IDENTITY CARD HEADER */}
           <div 
-            class="profile-section relative p-6 mb-6 rounded-xl overflow-hidden"
-            style={{ 
-              opacity: '1',
-              background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-              border: '2px solid rgba(0, 249, 42, 0.4)',
-              'box-shadow': '0 0 30px rgba(0, 249, 42, 0.3)'
-            }}
+            class="profile-section relative p-8 mb-8 bg-[#0d0d0d] border-2 border-[#04caf4]/30 overflow-hidden"
+            style="box-shadow: inset 0 0 30px rgba(4, 202, 244, 0.1);"
           >
-            <div class="space-y-4">
-              <textarea
-                ref={shareTextareaRef!}
-                value={shareText()}
-                onInput={(e) => setShareText(e.currentTarget.value)}
-                placeholder="What are you listening to? Share a thought, mood, or just drop a track..."
-                class="w-full bg-transparent text-white placeholder-gray-500 resize-none outline-none font-mono text-sm"
-                rows="3"
-                style={{ 'font-family': 'Courier New, monospace' }}
-              />
+            {/* Terminal Header */}
+            <div class="flex items-center justify-between mb-6">
+              <div class="text-[#04caf4] text-xs uppercase tracking-wider font-mono" style="font-family: 'JetBrains Mono', monospace;">
+                [IDENTITY_VERIFICATION]
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                <span class="text-[#00f92a] text-xs font-mono">AUTHENTICATED</span>
+              </div>
+            </div>
+
+            {/* Scan Line Animation */}
+            <div class="absolute inset-0 pointer-events-none">
+              <div 
+                class="w-full h-[1px] bg-gradient-to-r from-transparent via-[#04caf4] to-transparent opacity-60 animate-pulse"
+                style="animation: scan 3s linear infinite; transform: translateY(0);"
+              ></div>
+            </div>
+
+            {/* Identity Card Content */}
+            <div class="flex items-center gap-6">
+              {/* Large Profile Avatar */}
+              <div 
+                class="profile-avatar w-20 h-20 flex items-center justify-center text-6xl bg-[#04caf4]/10 border-2 border-[#04caf4] relative"
+                style="box-shadow: 0 0 20px rgba(4, 202, 244, 0.3);"
+              >
+                {userProfile()!.avatar}
+                {/* Corner accents */}
+                <div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-[#04caf4]"></div>
+                <div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-[#04caf4]"></div>
+              </div>
               
-              <div class="flex gap-3">
-                <input
-                  type="text"
-                  value={trackUrl()}
-                  onInput={(e) => setTrackUrl(e.currentTarget.value)}
-                  placeholder="Paste track URL (YouTube, Spotify, SoundCloud)"
-                  class="flex-1 bg-black/50 text-white px-3 py-2 rounded border border-gray-700 focus:border-green-500 outline-none font-mono text-xs"
-                  style={{ 'font-family': 'Courier New, monospace' }}
-                />
+              {/* Username Display */}
+              <div class="flex-1">
+                <h2 
+                  class="text-2xl font-mono font-bold tracking-wider uppercase text-[#04caf4] mb-1"
+                  style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);"
+                >
+                  {isCurrentUser() ? 'MY_LIBRARY' : `${userProfile()!.username.toUpperCase()}_LIBRARY`}
+                </h2>
                 
-                <button
-                  onClick={handleQuickShare}
-                  disabled={(!shareText().trim() && !trackUrl().trim()) || isSharing()}
-                  class="px-6 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded disabled:opacity-50"
-                  style={{
-                    background: 'linear-gradient(135deg, #00f92a 0%, #04caf4 100%)',
-                    color: 'black',
-                    'font-family': 'Courier New, monospace'
+                {/* Terminal status line */}
+                <div class="text-[#04caf4]/70 text-xs font-mono mt-2" style="font-family: 'JetBrains Mono', monospace;">
+                  STATUS: ONLINE • ACCESS_LEVEL: {isCurrentUser() ? 'ADMIN' : 'GUEST'} • CONN: SECURE
+                </div>
+              </div>
+
+              {/* Action Button (simplified) */}
+              <Show when={isCurrentUser()}>
+                <button 
+                  onClick={() => setShowShareInterface(!showShareInterface())}
+                  class="px-6 py-3 bg-[#00f92a]/10 border-2 border-[#00f92a] text-[#00f92a] text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-[#00f92a]/20"
+                  style="font-family: 'JetBrains Mono', monospace; box-shadow: 0 0 10px rgba(0, 249, 42, 0.3);"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 249, 42, 0.6)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 249, 42, 0.3)';
                   }}
                 >
-                  {isSharing() ? 'ADDING...' : 'ADD TO LIBRARY'}
+                  <i class={`fas fa-${showShareInterface() ? 'times' : 'plus'} mr-2`}></i>
+                  {showShareInterface() ? 'CANCEL' : 'ADD_TRACK'}
                 </button>
-              </div>
+              </Show>
             </div>
           </div>
-        </Show>
 
-        {/* FILTER BAR - Mobile-friendly horizontal scroll */}
-        <div 
-          class="profile-section relative mb-6 p-4 rounded-xl overflow-x-auto"
-          style={{ 
-            opacity: '1',
-            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-            border: '1px solid rgba(4, 202, 244, 0.3)',
-            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
-          }}
-        >
-          <div class="flex items-center justify-between gap-4 min-w-max">
-            <div class="flex gap-2">
-              <button
-                onClick={() => handleFilterChange('shared')}
-                class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
-                style={{
-                  background: activeFilter() === 'shared' ? 'rgba(0, 249, 42, 0.2)' : 'transparent',
-                  border: `1px solid ${activeFilter() === 'shared' ? '#00f92a' : 'rgba(4, 202, 244, 0.3)'}`,
-                  color: activeFilter() === 'shared' ? '#00f92a' : 'rgba(255, 255, 255, 0.6)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                SHARED ({userProfile()!.sharedTracks.length})
-              </button>
-              
-              <button
-                onClick={() => handleFilterChange('conversations')}
-                class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
-                style={{
-                  background: activeFilter() === 'conversations' ? 'rgba(249, 6, 214, 0.2)' : 'transparent',
-                  border: `1px solid ${activeFilter() === 'conversations' ? '#f906d6' : 'rgba(4, 202, 244, 0.3)'}`,
-                  color: activeFilter() === 'conversations' ? '#f906d6' : 'rgba(255, 255, 255, 0.6)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                CONVERSATIONS ({userProfile()!.repliedTracks.length})
-              </button>
-              
-              <button
-                onClick={() => handleFilterChange('liked')}
-                class="px-4 py-2 font-mono text-xs uppercase transition-all duration-300 rounded whitespace-nowrap"
-                style={{
-                  background: activeFilter() === 'liked' ? 'rgba(4, 202, 244, 0.2)' : 'transparent',
-                  border: `1px solid ${activeFilter() === 'liked' ? '#04caf4' : 'rgba(4, 202, 244, 0.3)'}`,
-                  color: activeFilter() === 'liked' ? '#04caf4' : 'rgba(255, 255, 255, 0.6)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                <i class="fas fa-heart mr-1"></i>LIKED
-              </button>
-            </div>
-            
-            <select
-              value={sortBy()}
-              onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
-              class="px-3 py-1 font-mono text-xs rounded transition-all duration-300"
-              style={{
-                background: 'rgba(0, 0, 0, 0.8)',
-                border: '1px solid rgba(4, 202, 244, 0.4)',
-                color: '#04caf4',
-                'font-family': 'Courier New, monospace'
-              }}
+          {/* SHARE INTERFACE - Only for own library */}
+          <Show when={isCurrentUser() && showShareInterface()}>
+            <div 
+              class="profile-section relative p-6 mb-8 bg-[#0d0d0d] border-2 border-[#00f92a]/40 overflow-hidden"
+              style="box-shadow: 0 0 30px rgba(0, 249, 42, 0.3);"
             >
-              <option value="recent">RECENT</option>
-              <option value="likes">POPULAR</option>
-              <option value="comments">ACTIVE</option>
-            </select>
-          </div>
-        </div>
-
-        {/* TRACK LIST */}
-        <div 
-          class="profile-section relative p-6 rounded-xl overflow-hidden"
-          style={{ 
-            opacity: '1',
-            background: 'linear-gradient(145deg, #0a0a0a, #1a1a1a)',
-            border: '1px solid rgba(4, 202, 244, 0.2)',
-            'box-shadow': 'inset 0 0 15px rgba(0, 0, 0, 0.8)'
-          }}
-        >        
-          <Show 
-            when={getCurrentTracks().length > 0} 
-            fallback={
-              <div 
-                class="text-center py-12"
-                style={{
-                  color: 'rgba(4, 202, 244, 0.5)',
-                  'font-family': 'Courier New, monospace'
-                }}
-              >
-                <Show 
-                  when={isCurrentUser() && activeFilter() === 'shared'}
-                  fallback={
-                    <>
-                      <i class="fas fa-music text-4xl mb-4" style={{ color: 'rgba(4, 202, 244, 0.3)' }}></i>
-                      <p class="font-mono uppercase text-sm mb-2">NO TRACKS IN THIS FILTER</p>
-                      <p class="font-mono text-xs opacity-60">Try a different filter or check back later</p>
-                    </>
-                  }
-                >
-                  <i class="fas fa-plus-circle text-4xl mb-4" style={{ color: 'rgba(0, 249, 42, 0.3)' }}></i>
-                  <p class="font-mono uppercase text-sm mb-2">YOUR LIBRARY IS EMPTY</p>
-                  <p class="font-mono text-xs opacity-60 mb-4">Start building your music library</p>
+              <div class="space-y-4">
+                <textarea
+                  ref={shareTextareaRef!}
+                  value={shareText()}
+                  onInput={(e) => setShareText(e.currentTarget.value)}
+                  placeholder="What are you listening to? Share a thought, mood, or just drop a track..."
+                  class="w-full bg-transparent text-white placeholder-gray-500 resize-none outline-none font-mono text-sm"
+                  rows="3"
+                  style="font-family: 'JetBrains Mono', monospace;"
+                />
+                
+                <div class="flex gap-3">
+                  <input
+                    type="text"
+                    value={trackUrl()}
+                    onInput={(e) => setTrackUrl(e.currentTarget.value)}
+                    placeholder="Paste track URL (YouTube, Spotify, SoundCloud)"
+                    class="flex-1 bg-black/50 text-white px-3 py-2 border border-gray-700 focus:border-green-500 outline-none font-mono text-xs"
+                    style="font-family: 'JetBrains Mono', monospace;"
+                  />
+                  
                   <button
-                    onClick={() => setShowShareInterface(true)}
-                    class="px-6 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
-                    style={{
-                      background: 'linear-gradient(135deg, #00f92a 0%, #04caf4 100%)',
-                      color: 'black',
-                      'font-family': 'Courier New, monospace'
-                    }}
+                    onClick={handleQuickShare}
+                    disabled={(!shareText().trim() && !trackUrl().trim()) || isSharing()}
+                    class="px-6 py-2 bg-gradient-to-r from-[#00f92a] to-[#04caf4] text-black font-mono font-bold text-xs uppercase transition-all duration-300 disabled:opacity-50"
+                    style="font-family: 'JetBrains Mono', monospace;"
                   >
-                    ADD YOUR FIRST TRACK
+                    {isSharing() ? 'ADDING...' : 'ADD_TO_LIBRARY'}
                   </button>
-                </Show>
+                </div>
               </div>
-            }
+            </div>
+          </Show>
+
+          {/* TERMINAL FILTERS SECTION */}
+          <div 
+            class="profile-section relative mb-8 p-6 bg-[#0d0d0d] border-2 border-[#04caf4]/20 overflow-x-auto"
+            style="box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);"
           >
-            <div class="space-y-4">
-              <For each={getCurrentTracks()}>
-                {(track) => (
-                  <div 
-                    class="track-item relative p-4 rounded transition-all duration-300 cursor-pointer"
-                    style={{ 
-                      opacity: '1',
-                      background: 'rgba(4, 202, 244, 0.05)',
-                      border: '1px solid rgba(4, 202, 244, 0.2)'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(4, 202, 244, 0.1)';
-                      e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.4)';
-                      e.currentTarget.style.transform = 'translateX(4px)';
-                      e.currentTarget.style.boxShadow = '0 0 15px rgba(4, 202, 244, 0.2)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'rgba(4, 202, 244, 0.05)';
-                      e.currentTarget.style.borderColor = 'rgba(4, 202, 244, 0.2)';
-                      e.currentTarget.style.transform = 'translateX(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
+            <div class="flex items-center justify-between gap-6 min-w-max">
+              {/* Activity Filter (New) */}
+              <div class="flex items-center gap-2">
+                <label class="text-[#f906d6] text-xs font-mono uppercase tracking-wider" style="font-family: 'JetBrains Mono', monospace;">
+                  ACTIVITY:
+                </label>
+                <select
+                  value={activityFilter()}
+                  onChange={(e) => handleActivityChange(e.currentTarget.value as 'shared' | 'liked' | 'replied')}
+                  class="px-3 py-2 bg-[#f906d6]/10 border border-[#f906d6] text-[#f906d6] text-xs font-mono uppercase tracking-wider focus:outline-none"
+                  style="font-family: 'JetBrains Mono', monospace;"
+                >
+                  <option value="shared">SHARED</option>
+                  <option value="liked">LIKED</option>
+                  <option value="replied">REPLIED</option>
+                </select>
+              </div>
+              
+              {/* Sort Filter */}
+              <div class="flex items-center gap-2">
+                <label class="text-[#04caf4] text-xs font-mono uppercase tracking-wider" style="font-family: 'JetBrains Mono', monospace;">
+                  SORT:
+                </label>
+                <select
+                  value={sortBy()}
+                  onChange={(e) => setSortBy(e.currentTarget.value as SortOption)}
+                  class="px-3 py-2 bg-[#04caf4]/10 border border-[#04caf4] text-[#04caf4] text-xs font-mono uppercase tracking-wider focus:outline-none"
+                  style="font-family: 'JetBrains Mono', monospace;"
+                >
+                  <option value="recent">RECENT</option>
+                  <option value="likes">POPULAR</option>
+                  <option value="comments">ACTIVE</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* TRACK LIST */}
+          <div 
+            class="profile-section relative p-6 bg-[#0d0d0d] border-2 border-[#04caf4]/20 overflow-hidden"
+            style="box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);"
+          >        
+            <Show 
+              when={getCurrentTracks().length > 0} 
+              fallback={
+                <div 
+                  class="text-center py-12 text-[#04caf4]/50 font-mono"
+                  style="font-family: 'JetBrains Mono', monospace;"
+                >
+                  <Show 
+                    when={isCurrentUser() && activityFilter() === 'shared'}
+                    fallback={
+                      <>
+                        <i class="fas fa-music text-4xl mb-4 text-[#04caf4]/30"></i>
+                        <p class="text-sm uppercase tracking-wider mb-2">NO TRACKS IN THIS ACTIVITY</p>
+                        <p class="text-xs opacity-60">Try a different activity filter</p>
+                      </>
+                    }
                   >
-                    <div class="flex items-start gap-4">
-                      {/* Thumbnail with neon border */}
-                      <div 
-                        class="relative overflow-hidden rounded"
-                        style={{
-                          border: '1px solid rgba(0, 249, 42, 0.3)',
-                          'box-shadow': '0 0 10px rgba(0, 249, 42, 0.2)'
-                        }}
-                      >
-                        <img 
-                          src={track.thumbnail} 
-                          alt={track.title}
-                          class="w-20 h-20 object-cover"
-                        />
-                      </div>
-                      
-                      <div class="flex-1">
-                        <div class="flex justify-between items-start mb-3">
-                          <div>
-                            <h3 
-                              class="font-mono font-bold text-base mb-1"
-                              style={{
-                                color: '#00f92a',
-                                'text-shadow': '0 0 3px rgba(0, 249, 42, 0.4)',
-                                'font-family': 'Courier New, monospace'
-                              }}
-                            >
-                              {track.title}
-                            </h3>
-                            <p 
-                              class="font-mono text-xs"
-                              style={{
-                                color: 'rgba(255, 255, 255, 0.6)',
-                                'font-family': 'Courier New, monospace'
-                              }}
-                            >
-                              {track.artist} • {track.duration}
-                            </p>
-                          </div>
-                          <button 
-                            class="px-4 py-2 font-mono font-bold text-xs uppercase transition-all duration-300 rounded"
-                            style={{
-                              background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-                              border: '1px solid rgba(0, 249, 42, 0.4)',
-                              color: '#00f92a',
-                              'font-family': 'Courier New, monospace'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = '#00f92a';
-                              e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 249, 42, 0.6)';
-                              e.currentTarget.style.textShadow = '0 0 5px rgba(0, 249, 42, 0.8)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = 'rgba(0, 249, 42, 0.4)';
-                              e.currentTarget.style.boxShadow = 'none';
-                              e.currentTarget.style.textShadow = 'none';
-                            }}
-                          >
-                            <i class="fas fa-play mr-1"></i>PLAY
-                          </button>
-                        </div>
-                        
-                        {/* Metadata */}
+                    <i class="fas fa-plus-circle text-4xl mb-4 text-[#00f92a]/30"></i>
+                    <p class="text-sm uppercase tracking-wider mb-2">YOUR LIBRARY IS EMPTY</p>
+                    <p class="text-xs opacity-60 mb-4">Start building your music library</p>
+                    <button
+                      onClick={() => setShowShareInterface(true)}
+                      class="px-6 py-2 bg-gradient-to-r from-[#00f92a] to-[#04caf4] text-black font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300"
+                      style="font-family: 'JetBrains Mono', monospace;"
+                    >
+                      ADD_YOUR_FIRST_TRACK
+                    </button>
+                  </Show>
+                </div>
+              }
+            >
+              <div class="space-y-4">
+                <For each={getCurrentTracks()}>
+                  {(track) => (
+                    <div 
+                      class="track-item relative p-4 bg-[#04caf4]/5 border border-[#04caf4]/20 transition-all duration-300 cursor-pointer hover:bg-[#04caf4]/10 hover:border-[#04caf4]/40 hover:translate-x-1"
+                      style="box-shadow: 0 0 10px rgba(4, 202, 244, 0.1);"
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.boxShadow = '0 0 15px rgba(4, 202, 244, 0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.boxShadow = '0 0 10px rgba(4, 202, 244, 0.1)';
+                      }}
+                    >
+                      <div class="flex items-start gap-4">
+                        {/* Thumbnail with neon border */}
                         <div 
-                          class="flex items-center gap-3 text-xs mb-3"
-                          style={{
-                            color: 'rgba(4, 202, 244, 0.6)',
-                            'font-family': 'Courier New, monospace'
-                          }}
+                          class="relative overflow-hidden border border-[#00f92a]/30"
+                          style="box-shadow: 0 0 10px rgba(0, 249, 42, 0.2);"
                         >
-                          <span class="flex items-center gap-1">
-                            <span class="text-base">{track.userAvatar}</span>
-                            {track.addedBy}
-                          </span>
-                          <span>•</span>
-                          <span>{track.timestamp}</span>
-                          <Show when={track.isConversation}>
-                            <span style={{ color: '#f906d6' }}>• CONVERSATION</span>
-                          </Show>
-                          <Show when={track.isLiked}>
-                            <span style={{ color: '#04caf4' }}>• LIKED</span>
-                          </Show>
-                          <Show when={!track.isConversation && !track.isLiked}>
-                            <span style={{ color: '#00f92a' }}>• SHARED</span>
-                          </Show>
+                          <img 
+                            src={track.thumbnail} 
+                            alt={track.title}
+                            class="w-20 h-20 object-cover"
+                          />
                         </div>
                         
-                        {/* Comment */}
-                        <p 
-                          class="font-mono text-sm mb-3"
-                          style={{
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            'font-family': 'Courier New, monospace'
-                          }}
-                        >
-                          {track.comment}
-                        </p>
-                        
-                        {/* Interaction Stats */}
-                        <div class="flex gap-6 text-xs font-mono">
-                          <span 
-                            class="flex items-center gap-2"
-                            style={{
-                              color: '#f906d6',
-                              'text-shadow': '0 0 3px rgba(249, 6, 214, 0.4)',
-                              'font-family': 'Courier New, monospace'
-                            }}
+                        <div class="flex-1">
+                          <div class="flex justify-between items-start mb-3">
+                            <div>
+                              <h3 
+                                class="font-mono font-bold text-base mb-1 text-[#00f92a]"
+                                style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 3px rgba(0, 249, 42, 0.4);"
+                              >
+                                {track.title}
+                              </h3>
+                              <p 
+                                class="font-mono text-xs text-white/60"
+                                style="font-family: 'JetBrains Mono', monospace;"
+                              >
+                                {track.artist} • {track.duration}
+                              </p>
+                            </div>
+                            <button 
+                              class="px-4 py-2 bg-[#2a2a2a] border border-[#00f92a]/40 text-[#00f92a] font-mono font-bold text-xs uppercase transition-all duration-300 hover:border-[#00f92a] hover:shadow-md"
+                              style="font-family: 'JetBrains Mono', monospace; box-shadow: 0 0 5px rgba(0, 249, 42, 0.3);"
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 249, 42, 0.6)';
+                                e.currentTarget.style.textShadow = '0 0 5px rgba(0, 249, 42, 0.8)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.boxShadow = '0 0 5px rgba(0, 249, 42, 0.3)';
+                                e.currentTarget.style.textShadow = 'none';
+                              }}
+                            >
+                              <i class="fas fa-play mr-1"></i>PLAY
+                            </button>
+                          </div>
+                          
+                          {/* Metadata */}
+                          <div 
+                            class="flex items-center gap-3 text-xs mb-3 text-[#04caf4]/60 font-mono"
+                            style="font-family: 'JetBrains Mono', monospace;"
                           >
-                            <i class="fas fa-heart"></i>
-                            {track.likes}
-                          </span>
-                          <span 
-                            class="flex items-center gap-2"
-                            style={{
-                              color: '#04caf4',
-                              'text-shadow': '0 0 3px rgba(4, 202, 244, 0.4)',
-                              'font-family': 'Courier New, monospace'
-                            }}
+                            <span class="flex items-center gap-1">
+                              <span class="text-base">{track.userAvatar}</span>
+                              {track.addedBy}
+                            </span>
+                            <span>•</span>
+                            <span>{track.timestamp}</span>
+                            <Show when={activityFilter() === 'replied'}>
+                              <span class="text-[#f906d6]">• CONVERSATION</span>
+                            </Show>
+                            <Show when={activityFilter() === 'liked'}>
+                              <span class="text-[#04caf4]">• LIKED</span>
+                            </Show>
+                            <Show when={activityFilter() === 'shared'}>
+                              <span class="text-[#00f92a]">• SHARED</span>
+                            </Show>
+                          </div>
+                          
+                          {/* Comment */}
+                          <p 
+                            class="font-mono text-sm mb-3 text-white/70"
+                            style="font-family: 'JetBrains Mono', monospace;"
                           >
-                            <i class="fas fa-comment"></i>
-                            {track.replies}
-                          </span>
-                          <span 
-                            class="flex items-center gap-2"
-                            style={{
-                              color: '#00f92a',
-                              'text-shadow': '0 0 3px rgba(0, 249, 42, 0.4)',
-                              'font-family': 'Courier New, monospace'
-                            }}
-                          >
-                            <i class="fas fa-retweet"></i>
-                            {track.recasts}
-                          </span>
+                            {track.comment}
+                          </p>
+                          
+                          {/* Interaction Stats */}
+                          <div class="flex gap-6 text-xs font-mono" style="font-family: 'JetBrains Mono', monospace;">
+                            <span 
+                              class="flex items-center gap-2 text-[#f906d6]"
+                              style="text-shadow: 0 0 3px rgba(249, 6, 214, 0.4);"
+                            >
+                              <i class="fas fa-heart"></i>
+                              {track.likes}
+                            </span>
+                            <span 
+                              class="flex items-center gap-2 text-[#04caf4]"
+                              style="text-shadow: 0 0 3px rgba(4, 202, 244, 0.4);"
+                            >
+                              <i class="fas fa-comment"></i>
+                              {track.replies}
+                            </span>
+                            <span 
+                              class="flex items-center gap-2 text-[#00f92a]"
+                              style="text-shadow: 0 0 3px rgba(0, 249, 42, 0.4);"
+                            >
+                              <i class="fas fa-retweet"></i>
+                              {track.recasts}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </For>
-            </div>
-          </Show>
-        </div>
-      </Show>
+                  )}
+                </For>
+              </div>
+            </Show>
+          </div>
+        </Show>
+      </div>
+
+      <style>{`
+        @keyframes scan {
+          0% { transform: translateY(0px); }
+          100% { transform: translateY(400px); }
+        }
+      `}</style>
     </div>
   );
 };

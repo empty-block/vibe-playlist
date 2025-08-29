@@ -79,14 +79,14 @@ const PersonalLibraryTableHeader: Component<PersonalLibraryTableHeaderProps> = (
           </div>
         </th>
 
-        {/* My Interaction Column */}
+        {/* Activity Column */}
         <th 
           class={`retro-grid-header-cell ${getSortClass('interaction')}`}
           onClick={() => handleSort('interaction')}
         >
           <div class="flex items-center gap-2">
             <span class="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent font-bold">
-              My Interaction
+              Activity
             </span>
             <span class={`retro-sort-indicator ${sortState().column === 'interaction' ? 'opacity-100' : 'opacity-40'}`}>
               {getSortIcon('interaction')}

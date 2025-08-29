@@ -181,84 +181,77 @@ const MePage: Component = () => {
     <div ref={pageRef} class="min-h-screen bg-gradient-to-br from-black via-slate-900 to-slate-800 p-4">
       <div class="max-w-7xl mx-auto">
         
-        {/* Unified Terminal Profile Interface */}
+        {/* ZEN CYBERPUNK IDENTITY CARD HEADER */}
         <div class="me-section mb-8">
-          {/* Single Terminal Window */}
-          <div class="terminal-window bg-gradient-to-b from-slate-900/60 to-black/60 border-2 border-pink-400/30 rounded-xl p-6">
-            
+          <div 
+            class="relative p-8 mb-8 bg-[#0d0d0d] border-2 border-[#04caf4]/30 overflow-hidden"
+            style="box-shadow: inset 0 0 30px rgba(4, 202, 244, 0.1);"
+          >
+            {/* Terminal Header */}
+            <div class="flex items-center justify-between mb-6">
+              <div class="text-[#04caf4] text-xs uppercase tracking-wider font-mono" style="font-family: 'JetBrains Mono', monospace;">
+                [IDENTITY_VERIFICATION]
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                <span class="text-[#00f92a] text-xs font-mono">AUTHENTICATED</span>
+              </div>
+            </div>
 
-            {/* Profile Section */}
-            <div class="flex items-center gap-6 mb-6">
-              
-              {/* Profile Avatar */}
-              <div class="relative">
+            {/* Scan Line Animation */}
+            <div class="absolute inset-0 pointer-events-none">
+              <div 
+                class="w-full h-[1px] bg-gradient-to-r from-transparent via-[#04caf4] to-transparent opacity-60 animate-pulse"
+                style="animation: scan 3s linear infinite; transform: translateY(0);"
+              ></div>
+            </div>
+
+            {/* Identity Card Content */}
+            <div class="flex items-center gap-6">
+              {/* Large Profile Avatar */}
+              <div 
+                class="w-20 h-20 flex items-center justify-center bg-[#04caf4]/10 border-2 border-[#04caf4] relative overflow-hidden"
+                style="box-shadow: 0 0 20px rgba(4, 202, 244, 0.3);"
+              >
                 <img 
                   src={userWithStats.avatar}
                   alt={userWithStats.displayName}
-                  class="w-20 h-20 rounded-full border-3 border-pink-400/60 shadow-2xl shadow-pink-400/20"
+                  class="w-full h-full object-cover"
                 />
-              </div>
-
-              {/* Profile Details */}
-              <div class="flex-1">
-                <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-1">
-                  {userWithStats.displayName}
-                </h1>
-                <p class="text-white/60 font-mono text-sm mb-3">@{userWithStats.username}</p>
-                <div class="text-xs text-white/40 font-mono">{userWithStats.joinDate}</div>
-              </div>
-            </div>
-
-            {/* Terminal Command & Stats Output */}
-            <div class="font-mono text-sm space-y-2">
-              {/* Command Prompt */}
-              <div class="text-white/70">
-                <span class="text-pink-400">jamzy@{userWithStats.username}</span>
-                <span class="text-white/60">:~/music_library$ </span>
-                <span class="text-green-400">ls -la --stats personal_tracks/</span>
+                {/* Corner accents */}
+                <div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-[#04caf4]"></div>
+                <div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-[#04caf4]"></div>
               </div>
               
-              {/* Stats Output */}
-              <div class="text-xs space-y-1 pl-4 border-l-2 border-pink-400/30 ml-4">
-                <div class="flex items-center justify-between flex-wrap gap-3">
-                  <div class="flex items-center gap-3 sm:gap-6 flex-wrap">
-                    <span 
-                      class="text-green-400 cursor-pointer hover:text-green-300 transition-colors whitespace-nowrap" 
-                      onClick={() => handleStatClick('all')}
-                      title="View all tracks"
-                    >
-                      📊 {tracks().length} <span class="hidden sm:inline">total_tracks</span><span class="sm:hidden">tracks</span>
-                    </span>
-                    <span 
-                      class="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors whitespace-nowrap hidden sm:inline"
-                      onClick={() => handleStatClick('conversations')}
-                      title="Filter conversations"
-                    >
-                      💬 {stats.conversations} conversations
-                    </span>
-                    <span 
-                      class="text-purple-400 cursor-pointer hover:text-purple-300 transition-colors whitespace-nowrap"
-                      onClick={() => handleStatClick('shared')}
-                      title="Filter shared tracks"
-                    >
-                      🎵 {stats.shared} <span class="hidden sm:inline">shared_tracks</span><span class="sm:hidden">shared</span>
-                    </span>
-                    <span 
-                      class="text-cyan-400 cursor-pointer hover:text-cyan-300 transition-colors whitespace-nowrap"
-                      onClick={() => handleStatClick('liked')}
-                      title="Filter liked tracks"
-                    >
-                      ❤️ {stats.liked} <span class="hidden sm:inline">liked_tracks</span><span class="sm:hidden">liked</span>
-                    </span>
-                  </div>
-                  
-                  <AddButton onClick={() => navigate('/curate')} class="px-3 py-1.5 text-xs flex-shrink-0 whitespace-nowrap">
-                    <span class="hidden sm:inline">+ Add Music</span>
-                    <span class="sm:hidden text-base">+</span>
-                  </AddButton>
+              {/* Username Display */}
+              <div class="flex-1">
+                <h2 
+                  class="text-2xl font-mono font-bold tracking-wider uppercase text-[#04caf4] mb-1"
+                  style="font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);"
+                >
+                  MY_LIBRARY
+                </h2>
+                
+                {/* Terminal status line */}
+                <div class="text-[#04caf4]/70 text-xs font-mono mt-2" style="font-family: 'JetBrains Mono', monospace;">
+                  STATUS: ONLINE • ACCESS_LEVEL: ADMIN • CONN: SECURE
                 </div>
               </div>
+
+              {/* Action Button (simplified) */}
+              <AddButton onClick={() => navigate('/curate')} class="px-6 py-3 bg-[#00f92a]/10 border-2 border-[#00f92a] text-[#00f92a] text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 hover:bg-[#00f92a]/20">
+                <i class="fas fa-plus mr-2"></i>
+                ADD_TRACK
+              </AddButton>
             </div>
+
+            {/* Scan line keyframes */}
+            <style>{`
+              @keyframes scan {
+                0% { transform: translateY(0px); }
+                100% { transform: translateY(400px); }
+              }
+            `}</style>
           </div>
         </div>
 
