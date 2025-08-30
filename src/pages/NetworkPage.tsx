@@ -87,39 +87,58 @@ const NetworkPage: Component = () => {
       {/* Main content */}
       <div class="relative z-10 max-w-[1400px] mx-auto px-6 py-8">
         
-        {/* Primary Header - Significantly Reduced Size */}
-        <div class="network-element mb-6 text-center">
-          <div class="flex items-center justify-center gap-3 mb-2">
-            <div class="w-3 h-3 bg-[#04caf4] animate-pulse"></div>
-            <h1 class="font-mono text-xl lg:text-2xl text-[#04caf4] tracking-wider font-bold" 
-                style="text-shadow: 0 0 15px rgba(4, 202, 244, 0.4)">
-              NETWORK_MATRIX.EXE
-            </h1>
-            <div class="w-3 h-3 bg-[#f906d6] animate-pulse"></div>
+        {/* Cyberpunk Terminal Window Header */}
+        <div class="mb-6">
+          {/* Window Controls */}
+          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-t-lg p-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-[#ff9b00] rounded-full animate-pulse"></div>
+                  <div class="w-3 h-3 bg-[#d1f60a] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                  <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                </div>
+                <div class="text-[#04caf4] font-mono text-lg font-bold tracking-wider ml-4" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
+                  [JAMZY::NETWORK]
+                </div>
+              </div>
+              
+              <div class="bg-[#00f92a]/20 border border-[#00f92a]/40 px-3 py-1">
+                <span class="text-[#00f92a] font-mono text-xs font-bold">CONNECTED</span>
+              </div>
+            </div>
           </div>
-          <p class="text-[#04caf4]/70 font-mono text-xs tracking-wide">
-            Musical connections visualization
-          </p>
+
+          {/* Command Line */}
+          <div class="bg-[#0d0d0d] border-l-2 border-r-2 border-[#04caf4]/30 p-4 font-mono">
+            <div class="flex items-center gap-2 text-sm">
+              <span class="text-[#00f92a]">user@jamzy</span>
+              <span class="text-[#04caf4]">:</span>
+              <span class="text-[#f906d6]">~/network/topology</span>
+              <span class="text-[#04caf4]">$</span>
+              <span class="text-white/70 ml-2">ping -c 4 music.nodes | traceroute --graph</span>
+            </div>
+          </div>
         </div>
         
         {/* Network Selector */}
-        <div class="network-element mb-6">
+        <div class="network-element mb-6 relative z-50">
           <NetworkSelector 
             selectedNetwork={selectedNetwork()}
             onNetworkChange={handleNetworkChange}
           />
         </div>
         
-        {/* Network Intelligence Dashboard */}
-        <div class="network-element mb-6">
-          <div class="bg-[#1a1a1a] border-2 border-[#04caf4]/30 p-4">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <div class="w-6 h-6 bg-[#04caf4] flex items-center justify-center">
-                  <i class="fas fa-chart-network text-black text-xs"></i>
+        {/* Network Activity Feed - Terminal Style */}
+        <div class="network-element mb-8">
+          <div class="bg-[#1a1a1a] border-2 border-[#00f92a]/30 p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-[#00f92a] flex items-center justify-center">
+                  <i class="fas fa-terminal text-black"></i>
                 </div>
-                <h2 class="text-[#04caf4] font-mono text-base font-bold tracking-wider">
-                  NETWORK INTELLIGENCE
+                <h2 class="text-[#00f92a] font-mono text-lg font-bold tracking-wider">
+                  NETWORK ACTIVITY
                 </h2>
               </div>
               <div class="flex items-center gap-2">
@@ -128,118 +147,28 @@ const NetworkPage: Component = () => {
               </div>
             </div>
             
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <div class="text-center bg-[#04caf4]/10 border border-[#04caf4]/30 p-3">
-                <div class="text-[#04caf4] font-mono text-lg font-bold">147</div>
-                <div class="text-[#04caf4]/60 font-mono text-xs">NODES</div>
+            <div class="bg-black/60 border border-[#00f92a]/30 p-4 h-64 overflow-y-auto font-mono text-sm">
+              <div class="space-y-1">
+                <div class="text-[#00f92a] opacity-90">[14:18:23] NEON_DREAMS shared "Digital Nights" → +47 nodes</div>
+                <div class="text-[#04caf4] opacity-80">[14:17:52] BEAT_MATRIX joined Electronic Network</div>
+                <div class="text-[#f906d6] opacity-90">[14:17:31] "Cyber Cascade" trending → 890 shares</div>
+                <div class="text-[#ff9b00] opacity-80">[14:16:45] Network velocity +23.4% (connections/hour)</div>
+                <div class="text-[#04caf4] opacity-80">[14:16:12] SOUND_ARCHITECT created new playlist</div>
+                <div class="text-[#00f92a] opacity-90">[14:15:58] RETRO_PULSE gained 12 new followers</div>
+                <div class="text-[#f906d6] opacity-80">[14:15:23] "Neon Velocity" shared by VIBE_CURATOR</div>
+                <div class="text-[#3b00fd] opacity-90">[14:14:47] Extended Network: +15 connections</div>
+                <div class="text-[#04caf4] opacity-80">[14:14:02] CYBER_SOUND released new track</div>
+                <div class="text-[#ff9b00] opacity-90">[14:13:38] Peak activity window started</div>
+                <div class="text-[#00f92a] opacity-80">[14:13:15] MusicLover42 joined Hip Hop Network</div>
+                <div class="text-[#f906d6] opacity-90">[14:12:44] "Synthetic Dreams" gained momentum</div>
+                <div class="text-[#04caf4] opacity-80">[14:12:20] Network health: 89% (excellent)</div>
+                <div class="text-[#3b00fd] opacity-90">[14:11:55] RHYTHM_SAGE offline</div>
+                <div class="text-[#00f92a] opacity-80">[14:11:32] New genre cluster detected: Lo-fi House</div>
+                <div class="flex items-center gap-2 mt-2">
+                  <div class="w-2 h-2 bg-[#00f92a] animate-pulse"></div>
+                  <span class="text-[#00f92a] animate-pulse">_</span>
+                </div>
               </div>
-              <div class="text-center bg-[#f906d6]/10 border border-[#f906d6]/30 p-3">
-                <div class="text-[#f906d6] font-mono text-lg font-bold">2.8K</div>
-                <div class="text-[#f906d6]/60 font-mono text-xs">SHARES</div>
-              </div>
-              <div class="text-center bg-[#00f92a]/10 border border-[#00f92a]/30 p-3">
-                <div class="text-[#00f92a] font-mono text-lg font-bold">89%</div>
-                <div class="text-[#00f92a]/60 font-mono text-xs">HEALTH</div>
-              </div>
-              <div class="text-center bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
-                <div class="text-[#ff9b00] font-mono text-lg font-bold">+23%</div>
-                <div class="text-[#ff9b00]/60 font-mono text-xs">GROWTH</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Three-Column Information Grid */}
-        <div class="network-element mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Network Insights - Orange Theme */}
-          <div class="bg-[#1a1a1a] border-2 border-[#ff9b00]/30 p-5">
-            <h3 class="text-[#ff9b00] font-mono text-lg font-bold mb-4 flex items-center gap-3">
-              <div class="w-8 h-8 bg-[#ff9b00] flex items-center justify-center">
-                <i class="fas fa-lightbulb text-black"></i>
-              </div>
-              NETWORK INSIGHTS
-            </h3>
-            <div class="space-y-3">
-              <div class="bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
-                <p class="text-[#ff9b00] font-mono font-bold text-sm">PEAK ACTIVITY</p>
-                <p class="text-[#ff9b00]/80 font-mono text-xs mt-1">Network most active 8-10 PM</p>
-              </div>
-              <div class="bg-[#04caf4]/10 border border-[#04caf4]/30 p-3">
-                <p class="text-[#04caf4] font-mono font-bold text-sm">GENRE SPREAD</p>
-                <p class="text-[#04caf4]/80 font-mono text-xs mt-1">12 distinct genre clusters</p>
-              </div>
-              <div class="bg-[#00f92a]/10 border border-[#00f92a]/30 p-3">
-                <p class="text-[#00f92a] font-mono font-bold text-sm">GROWTH TREND</p>
-                <p class="text-[#00f92a]/80 font-mono text-xs mt-1">+15% network expansion</p>
-              </div>
-              <div class="bg-[#f906d6]/10 border border-[#f906d6]/30 p-3">
-                <p class="text-[#f906d6] font-mono font-bold text-sm">INFLUENCE SCORE</p>
-                <p class="text-[#f906d6]/80 font-mono text-xs mt-1">Top 8% network position</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Live Network Stats - Blue Theme */}
-          <div class="bg-[#1a1a1a] border-2 border-[#3b00fd]/30 p-5">
-            <h3 class="text-[#3b00fd] font-mono text-lg font-bold mb-4 flex items-center gap-3">
-              <div class="w-8 h-8 bg-[#3b00fd] flex items-center justify-center">
-                <i class="fas fa-chart-bar text-white"></i>
-              </div>
-              LIVE STATISTICS
-            </h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div class="text-center bg-[#3b00fd]/10 border border-[#3b00fd]/30 p-4">
-                <div class="text-[#3b00fd] font-mono text-2xl font-bold">2.8K</div>
-                <div class="text-[#3b00fd]/80 font-mono text-xs">TOTAL SHARES</div>
-              </div>
-              <div class="text-center bg-[#04caf4]/10 border border-[#04caf4]/30 p-4">
-                <div class="text-[#04caf4] font-mono text-2xl font-bold">147</div>
-                <div class="text-[#04caf4]/80 font-mono text-xs">ACTIVE USERS</div>
-              </div>
-              <div class="text-center bg-[#00f92a]/10 border border-[#00f92a]/30 p-4">
-                <div class="text-[#00f92a] font-mono text-2xl font-bold">89%</div>
-                <div class="text-[#00f92a]/80 font-mono text-xs">ENGAGEMENT</div>
-              </div>
-              <div class="text-center bg-[#f906d6]/10 border border-[#f906d6]/30 p-4">
-                <div class="text-[#f906d6] font-mono text-2xl font-bold">48K</div>
-                <div class="text-[#f906d6]/80 font-mono text-xs">REACH</div>
-              </div>
-            </div>
-            <div class="mt-4 bg-[#ff9b00]/10 border border-[#ff9b00]/30 p-3">
-              <div class="flex justify-between items-center">
-                <span class="text-[#ff9b00] font-mono text-sm font-bold">NETWORK VELOCITY</span>
-                <span class="text-[#ff9b00] font-mono text-xl">+23.4%</span>
-              </div>
-              <div class="text-[#ff9b00]/80 font-mono text-xs mt-1">Connections/hour growth rate</div>
-            </div>
-          </div>
-          
-          {/* Network Tools - Green Theme */}
-          <div class="bg-[#1a1a1a] border-2 border-[#00f92a]/30 p-5">
-            <h3 class="text-[#00f92a] font-mono text-lg font-bold mb-4 flex items-center gap-3">
-              <div class="w-8 h-8 bg-[#00f92a] flex items-center justify-center">
-                <i class="fas fa-tools text-black"></i>
-              </div>
-              NETWORK TOOLS
-            </h3>
-            <div class="space-y-3">
-              <button class="w-full py-3 px-4 bg-[#04caf4]/20 border-2 border-[#04caf4]/40 text-[#04caf4] font-mono text-sm hover:bg-[#04caf4]/30 transition-all text-left">
-                <i class="fas fa-search mr-3"></i>
-                FIND SIMILAR CURATORS
-              </button>
-              <button class="w-full py-3 px-4 bg-[#f906d6]/20 border-2 border-[#f906d6]/40 text-[#f906d6] font-mono text-sm hover:bg-[#f906d6]/30 transition-all text-left">
-                <i class="fas fa-share-alt mr-3"></i>
-                SHARE NETWORK PROFILE
-              </button>
-              <button class="w-full py-3 px-4 bg-[#00f92a]/20 border-2 border-[#00f92a]/40 text-[#00f92a] font-mono text-sm hover:bg-[#00f92a]/30 transition-all text-left">
-                <i class="fas fa-download mr-3"></i>
-                EXPORT NETWORK DATA
-              </button>
-              <button class="w-full py-3 px-4 bg-[#ff9b00]/20 border-2 border-[#ff9b00]/40 text-[#ff9b00] font-mono text-sm hover:bg-[#ff9b00]/30 transition-all text-left">
-                <i class="fas fa-cogs mr-3"></i>
-                ADVANCED ANALYSIS
-              </button>
             </div>
           </div>
         </div>

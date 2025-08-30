@@ -42,17 +42,8 @@ const LibraryPage: Component = () => {
                 </div>
               </div>
               
-              <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                  <div class="w-2 h-2 bg-[#ff9b00] animate-pulse"></div>
-                  <span class="text-[#ff9b00] font-mono text-xs font-bold">LIVE</span>
-                </div>
-                <div class="bg-[#3b00fd]/20 border border-[#3b00fd]/40 px-3 py-1">
-                  <span class="text-[#3b00fd] font-mono text-xs font-bold">ONLINE</span>
-                </div>
-                <div class="bg-[#00f92a]/20 border border-[#00f92a]/40 px-3 py-1">
-                  <span class="text-[#00f92a] font-mono text-xs font-bold">CONNECTED</span>
-                </div>
+              <div class="bg-[#00f92a]/20 border border-[#00f92a]/40 px-3 py-1">
+                <span class="text-[#00f92a] font-mono text-xs font-bold">CONNECTED</span>
               </div>
             </div>
           </div>
@@ -65,9 +56,6 @@ const LibraryPage: Component = () => {
               <span class="text-[#f906d6]">~/music/library</span>
               <span class="text-[#04caf4]">$</span>
               <span class="text-white/70 ml-2">ls -la | grep -E "tracks|playlists|metadata"</span>
-            </div>
-            <div class="text-[#00f92a]/80 text-xs mt-2">
-              Loading music database... [████████████████████████████████████████] 100%
             </div>
           </div>
         </div>
