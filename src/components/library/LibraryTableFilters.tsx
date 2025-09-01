@@ -1,10 +1,7 @@
 import { Component, createSignal, onCleanup } from 'solid-js';
-import { useNavigate } from '@solidjs/router';
 import { filters, updateFilters, resetFilters, FilterPlatform, isShuffled, shuffleTracks, filteredTracks } from '../../stores/libraryStore';
-import AddButton from '../shared/AddButton';
 
 const LibraryTableFilters: Component = () => {
-  const navigate = useNavigate();
   const [searchInput, setSearchInput] = createSignal(filters.search);
   let searchTimeout: any;
 
@@ -144,18 +141,6 @@ const LibraryTableFilters: Component = () => {
             <span class="opacity-70">CLEAR </span>RESET
           </button>
 
-          {/* Add Track Button */}
-          <button
-            onClick={() => navigate('/curate')}
-            class="terminal-add-btn bg-gradient-to-r from-[#f906d6] to-[#ff0080] border border-[#f906d6] text-black font-mono text-[10px] 
-                   px-4 py-2 uppercase tracking-wider font-bold transition-all duration-200 relative overflow-hidden
-                   hover:shadow-[0_0_10px_rgba(249,6,214,0.3)] hover:from-[#ff0080] hover:to-[#f906d6]
-                   active:scale-95"
-            style="border-radius: 0;"
-          >
-            <i class="fas fa-plus text-[8px] mr-1"></i>
-            ADD_TRACK
-          </button>
         </div>
       </div>
 

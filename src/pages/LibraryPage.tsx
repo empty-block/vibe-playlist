@@ -29,35 +29,24 @@ const LibraryPage: Component = () => {
         {/* Cyberpunk Terminal Window Header */}
         <div class="mb-6">
           {/* Window Controls */}
-          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-t-lg p-3">
+          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-lg p-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-3 h-3 bg-[#ff9b00] rounded-full animate-pulse"></div>
-                  <div class="w-3 h-3 bg-[#d1f60a] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
-                  <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                  <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse"></div>
+                  <span class="text-xs text-[#00f92a]/70 font-mono tracking-wider">ONLINE</span>
                 </div>
                 <div class="text-[#04caf4] font-mono text-lg font-bold tracking-wider ml-4" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
                   [JAMZY::LIBRARY]
                 </div>
               </div>
               
-              <div class="bg-[#00f92a]/20 border border-[#00f92a]/40 px-3 py-1">
-                <span class="text-[#00f92a] font-mono text-xs font-bold">CONNECTED</span>
-              </div>
+              <AddButton onClick={() => navigate('/add')}>
+                <span class="text-xs font-bold tracking-wider">+ ADD_TRACK</span>
+              </AddButton>
             </div>
           </div>
 
-          {/* Command Line */}
-          <div class="bg-[#0d0d0d] border-l-2 border-r-2 border-[#04caf4]/30 p-4 font-mono">
-            <div class="flex items-center gap-2 text-sm">
-              <span class="text-[#00f92a]">user@jamzy</span>
-              <span class="text-[#04caf4]">:</span>
-              <span class="text-[#f906d6]">~/music/library</span>
-              <span class="text-[#04caf4]">$</span>
-              <span class="text-white/70 ml-2">ls -la | grep -E "tracks|playlists|metadata"</span>
-            </div>
-          </div>
         </div>
 
         {/* Main Content Container */}
@@ -75,7 +64,7 @@ const LibraryPage: Component = () => {
                   ┌─ LIBRARY QUERY INTERFACE ─────────────────────┐
                 </div>
                 <div class="text-[#04caf4] font-mono text-xs font-normal tracking-wide">
-                  │ {filteredTracks().length} TRACKS INDEXED | REAL-TIME SYNC ACTIVE    │
+                  │ {filteredTracks().length} TRACKS INDEXED │
                 </div>
               </div>
             </div>
