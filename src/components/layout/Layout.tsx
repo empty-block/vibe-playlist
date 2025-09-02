@@ -33,9 +33,7 @@ const Layout: Component<LayoutProps> = (props) => {
         
         {/* Player - Always bottom bar */}
         <Show when={currentTrack()}>
-          <div class="h-60 border-t-2 border-gray-300 flex-shrink-0">
-            <MediaPlayer />
-          </div>
+          <MediaPlayer />
         </Show>
       </WindowsFrame>
       

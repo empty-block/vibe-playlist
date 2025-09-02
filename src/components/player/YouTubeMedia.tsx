@@ -59,8 +59,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     
     try {
       player = new window.YT.Player(playerContainer, {
-        height: '180',
-        width: '300',
+        height: '100%',
+        width: '100%',
         videoId: 'hTWKbfoikeg',
         playerVars: {
           autoplay: 0,
@@ -159,7 +159,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
 
   return (
-    <div class="bg-gray-900 rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52">
+    <div class="w-full h-full">
       <div 
         ref={(el) => {
           playerContainer = el;

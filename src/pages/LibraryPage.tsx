@@ -3,7 +3,9 @@ import { useNavigate } from '@solidjs/router';
 import { LibraryTable } from '../components/library';
 import AddButton from '../components/shared/AddButton';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
-import { filteredTracks } from '../stores/libraryStore';
+import { filteredTracks, allTracks } from '../stores/libraryStore';
+import NetworkSelector from '../components/network/NetworkSelector';
+import { selectedNetwork, setSelectedNetwork } from '../stores/networkStore';
 
 const LibraryPage: Component = () => {
   const navigate = useNavigate();
@@ -27,9 +29,9 @@ const LibraryPage: Component = () => {
       <div class="relative z-10 max-w-[1400px] mx-auto p-6">
         
         {/* Cyberpunk Terminal Window Header */}
-        <div class="mb-6">
+        <div>
           {/* Window Controls */}
-          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-lg p-3">
+          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 border-b-0 rounded-t-lg p-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2">
@@ -47,13 +49,18 @@ const LibraryPage: Component = () => {
             </div>
           </div>
 
+        {/* Network Selector - Seamlessly connected */}
+        <div class="relative z-[9998]">
+          <NetworkSelector 
+            selectedNetwork={selectedNetwork()}
+            onNetworkChange={(networkId) => setSelectedNetwork(networkId)}
+            seamless={true}
+          />
+        </div>
         </div>
 
         {/* Main Content Container */}
         <div class="relative">
-          {/* Corner Accents */}
-          <div class="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-[#04caf4] opacity-60"></div>
-          <div class="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-[#f906d6] opacity-60"></div>
           
           <div class="bg-[#0d0d0d]/80 backdrop-blur border-2 border-[#04caf4]/30 rounded-b-lg overflow-hidden" style="box-shadow: inset 0 0 30px rgba(4, 202, 244, 0.1);">
             

@@ -177,53 +177,41 @@ export const heartBeat = (element: HTMLElement) => {
   });
 };
 
-// Enhanced playback button animations with gradients
+// Simplified playback button animations - works with CSS module styles
 export const playbackButtonHover = {
   enter: (element: HTMLElement) => {
-    anime({
-      targets: element,
-      scale: 1.1,
-      boxShadow: '0 8px 25px rgba(4, 202, 244, 0.4)',
-      duration: 300,
-      easing: 'easeOutBack'
-    });
-    
-    // Add gradient background with neon colors
-    element.style.background = 'linear-gradient(135deg, #04caf4 0%, #00f92a 100%)';
-    element.style.backgroundSize = '200% 200%';
-    
-    // Make icon white for visibility against gradient
-    const icon = element.querySelector('i');
-    if (icon) {
-      icon.style.color = 'white';
-    }
+    // Disable CSS transitions temporarily to prevent conflicts
+    element.style.transition = 'none';
     
     anime({
       targets: element,
-      backgroundPosition: ['0% 50%', '100% 50%'],
-      duration: 2000,
-      easing: 'linear',
-      loop: true,
-      direction: 'alternate'
+      scale: 1.05,
+      translateY: -2,
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        // Re-enable CSS transitions after animation
+        element.style.transition = '';
+      }
     });
   },
   
   leave: (element: HTMLElement) => {
+    // Disable CSS transitions temporarily
+    element.style.transition = 'none';
+    
     anime({
       targets: element,
       scale: 1,
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-      duration: 250,
-      easing: 'easeOutQuad'
+      translateY: 0,
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        // Re-enable CSS transitions and reset transform
+        element.style.transition = '';
+        element.style.transform = 'translateZ(0)';
+      }
     });
-    
-    // Reset background and icon color
-    element.style.background = '';
-    element.style.backgroundPosition = '';
-    const icon = element.querySelector('i');
-    if (icon) {
-      icon.style.color = '';
-    }
   }
 };
 

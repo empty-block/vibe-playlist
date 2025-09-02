@@ -14,6 +14,7 @@ interface NetworkOption {
 interface NetworkSelectorProps {
   selectedNetwork: string;
   onNetworkChange: (networkId: string) => void;
+  seamless?: boolean; // For seamless connection to header
 }
 
 const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
@@ -104,7 +105,7 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       {/* Terminal-style selector */}
       <button
         onClick={() => setIsOpen(!isOpen())}
-        class="w-full bg-black/60 border-2 border-[#04caf4]/30 p-4 text-left hover:border-[#04caf4] transition-all group"
+        class={`w-full bg-black/60 border-2 border-[#04caf4]/30 ${props.seamless ? 'border-t-0' : ''} p-4 text-left ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} transition-all group`}
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -142,7 +143,7 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       
       {/* Dropdown menu */}
       <Show when={isOpen()}>
-        <div class="absolute top-full left-0 right-0 mt-2 bg-black/90 border-2 border-[#04caf4]/30 overflow-hidden z-50">
+        <div class="absolute top-full left-0 right-0 -mt-px bg-black/95 backdrop-blur-sm border-2 border-[#04caf4]/30 border-t-0 overflow-hidden z-[9999] shadow-2xl shadow-cyan-400/20">
           {/* Terminal header */}
           <div class="bg-cyan-400/10 px-4 py-2 border-b border-cyan-400/20">
             <div class="flex items-center gap-2">

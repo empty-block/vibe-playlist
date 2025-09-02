@@ -2,6 +2,7 @@ import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { Track } from './playlistStore';
 import { mockDataService } from '../data/mockData';
+import { selectedNetwork } from './networkStore';
 
 export type SortColumn = 'track' | 'artist' | 'sharedBy' | 'timestamp' | 'platform' | 'engagement' | 'likes' | 'replies';
 export type SortDirection = 'asc' | 'desc';
@@ -54,6 +55,41 @@ const shuffleArray = <T>(array: T[]): T[] => {
 // Computed filtered and sorted tracks
 export const filteredTracks = createMemo(() => {
   let tracks = allTracks();
+  
+  // Apply network filter
+  const networkFilter = selectedNetwork();
+  if (networkFilter && networkFilter !== 'community') {
+    // Simulate network filtering based on the selected network
+    // In a real app, tracks would have network source metadata
+    tracks = tracks.filter((track, index) => {
+      if (networkFilter === 'personal') {
+        // Show ~60% of tracks for personal network
+        return index % 5 !== 0 && index % 5 !== 1;
+      } else if (networkFilter === 'extended') {
+        // Show ~80% of tracks for extended network
+        return index % 5 !== 0;
+      } else if (networkFilter.startsWith('genre-')) {
+        // Filter by genre - simulate based on track characteristics
+        const genre = networkFilter.replace('genre-', '');
+        if (genre === 'hiphop') {
+          return track.artist.toLowerCase().includes('hip') || 
+                 track.title.toLowerCase().includes('rap') ||
+                 index % 4 === 0;
+        } else if (genre === 'electronic') {
+          return track.artist.toLowerCase().includes('electr') || 
+                 track.title.toLowerCase().includes('synth') ||
+                 index % 4 === 1;
+        } else if (genre === 'indie') {
+          return track.artist.toLowerCase().includes('indie') || 
+                 index % 4 === 2;
+        }
+      } else if (networkFilter === 'trending') {
+        // Show tracks with high engagement
+        return (track.likes + track.recasts + track.replies) > 10;
+      }
+      return true;
+    });
+  }
   
   // Apply search filter
   if (filters.search) {
