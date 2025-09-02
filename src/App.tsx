@@ -1,7 +1,7 @@
 import { Component, onMount, Show } from 'solid-js';
 import { Router, Route, useNavigate } from '@solidjs/router';
 import Layout from './components/layout/Layout';
-import LandingPage from './pages/LandingPage';
+import HomePage from './components/home/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
 import StatsPage from './pages/StatsPage';
@@ -32,29 +32,12 @@ const App: Component = () => {
     await initializeAuth();
   });
 
-  // Create a root route component that handles auth routing
-  const RootRoute: Component = () => {
-    const navigate = useNavigate();
-    
-    onMount(() => {
-      // If authenticated, redirect to library (new home)
-      if (isAuthenticated()) {
-        navigate('/library');
-      }
-    });
-    
-    return (
-      <Show when={!isAuthenticated()} fallback={null}>
-        <LandingPage />
-      </Show>
-    );
-  };
-
   return (
     <Router root={Layout}>
-      <Route path="/" component={RootRoute} />
+      {/* Home page - dual splash/personalized functionality */}
+      <Route path="/" component={HomePage} />
       
-      {/* New primary navigation routes */}
+      {/* Main navigation routes */}
       <Route path="/library" component={LibraryPage} />
       <Route path="/network" component={StatsPage} />
       <Route path="/me/:username" component={ProfilePage} />

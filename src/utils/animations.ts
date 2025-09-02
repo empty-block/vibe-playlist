@@ -359,3 +359,71 @@ export const magnetic = (element: HTMLElement, strength: number = 20) => {
   element.addEventListener('mousemove', handleMouseMove);
   element.addEventListener('mouseleave', handleMouseLeave);
 };
+
+// Terminal cursor blink effect
+export const cursorBlink = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    opacity: [1, 0],
+    duration: 800,
+    direction: 'alternate',
+    loop: true,
+    easing: 'linear'
+  });
+};
+
+// Neon glow pulse for special elements
+export const neonPulse = (element: HTMLElement, color: string = '#04caf4') => {
+  anime({
+    targets: element,
+    boxShadow: [
+      `0 0 5px ${color}`,
+      `0 0 20px ${color}, 0 0 35px ${color}`,
+      `0 0 5px ${color}`
+    ],
+    duration: 2000,
+    loop: true,
+    easing: 'easeInOutSine'
+  });
+};
+
+// Loading dots animation
+export const loadingDots = (element: HTMLElement) => {
+  const dots = element.textContent || '...';
+  let count = 0;
+  
+  const animate = () => {
+    count = (count + 1) % 4;
+    element.textContent = '.'.repeat(count);
+  };
+  
+  const interval = setInterval(animate, 500);
+  
+  // Return cleanup function
+  return () => clearInterval(interval);
+};
+
+// Smooth state transition for dual-purpose components
+export const morphTransition = (fromElement: HTMLElement, toElement: HTMLElement) => {
+  // Fade out current content
+  anime({
+    targets: fromElement,
+    opacity: [1, 0],
+    scale: [1, 0.95],
+    duration: 300,
+    easing: 'easeInCubic',
+    complete: () => {
+      fromElement.style.display = 'none';
+      toElement.style.display = 'block';
+      
+      // Fade in new content
+      anime({
+        targets: toElement,
+        opacity: [0, 1],
+        scale: [0.95, 1],
+        duration: 400,
+        easing: 'easeOutCubic'
+      });
+    }
+  });
+};

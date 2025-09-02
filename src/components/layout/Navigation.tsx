@@ -7,8 +7,11 @@ const Navigation: Component = () => {
   const [focusedIndex, setFocusedIndex] = createSignal(-1);
   
   const isActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
     if (path === '/library') {
-      return location.pathname === '/' || location.pathname === '/library';
+      return location.pathname === '/library';
     }
     if (path === '/me') {
       return location.pathname === '/me' || location.pathname.startsWith('/profile');
@@ -17,7 +20,8 @@ const Navigation: Component = () => {
   };
 
   const navigationItems = [
-    { href: '/library', label: 'Library', isPrimary: true },
+    { href: '/', label: 'Home', isPrimary: true },
+    { href: '/library', label: 'Library', isPrimary: false },
     { href: '/network', label: 'Stats', isPrimary: false },
     { href: '/me', label: 'Profile', isPrimary: false, isProfile: true }
   ];
@@ -68,22 +72,22 @@ const Navigation: Component = () => {
       {/* Desktop Navigation - Zen Layout */}
       <div class="hidden md:flex h-full items-center px-6 font-display text-sm font-medium tracking-wide">
         
-        {/* Primary Section: Library */}
+        {/* Primary Section: Home */}
         <div class="flex-shrink-0">
           <A 
-            href="/library" 
+            href="/" 
             data-nav-index="0"
             class="relative px-4 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] font-bold uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
             classList={{ 
-              'text-white bg-neon-blue/20 border border-neon-blue/30': isActive('/library'),
-              'text-gray-400 hover:text-neon-blue': !isActive('/library')
+              'text-white bg-neon-blue/20 border border-neon-blue/30': isActive('/'),
+              'text-gray-400 hover:text-neon-blue': !isActive('/')
             }}
             onFocus={() => setFocusedIndex(0)}
-            aria-current={isActive('/library') ? 'page' : undefined}
+            aria-current={isActive('/') ? 'page' : undefined}
           >
-            Library
+            Home
             {/* Clean underline indicator for active state */}
-            {isActive('/library') && (
+            {isActive('/') && (
               <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-neon-blue"></div>
             )}
           </A>
@@ -94,17 +98,36 @@ const Navigation: Component = () => {
           <div class="w-px h-4 bg-gray-700"></div>
         </div>
         
-        {/* Secondary Navigation - Stats */}
+        {/* Secondary Navigation */}
         <div class="flex gap-8">
           <A 
-            href="/network" 
+            href="/library" 
             data-nav-index="1"
+            class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
+            classList={{ 
+              'text-neon-cyan': isActive('/library'),
+              'text-gray-400 hover:text-neon-cyan': !isActive('/library')
+            }}
+            onFocus={() => setFocusedIndex(1)}
+            aria-current={isActive('/library') ? 'page' : undefined}
+          >
+            Library
+            <div class={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200 ${
+              isActive('/library') 
+                ? 'bg-neon-cyan opacity-100' 
+                : 'bg-neon-cyan opacity-0 hover:opacity-50'
+            }`}></div>
+          </A>
+          
+          <A 
+            href="/network" 
+            data-nav-index="2"
             class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
             classList={{ 
               'text-neon-cyan': isActive('/network'),
               'text-gray-400 hover:text-neon-cyan': !isActive('/network')
             }}
-            onFocus={() => setFocusedIndex(1)}
+            onFocus={() => setFocusedIndex(2)}
             aria-current={isActive('/network') ? 'page' : undefined}
           >
             Stats
@@ -123,13 +146,13 @@ const Navigation: Component = () => {
         <div class="flex-shrink-0">
           <A 
             href="/me" 
-            data-nav-index="2"
+            data-nav-index="3"
             class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
             classList={{ 
               'text-neon-pink': isActive('/me'),
               'text-gray-400 hover:text-neon-pink': !isActive('/me')
             }}
-            onFocus={() => setFocusedIndex(2)}
+            onFocus={() => setFocusedIndex(3)}
             aria-current={isActive('/me') ? 'page' : undefined}
           >
             Profile
