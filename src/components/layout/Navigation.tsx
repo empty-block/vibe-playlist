@@ -18,7 +18,7 @@ const Navigation: Component = () => {
 
   const navigationItems = [
     { href: '/library', label: 'Library', isPrimary: true },
-    { href: '/network', label: 'Network', isPrimary: false },
+    { href: '/network', label: 'Stats', isPrimary: false },
     { href: '/me', label: 'Profile', isPrimary: false, isProfile: true }
   ];
 
@@ -94,7 +94,7 @@ const Navigation: Component = () => {
           <div class="w-px h-4 bg-gray-700"></div>
         </div>
         
-        {/* Secondary Navigation - Network */}
+        {/* Secondary Navigation - Stats */}
         <div class="flex gap-8">
           <A 
             href="/network" 
@@ -107,7 +107,7 @@ const Navigation: Component = () => {
             onFocus={() => setFocusedIndex(1)}
             aria-current={isActive('/network') ? 'page' : undefined}
           >
-            Network
+            Stats
             <div class={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200 ${
               isActive('/network') 
                 ? 'bg-neon-cyan opacity-100' 

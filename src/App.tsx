@@ -4,7 +4,7 @@ import Layout from './components/layout/Layout';
 import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
-import NetworkPage from './pages/NetworkPage';
+import StatsPage from './pages/StatsPage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
 const App: Component = () => {
@@ -56,7 +56,7 @@ const App: Component = () => {
       
       {/* New primary navigation routes */}
       <Route path="/library" component={LibraryPage} />
-      <Route path="/network" component={NetworkPage} />
+      <Route path="/network" component={StatsPage} />
       <Route path="/me/:username" component={ProfilePage} />
       <Route path="/me" component={ProfilePage} />
       <Route path="/profile/:username" component={ProfilePage} />
