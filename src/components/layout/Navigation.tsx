@@ -18,7 +18,6 @@ const Navigation: Component = () => {
 
   const navigationItems = [
     { href: '/library', label: 'Library', isPrimary: true },
-    { href: '/discover', label: 'Discover', isPrimary: false },
     { href: '/network', label: 'Network', isPrimary: false },
     { href: '/me', label: 'Profile', isPrimary: false, isProfile: true }
   ];
@@ -95,37 +94,17 @@ const Navigation: Component = () => {
           <div class="w-px h-4 bg-gray-700"></div>
         </div>
         
-        {/* Secondary Navigation - Discover & Network */}
+        {/* Secondary Navigation - Network */}
         <div class="flex gap-8">
           <A 
-            href="/discover" 
-            data-nav-index="1"
-            class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
-            classList={{ 
-              'text-neon-cyan': isActive('/discover'),
-              'text-gray-400 hover:text-neon-cyan': !isActive('/discover')
-            }}
-            onFocus={() => setFocusedIndex(1)}
-            aria-current={isActive('/discover') ? 'page' : undefined}
-          >
-            Discover
-            {/* Minimal underline for active/hover states */}
-            <div class={`absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-200 ${
-              isActive('/discover') 
-                ? 'bg-neon-cyan opacity-100' 
-                : 'bg-neon-cyan opacity-0 hover:opacity-50'
-            }`}></div>
-          </A>
-          
-          <A 
             href="/network" 
-            data-nav-index="2"
+            data-nav-index="1"
             class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
             classList={{ 
               'text-neon-cyan': isActive('/network'),
               'text-gray-400 hover:text-neon-cyan': !isActive('/network')
             }}
-            onFocus={() => setFocusedIndex(2)}
+            onFocus={() => setFocusedIndex(1)}
             aria-current={isActive('/network') ? 'page' : undefined}
           >
             Network
@@ -144,13 +123,13 @@ const Navigation: Component = () => {
         <div class="flex-shrink-0">
           <A 
             href="/me" 
-            data-nav-index="3"
+            data-nav-index="2"
             class="relative px-3 py-3 transition-all duration-200 ease-out inline-flex items-center min-h-[44px] uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black"
             classList={{ 
               'text-neon-pink': isActive('/me'),
               'text-gray-400 hover:text-neon-pink': !isActive('/me')
             }}
-            onFocus={() => setFocusedIndex(3)}
+            onFocus={() => setFocusedIndex(2)}
             aria-current={isActive('/me') ? 'page' : undefined}
           >
             Profile

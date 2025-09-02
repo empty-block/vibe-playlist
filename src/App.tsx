@@ -1,14 +1,9 @@
 import { Component, onMount, Show } from 'solid-js';
 import { Router, Route, useNavigate } from '@solidjs/router';
 import Layout from './components/layout/Layout';
-import PlayerPage from './pages/PlayerPage';
 import LandingPage from './pages/LandingPage';
-import DiscoverPage from './pages/DiscoverPage';
-import TrendingPage from './pages/TrendingPage';
-import CreatePage from './pages/CreatePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
-import MePage from './pages/MePage';
 import NetworkPage from './pages/NetworkPage';
 import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
 
@@ -61,13 +56,11 @@ const App: Component = () => {
       
       {/* New primary navigation routes */}
       <Route path="/library" component={LibraryPage} />
-      <Route path="/discover" component={DiscoverPage} />
       <Route path="/network" component={NetworkPage} />
-      <Route path="/me/:username" component={MePage} />
-      <Route path="/me" component={MePage} />
-      <Route path="/profile/:username" component={MePage} />
-      <Route path="/profile" component={MePage} />
-      <Route path="/trending" component={TrendingPage} />
+      <Route path="/me/:username" component={ProfilePage} />
+      <Route path="/me" component={ProfilePage} />
+      <Route path="/profile/:username" component={ProfilePage} />
+      <Route path="/profile" component={ProfilePage} />
     </Router>
   );
 };
