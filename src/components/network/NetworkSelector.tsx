@@ -105,8 +105,11 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       {/* Terminal-style selector */}
       <button
         onClick={() => setIsOpen(!isOpen())}
-        class={`w-full bg-black/60 border-2 border-[#04caf4]/30 ${props.seamless ? 'border-t-0' : ''} p-4 text-left ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} transition-all group`}
+        class={`w-full bg-black/60 border-2 border-[#04caf4]/30 ${props.seamless ? 'border-t-0' : ''} p-4 text-left ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} transition-all group relative overflow-hidden`}
       >
+        {/* Scanning line on hover */}
+        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00f92a] to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
+        
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class={`w-10 h-10 bg-gradient-to-r ${currentNetwork().color} flex items-center justify-center shadow-lg`}>
@@ -120,16 +123,17 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
               <p class="text-cyan-300/60 text-sm">{currentNetwork().description}</p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-4">
             {currentNetwork().userCount && (
-              <div class="text-right">
+              <div class="text-right mr-3">
                 <p class="text-cyan-400 font-mono text-lg font-bold">
                   {currentNetwork().userCount.toLocaleString()}
                 </p>
                 <p class="text-cyan-300/60 text-xs">nodes</p>
               </div>
             )}
-            <i class={`fas fa-chevron-${isOpen() ? 'up' : 'down'} text-cyan-400 group-hover:text-cyan-300 transition-all`}></i>
+            {/* Simple dropdown indicator */}
+            <i class={`fas fa-chevron-${isOpen() ? 'up' : 'down'} text-cyan-400 transition-transform duration-200 text-lg`}></i>
           </div>
         </div>
         
@@ -144,15 +148,6 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       {/* Dropdown menu */}
       <Show when={isOpen()}>
         <div class="absolute top-full left-0 right-0 -mt-px bg-black/95 backdrop-blur-sm border-2 border-[#04caf4]/30 border-t-0 overflow-hidden z-[9999] shadow-2xl shadow-cyan-400/20">
-          {/* Terminal header */}
-          <div class="bg-cyan-400/10 px-4 py-2 border-b border-cyan-400/20">
-            <div class="flex items-center gap-2">
-              <div class="w-2 h-2 rounded-full bg-red-400"></div>
-              <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
-              <div class="w-2 h-2 rounded-full bg-green-400"></div>
-              <span class="ml-2 text-cyan-400 font-mono text-xs">SELECT_NETWORK.exe</span>
-            </div>
-          </div>
           
           {/* Network options */}
           <div class="max-h-96 overflow-y-auto">
@@ -163,7 +158,7 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
                   disabled={network.isLocked}
                   class={`w-full p-4 text-left hover:bg-cyan-400/10 transition-all border-b border-cyan-400/10 last:border-0 ${
                     network.isLocked ? 'opacity-50 cursor-not-allowed' : ''
-                  } ${network.id === props.selectedNetwork ? 'bg-cyan-400/5' : ''}`}
+                  } ${network.id === props.selectedNetwork ? 'bg-cyan-400/15 border-l-2 border-l-cyan-400' : ''}`}
                 >
                   <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -190,28 +185,24 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
                     )}
                   </div>
                   
-                  {/* Selection indicator */}
-                  {network.id === props.selectedNetwork && (
-                    <div class="mt-2 pt-2 border-t border-cyan-400/20">
-                      <span class="text-cyan-400 font-mono text-xs">
-                        <i class="fas fa-terminal mr-1"></i>
-                        CURRENTLY_ACTIVE
-                      </span>
-                    </div>
-                  )}
                 </button>
               )}
             </For>
           </div>
-          
-          {/* Terminal footer */}
-          <div class="bg-cyan-400/5 px-4 py-2 border-t border-cyan-400/20">
-            <p class="text-cyan-400/60 font-mono text-xs">
-              Press ESC to cancel • Use ↑↓ to navigate
-            </p>
-          </div>
         </div>
       </Show>
+      
+      {/* Scanning animation styles */}
+      <style>{`
+        @keyframes scan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        
+        .group:hover .group-hover\\:animate-scan {
+          animation: scan 2s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };

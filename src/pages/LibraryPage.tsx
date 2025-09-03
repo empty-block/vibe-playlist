@@ -28,53 +28,43 @@ const LibraryPage: Component = () => {
 
       <div class="relative z-10 max-w-[1400px] mx-auto p-6">
         
-        {/* Cyberpunk Terminal Window Header */}
-        <div>
-          {/* Window Controls */}
-          <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 border-b-0 rounded-t-lg p-3">
+        {/* Unified Terminal Header */}
+        <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 border-b-0 rounded-t-lg overflow-visible">
+          {/* Terminal Title Bar */}
+          <div class="bg-[rgba(4,202,244,0.02)] border-b border-[#04caf4]/20 px-4 py-3">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
+              {/* Left section: Status and Title */}
+              <div class="flex items-center gap-4">
                 <div class="flex items-center gap-2">
-                  <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse"></div>
-                  <span class="text-xs text-[#00f92a]/70 font-mono tracking-wider">ONLINE</span>
+                  <div class="w-2 h-2 bg-[#00f92a] rounded-full animate-pulse"></div>
+                  <span class="text-[10px] text-[#00f92a] font-mono tracking-wider">ONLINE</span>
                 </div>
-                <div class="text-[#04caf4] font-mono text-lg font-bold tracking-wider ml-4" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
+                <div class="text-[#04caf4] font-mono text-sm font-bold tracking-wider" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
                   [JAMZY::LIBRARY]
                 </div>
               </div>
               
+              {/* Right section: Add button */}
               <AddButton onClick={() => navigate('/add')}>
                 <span class="text-xs font-bold tracking-wider">+ ADD_TRACK</span>
               </AddButton>
             </div>
           </div>
 
-        {/* Network Selector - Seamlessly connected */}
-        <div class="relative z-[9998]">
-          <NetworkSelector 
-            selectedNetwork={selectedNetwork()}
-            onNetworkChange={(networkId) => setSelectedNetwork(networkId)}
-            seamless={true}
-          />
-        </div>
+          {/* Network Selector - Integrated */}
+          <div class="relative z-[10000]">
+            <NetworkSelector 
+              selectedNetwork={selectedNetwork()}
+              onNetworkChange={(networkId) => setSelectedNetwork(networkId)}
+              seamless={true}
+            />
+          </div>
         </div>
 
         {/* Main Content Container */}
         <div class="relative">
           
           <div class="bg-[#0d0d0d]/80 backdrop-blur border-2 border-[#04caf4]/30 rounded-b-lg overflow-hidden" style="box-shadow: inset 0 0 30px rgba(4, 202, 244, 0.1);">
-            
-            {/* Compact Terminal Header */}
-            <div class="bg-[rgba(4,202,244,0.05)] border border-[#04caf4] p-2">
-              <div class="flex items-center justify-between">
-                <div class="text-[#04caf4] font-mono text-xs font-normal tracking-wide">
-                  ┌─ LIBRARY QUERY INTERFACE ─────────────────────┐
-                </div>
-                <div class="text-[#04caf4] font-mono text-xs font-normal tracking-wide">
-                  │ {filteredTracks().length} TRACKS INDEXED │
-                </div>
-              </div>
-            </div>
             
             {/* Library Content */}
             <div class="p-6">

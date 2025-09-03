@@ -107,7 +107,7 @@
   position: relative;
 }
 
-/* Column widths remain the same as original */
+/* Column widths with golden ratio proportions */
 .retro-data-grid th:nth-child(1),
 .retro-data-grid td:nth-child(1) {
   width: 50px;
@@ -115,17 +115,19 @@
   text-align: center;
 }
 
+/* Track column - Primary content (golden ratio: 1.618) */
 .retro-data-grid th:nth-child(2),
 .retro-data-grid td:nth-child(2) {
-  width: 160px !important;
-  min-width: 160px !important;
-  max-width: 160px !important;
+  width: 240px !important;
+  min-width: 240px !important;
+  max-width: 240px !important;
 }
 
+/* Artist column - Secondary content (240 / 1.618 ≈ 148) */
 .retro-data-grid th:nth-child(3),
 .retro-data-grid td:nth-child(3) {
-  width: 120px;
-  min-width: 120px;
+  width: 148px;
+  min-width: 148px;
 }
 
 .retro-data-grid th:nth-child(4),
