@@ -92,17 +92,28 @@ const StatsPage: Component = () => {
           {/* Window Controls */}
           <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-t-lg p-3">
             <div class="flex items-center justify-between">
+              {/* Left section: Window controls and title */}
               <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2">
                   <div class="w-3 h-3 bg-[#ff9b00] rounded-full animate-pulse"></div>
                   <div class="w-3 h-3 bg-[#d1f60a] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
                   <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
                 </div>
-                <div class="text-[#04caf4] font-mono text-lg font-bold tracking-wider ml-4" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
+                <div class="text-[#04caf4] font-mono text-sm font-bold tracking-wider ml-4" style="text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);">
                   [JAMZY::STATS]
                 </div>
               </div>
               
+              {/* Center section: Network Selector */}
+              <div class="flex-shrink-0">
+                <NetworkSelector 
+                  selectedNetwork={selectedNetwork()}
+                  onNetworkChange={handleNetworkChange}
+                  compact={true}
+                />
+              </div>
+              
+              {/* Right section: Connected Status */}
               <div class="bg-[#00f92a]/20 border border-[#00f92a]/40 px-3 py-1">
                 <span class="text-[#00f92a] font-mono text-xs font-bold">CONNECTED</span>
               </div>
@@ -119,14 +130,6 @@ const StatsPage: Component = () => {
               <span class="text-white/70 ml-2">ping -c 4 music.nodes | traceroute --graph</span>
             </div>
           </div>
-        </div>
-        
-        {/* Network Selector */}
-        <div class="network-element mb-6 relative z-50">
-          <NetworkSelector 
-            selectedNetwork={selectedNetwork()}
-            onNetworkChange={handleNetworkChange}
-          />
         </div>
         
         {/* Network Activity Feed - Terminal Style */}

@@ -15,6 +15,7 @@ interface NetworkSelectorProps {
   selectedNetwork: string;
   onNetworkChange: (networkId: string) => void;
   seamless?: boolean; // For seamless connection to header
+  compact?: boolean; // For compact header mode
 }
 
 const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
@@ -99,55 +100,100 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       }
     });
   };
+
+  // Determine display style based on props
+  const isCompact = props.compact;
   
   return (
     <div class="relative">
-      {/* Terminal-style selector */}
+      {/* Network selector - responsive design */}
       <button
         onClick={() => setIsOpen(!isOpen())}
-        class={`w-full bg-black/60 border-2 border-[#04caf4]/30 ${props.seamless ? 'border-t-0' : ''} p-4 text-left ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} transition-all group relative overflow-hidden`}
+        class={`
+          ${isCompact 
+            ? `
+              w-[280px] lg:w-[280px] md:w-[240px] sm:w-[200px]
+              bg-black/60 border border-[#04caf4]/30 rounded px-2 py-1 text-left
+              ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} 
+              transition-all group relative overflow-hidden h-[36px] flex items-center
+            `
+            : `
+              w-full bg-black/60 border-2 border-[#04caf4]/30 
+              ${props.seamless ? 'border-t-0' : ''} p-4 text-left 
+              ${!isOpen() ? 'hover:border-[#04caf4]' : 'border-[#04caf4]'} 
+              transition-all group relative overflow-hidden
+            `
+          }
+        `}
       >
         {/* Scanning line on hover */}
         <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00f92a] to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-scan" />
         
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class={`w-10 h-10 bg-gradient-to-r ${currentNetwork().color} flex items-center justify-center shadow-lg`}>
-              <i class={`${currentNetwork().icon} text-white`}></i>
+        <div class={`flex items-center ${isCompact ? 'justify-between gap-2' : 'justify-between gap-3'}`}>
+          <div class={`flex items-center ${isCompact ? 'gap-2' : 'gap-3'}`}>
+            <div class={`
+              ${isCompact ? 'w-6 h-6' : 'w-10 h-10'} 
+              bg-gradient-to-r ${currentNetwork().color} 
+              flex items-center justify-center shadow-lg
+            `}>
+              <i class={`${currentNetwork().icon} text-white ${isCompact ? 'text-xs' : ''}`}></i>
             </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-cyan-400 font-mono text-sm">NETWORK://</span>
-                <h3 class="text-white font-bold">{currentNetwork().name}</h3>
+            {isCompact ? (
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                <span class="text-cyan-400 font-mono text-xs">NET://</span>
+                <h3 class="text-white font-bold text-xs truncate">
+                  {currentNetwork().name.replace('Network', '').replace('Jamzy Community', 'Community').trim()}
+                </h3>
               </div>
-              <p class="text-cyan-300/60 text-sm">{currentNetwork().description}</p>
-            </div>
+            ) : (
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-cyan-400 font-mono text-sm">NETWORK://</span>
+                  <h3 class="text-white font-bold">{currentNetwork().name}</h3>
+                </div>
+                <p class="text-cyan-300/60 text-sm">{currentNetwork().description}</p>
+              </div>
+            )}
           </div>
-          <div class="flex items-center gap-4">
+          
+          <div class={`flex items-center ${isCompact ? 'gap-1' : 'gap-4'}`}>
             {currentNetwork().userCount && (
-              <div class="text-right mr-3">
-                <p class="text-cyan-400 font-mono text-lg font-bold">
-                  {currentNetwork().userCount.toLocaleString()}
+              <div class={`text-right ${isCompact ? '' : 'mr-3'}`}>
+                <p class={`text-cyan-400 font-mono font-bold ${isCompact ? 'text-xs' : 'text-lg'}`}>
+                  {isCompact 
+                    ? `${(currentNetwork().userCount / 1000).toFixed(0)}k`
+                    : currentNetwork().userCount.toLocaleString()
+                  }
                 </p>
-                <p class="text-cyan-300/60 text-xs">nodes</p>
+                {!isCompact && (
+                  <p class="text-cyan-300/60 text-xs">nodes</p>
+                )}
               </div>
             )}
             {/* Simple dropdown indicator */}
-            <i class={`fas fa-chevron-${isOpen() ? 'up' : 'down'} text-cyan-400 transition-transform duration-200 text-lg`}></i>
+            <i class={`fas fa-chevron-${isOpen() ? 'up' : 'down'} text-cyan-400 transition-transform duration-200 ${isCompact ? 'text-xs' : 'text-lg'}`}></i>
           </div>
         </div>
         
         {/* Typing cursor effect */}
         <Show when={isTyping()}>
-          <div class="absolute bottom-2 right-4">
-            <span class="text-cyan-400 font-mono text-xs animate-pulse">LOADING_</span>
+          <div class={`absolute ${isCompact ? 'bottom-1 right-2' : 'bottom-2 right-4'}`}>
+            <span class={`text-cyan-400 font-mono animate-pulse ${isCompact ? 'text-xs' : 'text-xs'}`}>LOADING_</span>
           </div>
         </Show>
       </button>
       
       {/* Dropdown menu */}
       <Show when={isOpen()}>
-        <div class="absolute top-full left-0 right-0 -mt-px bg-black/95 backdrop-blur-sm border-2 border-[#04caf4]/30 border-t-0 overflow-hidden z-[9999] shadow-2xl shadow-cyan-400/20">
+        <div class={`
+          absolute top-full -mt-px bg-black/95 backdrop-blur-sm 
+          border-2 border-[#04caf4]/30 border-t-0 overflow-hidden z-[9999] 
+          shadow-2xl shadow-cyan-400/20
+          ${isCompact 
+            ? 'w-[420px] right-0 left-auto' // Wider dropdown for compact version, right-aligned
+            : 'left-0 right-0' // Full width for regular version
+          }
+        `}>
           
           {/* Network options */}
           <div class="max-h-96 overflow-y-auto">

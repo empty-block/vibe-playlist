@@ -29,7 +29,7 @@ const LibraryPage: Component = () => {
       <div class="relative z-10 max-w-[1400px] mx-auto p-6">
         
         {/* Unified Terminal Header */}
-        <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 border-b-0 rounded-t-lg overflow-visible">
+        <div class="bg-[#0d0d0d] border-2 border-[#04caf4]/30 rounded-t-lg overflow-visible">
           {/* Terminal Title Bar */}
           <div class="bg-[rgba(4,202,244,0.02)] border-b border-[#04caf4]/20 px-4 py-3">
             <div class="flex items-center justify-between">
@@ -44,20 +44,20 @@ const LibraryPage: Component = () => {
                 </div>
               </div>
               
+              {/* Center section: Network Selector */}
+              <div class="flex-shrink-0">
+                <NetworkSelector 
+                  selectedNetwork={selectedNetwork()}
+                  onNetworkChange={(networkId) => setSelectedNetwork(networkId)}
+                  compact={true}
+                />
+              </div>
+              
               {/* Right section: Add button */}
               <AddButton onClick={() => navigate('/add')}>
                 <span class="text-xs font-bold tracking-wider">+ ADD_TRACK</span>
               </AddButton>
             </div>
-          </div>
-
-          {/* Network Selector - Integrated */}
-          <div class="relative z-[10000]">
-            <NetworkSelector 
-              selectedNetwork={selectedNetwork()}
-              onNetworkChange={(networkId) => setSelectedNetwork(networkId)}
-              seamless={true}
-            />
           </div>
         </div>
 
