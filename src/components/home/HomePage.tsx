@@ -26,11 +26,14 @@ export interface Network {
   isNew?: boolean;
 }
 
-export interface Artist {
+export interface UserConnection {
   id: string;
-  name: string;
-  image: string;
-  recentActivity: boolean;
+  username: string;
+  avatar: string;
+  musicMatch: number;
+  recentlyPlayed?: string;
+  isOnline: boolean;
+  favoriteGenres: string[];
 }
 
 export interface Suggestion {
@@ -44,7 +47,8 @@ export interface Suggestion {
 export interface HomePageData {
   recentlyPlayed: Track[];
   favoriteNetworks: Network[];
-  favoriteArtists: Artist[];
+  favoriteArtists: Track[]; // Adding missing favoriteArtists
+  topConnections: UserConnection[];
   discoveryStats: {
     newConnections: number;
     newTracks: number;
@@ -62,6 +66,7 @@ const HomePage: Component = () => {
     recentlyPlayed: [],
     favoriteNetworks: [],
     favoriteArtists: [],
+    topConnections: [],
     discoveryStats: null,
     suggestions: []
   });
@@ -82,18 +87,19 @@ const HomePage: Component = () => {
     setIsLoading(true);
     
     // Load all data in parallel and update single state
-    const [recentlyPlayed, favoriteNetworks, favoriteArtists, suggestions] = 
+    const [recentlyPlayed, favoriteNetworks, topConnections, suggestions] = 
       await Promise.all([
         loadRecentlyPlayed(),
         loadFavoriteNetworks(), 
-        loadFavoriteArtists(),
+        loadTopConnections(),
         loadDiscoverySuggestions()
       ]);
     
     setHomePageData({
       recentlyPlayed,
       favoriteNetworks,
-      favoriteArtists,
+      favoriteArtists: recentlyPlayed.slice(0, 6), // Use top 6 recently played as favorite artists for now
+      topConnections,
       discoveryStats: { 
         newConnections: favoriteNetworks.filter(n => n.isNew).length,
         newTracks: recentlyPlayed.filter(t => t.isNew).length 
@@ -270,68 +276,61 @@ const HomePage: Component = () => {
     ];
   };
 
-  const loadFavoriteArtists = async (): Promise<Artist[]> => {
+  const loadTopConnections = async (): Promise<UserConnection[]> => {
     await new Promise(resolve => setTimeout(resolve, 400));
     return [
       {
-        id: 'hendrix',
-        name: 'Jimi Hendrix',
-        image: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
-        recentActivity: true
+        id: 'user-1',
+        username: 'rockgod87',
+        avatar: 'https://i.pravatar.cc/150?img=1',
+        musicMatch: 92,
+        recentlyPlayed: 'Stairway to Heaven - Led Zeppelin',
+        isOnline: true,
+        favoriteGenres: ['Classic Rock', 'Progressive', 'Psychedelic']
       },
       {
-        id: 'pink-floyd',
-        name: 'Pink Floyd',
-        image: 'https://i.scdn.co/image/ab6761610000e5ebeb6bb372e93a51bf78aa2767',
-        recentActivity: false
+        id: 'user-2',
+        username: 'vinylheart',
+        avatar: 'https://i.pravatar.cc/150?img=2',
+        musicMatch: 87,
+        recentlyPlayed: 'Wish You Were Here - Pink Floyd',
+        isOnline: true,
+        favoriteGenres: ['Rock', 'Blues', 'Folk']
       },
       {
-        id: 'queen',
-        name: 'Queen',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb7d0ca20c2b88b8a8fb13d3f3',
-        recentActivity: true
+        id: 'user-3',
+        username: 'metalhead420',
+        avatar: 'https://i.pravatar.cc/150?img=3',
+        musicMatch: 84,
+        recentlyPlayed: 'Master of Puppets - Metallica',
+        isOnline: false,
+        favoriteGenres: ['Metal', 'Thrash', 'Hard Rock']
       },
       {
-        id: 'led-zeppelin',
-        name: 'Led Zeppelin',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb4524cd7c1d14cf44ed0fcdbd',
-        recentActivity: true
+        id: 'user-4',
+        username: 'grungequeen',
+        avatar: 'https://i.pravatar.cc/150?img=4',
+        musicMatch: 78,
+        recentlyPlayed: 'Black - Pearl Jam',
+        isOnline: true,
+        favoriteGenres: ['Grunge', 'Alternative', 'Indie']
       },
       {
-        id: 'pearl-jam',
-        name: 'Pearl Jam',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb8e2341bce08b7e5b3e69aa57',
-        recentActivity: false
+        id: 'user-5',
+        username: 'psychsoul',
+        avatar: 'https://i.pravatar.cc/150?img=5',
+        musicMatch: 75,
+        isOnline: false,
+        favoriteGenres: ['Psychedelic', 'Soul', 'Funk']
       },
       {
-        id: 'metallica',
-        name: 'Metallica',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb3ea4c3f9bb72d3d2b16b1397',
-        recentActivity: true
-      },
-      {
-        id: 'nirvana',
-        name: 'Nirvana',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb95f14a2beb0a46b9c0e0c05c',
-        recentActivity: false
-      },
-      {
-        id: 'acdc',
-        name: 'AC/DC',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb3be0b92ed8dda7a85faf24a8',
-        recentActivity: true
-      },
-      {
-        id: 'black-sabbath',
-        name: 'Black Sabbath',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb2e86d0e7f9a2a5e3ea06a49b',
-        recentActivity: false
-      },
-      {
-        id: 'guns-n-roses',
-        name: 'Guns N Roses',
-        image: 'https://i.scdn.co/image/ab6761610000e5eb6e35a5f1fac86a7a2d70f0bc',
-        recentActivity: true
+        id: 'user-6',
+        username: 'bluesmaster',
+        avatar: 'https://i.pravatar.cc/150?img=6',
+        musicMatch: 71,
+        recentlyPlayed: 'The Thrill Is Gone - B.B. King',
+        isOnline: true,
+        favoriteGenres: ['Blues', 'Jazz', 'Soul']
       }
     ];
   };

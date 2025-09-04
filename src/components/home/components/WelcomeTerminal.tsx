@@ -1,4 +1,4 @@
-import { Component, onMount, Show } from 'solid-js';
+import { Component, onMount, Show, createSignal, onCleanup } from 'solid-js';
 import { typewriter, counterAnimation } from '../../../utils/animations';
 
 interface WelcomeTerminalProps {
@@ -7,43 +7,100 @@ interface WelcomeTerminalProps {
   loading: boolean;
 }
 
+type TerminalMode = 'welcome' | 'stats' | 'activity' | 'time';
+
+interface TerminalContent {
+  mode: TerminalMode;
+  content: string;
+  duration: number;
+}
+
 export const WelcomeTerminal: Component<WelcomeTerminalProps> = (props) => {
   let terminalRef!: HTMLDivElement;
-  let welcomeLineRef!: HTMLDivElement;
-  let connectionsCountRef!: HTMLSpanElement;
-  let tracksCountRef!: HTMLSpanElement;
+  let contentRef!: HTMLDivElement;
+  let intervalId: number | undefined;
+  
+  const [currentMode, setCurrentMode] = createSignal<TerminalMode>('welcome');
+  const [isAnimating, setIsAnimating] = createSignal(false);
+  const [isPaused, setIsPaused] = createSignal(false);
+  const [displayContent, setDisplayContent] = createSignal('');
+  
+  // Dynamic content for cycling
+  const getTerminalModes = (): TerminalContent[] => [
+    {
+      mode: 'welcome',
+      content: `Welcome back, @${props.username}`,
+      duration: 3000
+    },
+    {
+      mode: 'stats',
+      content: `${props.stats?.newConnections || 0} connections • ${props.stats?.newTracks || 0} new tracks`,
+      duration: 3000
+    },
+    {
+      mode: 'activity',
+      content: 'Network activity: Classic Rock +3 users',
+      duration: 3000
+    },
+    {
+      mode: 'time',
+      content: `Session: 2h 15m • Last sync: just now`,
+      duration: 3000
+    }
+  ];
+  
+  const cycleContent = () => {
+    if (isPaused() || props.loading) return;
+    
+    const modes = getTerminalModes();
+    const currentIndex = modes.findIndex(m => m.mode === currentMode());
+    const nextIndex = (currentIndex + 1) % modes.length;
+    const nextMode = modes[nextIndex];
+    
+    // Animate transition
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentMode(nextMode.mode);
+      setDisplayContent(nextMode.content);
+      setIsAnimating(false);
+    }, 300);
+  };
 
   onMount(() => {
-    // Typewriter effect for welcome message
-    if (welcomeLineRef && !props.loading) {
-      setTimeout(() => {
-        typewriter(
-          welcomeLineRef.querySelector('.welcome-text') as HTMLElement,
-          `Welcome back, @${props.username}`,
-          60
-        );
-      }, 300);
-    }
-
-    // Counter animations for stats
-    if (props.stats && !props.loading) {
-      setTimeout(() => {
-        if (connectionsCountRef) {
-          counterAnimation(connectionsCountRef, 0, props.stats!.newConnections);
-        }
-        if (tracksCountRef) {
-          counterAnimation(tracksCountRef, 0, props.stats!.newTracks);
-        }
-      }, 1000);
+    // Initialize content
+    const initialMode = getTerminalModes()[0];
+    setDisplayContent(initialMode.content);
+    
+    // Start cycling
+    if (!props.loading) {
+      intervalId = setInterval(cycleContent, 3000) as unknown as number;
     }
   });
+  
+  onCleanup(() => {
+    if (intervalId) clearInterval(intervalId);
+  });
+
+  const handleClick = () => {
+    setIsPaused(!isPaused());
+    if (!isPaused() && !intervalId) {
+      intervalId = setInterval(cycleContent, 3000) as unknown as number;
+    }
+  };
 
   return (
-    <div ref={terminalRef} class="welcome-terminal">
+    <div 
+      ref={terminalRef} 
+      class="welcome-terminal"
+      onClick={handleClick}
+      title={isPaused() ? 'Click to resume' : 'Click to pause'}
+    >
       <div class="terminal-header">
         <div class="terminal-status">
-          <span class="status-indicator active"></span>
-          <span class="status-text">[TERMINAL::SESSION_ACTIVE]</span>
+          <span class={`status-indicator ${isPaused() ? 'paused' : 'active'}`}></span>
+          <span class="status-text">
+            [TERMINAL::{currentMode().toUpperCase()}]
+          </span>
         </div>
         <div class="terminal-timestamp">
           {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -51,43 +108,31 @@ export const WelcomeTerminal: Component<WelcomeTerminalProps> = (props) => {
       </div>
       
       <div class="terminal-content">
-        <div ref={welcomeLineRef} class="terminal-line welcome-line">
-          <span class="terminal-prompt">&gt;</span>
-          <span class="welcome-text"></span>
-        </div>
-        
-        <Show when={props.stats && !props.loading}>
-          <div class="terminal-line stats-line">
+        <Show 
+          when={!props.loading}
+          fallback={
+            <div class="terminal-line loading-line">
+              <span class="terminal-prompt">&gt;</span>
+              <span>Syncing</span>
+              <span class="loading-dots">...</span>
+            </div>
+          }
+        >
+          <div 
+            ref={contentRef}
+            class={`terminal-line terminal-cycling-content ${isAnimating() ? 'animating' : ''}`}
+          >
             <span class="terminal-prompt">&gt;</span>
-            <span>Your music network has grown by </span>
-            <span 
-              ref={connectionsCountRef} 
-              class="stat-number neon-cyan"
-            >
-              0
-            </span>
-            <span> connections</span>
-          </div>
-          
-          <div class="terminal-line stats-line">
-            <span class="terminal-prompt">&gt;</span>
-            <span ref={tracksCountRef} class="stat-number neon-green">0</span>
-            <span> new tracks discovered since last visit</span>
-          </div>
-        </Show>
-        
-        <Show when={props.loading}>
-          <div class="terminal-line loading-line">
-            <span class="terminal-prompt">&gt;</span>
-            <span>Synchronizing music universe</span>
-            <span class="loading-dots">...</span>
+            <span class="cycling-text">{displayContent()}</span>
+            <Show when={currentMode() === 'stats'}>
+              <span class="status-badges">
+                <Show when={props.stats?.newConnections}>
+                  <span class="badge-new">NEW</span>
+                </Show>
+              </span>
+            </Show>
           </div>
         </Show>
-        
-        <div class="terminal-line cursor-line">
-          <span class="terminal-prompt">&gt;</span>
-          <span class="cursor-blink">_</span>
-        </div>
       </div>
     </div>
   );
