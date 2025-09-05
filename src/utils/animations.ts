@@ -427,3 +427,174 @@ export const morphTransition = (fromElement: HTMLElement, toElement: HTMLElement
     }
   });
 };
+
+// ====== SIDEBAR ANIMATIONS ======
+
+// Sidebar expand/collapse
+export const sidebarToggle = {
+  expand: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      width: [64, 240],
+      duration: 350,
+      easing: 'easeOutCubic',
+      complete: () => {
+        // Trigger label fade-in
+        const labels = element.querySelectorAll('.sidebar-section-label');
+        staggeredFadeIn(labels);
+      }
+    });
+  },
+  
+  collapse: (element: HTMLElement) => {
+    // Hide labels first
+    anime({
+      targets: element.querySelectorAll('.sidebar-section-label'),
+      opacity: [1, 0],
+      duration: 200,
+      easing: 'easeInCubic',
+      complete: () => {
+        // Then collapse width
+        anime({
+          targets: element,
+          width: [240, 64],
+          duration: 300,
+          easing: 'easeInCubic'
+        });
+      }
+    });
+  }
+};
+
+// Section hover effects
+export const sidebarSectionHover = {
+  enter: (element: HTMLElement, color: string) => {
+    element.style.transition = 'none';
+    
+    anime({
+      targets: element,
+      translateX: [0, 4],
+      boxShadow: [`0 0 0 transparent`, `0 0 8px ${color}`],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateX: [4, 0],
+      boxShadow: [`0 0 8px currentColor`, `0 0 0 transparent`],
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        element.style.transform = 'translateZ(0)';
+      }
+    });
+  }
+};
+
+// Active section pulse
+export const sidebarActivePulse = (element: HTMLElement, color: string) => {
+  anime({
+    targets: element,
+    boxShadow: [
+      `0 0 8px ${color}`,
+      `0 0 20px ${color}`,
+      `0 0 8px ${color}`
+    ],
+    duration: 1500,
+    easing: 'easeInOutSine',
+    direction: 'alternate',
+    loop: 3
+  });
+};
+
+// Toggle button particle burst
+export const toggleParticleBurst = (element: HTMLElement) => {
+  const colors = ['#3b00fd', '#04caf4', '#00f92a', '#f906d6'];
+  
+  for (let i = 0; i < 8; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'absolute w-1 h-1 rounded-full pointer-events-none';
+    particle.style.backgroundColor = colors[i % colors.length];
+    
+    const rect = element.getBoundingClientRect();
+    particle.style.left = `${rect.left + rect.width / 2}px`;
+    particle.style.top = `${rect.top + rect.height / 2}px`;
+    
+    document.body.appendChild(particle);
+    
+    const angle = (i * 45) * Math.PI / 180;
+    anime({
+      targets: particle,
+      translateX: Math.cos(angle) * 30,
+      translateY: Math.sin(angle) * 30,
+      opacity: [1, 0],
+      scale: [0.5, 0],
+      duration: 600,
+      easing: 'easeOutCubic',
+      complete: () => particle.remove()
+    });
+  }
+};
+
+// Icon hover animations
+export const iconHover = {
+  enter: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: [1, 1.1],
+      rotate: [0, 5],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: [1.1, 1],
+      rotate: [5, 0],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  }
+};
+
+// Active section icon glow
+export const iconActiveGlow = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    filter: [
+      'drop-shadow(0 0 4px currentColor)',
+      'drop-shadow(0 0 8px currentColor)',
+      'drop-shadow(0 0 4px currentColor)'
+    ],
+    duration: 2000,
+    direction: 'alternate',
+    loop: true,
+    easing: 'easeInOutSine'
+  });
+};
+
+// Mobile sidebar slide
+export const sidebarMobileSlide = {
+  slideIn: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateX: [-240, 0],
+      duration: 300,
+      easing: 'easeOutCubic'
+    });
+  },
+  
+  slideOut: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      translateX: [0, -240],
+      duration: 250,
+      easing: 'easeInCubic'
+    });
+  }
+};

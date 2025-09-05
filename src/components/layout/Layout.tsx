@@ -1,6 +1,6 @@
 import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
 import WindowsFrame from './WindowsFrame';
-import Navigation from './Navigation';
+import Sidebar from './Sidebar/Sidebar';
 import Terminal from '../chat/Terminal';
 import MediaPlayer from '../player/MediaPlayer';
 import { currentTrack } from '../../stores/playlistStore';
@@ -24,17 +24,22 @@ const Layout: Component<LayoutProps> = (props) => {
       
       {/* Main window */}
       <WindowsFrame onCloseClick={() => setShowTerminal(true)}>
-        <Navigation />
-        
-        {/* Main Content - Takes full width */}
-        <div class="flex-1 overflow-y-auto min-w-0">
-          {props.children}
+        <div class="flex h-full overflow-hidden">
+          {/* NEW: Sidebar replaces Navigation */}
+          <Sidebar class="flex-shrink-0" />
+          
+          {/* Main Content - Adjusted for sidebar */}
+          <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <div class="flex-1 overflow-y-auto">
+              {props.children}
+            </div>
+            
+            {/* Player - Always bottom */}
+            <Show when={currentTrack()}>
+              <MediaPlayer />
+            </Show>
+          </div>
         </div>
-        
-        {/* Player - Always bottom bar */}
-        <Show when={currentTrack()}>
-          <MediaPlayer />
-        </Show>
       </WindowsFrame>
       
       {/* Terminal */}
