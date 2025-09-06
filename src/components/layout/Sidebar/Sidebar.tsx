@@ -24,19 +24,8 @@ interface SidebarProps {
 const Sidebar: Component<SidebarProps> = (props) => {
   const location = useLocation();
   const [focusedIndex, setFocusedIndex] = createSignal(-1);
-  const [hoverIndex, setHoverIndex] = createSignal(-1);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = createSignal(false);
 
   let sidebarRef: HTMLElement;
-  let sectionsRef: HTMLElement[] = [];
-
-  // Navigation data
-  const sections: SidebarSection[] = [
-    { id: 'home', href: '/', label: 'Home', icon: HomeIcon, color: 'blue', isPrimary: true },
-    { id: 'library', href: '/library', label: 'Library', icon: LibraryIcon, color: 'cyan' },
-    { id: 'stats', href: '/network', label: 'Stats', icon: StatsIcon, color: 'cyan' },
-    { id: 'profile', href: '/me', label: 'Profile', icon: ProfileIcon, color: 'pink' }
-  ];
 
   // Update current section based on location
   createEffect(() => {
@@ -50,13 +39,6 @@ const Sidebar: Component<SidebarProps> = (props) => {
   // Keyboard navigation
   const handleKeyDown = (e: KeyboardEvent) => {
     const focusedElement = document.activeElement;
-    
-    // Sidebar-specific shortcuts
-    if (e.ctrlKey && e.key === 'b') {
-      e.preventDefault();
-      handleToggle();
-      return;
-    }
     
     // Arrow navigation within sidebar
     if (focusedElement?.closest('.sidebar')) {
@@ -88,7 +70,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
 
   const focusNextSection = () => {
     const currentIndex = focusedIndex();
-    const nextIndex = currentIndex >= sections.length - 1 ? 0 : currentIndex + 1;
+    const nextIndex = currentIndex >= navigationSections.length - 1 ? 0 : currentIndex + 1;
     setFocusedIndex(nextIndex);
     
     const nextElement = document.querySelector(`[data-section-index="${nextIndex}"]`);
@@ -97,7 +79,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
 
   const focusPreviousSection = () => {
     const currentIndex = focusedIndex();
-    const prevIndex = currentIndex <= 0 ? sections.length - 1 : currentIndex - 1;
+    const prevIndex = currentIndex <= 0 ? navigationSections.length - 1 : currentIndex - 1;
     setFocusedIndex(prevIndex);
     
     const prevElement = document.querySelector(`[data-section-index="${prevIndex}"]`);
@@ -111,7 +93,7 @@ const Sidebar: Component<SidebarProps> = (props) => {
   };
 
   const focusLastSection = () => {
-    const lastIndex = sections.length - 1;
+    const lastIndex = navigationSections.length - 1;
     setFocusedIndex(lastIndex);
     const lastElement = document.querySelector(`[data-section-index="${lastIndex}"]`);
     (lastElement as HTMLElement)?.focus();
@@ -122,83 +104,58 @@ const Sidebar: Component<SidebarProps> = (props) => {
     (currentElement as HTMLElement)?.click();
   };
 
-  const handleToggle = () => {
-    if (sidebarRef!) {
-      if (isExpanded()) {
-        sidebarToggle.collapse(sidebarRef);
-      } else {
-        sidebarToggle.expand(sidebarRef);
-      }
-    }
-    setIsExpanded(!isExpanded());
-  };
-
-  // Mobile menu handling
-  const handleMobileToggle = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen());
-    
-    if (sidebarRef!) {
-      if (isMobileMenuOpen()) {
-        sidebarMobileSlide.slideIn(sidebarRef);
-        document.body.style.overflow = 'hidden';
-      } else {
-        sidebarMobileSlide.slideOut(sidebarRef);
-        document.body.style.overflow = '';
-      }
-    }
-  };
-
-  const handleBackdropClick = (e: MouseEvent) => {
-    if (sidebarRef! && !sidebarRef.contains(e.target as Node)) {
-      setIsMobileMenuOpen(false);
-    }
-  };
-
   const handleSectionClick = () => {
-    // Close mobile menu when section is clicked
-    if (isMobileMenuOpen()) {
-      setIsMobileMenuOpen(false);
-      document.body.style.overflow = '';
+    // Navigation callback
+    if (props.onNavigate) {
+      const section = navigationSections[focusedIndex()];
+      props.onNavigate(section.id);
     }
   };
-
-  // Responsive behavior
-  createEffect(() => {
-    const mediaQuery = window.matchMedia('(min-width: 640px) and (max-width: 767px)');
-    
-    const handleTabletView = (e: MediaQueryListEvent | MediaQueryList) => {
-      if (e.matches) {
-        setIsExpanded(false); // Force collapse on tablet
-      }
-    };
-    
-    mediaQuery.addEventListener('change', handleTabletView);
-    if (mediaQuery.matches) setIsExpanded(false);
-    
-    onCleanup(() => mediaQuery.removeEventListener('change', handleTabletView));
-  });
 
   onMount(() => {
     document.addEventListener('keydown', handleKeyDown);
-    if (isMobileMenuOpen()) {
-      document.addEventListener('click', handleBackdropClick);
-    }
   });
 
   onCleanup(() => {
     document.removeEventListener('keydown', handleKeyDown);
-    document.removeEventListener('click', handleBackdropClick);
-    document.body.style.overflow = '';
   });
 
   return (
-    <>
-      {/* Mobile overlay backdrop */}
-      {isMobileMenuOpen() && (
-        <div 
-          class="md:hidden fixed inset-0 bg-black/60 z-25"
-          onClick={handleBackdropClick}
-        />
+    <nav 
+      ref={sidebarRef!}
+      class={`sidebar ${props.class || ''}`}
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      {/* Terminal Header */}
+      <div class="terminal-header">
+        <div class="terminal-line">┌─ JAMZY TERMINAL v2.0 ─┐</div>
+        <div class="terminal-line">│  ♫ NAVIGATION SYSTEM   │</div>
+        <div class="terminal-line">└────────────────────────┘</div>
+      </div>
+
+      {/* Navigation Sections */}
+      <ul role="menubar" aria-orientation="vertical" class="sidebar-sections">
+        <For each={navigationSections}>
+          {(section, index) => (
+            <SidebarSectionComponent
+              id={section.id}
+              href={section.href}
+              label={section.label}
+              icon={section.icon}
+              color={section.color}
+              isPrimary={section.isPrimary}
+              index={index()}
+              focusedIndex={focusedIndex}
+              setFocusedIndex={setFocusedIndex}
+              onSectionClick={handleSectionClick}
+            />
+          )}
+        </For>
+      </ul>
+    </nav>
+  );
+}
       )}
       
       {/* Main Sidebar */}

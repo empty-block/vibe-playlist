@@ -34,6 +34,16 @@ const SidebarSection: Component<SidebarSectionProps> = (props) => {
     return location.pathname === props.href;
   };
 
+  const getAsciiSymbol = () => {
+    switch (props.id) {
+      case 'home': return '[♥]';
+      case 'library': return '[♪]';
+      case 'stats': return '[■]';
+      case 'profile': return '[♠]';
+      default: return '[►]';
+    }
+  };
+
   const getColorClasses = () => {
     switch (props.color) {
       case 'blue':
@@ -113,11 +123,9 @@ const SidebarSection: Component<SidebarSectionProps> = (props) => {
         ref={sectionRef!}
         href={props.href}
         class={`
-          relative flex items-center h-14
-          ${isExpanded() ? 'px-4' : 'px-2 justify-center'}
-          font-display text-sm font-medium uppercase tracking-wide
-          text-gray-400 border-l-2 border-transparent
-          transition-colors duration-200 cursor-pointer
+          sidebar-section
+          ${isExpanded() ? '' : 'justify-center'}
+          text-gray-400
           focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:ring-offset-2 focus:ring-offset-black
           ${colorClasses.hover}
           ${isActive() ? colorClasses.active : ''}
@@ -131,18 +139,20 @@ const SidebarSection: Component<SidebarSectionProps> = (props) => {
         onClick={handleClick}
         onFocus={handleFocus}
       >
-        <div ref={iconRef!} class="sidebar-section-icon w-6 h-6 flex-shrink-0">
-          <props.icon aria-hidden={true} />
-        </div>
-        <span 
-          class={`
-            sidebar-section-label ml-3 whitespace-nowrap overflow-hidden 
-            transition-opacity duration-200
-            ${!isExpanded() ? 'opacity-0 pointer-events-none' : ''}
-          `}
-        >
-          {props.label}
-        </span>
+        {!isExpanded() && (
+          <div ref={iconRef!} class="sidebar-section-icon w-6 h-6 flex-shrink-0">
+            <props.icon aria-hidden={true} />
+          </div>
+        )}
+        {isExpanded() && (
+          <span 
+            class="sidebar-section-label ml-3 whitespace-nowrap overflow-hidden font-mono text-xs tracking-wider"
+          >
+            <span class="text-current opacity-60">{getAsciiSymbol()}</span>
+            <span class="ml-1 text-current">{props.label.toUpperCase()}</span>
+            <span class="ml-1 text-current opacity-40">[►]</span>
+          </span>
+        )}
         
         {/* Active state indicator */}
         {isActive() && (
@@ -151,24 +161,8 @@ const SidebarSection: Component<SidebarSectionProps> = (props) => {
             style={{ "box-shadow": "0 0 8px currentColor" }}
           />
         )}
+        
       </A>
-      
-      {/* Tooltip for collapsed state */}
-      {!isExpanded() && (
-        <div
-          id={`${props.id}-tooltip`}
-          class="
-            absolute left-16 top-1/2 -translate-y-1/2 z-40
-            px-2 py-1 bg-gray-900 border border-gray-700 text-xs text-white
-            opacity-0 pointer-events-none transition-opacity duration-200
-            hover:opacity-100
-          "
-          role="tooltip"
-          aria-hidden="true"
-        >
-          {props.label}
-        </div>
-      )}
     </li>
   );
 };
