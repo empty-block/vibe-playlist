@@ -1,41 +1,79 @@
-/* Container - Increased height to accommodate YouTube embed */
+/* Container - CSS Grid layout with controls on left */
 .playerContainer {
-  height: 120px;
+  height: 140px;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
   border-top: 1px solid var(--neon-cyan);
   background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-4);
+  display: grid;
+  grid-template-columns: 400px 1fr 400px;
+  grid-template-areas: "info controls media";
   gap: var(--space-6);
+  padding: 0 var(--space-6);
+  align-items: center;
 }
 
-/* Track Info Section */
+/* Track Info Section - Left side */
 .trackInfo {
-  flex: 1;
-  min-width: 0; /* Allow text truncation */
+  grid-area: info;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 300px;
+  padding: 0 var(--space-4);
+}
+
+.trackHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .trackTitle {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   color: var(--neon-cyan);
   font-weight: 600;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.2;
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
-.trackMeta {
+.artistName {
+  font-family: var(--font-interface);
+  font-size: var(--text-lg);
+  color: var(--neon-orange);
+  cursor: pointer;
+  transition: all 200ms ease;
+  margin: 0;
+  width: 100%;
+}
+
+.artistName:hover {
+  color: var(--light-text);
+  text-shadow: 0 0 8px var(--neon-orange);
+}
+
+.socialContext {
   font-family: var(--font-interface);
   font-size: var(--text-sm);
   color: var(--muted-text);
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  width: 100%;
 }
 
 .statusIndicator {
@@ -43,7 +81,14 @@
   height: 8px;
   border-radius: 50%;
   background: var(--neon-green);
-  box-shadow: 0 0 8px var(--neon-green);
+  box-shadow: 0 0 12px var(--neon-green);
+  animation: pulse 2s infinite;
+  margin-right: var(--space-2);
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--neon-green); }
+  50% { box-shadow: 0 0 16px var(--neon-green); }
 }
 
 .statusIndicator.paused {
@@ -61,27 +106,30 @@
   letter-spacing: 0.05em;
 }
 
-/* Controls Section */
+/* Controls Section - Center layout */
 .controls {
+  grid-area: controls;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-4);
-  flex-shrink: 0;
 }
 
+
 .controlButton {
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--neon-cyan);
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--neon-cyan);
   background: var(--darker-bg);
   color: var(--neon-cyan);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 200ms ease;
+  position: relative;
 }
 
 .controlButton:hover {
@@ -102,12 +150,14 @@
 }
 
 .playButton {
-  width: 64px;
-  height: 64px;
-  border: 2px solid var(--neon-blue);
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--neon-blue);
   background: var(--neon-blue);
   color: var(--light-text);
-  font-size: 24px;
+  font-size: 22px;
+  position: relative;
+  box-shadow: 0 0 16px rgba(59, 0, 253, 0.4);
 }
 
 .playButton:hover {
@@ -116,12 +166,12 @@
   box-shadow: 0 0 16px rgba(59, 0, 253, 0.6);
 }
 
-/* Media Section - YouTube compliant sizing */
+/* Media Section - Right side without border */
 .mediaSection {
-  flex-shrink: 0;
-  width: 320px;
-  height: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  grid-area: media;
+  width: 100%;
+  height: 120px;
+  border: none;
   border-radius: 4px;
   overflow: hidden;
   background: var(--darker-bg);
@@ -131,37 +181,116 @@
   display: none;
 }
 
-/* Progress Section */
-.progress {
+/* Enhanced Progress Section */
+.progressContainer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: var(--darker-bg);
+  height: 3px;
+  background: rgba(26, 26, 26, 0.8);
+  cursor: pointer;
 }
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, var(--neon-blue) 0%, var(--neon-cyan) 100%);
+  background: linear-gradient(90deg, 
+    var(--neon-blue) 0%, 
+    var(--neon-cyan) 100%
+  );
+  position: relative;
   transition: width 200ms ease;
+}
+
+.progressHandle {
+  position: absolute;
+  right: -6px;
+  top: -3px;
+  width: 12px;
+  height: 12px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 200ms ease;
+  box-shadow: 0 0 8px var(--neon-cyan);
+}
+
+.progressContainer:hover .progressHandle {
+  opacity: 1;
+}
+
+/* New: Shuffle Button Styles */
+.shuffleButton {
+  border-color: var(--neon-pink);
+  color: var(--neon-pink);
+}
+
+.shuffleButton.active {
+  background: var(--neon-pink);
+  color: var(--darker-bg);
+  box-shadow: 0 0 12px rgba(249, 6, 214, 0.4);
+}
+
+/* New: Repeat Button Styles */
+.repeatButton {
+  border-color: var(--neon-orange);
+  color: var(--neon-orange);
+}
+
+.repeatButton.active {
+  background: var(--neon-orange);
+  color: var(--darker-bg);
+  box-shadow: 0 0 12px rgba(255, 155, 0, 0.4);
+}
+
+.repeatOne {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  font-weight: bold;
+  width: 14px;
+  height: 14px;
+  background: var(--neon-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--darker-bg);
+}
+
+/* Chat Button Styles */
+.chatButton {
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+}
+
+.chatButton:hover {
+  background: var(--neon-green);
+  color: var(--darker-bg);
+  box-shadow: 0 0 12px rgba(0, 249, 42, 0.4);
 }
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .playerContainer {
-    height: 120px;
-    flex-direction: column;
-    padding: var(--space-2) var(--space-4);
-    gap: var(--space-2);
+    height: 140px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas: 
+      "info"
+      "controls";
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
   }
   
   .trackInfo {
     width: 100%;
+    text-align: center;
+    gap: var(--space-1);
   }
   
   .controls {
-    width: 100%;
     justify-content: center;
     gap: var(--space-6);
   }
@@ -170,7 +299,17 @@
     display: none;
   }
   
-  .progress {
+  .chatButton {
+    display: block;
+  }
+  
+  .playButton {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+  }
+  
+  .progressContainer {
     position: static;
     height: 2px;
     width: 100%;

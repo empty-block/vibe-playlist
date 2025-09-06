@@ -598,3 +598,109 @@ export const sidebarMobileSlide = {
     });
   }
 };
+
+// ====== PLAYER BAR ANIMATIONS ======
+
+// Enhanced hover for shuffle/repeat state buttons
+export const stateButtonHover = {
+  enter: (element: HTMLElement, isActive: boolean) => {
+    const color = isActive ? '#ffffff' : element.style.borderColor;
+    element.style.transition = 'none';
+    
+    anime({
+      targets: element,
+      scale: 1.1,
+      translateY: -3,
+      boxShadow: `0 0 16px ${color}`,
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: 1,
+      translateY: 0,
+      boxShadow: '0 0 0 transparent',
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        element.style.transition = '';
+        element.style.transform = 'translateZ(0)';
+      }
+    });
+  }
+};
+
+// Progress bar interactions
+export const progressBarInteraction = {
+  onMouseMove: (element: HTMLElement, percentage: number) => {
+    const handle = element.querySelector('.progressHandle') as HTMLElement;
+    if (handle) {
+      handle.style.right = `${100 - percentage}%`;
+    }
+  },
+  
+  onSeek: (element: HTMLElement, targetPercentage: number) => {
+    const bar = element.querySelector('.progressBar') as HTMLElement;
+    anime({
+      targets: bar,
+      width: `${targetPercentage}%`,
+      duration: 300,
+      easing: 'easeOutQuad'
+    });
+  }
+};
+
+// Shuffle toggle animation
+export const shuffleToggle = (element: HTMLElement, isActive: boolean) => {
+  const color = isActive ? '#f906d6' : '#cccccc';
+  
+  anime({
+    targets: element,
+    rotate: [0, 360],
+    borderColor: color,
+    color: color,
+    background: isActive ? '#f906d6' : 'transparent',
+    duration: 400,
+    easing: 'easeInOutQuad'
+  });
+};
+
+// Repeat toggle animation with mode indication
+export const repeatToggle = (element: HTMLElement, mode: 'none' | 'all' | 'one') => {
+  const colors = {
+    none: '#cccccc',
+    all: '#ff9b00',
+    one: '#ff9b00'
+  };
+  
+  const color = colors[mode];
+  const isActive = mode !== 'none';
+  
+  anime({
+    targets: element,
+    scale: [1, 1.2, 1],
+    borderColor: color,
+    color: color,
+    background: isActive ? color : 'transparent',
+    duration: 300,
+    easing: 'easeOutQuad'
+  });
+};
+
+// Status indicator pulse animation
+export const statusPulse = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    boxShadow: [
+      '0 0 8px var(--neon-green)',
+      '0 0 16px var(--neon-green)',
+      '0 0 8px var(--neon-green)'
+    ],
+    duration: 2000,
+    loop: true,
+    easing: 'easeInOutSine'
+  });
+};

@@ -1,7 +1,19 @@
 import { Component, Show, JSX, createSignal, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { currentTrack, isPlaying, playingPlaylistId, setCurrentPlaylistId } from '../../stores/playlistStore';
-import { playbackButtonHover } from '../../utils/animations';
+import { 
+  currentTrack, 
+  isPlaying, 
+  playingPlaylistId, 
+  setCurrentPlaylistId,
+  shuffleMode,
+  setShuffleMode,
+  repeatMode,
+  setRepeatMode,
+  currentTime,
+  duration,
+  isSeekable
+} from '../../stores/playlistStore';
+import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
 import styles from './player.module.css';
 
 interface PlayerProps {
@@ -19,6 +31,9 @@ const Player: Component<PlayerProps> = (props) => {
   let playButtonRef: HTMLButtonElement | undefined;
   let prevButtonRef: HTMLButtonElement | undefined;
   let nextButtonRef: HTMLButtonElement | undefined;
+  let shuffleButtonRef: HTMLButtonElement | undefined;
+  let chatButtonRef: HTMLButtonElement | undefined;
+  let statusIndicatorRef: HTMLDivElement | undefined;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -36,46 +51,97 @@ const Player: Component<PlayerProps> = (props) => {
     // TODO: Implement playlist navigation
   };
 
-  const handleGoToPlayingPlaylist = () => {
-    // Set the current playlist to the one that's actually playing
-    setCurrentPlaylistId(playingPlaylistId());
-    // Navigate to player page to show the playing playlist
-    navigate('/player');
+  const handleShuffleToggle = () => {
+    const newShuffleState = !shuffleMode();
+    setShuffleMode(newShuffleState);
+    
+    // Visual feedback
+    if (shuffleButtonRef) {
+      shuffleToggle(shuffleButtonRef, newShuffleState);
+    }
+    
+    console.log('Shuffle:', newShuffleState ? 'ON' : 'OFF');
   };
+
+  const handleChatToggle = () => {
+    console.log('Open chat for track:', currentTrack()?.id);
+    // TODO: Navigate to track's conversation thread or open chat sidebar
+  };
+
+  const handleArtistClick = () => {
+    navigate(`/artist/${encodeURIComponent(currentTrack()?.artist || '')}`);
+  };
+
+  const handleProgressClick = (event: MouseEvent) => {
+    if (!isSeekable() || !props.onSeek) return;
+    
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const percentage = ((event.clientX - rect.left) / rect.width) * 100;
+    const targetTime = (duration() * percentage) / 100;
+    
+    props.onSeek(targetTime);
+  };
+
 
   // Set up animations
   onMount(() => {
-    [playButtonRef, prevButtonRef, nextButtonRef]
+    // Primary playback buttons
+    [playButtonRef, prevButtonRef, nextButtonRef, chatButtonRef]
       .filter(Boolean)
       .forEach(button => {
         button!.addEventListener('mouseenter', () => playbackButtonHover.enter(button!));
         button!.addEventListener('mouseleave', () => playbackButtonHover.leave(button!));
       });
+
+    // Shuffle button
+    if (shuffleButtonRef) {
+      shuffleButtonRef.addEventListener('mouseenter', () => 
+        stateButtonHover.enter(shuffleButtonRef!, shuffleMode())
+      );
+      shuffleButtonRef.addEventListener('mouseleave', () => 
+        stateButtonHover.leave(shuffleButtonRef!)
+      );
+    }
+
+    // Status indicator pulsing animation
+    if (statusIndicatorRef && isPlaying()) {
+      statusPulse(statusIndicatorRef);
+    }
   });
 
   return (
     <Show when={currentTrack()}>
       <div class={styles.playerContainer}>
-        {/* Track Info Section */}
+        {/* Track Info Section - Left */}
         <div class={styles.trackInfo}>
-          <div class="flex items-center gap-2 mb-1">
-            <div class={`${styles.statusIndicator} ${!isPlaying() ? styles.paused : ''}`}></div>
-            <h3 class={styles.trackTitle}>
-              {currentTrack()?.title}
-            </h3>
-            <div class={styles.platformBadge}>
-              {currentTrack()?.source?.toUpperCase()}
-            </div>
+          <h3 class={styles.trackTitle}>
+            <div ref={statusIndicatorRef!} class={`${styles.statusIndicator} ${!isPlaying() ? styles.paused : ''}`}></div>
+            {currentTrack()?.title}
+          </h3>
+          <div class={styles.artistName} onClick={handleArtistClick}>
+            {currentTrack()?.artist}
           </div>
-          <div class={styles.trackMeta}>
-            <span>{currentTrack()?.artist}</span>
-            <span>•</span>
+          <div class={styles.socialContext}>
             <span>Added by {currentTrack()?.addedBy}</span>
+            <span>•</span>
+            <span class={styles.platformBadge}>{currentTrack()?.source?.toUpperCase()}</span>
+            <span>•</span>
+            <span>now</span>
           </div>
         </div>
 
-        {/* Controls Section */}
+        {/* Controls Section - Center */}
         <div class={styles.controls}>
+          <button
+            ref={shuffleButtonRef!}
+            onClick={handleShuffleToggle}
+            class={`${styles.controlButton} ${styles.shuffleButton} ${shuffleMode() ? styles.active : ''}`}
+            disabled={!props.playerReady()}
+            title={`Shuffle ${shuffleMode() ? 'ON' : 'OFF'}`}
+          >
+            <i class="fas fa-random"></i>
+          </button>
+
           <button
             ref={prevButtonRef!}
             onClick={handleSkipPrevious}
@@ -108,39 +174,37 @@ const Player: Component<PlayerProps> = (props) => {
             <i class="fas fa-step-forward"></i>
           </button>
 
-          {/* Secondary Actions */}
-          <div class="flex gap-2 ml-4">
-            <button 
-              class={`${styles.controlButton} text-sm`} 
-              onClick={handleGoToPlayingPlaylist}
-              title="View playlist"
-            >
-              <i class="fas fa-list"></i>
-            </button>
-            <button 
-              class={`${styles.controlButton} text-sm`} 
-              onClick={() => console.log('Open chat')}
-              title="Open chat"
-            >
-              <i class="fas fa-comment"></i>
-            </button>
-          </div>
+          <button
+            ref={chatButtonRef!}
+            onClick={handleChatToggle}
+            class={`${styles.controlButton} ${styles.chatButton}`}
+            disabled={!props.playerReady()}
+            title="Open chat"
+          >
+            <i class="fas fa-comments"></i>
+          </button>
         </div>
 
-        {/* Media Section - Desktop Only */}
-        <div class={`${styles.mediaSection} hidden md:block`}>
+        {/* Media Section - Right */}
+        <div class={styles.mediaSection}>
           {props.mediaComponent}
         </div>
 
-        {/* Progress Bar - Non-YouTube sources */}
+        {/* Progress Bar - Full Width Bottom */}
         <Show when={currentTrack()?.source !== 'youtube' && props.currentTime}>
-          <div class={styles.progress}>
+          <div 
+            class={styles.progressContainer}
+            onClick={handleProgressClick}
+            title="Click to seek"
+          >
             <div 
               class={styles.progressBar}
               style={{
                 width: `${((props.currentTime?.() || 0) / (props.duration?.() || 1)) * 100}%`
               }}
-            ></div>
+            >
+              <div class={styles.progressHandle}></div>
+            </div>
           </div>
         </Show>
       </div>

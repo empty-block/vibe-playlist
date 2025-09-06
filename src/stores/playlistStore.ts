@@ -77,6 +77,16 @@ export const [playlistTracks, setPlaylistTracks] = createStore<Record<string, Tr
 export const [currentTrack, setCurrentTrack] = createSignal<Track | null>(null);
 export const [isPlaying, setIsPlaying] = createSignal(false);
 
+// Player controls state
+export const [shuffleMode, setShuffleMode] = createSignal(false);
+export const [repeatMode, setRepeatMode] = createSignal<'none' | 'all' | 'one'>('none');
+export const [playerHeight, setPlayerHeight] = createSignal(155);
+
+// Progress tracking
+export const [currentTime, setCurrentTime] = createSignal(0);
+export const [duration, setDuration] = createSignal(0);
+export const [isSeekable, setIsSeekable] = createSignal(false);
+
 // Temporary migration function to add missing source fields
 const addMissingSourceFields = (track: any): Track => {
   if (!track.source && track.videoId) {
