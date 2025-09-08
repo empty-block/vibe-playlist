@@ -435,7 +435,7 @@ export const sidebarToggle = {
   expand: (element: HTMLElement) => {
     anime({
       targets: element,
-      width: [64, 240],
+      width: [64, 192],
       duration: 350,
       easing: 'easeOutCubic',
       complete: () => {
@@ -457,7 +457,7 @@ export const sidebarToggle = {
         // Then collapse width
         anime({
           targets: element,
-          width: [240, 64],
+          width: [192, 64],
           duration: 300,
           easing: 'easeInCubic'
         });
@@ -578,23 +578,175 @@ export const iconActiveGlow = (element: HTMLElement) => {
   });
 };
 
-// Mobile sidebar slide
+// Enhanced mobile sidebar slide with terminal boot sequence
 export const sidebarMobileSlide = {
   slideIn: (element: HTMLElement) => {
+    // Add terminal boot sequence first
+    terminalBootSequence(element);
+    
     anime({
       targets: element,
-      translateX: [-240, 0],
-      duration: 300,
-      easing: 'easeOutCubic'
+      translateX: [-192, 0],
+      duration: 400,
+      easing: 'easeOutCubic',
+      complete: () => {
+        // Add scanning effect after slide-in
+        terminalScanEffect(element);
+      }
     });
   },
   
   slideOut: (element: HTMLElement) => {
     anime({
       targets: element,
-      translateX: [0, -240],
-      duration: 250,
+      translateX: [0, -192],
+      duration: 300,
       easing: 'easeInCubic'
     });
+  }
+};
+
+// Terminal boot sequence for mobile
+export const terminalBootSequence = (element: HTMLElement) => {
+  // Create boot overlay
+  const bootOverlay = document.createElement('div');
+  bootOverlay.className = 'absolute inset-0 bg-black/95 z-50 flex flex-col justify-center items-start px-4 font-mono text-xs text-library-color';
+  bootOverlay.innerHTML = `
+    <div class="boot-line opacity-0">JAMZY TERMINAL v2.0</div>
+    <div class="boot-line opacity-0">Initializing navigation system...</div>
+    <div class="boot-line opacity-0">Loading user preferences...</div>
+    <div class="boot-line opacity-0">Connecting to music services...</div>
+    <div class="boot-line opacity-0">System ready ●</div>
+  `;
+  
+  element.appendChild(bootOverlay);
+  
+  // Animate boot lines
+  const bootLines = bootOverlay.querySelectorAll('.boot-line');
+  
+  anime({
+    targets: bootLines,
+    opacity: [0, 1],
+    translateX: [-20, 0],
+    duration: 300,
+    delay: anime.stagger(400),
+    easing: 'easeOutQuad',
+    complete: () => {
+      // Fade out boot overlay
+      anime({
+        targets: bootOverlay,
+        opacity: [1, 0],
+        duration: 500,
+        delay: 800,
+        easing: 'easeInQuad',
+        complete: () => {
+          bootOverlay.remove();
+        }
+      });
+    }
+  });
+};
+
+// Terminal scanning effect
+export const terminalScanEffect = (element: HTMLElement) => {
+  const scanLine = document.createElement('div');
+  scanLine.className = 'absolute top-0 left-0 w-full h-0.5 bg-library-color/60 z-40';
+  scanLine.style.boxShadow = '0 0 10px var(--library-color)';
+  
+  element.appendChild(scanLine);
+  
+  anime({
+    targets: scanLine,
+    translateY: [0, element.offsetHeight],
+    opacity: [0, 1, 0],
+    duration: 2000,
+    easing: 'easeInOutQuad',
+    complete: () => {
+      scanLine.remove();
+    }
+  });
+};
+
+// Music-reactive elements (tempo sync, activity indicators)
+export const musicReactiveElements = {
+  tempoSync: (element: HTMLElement, bpm: number = 120) => {
+    const beatDuration = (60 / bpm) * 1000; // Convert BPM to milliseconds
+    
+    anime({
+      targets: element,
+      scale: [1, 1.02, 1],
+      duration: beatDuration / 2,
+      loop: true,
+      easing: 'easeInOutSine'
+    });
+  },
+  
+  activityIndicator: (element: HTMLElement, isActive: boolean = true) => {
+    if (isActive) {
+      anime({
+        targets: element,
+        opacity: [0.5, 1, 0.5],
+        duration: 1500,
+        loop: true,
+        easing: 'easeInOutSine'
+      });
+    } else {
+      anime.remove(element);
+      element.style.opacity = '0.5';
+    }
+  },
+  
+  visualizerPulse: (elements: HTMLElement[], audioData?: number[]) => {
+    elements.forEach((element, index) => {
+      const intensity = audioData ? audioData[index] || 0.5 : Math.random();
+      
+      anime({
+        targets: element,
+        scaleY: [1, 1 + intensity],
+        duration: 200,
+        easing: 'easeOutQuad'
+      });
+    });
+  }
+};
+
+// Music player state synchronization
+export const musicPlayerSync = {
+  highlightActiveSection: (sectionElement: HTMLElement, platform: string) => {
+    // Platform-specific colors
+    const platformColors: Record<string, string> = {
+      'spotify': '#00f92a',
+      'youtube': '#ff0000',
+      'soundcloud': '#ff7700',
+      'default': '#04caf4'
+    };
+    
+    const color = platformColors[platform] || platformColors.default;
+    
+    anime({
+      targets: sectionElement,
+      boxShadow: [
+        '0 0 0 transparent',
+        `0 0 15px ${color}`,
+        `0 0 8px ${color}`
+      ],
+      duration: 1000,
+      easing: 'easeOutCubic'
+    });
+  },
+  
+  nowPlayingPulse: (element: HTMLElement, isPlaying: boolean) => {
+    if (isPlaying) {
+      anime({
+        targets: element,
+        scale: [1, 1.05, 1],
+        duration: 2000,
+        loop: true,
+        easing: 'easeInOutSine'
+      });
+    } else {
+      anime.remove(element);
+      element.style.transform = 'scale(1)';
+    }
   }
 };

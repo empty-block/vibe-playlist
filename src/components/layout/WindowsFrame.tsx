@@ -7,7 +7,7 @@ interface WindowsFrameProps {
 
 const WindowsFrame: Component<WindowsFrameProps> = (props) => {
   return (
-    <div class="win95-panel m-4 h-[calc(100vh-2rem)] flex flex-col">
+    <div class="win95-panel m-4 flex flex-col" style="height: calc(100% - 2rem);">
       {/* Title bar */}
       <div class="windows-titlebar p-2 flex justify-between items-center">
         <div class="flex items-center gap-2">
