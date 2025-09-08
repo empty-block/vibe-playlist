@@ -13,9 +13,9 @@ export default defineConfig(() => {
     },
   server: {
     host: 'localhost', // For local development
-    port: 4001,
+    port: 3001,
     hmr: {
-      port: 4002,
+      port: 3002,
       protocol: 'ws',
       host: 'localhost'
     },

@@ -15,8 +15,6 @@ const Layout: Component<LayoutProps> = (props) => {
   // Make showTerminal globally accessible for the close button
   (window as any).showTerminal = () => setShowTerminal(true);
 
-  // Simplified layout - no responsive state needed
-
   return (
     <div class="h-screen relative overflow-hidden" style="background: linear-gradient(135deg, #04caf4 0%, #00f92a 100%);">
       {/* TV Static overlay */}
@@ -24,21 +22,24 @@ const Layout: Component<LayoutProps> = (props) => {
       
       {/* Main window */}
       <WindowsFrame onCloseClick={() => setShowTerminal(true)}>
-        <div class="flex h-full overflow-hidden">
-          {/* NEW: Sidebar replaces Navigation */}
-          <Sidebar class="flex-shrink-0" />
+        <div class="layout-container">
+          {/* Desktop Sidebar - Hidden on mobile */}
+          <Sidebar class="desktop-sidebar" />
           
-          {/* Main Content - Adjusted for sidebar */}
-          <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <div class="flex-1 overflow-y-auto">
+          {/* Main Content - Responsive padding */}
+          <div class="main-content">
+            <div class="content-scroll">
               {props.children}
             </div>
             
-            {/* Player - Always bottom */}
+            {/* Player - Always above mobile nav */}
             <Show when={currentTrack()}>
               <MediaPlayer />
             </Show>
           </div>
+          
+          {/* Mobile Navigation - Hidden on desktop */}
+          <MobileNav class="mobile-navigation" />
         </div>
       </WindowsFrame>
       
@@ -47,6 +48,8 @@ const Layout: Component<LayoutProps> = (props) => {
         <Terminal onClose={() => setShowTerminal(false)} />
       </Show>
     </div>
+  );
+}
   );
 };
 
