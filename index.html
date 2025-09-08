@@ -426,9 +426,30 @@
             min-width: var(--zen-touch-comfortable);
             min-height: var(--zen-touch-comfortable);
         }
+        
+        /* Reset any potential margin/padding issues */
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        
+        /* Ensure full viewport usage */
+        html {
+            height: 100%;
+        }
+        
+        #root {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
-<body class="bg-black font-pixel overflow-hidden h-screen" style="color: var(--primary-color);">
+<body class="bg-black font-pixel overflow-hidden m-0 p-0" style="color: var(--primary-color); height: 100vh; position: fixed; width: 100%; top: 0; left: 0;">
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
 </body>

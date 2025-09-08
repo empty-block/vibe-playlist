@@ -1,26 +1,72 @@
-import { Component, createSignal, onMount, onCleanup, createEffect } from 'solid-js';
+import { Component, createSignal, onMount, onCleanup, createEffect, Accessor, Setter } from 'solid-js';
 import { For } from 'solid-js';
-import { useLocation } from '@solidjs/router';
-import { isExpanded, setIsExpanded, setCurrentSection } from '../../../stores/sidebarStore';
-import { sidebarToggle, sidebarMobileSlide } from '../../../utils/animations';
-import SidebarSection from './SidebarSection';
-import SidebarToggle from './SidebarToggle';
-import { HomeIcon, LibraryIcon, StatsIcon, ProfileIcon } from './SidebarIcons';
+import { A, useLocation } from '@solidjs/router';
+import { setCurrentSection, currentSection } from '../../../stores/sidebarStore';
+import { navigationSections, type SidebarSection, type SectionColor, type IconProps } from './NavigationData';
 import './sidebar.css';
 
-interface SidebarSection {
+// Component interfaces
+interface SidebarSectionProps {
   id: string;
   href: string;
   label: string;
-  icon: Component;
-  color: 'blue' | 'cyan' | 'pink';
+  icon: Component<IconProps>;
+  color: SectionColor;
   isPrimary?: boolean;
+  index: number;
+  focusedIndex: Accessor<number>;
+  setFocusedIndex: Setter<number>;
+  onSectionClick: () => void;
 }
 
 interface SidebarProps {
   class?: string;
+  onNavigate?: (sectionId: string) => void;
 }
 
+// Sidebar Section Component
+const SidebarSectionComponent: Component<SidebarSectionProps> = (props) => {
+  const location = useLocation();
+  
+  const isActive = () => {
+    return currentSection() === props.id;
+  };
+
+  return (
+    <li role="none">
+      <A
+        href={props.href}
+        class="sidebar-section"
+        classList={{
+          [`sidebar-section-${props.color}`]: true,
+          'sidebar-section-active': isActive(),
+          'sidebar-section-primary': props.isPrimary
+        }}
+        role="menuitem"
+        aria-label={`Navigate to ${props.label} page`}
+        aria-current={isActive() ? 'page' : undefined}
+        data-section-index={props.index}
+        tabindex={props.focusedIndex() === props.index ? 0 : -1}
+        onFocus={() => props.setFocusedIndex(props.index)}
+        onClick={props.onSectionClick}
+      >
+        <props.icon class="sidebar-section-icon" />
+        <span class="sidebar-section-label">{props.label}</span>
+        
+        {/* Tooltip for collapsed state */}
+        <div 
+          class="sidebar-tooltip" 
+          role="tooltip" 
+          aria-hidden="true"
+        >
+          {props.label}
+        </div>
+      </A>
+    </li>
+  );
+};
+
+// Main Sidebar Component
 const Sidebar: Component<SidebarProps> = (props) => {
   const location = useLocation();
   const [focusedIndex, setFocusedIndex] = createSignal(-1);
@@ -129,9 +175,9 @@ const Sidebar: Component<SidebarProps> = (props) => {
     >
       {/* Terminal Header */}
       <div class="terminal-header">
-        <div class="terminal-line">┌─ JAMZY TERMINAL v2.0 ─┐</div>
-        <div class="terminal-line">│  ♫ NAVIGATION SYSTEM   │</div>
-        <div class="terminal-line">└────────────────────────┘</div>
+        <div class="terminal-line">┌─ JAMZY v2.0 ──┐</div>
+        <div class="terminal-line">│ ♫ NAV SYSTEM  │</div>
+        <div class="terminal-line">└───────────────┘</div>
       </div>
 
       {/* Navigation Sections */}
@@ -154,51 +200,6 @@ const Sidebar: Component<SidebarProps> = (props) => {
         </For>
       </ul>
     </nav>
-  );
-}
-      )}
-      
-      {/* Main Sidebar */}
-      <nav
-        ref={sidebarRef!}
-        class={`
-          sidebar h-full transition-all duration-300 ease-out z-30
-          bg-black/95 border-r border-gray-800 relative
-          ${isExpanded() ? 'w-48 min-w-48 max-w-48' : 'w-16 min-w-16 max-w-16'}
-          ${props.class || ''}
-        `}
-        classList={{
-          'sidebar-collapsed': !isExpanded()
-        }}
-        role="navigation"
-        aria-label="Main navigation"
-        aria-expanded={isExpanded()}
-      >
-        {/* Toggle Button */}
-        <SidebarToggle />
-        
-
-        {/* Navigation Sections */}
-        <ul class="sidebar-sections pt-14 px-1 space-y-1" id="sidebar-navigation">
-          <For each={sections}>
-            {(section, index) => (
-              <SidebarSection
-                id={section.id}
-                href={section.href}
-                label={section.label}
-                icon={section.icon}
-                color={section.color}
-                isPrimary={section.isPrimary}
-                index={index()}
-                focusedIndex={focusedIndex}
-                setFocusedIndex={setFocusedIndex}
-                onSectionClick={handleSectionClick}
-              />
-            )}
-          </For>
-        </ul>
-      </nav>
-    </>
   );
 };
 

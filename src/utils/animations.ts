@@ -435,7 +435,7 @@ export const sidebarToggle = {
   expand: (element: HTMLElement) => {
     anime({
       targets: element,
-      width: [64, 240],
+      width: [64, 192],
       duration: 350,
       easing: 'easeOutCubic',
       complete: () => {
@@ -457,7 +457,7 @@ export const sidebarToggle = {
         // Then collapse width
         anime({
           targets: element,
-          width: [240, 64],
+          width: [192, 64],
           duration: 300,
           easing: 'easeInCubic'
         });
@@ -578,129 +578,175 @@ export const iconActiveGlow = (element: HTMLElement) => {
   });
 };
 
-// Mobile sidebar slide
+// Enhanced mobile sidebar slide with terminal boot sequence
 export const sidebarMobileSlide = {
   slideIn: (element: HTMLElement) => {
+    // Add terminal boot sequence first
+    terminalBootSequence(element);
+    
     anime({
       targets: element,
-      translateX: [-240, 0],
-      duration: 300,
-      easing: 'easeOutCubic'
+      translateX: [-192, 0],
+      duration: 400,
+      easing: 'easeOutCubic',
+      complete: () => {
+        // Add scanning effect after slide-in
+        terminalScanEffect(element);
+      }
     });
   },
   
   slideOut: (element: HTMLElement) => {
     anime({
       targets: element,
-      translateX: [0, -240],
-      duration: 250,
+      translateX: [0, -192],
+      duration: 300,
       easing: 'easeInCubic'
     });
   }
 };
 
-// ====== PLAYER BAR ANIMATIONS ======
+// Terminal boot sequence for mobile
+export const terminalBootSequence = (element: HTMLElement) => {
+  // Create boot overlay
+  const bootOverlay = document.createElement('div');
+  bootOverlay.className = 'absolute inset-0 bg-black/95 z-50 flex flex-col justify-center items-start px-4 font-mono text-xs text-library-color';
+  bootOverlay.innerHTML = `
+    <div class="boot-line opacity-0">JAMZY TERMINAL v2.0</div>
+    <div class="boot-line opacity-0">Initializing navigation system...</div>
+    <div class="boot-line opacity-0">Loading user preferences...</div>
+    <div class="boot-line opacity-0">Connecting to music services...</div>
+    <div class="boot-line opacity-0">System ready ●</div>
+  `;
+  
+  element.appendChild(bootOverlay);
+  
+  // Animate boot lines
+  const bootLines = bootOverlay.querySelectorAll('.boot-line');
+  
+  anime({
+    targets: bootLines,
+    opacity: [0, 1],
+    translateX: [-20, 0],
+    duration: 300,
+    delay: anime.stagger(400),
+    easing: 'easeOutQuad',
+    complete: () => {
+      // Fade out boot overlay
+      anime({
+        targets: bootOverlay,
+        opacity: [1, 0],
+        duration: 500,
+        delay: 800,
+        easing: 'easeInQuad',
+        complete: () => {
+          bootOverlay.remove();
+        }
+      });
+    }
+  });
+};
 
-// Enhanced hover for shuffle/repeat state buttons
-export const stateButtonHover = {
-  enter: (element: HTMLElement, isActive: boolean) => {
-    const color = isActive ? '#ffffff' : element.style.borderColor;
-    element.style.transition = 'none';
+// Terminal scanning effect
+export const terminalScanEffect = (element: HTMLElement) => {
+  const scanLine = document.createElement('div');
+  scanLine.className = 'absolute top-0 left-0 w-full h-0.5 bg-library-color/60 z-40';
+  scanLine.style.boxShadow = '0 0 10px var(--library-color)';
+  
+  element.appendChild(scanLine);
+  
+  anime({
+    targets: scanLine,
+    translateY: [0, element.offsetHeight],
+    opacity: [0, 1, 0],
+    duration: 2000,
+    easing: 'easeInOutQuad',
+    complete: () => {
+      scanLine.remove();
+    }
+  });
+};
+
+// Music-reactive elements (tempo sync, activity indicators)
+export const musicReactiveElements = {
+  tempoSync: (element: HTMLElement, bpm: number = 120) => {
+    const beatDuration = (60 / bpm) * 1000; // Convert BPM to milliseconds
     
     anime({
       targets: element,
-      scale: 1.1,
-      translateY: -3,
-      boxShadow: `0 0 16px ${color}`,
-      duration: 200,
-      easing: 'easeOutQuad'
+      scale: [1, 1.02, 1],
+      duration: beatDuration / 2,
+      loop: true,
+      easing: 'easeInOutSine'
     });
   },
   
-  leave: (element: HTMLElement) => {
-    anime({
-      targets: element,
-      scale: 1,
-      translateY: 0,
-      boxShadow: '0 0 0 transparent',
-      duration: 200,
-      easing: 'easeOutQuad',
-      complete: () => {
-        element.style.transition = '';
-        element.style.transform = 'translateZ(0)';
-      }
-    });
-  }
-};
-
-// Progress bar interactions
-export const progressBarInteraction = {
-  onMouseMove: (element: HTMLElement, percentage: number) => {
-    const handle = element.querySelector('.progressHandle') as HTMLElement;
-    if (handle) {
-      handle.style.right = `${100 - percentage}%`;
+  activityIndicator: (element: HTMLElement, isActive: boolean = true) => {
+    if (isActive) {
+      anime({
+        targets: element,
+        opacity: [0.5, 1, 0.5],
+        duration: 1500,
+        loop: true,
+        easing: 'easeInOutSine'
+      });
+    } else {
+      anime.remove(element);
+      element.style.opacity = '0.5';
     }
   },
   
-  onSeek: (element: HTMLElement, targetPercentage: number) => {
-    const bar = element.querySelector('.progressBar') as HTMLElement;
-    anime({
-      targets: bar,
-      width: `${targetPercentage}%`,
-      duration: 300,
-      easing: 'easeOutQuad'
+  visualizerPulse: (elements: HTMLElement[], audioData?: number[]) => {
+    elements.forEach((element, index) => {
+      const intensity = audioData ? audioData[index] || 0.5 : Math.random();
+      
+      anime({
+        targets: element,
+        scaleY: [1, 1 + intensity],
+        duration: 200,
+        easing: 'easeOutQuad'
+      });
     });
   }
 };
 
-// Shuffle toggle animation
-export const shuffleToggle = (element: HTMLElement, isActive: boolean) => {
-  const color = isActive ? '#f906d6' : '#cccccc';
+// Music player state synchronization
+export const musicPlayerSync = {
+  highlightActiveSection: (sectionElement: HTMLElement, platform: string) => {
+    // Platform-specific colors
+    const platformColors: Record<string, string> = {
+      'spotify': '#00f92a',
+      'youtube': '#ff0000',
+      'soundcloud': '#ff7700',
+      'default': '#04caf4'
+    };
+    
+    const color = platformColors[platform] || platformColors.default;
+    
+    anime({
+      targets: sectionElement,
+      boxShadow: [
+        '0 0 0 transparent',
+        `0 0 15px ${color}`,
+        `0 0 8px ${color}`
+      ],
+      duration: 1000,
+      easing: 'easeOutCubic'
+    });
+  },
   
-  anime({
-    targets: element,
-    rotate: [0, 360],
-    borderColor: color,
-    color: color,
-    background: isActive ? '#f906d6' : 'transparent',
-    duration: 400,
-    easing: 'easeInOutQuad'
-  });
-};
-
-// Repeat toggle animation with mode indication
-export const repeatToggle = (element: HTMLElement, mode: 'none' | 'all' | 'one') => {
-  const colors = {
-    none: '#cccccc',
-    all: '#ff9b00',
-    one: '#ff9b00'
-  };
-  
-  const color = colors[mode];
-  const isActive = mode !== 'none';
-  
-  anime({
-    targets: element,
-    scale: [1, 1.2, 1],
-    borderColor: color,
-    color: color,
-    background: isActive ? color : 'transparent',
-    duration: 300,
-    easing: 'easeOutQuad'
-  });
-};
-
-// Status indicator pulse animation
-export const statusPulse = (element: HTMLElement) => {
-  anime({
-    targets: element,
-    boxShadow: [
-      '0 0 8px var(--neon-green)',
-      '0 0 16px var(--neon-green)',
-      '0 0 8px var(--neon-green)'
-    ],
-    duration: 2000,
-    loop: true,
-    easing: 'easeInOutSine'
-  });
+  nowPlayingPulse: (element: HTMLElement, isPlaying: boolean) => {
+    if (isPlaying) {
+      anime({
+        targets: element,
+        scale: [1, 1.05, 1],
+        duration: 2000,
+        loop: true,
+        easing: 'easeInOutSine'
+      });
+    } else {
+      anime.remove(element);
+      element.style.transform = 'scale(1)';
+    }
+  }
 };
