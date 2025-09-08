@@ -710,6 +710,91 @@ export const musicReactiveElements = {
   }
 };
 
+// ====== PLAYER CONTROL ANIMATIONS ======
+
+// State button animations (shuffle, repeat, etc.)
+export const stateButtonHover = {
+  enter: (element: HTMLElement) => {
+    element.style.transition = 'none';
+    
+    anime({
+      targets: element,
+      scale: 1.1,
+      translateY: -2,
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        element.style.transition = '';
+      }
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    element.style.transition = 'none';
+    
+    anime({
+      targets: element,
+      scale: 1,
+      translateY: 0,
+      duration: 200,
+      easing: 'easeOutQuad',
+      complete: () => {
+        element.style.transition = '';
+        element.style.transform = 'translateZ(0)';
+      }
+    });
+  }
+};
+
+// Shuffle button toggle animation
+export const shuffleToggle = (element: HTMLElement, isActive: boolean) => {
+  anime({
+    targets: element,
+    rotate: isActive ? 360 : 0,
+    scale: [1, 1.2, 1],
+    duration: 400,
+    easing: 'easeOutCubic',
+    complete: () => {
+      // Add glow effect for active state
+      if (isActive) {
+        element.style.filter = 'drop-shadow(0 0 6px currentColor)';
+      } else {
+        element.style.filter = 'none';
+      }
+    }
+  });
+};
+
+// Repeat button toggle animation
+export const repeatToggle = (element: HTMLElement, isActive: boolean) => {
+  anime({
+    targets: element,
+    scale: [1, 1.15, 1],
+    rotate: isActive ? [0, 180] : [180, 0],
+    duration: 350,
+    easing: 'easeOutCubic',
+    complete: () => {
+      if (isActive) {
+        element.style.filter = 'drop-shadow(0 0 6px currentColor)';
+      } else {
+        element.style.filter = 'none';
+      }
+    }
+  });
+};
+
+// Status pulse for connection/loading states
+export const statusPulse = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    opacity: [0.5, 1, 0.5],
+    scale: [1, 1.05, 1],
+    duration: 1500,
+    loop: true,
+    easing: 'easeInOutSine'
+  });
+};
+
 // Music player state synchronization
 export const musicPlayerSync = {
   highlightActiveSection: (sectionElement: HTMLElement, platform: string) => {
