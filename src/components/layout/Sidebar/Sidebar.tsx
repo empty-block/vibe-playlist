@@ -2,7 +2,7 @@ import { Component, createSignal, onMount, onCleanup, createEffect, Accessor, Se
 import { For } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
 import { setCurrentSection, currentSection } from '../../../stores/sidebarStore';
-import { navigationSections, type SidebarSection, type SectionColor, type IconProps } from './NavigationData';
+import { navigationSections, type SidebarSection, type SectionColor, type IconProps, TerminalIcon } from './NavigationData';
 import './sidebar.css';
 
 // Component interfaces
@@ -22,6 +22,7 @@ interface SidebarSectionProps {
 interface SidebarProps {
   class?: string;
   onNavigate?: (sectionId: string) => void;
+  onTerminalClick?: () => void;
 }
 
 // Sidebar Section Component
@@ -178,6 +179,16 @@ const Sidebar: Component<SidebarProps> = (props) => {
         <div class="terminal-line">┌─ JAMZY v2.0 ──┐</div>
         <div class="terminal-line">│ ♫ NAV SYSTEM  │</div>
         <div class="terminal-line">└───────────────┘</div>
+        
+        {/* Terminal Easter Egg Button */}
+        <button 
+          class="terminal-button"
+          onClick={() => props.onTerminalClick?.()}
+          aria-label="Open Terminal (Easter Egg)"
+          title="Open Terminal"
+        >
+          <TerminalIcon />
+        </button>
       </div>
 
       {/* Navigation Sections */}

@@ -175,6 +175,41 @@ export const ProfileIcon: Component<IconProps> = (props) => (
   </svg>
 );
 
+// Terminal Icon - Retro terminal/command prompt
+export const TerminalIcon: Component<IconProps> = (props) => (
+  <svg class={`terminal-icon ${props.class || ''}`} width="18" height="18" viewBox="0 0 18 18" fill="none">
+    {/* Terminal window frame */}
+    <rect 
+      x="2" 
+      y="3" 
+      width="14" 
+      height="11" 
+      rx="1" 
+      stroke="currentColor" 
+      stroke-width="1.5" 
+      fill="none"
+    />
+    
+    {/* Terminal header bar */}
+    <line x1="2" y1="6" x2="16" y2="6" stroke="currentColor" stroke-width="1"/>
+    
+    {/* Command prompt cursor */}
+    <rect x="4" y="8" width="6" height="1" fill="currentColor"/>
+    <rect x="10.5" y="7.5" width="1" height="2" fill="currentColor" class="cursor-blink">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    
+    {/* Additional command lines */}
+    <rect x="4" y="10" width="4" height="0.8" fill="currentColor" opacity="0.6"/>
+    <rect x="4" y="11.5" width="7" height="0.8" fill="currentColor" opacity="0.4"/>
+    
+    {/* Window controls dots */}
+    <circle cx="4" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
+    <circle cx="6" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
+    <circle cx="8" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
+  </svg>
+);
+
 // Navigation section interface
 export interface SidebarSection {
   id: SectionId;
