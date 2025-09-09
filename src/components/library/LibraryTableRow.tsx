@@ -1,11 +1,13 @@
-import { Component, createSignal, Show, onMount, createEffect } from 'solid-js';
+import { Component, createSignal, Show, onMount, createEffect, For } from 'solid-js';
 import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playlistStore';
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
+import { heartBeat, particleBurst, socialButtonClick } from '../../utils/animations';
 
 interface LibraryTableRowProps {
   track: Track;
   trackNumber: number;
+  isMobile?: boolean;
 }
 
 const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
@@ -13,10 +15,15 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   const [isTitleTruncated, setIsTitleTruncated] = createSignal(false);
   const [isArtistTruncated, setIsArtistTruncated] = createSignal(false);
   const [isCommentTruncated, setIsCommentTruncated] = createSignal(false);
+  const [isLiked, setIsLiked] = createSignal(false);
+  const [likeCount, setLikeCount] = createSignal(props.track.likes);
+  const [replyCount, setReplyCount] = createSignal(props.track.replies);
   
   let titleRef: HTMLDivElement | undefined;
   let artistRef: HTMLDivElement | undefined;
   let commentRef: HTMLDivElement | undefined;
+  let likeButtonRef: HTMLButtonElement | undefined;
+  let chatButtonRef: HTMLButtonElement | undefined;
   
   const checkTruncation = () => {
     if (titleRef) {
@@ -110,7 +117,146 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
     return isCurrentTrack() && isPlaying();
   };
 
+  const handleLikeClick = (e: Event) => {
+    e.stopPropagation();
+    if (likeButtonRef) {
+      if (isLiked()) {
+        setIsLiked(false);
+        setLikeCount(prev => prev - 1);
+        socialButtonClick(likeButtonRef);
+      } else {
+        setIsLiked(true);
+        setLikeCount(prev => prev + 1);
+        heartBeat(likeButtonRef);
+        particleBurst(likeButtonRef);
+      }
+    }
+  };
+
+  const handleChatClick = (e: Event) => {
+    e.stopPropagation();
+    if (chatButtonRef) {
+      socialButtonClick(chatButtonRef);
+      // TODO: Open modal for chat functionality
+    }
+  };
+
+
+  // Mobile Card Layout
+  if (props.isMobile) {
+    return (
+      <div
+        class={`${
+          props.trackNumber % 2 === 0 
+            ? 'bg-[#1a1a1a]/90 border border-[#04caf4]/40' 
+            : 'bg-[#0d0d0d]/80 border border-[#04caf4]/30'
+        } rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#04caf4]/60 hover:bg-[#04caf4]/5 ${
+          isCurrentTrack() ? 'border-[#00f92a]/60 bg-[#00f92a]/8' : ''
+        }`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onDblClick={handlePlayTrack}
+      >
+        {/* Main Track Info */}
+        <div class="flex items-center gap-3 mb-3">
+          <div class="relative">
+            <img
+              src={props.track.thumbnail}
+              alt={props.track.title}
+              class="w-20 h-20 rounded-lg border border-cyan-400/30 object-cover"
+            />
+            {(isHovered() || isTrackPlaying()) && (
+              <div class="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlayTrack();
+                  }}
+                  class="text-white text-xl hover:text-cyan-400 transition-colors"
+                >
+                  {isTrackPlaying() ? '⏸' : '▶'}
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <div class="min-w-0 flex-1">
+            <div class="retro-track-title text-sm font-bold mb-1 truncate">
+              {props.track.title}
+            </div>
+            <div class="retro-track-artist text-xs mb-1 truncate">
+              {props.track.artist}
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-lg">{props.track.userAvatar}</span>
+              <span class="retro-user-name truncate">
+                {props.track.addedBy}
+              </span>
+            </div>
+          </div>
+          
+          <div class="text-right">
+            <div class="retro-timestamp text-xs mb-2">
+              {formatTimeAgo(props.track.timestamp)}
+            </div>
+            <div class={`retro-platform-badge ${props.track.source} mb-1`}>
+              <span>{getPlatformIcon(props.track.source)}</span>
+            </div>
+            {/* Genre Tags - Mobile */}
+            <Show when={props.track.tags && props.track.tags.length > 0}>
+              <div class="flex flex-wrap gap-1 justify-end">
+                <For each={props.track.tags?.slice(0, 2)}>
+                  {(tag) => (
+                    <span class="bg-[#04caf4]/20 border border-[#04caf4]/40 text-[#04caf4] text-xs px-2 py-0.5 rounded font-mono">
+                      {tag}
+                    </span>
+                  )}
+                </For>
+              </div>
+            </Show>
+          </div>
+        </div>
+
+        {/* Bottom Row: Context and Social Stats */}
+        <div class="pt-3 border-t border-[#04caf4]/10">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+              {props.track.comment && (
+                <div class="text-xs text-white/60 truncate font-mono">
+                  {props.track.comment}
+                </div>
+              )}
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                ref={chatButtonRef}
+                onClick={handleChatClick}
+                class="flex items-center gap-1 text-xs font-mono hover:bg-[#04caf4]/10 px-2 py-1 rounded transition-colors cursor-pointer"
+              >
+                <span class="text-blue-400">💬</span>
+                <span class="text-blue-400">{replyCount()}</span>
+              </button>
+              <button
+                ref={likeButtonRef}
+                onClick={handleLikeClick}
+                class={`flex items-center gap-1 text-xs font-mono hover:bg-red-500/10 px-2 py-1 rounded transition-colors cursor-pointer ${
+                  isLiked() ? 'bg-red-500/20' : ''
+                }`}
+              >
+                <span class={isLiked() ? 'text-red-300' : 'text-red-400'}>{isLiked() ? '❤️' : '❤'}</span>
+                <span class={isLiked() ? 'text-red-300' : 'text-red-400'}>{likeCount()}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    );
+  }
+
+  // Desktop Table Layout
   return (
+    <>
     <tr
       class={`retro-grid-row ${isCurrentTrack() ? 'current-track' : ''}`}
       onMouseEnter={() => setIsHovered(true)}
@@ -129,6 +275,7 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
           {String(props.trackNumber).padStart(2, '0')}
         </span>
       </td>
+
 
       {/* Track Column */}
       <td class="retro-grid-cell">
@@ -190,18 +337,8 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         </Show>
       </td>
 
-      {/* Shared By Column */}
-      <td class="retro-grid-cell">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">{props.track.userAvatar}</span>
-          <span class="retro-user-name">
-            {props.track.addedBy}
-          </span>
-        </div>
-      </td>
-
-      {/* Context Column */}
-      <td class="retro-grid-cell">
+      {/* Context Column - Hidden on smaller screens */}
+      <td class="retro-grid-cell hidden lg:table-cell">
         <Show 
           when={props.track.comment && isCommentTruncated()} 
           fallback={
@@ -216,6 +353,42 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
             </div>
           </RetroTooltip>
         </Show>
+      </td>
+
+      {/* Likes Column */}
+      <td class="retro-grid-cell">
+        <button
+          ref={likeButtonRef}
+          onClick={handleLikeClick}
+          class={`flex items-center gap-1 text-sm font-mono hover:bg-red-500/10 px-2 py-1 rounded transition-colors cursor-pointer w-full justify-center ${
+            isLiked() ? 'bg-red-500/20' : ''
+          }`}
+        >
+          <span class={isLiked() ? 'text-red-300' : 'text-red-400'}>{isLiked() ? '❤️' : '❤'}</span>
+          <span class={isLiked() ? 'text-red-300' : 'text-red-400'}>{likeCount()}</span>
+        </button>
+      </td>
+
+      {/* Replies Column */}
+      <td class="retro-grid-cell">
+        <button
+          ref={chatButtonRef}
+          onClick={handleChatClick}
+          class="flex items-center gap-1 text-sm font-mono hover:bg-[#04caf4]/10 px-2 py-1 rounded transition-colors cursor-pointer w-full justify-center"
+        >
+          <span class="text-blue-400">💬</span>
+          <span class="text-blue-400">{replyCount()}</span>
+        </button>
+      </td>
+
+      {/* Shared By Column */}
+      <td class="retro-grid-cell">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">{props.track.userAvatar}</span>
+          <span class="retro-user-name">
+            {props.track.addedBy}
+          </span>
+        </div>
       </td>
 
       {/* When Column */}
@@ -233,22 +406,36 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         </div>
       </td>
 
-      {/* Replies Column */}
-      <td class="retro-grid-cell">
-        <div class="flex items-center gap-1 text-sm font-mono">
-          <span class="text-blue-400">💬</span>
-          <span class="text-blue-400">{props.track.replies}</span>
-        </div>
-      </td>
-
-      {/* Likes Column */}
-      <td class="retro-grid-cell">
-        <div class="flex items-center gap-1 text-sm font-mono">
-          <span class="text-red-400">❤</span>
-          <span class="text-red-400">{props.track.likes}</span>
-        </div>
+      {/* Genre Column - Hidden on smaller screens */}
+      <td class="retro-grid-cell hidden xl:table-cell">
+        <Show 
+          when={props.track.tags && props.track.tags.length > 0}
+          fallback={<span class="text-gray-500 italic text-sm">No tags</span>}
+        >
+          <div class="flex flex-wrap gap-1">
+            <For each={props.track.tags?.slice(0, 3)}>
+              {(tag, index) => (
+                <span 
+                  class="bg-[#04caf4]/20 border border-[#04caf4]/40 text-[#04caf4] text-xs px-2 py-1 rounded font-mono hover:bg-[#04caf4]/30 transition-colors cursor-pointer"
+                  style={{
+                    'animation-delay': `${index() * 100}ms`
+                  }}
+                >
+                  {tag}
+                </span>
+              )}
+            </For>
+            <Show when={props.track.tags && props.track.tags.length > 3}>
+              <span class="text-[#04caf4]/60 text-xs font-mono">
+                +{(props.track.tags?.length || 0) - 3}
+              </span>
+            </Show>
+          </div>
+        </Show>
       </td>
     </tr>
+    
+    </>
   );
 };
 
