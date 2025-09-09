@@ -35,6 +35,7 @@ const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
           </div>
         </th>
 
+
         {/* Track Column */}
         <th 
           class={`retro-grid-header-cell ${getSortClass('track')}`}
@@ -57,6 +58,39 @@ const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
             Artist
             <span class={`retro-sort-indicator ${sortState.column === 'artist' ? 'opacity-100' : 'opacity-40'}`}>
               {getSortIcon('artist')}
+            </span>
+          </div>
+        </th>
+
+        {/* Context Column - Not sortable, hidden on smaller screens */}
+        <th class="retro-grid-header-cell hidden lg:table-cell">
+          <div class="flex items-center gap-2">
+            Context
+          </div>
+        </th>
+
+        {/* Likes Column */}
+        <th 
+          class={`retro-grid-header-cell ${getSortClass('likes')}`}
+          onClick={() => handleSort('likes')}
+        >
+          <div class="flex items-center gap-2">
+            Likes
+            <span class={`retro-sort-indicator ${sortState.column === 'likes' ? 'opacity-100' : 'opacity-40'}`}>
+              {getSortIcon('likes')}
+            </span>
+          </div>
+        </th>
+
+        {/* Replies Column */}
+        <th 
+          class={`retro-grid-header-cell ${getSortClass('replies')}`}
+          onClick={() => handleSort('replies')}
+        >
+          <div class="flex items-center gap-2">
+            Replies
+            <span class={`retro-sort-indicator ${sortState.column === 'replies' ? 'opacity-100' : 'opacity-40'}`}>
+              {getSortIcon('replies')}
             </span>
           </div>
         </th>
@@ -84,13 +118,6 @@ const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
           </th>
         </Show>
 
-        {/* Context Column - Not sortable */}
-        <th class="retro-grid-header-cell">
-          <div class="flex items-center gap-2">
-            Context
-          </div>
-        </th>
-
         {/* When Column */}
         <th 
           class={`retro-grid-header-cell ${getSortClass('timestamp')}`}
@@ -117,29 +144,10 @@ const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
           </div>
         </th>
 
-        {/* Replies Column */}
-        <th 
-          class={`retro-grid-header-cell ${getSortClass('replies')}`}
-          onClick={() => handleSort('replies')}
-        >
+        {/* Genre Column - Hidden on smaller screens */}
+        <th class="retro-grid-header-cell hidden xl:table-cell">
           <div class="flex items-center gap-2">
-            Replies
-            <span class={`retro-sort-indicator ${sortState.column === 'replies' ? 'opacity-100' : 'opacity-40'}`}>
-              {getSortIcon('replies')}
-            </span>
-          </div>
-        </th>
-
-        {/* Likes Column */}
-        <th 
-          class={`retro-grid-header-cell ${getSortClass('likes')}`}
-          onClick={() => handleSort('likes')}
-        >
-          <div class="flex items-center gap-2">
-            Likes
-            <span class={`retro-sort-indicator ${sortState.column === 'likes' ? 'opacity-100' : 'opacity-40'}`}>
-              {getSortIcon('likes')}
-            </span>
+            Genre
           </div>
         </th>
       </tr>
