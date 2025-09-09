@@ -3,9 +3,24 @@ import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '.
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
 
+// Import PersonalTrack from LibraryTable
+export interface PersonalTrack extends Track {
+  userInteraction: {
+    type: 'shared' | 'liked' | 'conversation' | 'recast';
+    timestamp: string;
+    context?: string;
+    socialStats?: {
+      likes: number;
+      replies: number;
+      recasts: number;
+    };
+  };
+}
+
 interface LibraryTableRowProps {
-  track: Track;
+  track: Track | PersonalTrack;
   trackNumber: number;
+  mode?: 'library' | 'profile';
 }
 
 const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
@@ -13,6 +28,11 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   const [isTitleTruncated, setIsTitleTruncated] = createSignal(false);
   const [isArtistTruncated, setIsArtistTruncated] = createSignal(false);
   const [isCommentTruncated, setIsCommentTruncated] = createSignal(false);
+
+  const isProfileMode = () => props.mode === 'profile';
+  const isPersonalTrack = (track: Track | PersonalTrack): track is PersonalTrack => {
+    return 'userInteraction' in track;
+  };
   
   let titleRef: HTMLDivElement | undefined;
   let artistRef: HTMLDivElement | undefined;
@@ -110,6 +130,37 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
     return isCurrentTrack() && isPlaying();
   };
 
+  // Profile mode Activity column helpers
+  const getInteractionIcon = (type: PersonalTrack['userInteraction']['type']) => {
+    switch (type) {
+      case 'shared': return '🎵';
+      case 'liked': return '💖';
+      case 'conversation': return '💬';
+      case 'recast': return '🔄';
+      default: return '📝';
+    }
+  };
+
+  const getInteractionColor = (type: PersonalTrack['userInteraction']['type']) => {
+    switch (type) {
+      case 'shared': return 'text-pink-400 border-pink-400/30 bg-pink-400/10';
+      case 'liked': return 'text-red-400 border-red-400/30 bg-red-400/10';
+      case 'conversation': return 'text-blue-400 border-blue-400/30 bg-blue-400/10';
+      case 'recast': return 'text-green-400 border-green-400/30 bg-green-400/10';
+      default: return 'text-gray-400 border-gray-400/30 bg-gray-400/10';
+    }
+  };
+
+  const getInteractionLabel = (type: PersonalTrack['userInteraction']['type']) => {
+    switch (type) {
+      case 'shared': return 'Shared';
+      case 'liked': return 'Liked';
+      case 'conversation': return 'Reply';
+      case 'recast': return 'Recast';
+      default: return 'Activity';
+    }
+  };
+
   return (
     <tr
       class={`retro-grid-row ${isCurrentTrack() ? 'current-track' : ''}`}
@@ -190,38 +241,75 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         </Show>
       </td>
 
-      {/* Shared By Column */}
-      <td class="retro-grid-cell">
-        <div class="flex items-center gap-2">
-          <span class="text-lg">{props.track.userAvatar}</span>
-          <span class="retro-user-name">
-            {props.track.addedBy}
-          </span>
-        </div>
-      </td>
+      {/* Shared By Column (Library) OR Activity Column (Profile) */}
+      <Show when={!isProfileMode()} fallback={
+        isPersonalTrack(props.track) ? (
+          <td class="retro-grid-cell">
+            <div class={`flex items-center gap-2 px-2 py-1 rounded border text-xs font-semibold ${getInteractionColor(props.track.userInteraction.type)}`}>
+              <span class="text-sm">{getInteractionIcon(props.track.userInteraction.type)}</span>
+              <span>{getInteractionLabel(props.track.userInteraction.type)}</span>
+            </div>
+          </td>
+        ) : null
+      }>
+        <td class="retro-grid-cell">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">{props.track.userAvatar}</span>
+            <span class="retro-user-name">
+              {props.track.addedBy}
+            </span>
+          </div>
+        </td>
+      </Show>
 
       {/* Context Column */}
       <td class="retro-grid-cell">
-        <Show 
-          when={props.track.comment && isCommentTruncated()} 
-          fallback={
-            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
-              {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
-            </div>
-          }
-        >
-          <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
-            <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
-              {props.track.comment}
-            </div>
-          </RetroTooltip>
+        <Show when={!(isProfileMode() && isPersonalTrack(props.track))} fallback={
+          isPersonalTrack(props.track) && props.track.userInteraction.context ? (
+            <Show 
+              when={isCommentTruncated()} 
+              fallback={
+                <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
+                  {props.track.userInteraction.context}
+                </div>
+              }
+            >
+              <RetroTooltip content={props.track.userInteraction.context} maxWidth={300} delay={200}>
+                <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
+                  {props.track.userInteraction.context}
+                </div>
+              </RetroTooltip>
+            </Show>
+          ) : (
+            <span class="text-gray-500 italic">No comment</span>
+          )
+        }>
+          <Show 
+            when={props.track.comment && isCommentTruncated()} 
+            fallback={
+              <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
+                {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
+              </div>
+            }
+          >
+            <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
+              <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
+                {props.track.comment}
+              </div>
+            </RetroTooltip>
+          </Show>
         </Show>
       </td>
 
       {/* When Column */}
       <td class="retro-grid-cell">
         <span class="retro-timestamp">
-          {formatTimeAgo(props.track.timestamp)}
+          {(() => {
+            if (isProfileMode() && isPersonalTrack(props.track)) {
+              return formatTimeAgo(props.track.userInteraction.timestamp);
+            }
+            return formatTimeAgo(props.track.timestamp);
+          })()}
         </span>
       </td>
 

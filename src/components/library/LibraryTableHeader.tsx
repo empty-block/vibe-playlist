@@ -1,7 +1,12 @@
-import { Component } from 'solid-js';
+import { Component, Show } from 'solid-js';
 import { sortState, updateSort, SortColumn } from '../../stores/libraryStore';
 
-const LibraryTableHeader: Component = () => {
+interface LibraryTableHeaderProps {
+  mode?: 'library' | 'profile';
+}
+
+const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
+  const isProfileMode = () => props.mode === 'profile';
   const handleSort = (column: SortColumn) => {
     updateSort(column);
   };
@@ -56,18 +61,28 @@ const LibraryTableHeader: Component = () => {
           </div>
         </th>
 
-        {/* Shared By Column */}
-        <th 
-          class={`retro-grid-header-cell ${getSortClass('sharedBy')}`}
-          onClick={() => handleSort('sharedBy')}
-        >
-          <div class="flex items-center gap-2">
-            Shared By
-            <span class={`retro-sort-indicator ${sortState.column === 'sharedBy' ? 'opacity-100' : 'opacity-40'}`}>
-              {getSortIcon('sharedBy')}
-            </span>
-          </div>
-        </th>
+        {/* Shared By Column (Library) OR Activity Column (Profile) */}
+        <Show when={!isProfileMode()} fallback={
+          <th class="retro-grid-header-cell">
+            <div class="flex items-center gap-2">
+              <span class="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent font-bold">
+                Activity
+              </span>
+            </div>
+          </th>
+        }>
+          <th 
+            class={`retro-grid-header-cell ${getSortClass('sharedBy')}`}
+            onClick={() => handleSort('sharedBy')}
+          >
+            <div class="flex items-center gap-2">
+              Shared By
+              <span class={`retro-sort-indicator ${sortState.column === 'sharedBy' ? 'opacity-100' : 'opacity-40'}`}>
+                {getSortIcon('sharedBy')}
+              </span>
+            </div>
+          </th>
+        </Show>
 
         {/* Context Column - Not sortable */}
         <th class="retro-grid-header-cell">

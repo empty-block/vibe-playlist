@@ -23,7 +23,7 @@ const ExpandableTableRow: Component<ExpandableTableRowProps> = (props) => {
   return (
     <>
       {/* Regular table row */}
-      <LibraryTableRow track={props.track} />
+      <LibraryTableRow track={props.track} trackNumber={1} />
       
       {/* Expandable details row */}
       <Show when={hasLongContent()}>

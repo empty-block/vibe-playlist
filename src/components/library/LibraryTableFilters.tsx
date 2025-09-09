@@ -1,7 +1,32 @@
 import { Component, createSignal, onCleanup, Show } from 'solid-js';
 import { filters, updateFilters, resetFilters, FilterPlatform, isShuffled, shuffleTracks, filteredTracks } from '../../stores/libraryStore';
 
-const LibraryTableFilters: Component = () => {
+// Import types for profile mode
+export interface PersonalTrack {
+  id: string;
+  userInteraction: {
+    type: 'shared' | 'liked' | 'conversation' | 'recast';
+    timestamp: string;
+    context?: string;
+    socialStats?: {
+      likes: number;
+      replies: number;
+      recasts: number;
+    };
+  };
+  // ... other track properties
+}
+
+export type PersonalFilterType = 'all' | 'shared' | 'liked' | 'conversations' | 'recasts';
+
+interface LibraryTableFiltersProps {
+  profileMode?: boolean;
+  personalFilter?: PersonalFilterType;
+  onPersonalFilterChange?: (filter: PersonalFilterType) => void;
+  personalTracks?: PersonalTrack[];
+}
+
+const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
   const [searchInput, setSearchInput] = createSignal(filters.search);
   const [showFilters, setShowFilters] = createSignal(false);
   let searchTimeout: any;
@@ -70,12 +95,32 @@ const LibraryTableFilters: Component = () => {
     }
   };
 
+  // Calculate personal stats for profile mode
+  const getPersonalStats = () => {
+    if (!props.profileMode || !props.personalTracks) {
+      return { all: 0, shared: 0, liked: 0, conversations: 0, recasts: 0 };
+    }
+    
+    const tracks = props.personalTracks;
+    return {
+      all: tracks.length,
+      shared: tracks.filter(t => t.userInteraction.type === 'shared').length,
+      liked: tracks.filter(t => t.userInteraction.type === 'liked').length,
+      conversations: tracks.filter(t => t.userInteraction.type === 'conversation').length,
+      recasts: tracks.filter(t => t.userInteraction.type === 'recast').length,
+    };
+  };
+
   // Auto-expand when filters are active
   const hasActiveFilters = () => {
-    return filters.search || 
+    const baseFilters = filters.search || 
            filters.platform !== 'all' || 
            filters.dateRange !== 'all' || 
            filters.minEngagement > 0;
+    
+    const personalFilter = props.profileMode && props.personalFilter && props.personalFilter !== 'all';
+    
+    return baseFilters || personalFilter;
   };
 
   // Auto-expand effect
@@ -219,6 +264,27 @@ const LibraryTableFilters: Component = () => {
                 />
                 <span class="text-[#ff6b35] font-mono text-[9px] ml-2 opacity-70 uppercase tracking-wide">MIN_ENGAGEMENT</span>
               </div>
+
+              {/* Activity Filter - Only show in profile mode */}
+              <Show when={props.profileMode}>
+                <div class="relative">
+                  <select
+                    value={props.personalFilter || 'all'}
+                    onChange={(e) => props.onPersonalFilterChange?.(e.target.value as PersonalFilterType)}
+                    class="terminal-select bg-[rgba(0,0,0,0.9)] border border-[#f906d6] text-[#f906d6] font-mono text-[10px] 
+                           px-3 py-2 min-w-[120px] uppercase tracking-wide cursor-pointer transition-all duration-200
+                           hover:border-[#f906d6] hover:shadow-[0_0_8px_rgba(249,6,214,0.2)]
+                           focus:outline-none focus:shadow-[0_0_12px_rgba(249,6,214,0.3)]"
+                    style="border-radius: 0; text-shadow: 0 0 6px rgba(249, 6, 214, 0.4);"
+                  >
+                    <option value="all" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_ALL ({getPersonalStats().all})</option>
+                    <option value="shared" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_SHARED ({getPersonalStats().shared})</option>
+                    <option value="liked" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_LIKED ({getPersonalStats().liked})</option>
+                    <option value="conversations" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_CONVERSATIONS ({getPersonalStats().conversations})</option>
+                    <option value="recasts" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_RECASTS ({getPersonalStats().recasts})</option>
+                  </select>
+                </div>
+              </Show>
             </div>
           </div>
         </div>
