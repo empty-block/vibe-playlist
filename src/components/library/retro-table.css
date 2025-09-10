@@ -116,25 +116,25 @@
   text-align: center;
 }
 
-/* Track Column - Primary content (expanded for readability) */
+/* Track Column - Reduced for no images */
 .retro-data-grid th:nth-child(2),
 .retro-data-grid td:nth-child(2) {
-  width: 280px;
-  min-width: 280px;
+  width: 240px;
+  min-width: 240px;
 }
 
-/* Artist Column - Golden ratio sizing (280 / 1.618 ≈ 173, rounded to 180) */
+/* Artist Column - Golden ratio proportion */
 .retro-data-grid th:nth-child(3),
 .retro-data-grid td:nth-child(3) {
-  width: 180px;
-  min-width: 180px;
+  width: 148px;
+  min-width: 148px;
 }
 
-/* Context Column - Expanded for readable user comments */
+/* Context Column - Increased width for better text accommodation */
 .retro-data-grid th:nth-child(4),
 .retro-data-grid td:nth-child(4) {
-  width: 220px;
-  min-width: 220px;
+  width: 280px;
+  min-width: 280px;
 }
 
 /* Likes Column - Optimized for social metrics */
@@ -207,9 +207,9 @@
 }
 
 .retro-grid-header-cell {
-  padding: 16px 20px;
+  padding: 8px 16px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 10px;
   color: #04caf4;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -301,12 +301,15 @@
 }
 
 .retro-grid-cell {
-  padding: 16px 20px;
+  padding: 6px 16px;
   border-right: 1px solid rgba(4, 202, 244, 0.05);
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 12px;
+  line-height: 1.2;
   text-align: left;
   vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ========================================
@@ -314,22 +317,22 @@
    ======================================== */
 
 .retro-track-title {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: #ffffff;
   text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .retro-track-artist {
-  font-size: 12px;
+  font-size: 11px;
   color: #04caf4;
   text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
-  margin-bottom: 4px;
+  margin-bottom: 0;
 }
 
 .retro-track-duration {
-  font-size: 11px;
+  font-size: 10px;
   color: #f906d6;
   font-weight: 500;
   text-shadow: 0 0 6px rgba(249, 6, 214, 0.4);
@@ -357,15 +360,16 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 2px 6px;
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   position: relative;
   overflow: hidden;
+  border-radius: 2px;
 }
 
 .retro-platform-badge::before {
@@ -593,32 +597,32 @@
   }
   
   .retro-grid-cell {
-    padding: 14px 16px;
+    padding: 8px 14px;
     font-size: 12px;
   }
   
   .retro-grid-header-cell {
-    padding: 14px 16px;
-    font-size: 11px;
+    padding: 8px 14px;
+    font-size: 10px;
   }
 
   /* Adjust column widths for tablet */
   .retro-data-grid th:nth-child(2),
   .retro-data-grid td:nth-child(2) {
-    width: 240px;
-    min-width: 240px;
+    width: 220px;
+    min-width: 220px;
   }
 
   .retro-data-grid th:nth-child(3),
   .retro-data-grid td:nth-child(3) {
-    width: 150px;
-    min-width: 150px;
+    width: 136px;
+    min-width: 136px;
   }
 
   .retro-data-grid th:nth-child(4),
   .retro-data-grid td:nth-child(4) {
-    width: 180px;
-    min-width: 180px;
+    width: 220px;
+    min-width: 220px;
   }
 
   .retro-data-grid th:nth-child(5),
@@ -688,6 +692,27 @@
 .retro-grid-cell span[class*="bg-[#04caf4]"] {
   position: relative;
   overflow: hidden;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+/* Context column specific override for single-line with tooltips */
+.retro-grid-cell .line-clamp-2 {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: unset;
+  -webkit-box-orient: unset;
+  line-height: 1.2;
+}
+
+/* Social button optimization */
+.retro-grid-cell button {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 3px;
 }
 
 .retro-grid-cell span[class*="bg-[#04caf4]"]:hover {

@@ -76,15 +76,24 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   };
 
   const formatTimeAgo = (timestamp: string) => {
-    // If it's already a relative time string (from mock data), return as-is
+    // If it's already a relative time string, convert to compact format
     if (timestamp.includes('ago') || timestamp === 'now') {
-      return timestamp;
+      return timestamp
+        .replace(' hours ago', 'h')
+        .replace(' hour ago', 'h') 
+        .replace(' days ago', 'd')
+        .replace(' day ago', 'd')
+        .replace(' weeks ago', 'w')
+        .replace(' week ago', 'w')
+        .replace(' months ago', 'm')
+        .replace(' month ago', 'm')
+        .replace(' ago', '');
     }
     
-    // Otherwise, format the actual timestamp
+    // Parse actual timestamp and return compact format
     const date = new Date(timestamp);
     if (isNaN(date.getTime())) {
-      return timestamp; // Return original if unparseable
+      return timestamp;
     }
     
     const now = new Date();
@@ -201,7 +210,7 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
           props.trackNumber % 2 === 0 
             ? 'bg-[#1a1a1a]/90 border border-[#04caf4]/40' 
             : 'bg-[#0d0d0d]/80 border border-[#04caf4]/30'
-        } rounded-lg p-4 cursor-pointer transition-all duration-300 hover:border-[#04caf4]/60 hover:bg-[#04caf4]/5 ${
+        } rounded-lg p-3 cursor-pointer transition-all duration-300 hover:border-[#04caf4]/60 hover:bg-[#04caf4]/5 ${
           isCurrentTrack() ? 'border-[#00f92a]/60 bg-[#00f92a]/8' : ''
         }`}
         onMouseEnter={() => setIsHovered(true)}
@@ -209,26 +218,17 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         onDblClick={handlePlayTrack}
       >
         {/* Main Track Info */}
-        <div class="flex items-center gap-3 mb-3">
-          <div class="relative">
-            <img
-              src={props.track.thumbnail}
-              alt={props.track.title}
-              class="w-20 h-20 rounded-lg border border-cyan-400/30 object-cover"
-            />
-            {(isHovered() || isTrackPlaying()) && (
-              <div class="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePlayTrack();
-                  }}
-                  class="text-white text-xl hover:text-cyan-400 transition-colors"
-                >
-                  {isTrackPlaying() ? '⏸' : '▶'}
-                </button>
-              </div>
-            )}
+        <div class="flex items-center gap-2 mb-2">
+          <div class="relative flex items-center justify-center w-10 h-10 rounded-lg border border-cyan-400/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePlayTrack();
+              }}
+              class="text-cyan-400 text-xl hover:text-white transition-colors"
+            >
+              {isTrackPlaying() ? '⏸' : '▶'}
+            </button>
           </div>
           
           <div class="min-w-0 flex-1">
@@ -247,7 +247,7 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
           </div>
           
           <div class="text-right">
-            <div class="retro-timestamp text-xs mb-2">
+            <div class="retro-timestamp text-xs mb-1">
               {(() => {
                 if (isProfileMode() && isPersonalTrack(props.track)) {
                   return formatTimeAgo(props.track.userInteraction.timestamp);
@@ -274,8 +274,8 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
         </div>
 
         {/* Bottom Row: Context and Social Stats */}
-        <div class="pt-3 border-t border-[#04caf4]/10">
-          <div class="flex items-center justify-between gap-3">
+        <div class="pt-2 border-t border-[#04caf4]/10">
+          <div class="flex items-center justify-between gap-2">
             <div class="flex-1 min-w-0">
               {props.track.comment && (
                 <div class="text-xs text-white/60 truncate font-mono">
@@ -283,7 +283,7 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
                 </div>
               )}
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
               <button
                 ref={chatButtonRef}
                 onClick={handleChatClick}
@@ -336,25 +336,16 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
       {/* Track Column */}
       <td class="retro-grid-cell">
         <div class="flex items-center gap-3">
-          <div class="relative">
-            <img
-              src={props.track.thumbnail}
-              alt={props.track.title}
-              class="w-12 h-12 rounded-lg border border-cyan-400/30 object-cover"
-            />
-            {(isHovered() || isTrackPlaying()) && (
-              <div class="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePlayTrack();
-                  }}
-                  class="text-white text-xl hover:text-cyan-400 transition-colors"
-                >
-                  {isTrackPlaying() ? '⏸' : '▶'}
-                </button>
-              </div>
-            )}
+          <div class="relative flex items-center justify-center w-8 h-8 rounded border border-cyan-400/30 bg-gradient-to-br from-cyan-500/10 to-purple-500/10">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePlayTrack();
+              }}
+              class="text-cyan-400 text-xs hover:text-white transition-colors"
+            >
+              {isTrackPlaying() ? '⏸' : '▶'}
+            </button>
           </div>
           <div class="min-w-0 flex-1">
             <Show 
@@ -400,13 +391,13 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
             <Show 
               when={isCommentTruncated()} 
               fallback={
-                <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
+                <div ref={commentRef} class="text-sm text-white/60 truncate font-mono">
                   {props.track.userInteraction.context}
                 </div>
               }
             >
               <RetroTooltip content={props.track.userInteraction.context} maxWidth={300} delay={200}>
-                <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
+                <div ref={commentRef} class="text-sm text-white/60 truncate font-mono cursor-help">
                   {props.track.userInteraction.context}
                 </div>
               </RetroTooltip>
@@ -418,13 +409,13 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
           <Show 
             when={props.track.comment && isCommentTruncated()} 
             fallback={
-              <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono">
+              <div ref={commentRef} class="text-sm text-white/60 truncate font-mono">
                 {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
               </div>
             }
           >
             <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
-              <div ref={commentRef} class="text-sm text-white/60 line-clamp-2 font-mono cursor-help">
+              <div ref={commentRef} class="text-sm text-white/60 truncate font-mono cursor-help">
                 {props.track.comment}
               </div>
             </RetroTooltip>
