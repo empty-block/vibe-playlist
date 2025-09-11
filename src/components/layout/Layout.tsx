@@ -1,6 +1,7 @@
 import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
 import Sidebar from './Sidebar/Sidebar';
 import MobileNavigation from './MobileNavigation/MobileNavigation';
+import CompactHeader from './CompactHeader';
 import Terminal from '../chat/Terminal';
 import MediaPlayer from '../player/MediaPlayer';
 import { currentTrack } from '../../stores/playlistStore';
@@ -21,6 +22,8 @@ const Layout: Component<LayoutProps> = (props) => {
       {/* Enhanced retro background */}
       <div class="retro-background"></div>
       
+      {/* Compact Header */}
+      <CompactHeader onTerminalClick={() => setShowTerminal(true)} />
       
       {/* Desktop Sidebar */}
       <Sidebar onTerminalClick={() => setShowTerminal(true)} />
@@ -28,9 +31,9 @@ const Layout: Component<LayoutProps> = (props) => {
       {/* Mobile Navigation */}
       <MobileNavigation />
       
-      {/* Main Content (edge-to-edge) */}
+      {/* Main Content (with compact header offset) */}
       <main 
-        class="main-content"
+        class="main-content compact-layout"
         classList={{ 'has-player': !!currentTrack() }}
       >
         <div class="content-wrapper">

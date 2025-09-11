@@ -75,6 +75,7 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
         mode={props.mode}
         userId={props.userId}
         initialSection={props.initialSection}
+        personalTracks={props.personalTracks}
       />
 
       {/* Main Content */}

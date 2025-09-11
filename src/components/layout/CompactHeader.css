@@ -1,0 +1,126 @@
+/* Compact Header Component Styles - Winamp-inspired Ultra-compact Design */
+
+.compact-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: linear-gradient(to bottom, #2a2a2a, #1e1e1e);
+  border-bottom: 1px solid rgba(4, 202, 244, 0.3);
+  z-index: 40;
+  user-select: none;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+}
+
+.compact-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
+  max-width: 100%;
+}
+
+/* Title Section */
+.compact-header-title-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0; /* Allow shrinking */
+}
+
+.compact-header-icon {
+  font-size: 10px;
+  color: var(--neon-cyan, #04caf4);
+  flex-shrink: 0;
+}
+
+.compact-header-title {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--neon-cyan, #04caf4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Close Button (Terminal Easter Egg) */
+.compact-header-close-btn {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 107, 107, 0.5);
+  border-radius: 0;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.compact-header-close-btn:hover {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: #ff6b6b;
+  color: #ff8a80;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+  transform: scale(1.1);
+}
+
+.compact-header-close-btn:active {
+  background: rgba(255, 107, 107, 0.2);
+  transform: scale(0.95);
+  box-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
+}
+
+/* Subtle retro accent line */
+.compact-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right, 
+    transparent, 
+    rgba(4, 202, 244, 0.2), 
+    transparent
+  );
+  opacity: 0.8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 479px) {
+  .compact-header-content {
+    padding: 0 12px;
+  }
+  
+  .compact-header-close-btn {
+    width: 24px;
+    height: 22px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .compact-header-title {
+    font-size: 10px;
+  }
+}
+
+/* Desktop layout adjustment for sidebar */
+@media (min-width: 768px) {
+  .compact-header-content {
+    padding-left: 68px; /* 60px sidebar + 8px padding */
+  }
+}

@@ -9,6 +9,7 @@ import TableErrorState from '../shared/TableErrorState';
 import TablePagination from '../shared/TablePagination';
 import MobileSidebarToggle from './MobileSidebarToggle';
 import BrowseSectionsContainer, { LibraryFilters } from './BrowseSectionsContainer';
+// WinampLibraryFooter removed - functionality moved to WinampSidebarFooter
 import { filterTracksByArtist, filterTracksByGenre } from './utils/browseDataExtractors';
 import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage } from '../../../stores/libraryStore';
 import { selectedNetwork } from '../../../stores/networkStore';
@@ -313,6 +314,8 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
           onPageChange={handlePageChange}
         />
       </div>
+
+      {/* Footer removed - functionality consolidated into WinampSidebarFooter */}
 
     </div>
   );

@@ -38,6 +38,11 @@
   transform: translateZ(0); /* Hardware acceleration */
 }
 
+/* Compact layout adjustments */
+.main-content.compact-layout {
+  top: 24px; /* Offset for compact header */
+}
+
 .content-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -51,12 +56,20 @@
     left: 60px; /* Exact match with --sidebar-width */
     width: calc(100vw - 60px); /* Prevent overflow */
   }
+  
+  .main-content.compact-layout {
+    top: 24px; /* Offset for compact header */
+  }
 }
 
 /* Mobile Layout */
 @media (max-width: 767px) {
   .main-content {
     bottom: 64px; /* Mobile nav height */
+  }
+  
+  .main-content.compact-layout {
+    top: 24px; /* Offset for compact header */
   }
   
   .main-content.has-player {
