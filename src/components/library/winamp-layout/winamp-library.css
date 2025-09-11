@@ -58,30 +58,93 @@
   z-index: 40;
 }
 
-/* Sidebar Header - REMOVED: Functionality moved to library footer */
+/* Sidebar Header */
+.winamp-sidebar-header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--sidebar-border);
+  background: rgba(4, 202, 244, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.title-icon {
+  font-size: var(--text-base);
+  color: var(--sidebar-accent);
+}
+
+.title-text {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: bold;
+  color: var(--sidebar-accent);
+  text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Header ADD_TRACK Button */
+.header-add-track-btn {
+  padding: 8px 16px;
+  background: rgba(13, 13, 13, 0.9);
+  border: 1px solid rgba(4, 202, 244, 0.4);
+  border-radius: 3px;
+  color: #00f92a;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  height: 32px;
+  min-width: 120px;
+}
+
+.header-add-track-btn:hover {
+  border-color: rgba(0, 249, 42, 0.6);
+  color: #00ff41;
+  box-shadow: 0 0 8px rgba(0, 249, 42, 0.3);
+  transform: translateY(-1px);
+}
+
+.header-add-track-btn:active {
+  transform: translateY(0);
+}
+
+.header-add-track-btn .add-icon {
+  font-weight: bold;
+  color: inherit;
+}
+
+.header-add-track-btn .add-text {
+  color: inherit;
+}
 
 .mobile-close-btn {
   display: none;
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
   background: transparent;
-  border: 1px solid rgba(255, 107, 107, 0.3);
-  color: #ff6b6b;
-  font-size: 18px;
+  border: none;
+  color: var(--sidebar-text);
+  font-size: 24px;
   cursor: pointer;
-  padding: var(--space-1);
-  width: 28px;
-  height: 28px;
-  transition: all 0.2s ease;
-  z-index: 50;
-  border-radius: 0;
+  padding: var(--space-2);
+  transition: color 0.2s ease;
 }
 
 .mobile-close-btn:hover {
-  color: #ff8a80;
-  border-color: #ff6b6b;
-  box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+  color: var(--sidebar-accent);
 }
 
 /* Sidebar Content */
@@ -89,9 +152,6 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-4);
-  
-  /* Ensure proper spacing with header */
-  padding-top: var(--space-4);
 }
 
 /* Sidebar Sections */
@@ -205,7 +265,27 @@
   color: var(--sidebar-accent);
 }
 
-/* Sidebar Footer - REMOVED: Functionality moved to library footer */
+/* Sidebar Footer */
+.winamp-sidebar-footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--sidebar-border);
+  background: rgba(4, 202, 244, 0.05);
+  display: flex;
+  justify-content: center;
+}
+
+.footer-status {
+  display: flex;
+  justify-content: center;
+}
+
+.network-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(4, 202, 244, 0.8);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 
 /* Main Content Area */
 .winamp-main-content {
@@ -216,21 +296,20 @@
   overflow: hidden;
 }
 
-/* Main Content Header - Compact */
+/* Main Content Header */
 .main-content-header {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-4);
-  height: 20px;
-  border-bottom: 1px solid rgba(4, 202, 244, 0.2);
-  background: transparent;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--content-border);
+  background: rgba(4, 202, 244, 0.03);
 }
 
 .content-title {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
+  font-size: var(--text-base);
+  font-weight: bold;
   color: var(--sidebar-accent);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -671,7 +750,21 @@
     display: block;
   }
 
-  /* Removed mobile styles for header-add-track-btn (moved to footer) */
+  /* Compact header button on mobile */
+  .header-add-track-btn {
+    font-size: 10px;
+    padding: 6px 12px;
+    min-width: 100px;
+    height: 28px;
+  }
+
+  .header-add-track-btn .add-text {
+    display: inline; /* Show full text on mobile */
+  }
+
+  .header-add-track-btn .add-icon:last-child {
+    display: inline; /* Keep closing bracket */
+  }
 }
 
 @media (max-width: 767px) {
@@ -685,8 +778,7 @@
   }
 
   .main-content-header {
-    padding: var(--space-1) var(--space-4);
-    height: 20px;
+    padding: var(--space-4);
   }
 
   .search-filters-wrapper {

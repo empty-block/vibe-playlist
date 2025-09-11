@@ -1,6 +1,5 @@
 import { Component, createSignal, onMount, For, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import WinampSidebarHeader from './WinampSidebarHeader';
 import WinampSidebarSection from './WinampSidebarSection';
 import { createWinampSidebarStore, createSidebarFilter } from '../../../stores/winampSidebarStore';
 import { allTracks } from '../../../stores/libraryStore';
@@ -27,7 +26,6 @@ interface WinampSidebarProps {
   mode?: 'library' | 'profile';
   userId?: string;
   initialSection?: string;
-  personalTracks?: any[];
 }
 
 const WinampSidebar: Component<WinampSidebarProps> = (props) => {
@@ -186,19 +184,35 @@ const WinampSidebar: Component<WinampSidebarProps> = (props) => {
       role="navigation"
       aria-label="Library Navigation"
     >
-      {/* Mobile close button */}
-      <Show when={props.isOpen && window.innerWidth < 1024}>
-        <button
-          onClick={props.onClose}
-          class="mobile-close-btn"
-          aria-label="Close sidebar"
-        >
-          ×
-        </button>
-      </Show>
-
       {/* Sidebar Header */}
-      <WinampSidebarHeader />
+      <div class="winamp-sidebar-header">
+        <div class="sidebar-title">
+          <span class="title-icon">🎵</span>
+          <span class="title-text">LIBRARY</span>
+        </div>
+        
+        {/* ADD_TRACK Button */}
+        <button 
+          class="header-add-track-btn"
+          onClick={() => navigate('/add')}
+          aria-label="Add new track"
+        >
+          <span class="add-icon">[</span>
+          <span class="add-text">+ ADD_TRACK</span>
+          <span class="add-icon">]</span>
+        </button>
+        
+        {/* Mobile close button */}
+        <Show when={props.isOpen && window.innerWidth < 1024}>
+          <button
+            onClick={props.onClose}
+            class="mobile-close-btn"
+            aria-label="Close sidebar"
+          >
+            ×
+          </button>
+        </Show>
+      </div>
 
       {/* Sidebar Content */}
       <div class="winamp-sidebar-content" role="tree">
@@ -216,6 +230,14 @@ const WinampSidebar: Component<WinampSidebarProps> = (props) => {
         </For>
       </div>
 
+      {/* Sidebar Footer */}
+      <div class="winamp-sidebar-footer">
+        <div class="footer-status">
+          <span class="network-status">
+            NET: {selectedNetwork() === 'personal' ? 'PERSONAL' : selectedNetwork() === 'extended' ? 'EXTENDED' : selectedNetwork() === 'community' ? 'COMMUNITY' : 'PERSONAL'} • TRACKS: {allTracks().length}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

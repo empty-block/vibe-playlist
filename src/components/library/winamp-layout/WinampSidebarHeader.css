@@ -1,70 +1,39 @@
-/* Winamp Sidebar Header - Clean design with ADD_TRACK button */
+/* Sidebar Header - Match LIBRARY_DATA style exactly */
 
-.winamp-sidebar-header {
-  background: var(--sidebar-bg, #1a1a1a);
-  border-bottom: 1px solid rgba(204, 204, 204, 0.1);
-  padding: var(--space-3, 12px) var(--space-4, 16px);
+.sidebar-header {
+  background: var(--content-bg, #1a1a1a);
+  border-bottom: 1px solid rgba(4, 202, 244, 0.2);
+  padding: 8px 16px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  min-height: 48px;
 }
 
-/* Original ADD_TRACK Button Styling */
-.sidebar-add-track-btn {
-  background: transparent;
-  border: 1px solid var(--neon-green, #00f92a);
-  color: var(--neon-green, #00f92a);
+.sidebar-title {
+  color: var(--neon-cyan, #04caf4);
   font-family: var(--font-display, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: all 200ms ease;
-  width: 100%;
-  text-align: center;
-  border-radius: 4px;
-  outline: none;
-}
-
-.sidebar-add-track-btn:hover {
-  background: rgba(0, 249, 42, 0.1);
-  box-shadow: 0 0 8px rgba(0, 249, 42, 0.4);
-  transform: translateY(-1px);
-}
-
-.sidebar-add-track-btn:focus {
-  outline: 2px solid var(--neon-cyan, #04caf4);
-  outline-offset: 2px;
-}
-
-.sidebar-add-track-btn:active {
-  transform: translateY(0);
-  background: rgba(0, 249, 42, 0.2);
-}
-
-.add-text {
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 /* Responsive adjustments */
 @media (max-width: 767px) {
   .winamp-sidebar-header {
-    padding: var(--space-2, 8px) var(--space-3, 12px);
-    min-height: 40px;
+    padding: var(--space-1, 4px) var(--space-3, 12px);
+    min-height: 28px;
   }
   
-  .sidebar-add-track-btn {
-    font-size: 12px;
-    padding: 6px 12px;
+  .sidebar-title {
+    font-size: 11px;
   }
 }
 
 @media (max-width: 479px) {
-  .sidebar-add-track-btn {
-    font-size: 11px;
-    padding: 6px 10px;
+  .sidebar-title {
+    font-size: 10px;
   }
 }
