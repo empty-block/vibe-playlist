@@ -1,7 +1,9 @@
 import { Component, createSignal, onMount, Show } from 'solid-js';
+import { createStore } from 'solid-js/store';
 import { PersonalTrack, PersonalFilterType } from '../LibraryTable';
 import WinampSidebar from './WinampSidebar';
 import WinampMainContent from './WinampMainContent';
+import { LibraryFilters } from './BrowseSectionsContainer';
 import './winamp-library.css';
 
 interface WinampLibraryLayoutProps {
@@ -18,6 +20,14 @@ interface WinampLibraryLayoutProps {
 
 const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = createSignal(false);
+  
+  // Browse filters state for artist/genre filtering
+  const [browseFilters, setBrowseFilters] = createStore<LibraryFilters>({
+    selectedArtist: null,
+    selectedGenre: null,
+    searchQuery: '',
+    personalFilter: props.personalFilter || 'all'
+  });
 
   // Close mobile sidebar when clicking outside or on escape
   onMount(() => {
@@ -37,6 +47,15 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
 
   const handleSidebarToggle = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen());
+  };
+
+  const handleBrowseFiltersChange = (newFilters: Partial<LibraryFilters>) => {
+    setBrowseFilters(current => ({ ...current, ...newFilters }));
+    
+    // If personal filter changed, notify parent
+    if (newFilters.personalFilter && props.onPersonalFilterChange) {
+      props.onPersonalFilterChange(newFilters.personalFilter as PersonalFilterType);
+    }
   };
 
   return (
@@ -70,6 +89,9 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
         onPersonalFilterChange={props.onPersonalFilterChange}
         onAddMusic={props.onAddMusic}
         userId={props.userId}
+        // Browse filters
+        browseFilters={browseFilters}
+        onBrowseFiltersChange={handleBrowseFiltersChange}
       />
     </div>
   );

@@ -8,9 +8,11 @@ import TableEmptyState from '../shared/TableEmptyState';
 import TableErrorState from '../shared/TableErrorState';
 import TablePagination from '../shared/TablePagination';
 import MobileSidebarToggle from './MobileSidebarToggle';
+import BrowseSectionsContainer, { LibraryFilters } from './BrowseSectionsContainer';
+import { filterTracksByArtist, filterTracksByGenre } from './utils/browseDataExtractors';
 import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage } from '../../../stores/libraryStore';
 import { selectedNetwork } from '../../../stores/networkStore';
-import { For, createSignal, onMount } from 'solid-js';
+import { For, createSignal, onMount, createMemo } from 'solid-js';
 
 interface WinampMainContentProps {
   mode?: 'library' | 'profile';
@@ -23,6 +25,9 @@ interface WinampMainContentProps {
   onPersonalFilterChange?: (filter: PersonalFilterType) => void;
   onAddMusic?: () => void;
   userId?: string;
+  // Browse filters
+  browseFilters?: LibraryFilters;
+  onBrowseFiltersChange?: (filters: Partial<LibraryFilters>) => void;
 }
 
 const WinampMainContent: Component<WinampMainContentProps> = (props) => {
@@ -33,25 +38,61 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
 
   const isProfileMode = () => props.mode === 'profile';
 
-  // Profile mode data handling (copied from LibraryTable)
+  // Profile mode data handling with artist/genre filtering
   const personalFilteredTracks = () => {
     if (!isProfileMode()) return [];
-    const allTracks = props.personalTracks || [];
+    let tracks = props.personalTracks || [];
     const filter = props.personalFilter || 'all';
     
+    // Apply personal filter first
     switch (filter) {
       case 'shared':
-        return allTracks.filter(track => track.userInteraction.type === 'shared');
+        tracks = tracks.filter(track => track.userInteraction.type === 'shared');
+        break;
       case 'liked':
-        return allTracks.filter(track => track.userInteraction.type === 'liked');
+        tracks = tracks.filter(track => track.userInteraction.type === 'liked');
+        break;
       case 'conversations':
-        return allTracks.filter(track => track.userInteraction.type === 'conversation');
+        tracks = tracks.filter(track => track.userInteraction.type === 'conversation');
+        break;
       case 'recasts':
-        return allTracks.filter(track => track.userInteraction.type === 'recast');
+        tracks = tracks.filter(track => track.userInteraction.type === 'recast');
+        break;
       default:
-        return allTracks;
+        // Keep all tracks
+        break;
     }
+
+    // Apply browse filters if available
+    if (props.browseFilters) {
+      if (props.browseFilters.selectedArtist) {
+        tracks = filterTracksByArtist(tracks, props.browseFilters.selectedArtist);
+      }
+      if (props.browseFilters.selectedGenre) {
+        tracks = filterTracksByGenre(tracks, props.browseFilters.selectedGenre);
+      }
+    }
+    
+    return tracks;
   };
+
+  // Library mode data handling with artist/genre filtering
+  const libraryFilteredTracks = createMemo(() => {
+    if (isProfileMode()) return [];
+    let tracks = filteredTracks();
+    
+    // Apply browse filters if available
+    if (props.browseFilters) {
+      if (props.browseFilters.selectedArtist) {
+        tracks = filterTracksByArtist(tracks, props.browseFilters.selectedArtist);
+      }
+      if (props.browseFilters.selectedGenre) {
+        tracks = filterTracksByGenre(tracks, props.browseFilters.selectedGenre);
+      }
+    }
+    
+    return tracks;
+  });
 
   const personalPaginatedTracks = () => {
     const tracks = personalFilteredTracks();
@@ -84,9 +125,12 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
   const getCurrentPaginated = () => isProfileMode() ? personalPaginatedTracks() : paginatedTracks();
   const getCurrentTotalPages = () => isProfileMode() ? personalTotalPages() : totalPages();
   const getCurrentPage = () => isProfileMode() ? personalCurrentPage() : currentPage();
-  const getCurrentFiltered = () => isProfileMode() ? personalFilteredTracks() : filteredTracks();
+  const getCurrentFiltered = () => isProfileMode() ? personalFilteredTracks() : libraryFilteredTracks();
   const getCurrentLoading = () => isProfileMode() ? props.personalLoading : isLoading();
   const columnCount = isProfileMode() ? 7 : 9; // Images simplified to play buttons
+  
+  // Get all tracks for browse sections (before pagination)
+  const getAllTracks = () => isProfileMode() ? (props.personalTracks || []) : filteredTracks();
 
   const getEmptyStateProps = () => {
     if (!isProfileMode()) {
@@ -141,6 +185,16 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
           personalTracks={props.personalTracks}
         />
       </div>
+
+      {/* Browse Sections - Artist and Genre filtering */}
+      <Show when={props.browseFilters && props.onBrowseFiltersChange}>
+        <BrowseSectionsContainer
+          tracks={getAllTracks()}
+          filters={props.browseFilters!}
+          onFiltersChange={props.onBrowseFiltersChange!}
+          isLoading={getCurrentLoading()}
+        />
+      </Show>
 
       {/* Track Table */}
       <div class="table-wrapper">
