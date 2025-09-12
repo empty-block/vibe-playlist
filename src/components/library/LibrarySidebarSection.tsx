@@ -126,22 +126,23 @@ const LibrarySidebarSection: Component<LibrarySidebarSectionProps> = (props) => 
         onClick={props.onToggle}
         onKeyDown={handleSectionKeyDown}
         role="treeitem"
-        aria-expanded={props.isExpanded}
-        aria-label={`${props.section.title} section${props.isExpanded ? ', expanded' : ', collapsed'}`}
+        aria-expanded={props.section.isExpandable ? props.isExpanded : undefined}
+        aria-label={`${props.section.label} section${props.section.isExpandable ? (props.isExpanded ? ', expanded' : ', collapsed') : ''}`}
         tabIndex={0}
       >
         <div class="section-header-content">
           <span class="expand-icon">
-            {props.isExpanded ? '▼' : '►'}
+            {props.section.isExpandable ? (props.isExpanded ? '▼' : '►') : ''}
           </span>
-          <span class="section-label">{props.section.title}</span>
+          <span class="section-icon">{props.section.icon}</span>
+          <span class="section-label">{props.section.label}</span>
         </div>
       </div>
 
       {/* Section Items */}
-      <Show when={props.isExpanded && props.section.items && props.section.items.length > 0}>
+      <Show when={props.isExpanded && props.section.children.length > 0}>
         <div class="section-items" role="group">
-          <For each={props.section.items}>
+          <For each={props.section.children}>
             {(item: SidebarItem, index) => (
               <div
                 class={`sidebar-item ${props.activeItem === item.id ? 'active' : ''}`}
