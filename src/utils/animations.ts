@@ -5,7 +5,6 @@ import anime from 'animejs';
 // ================================================================
 // This file is maintained for backward compatibility during migration.
 // New animations should be added to component-specific files:
-// - Sidebar: src/components/layout/Sidebar/sidebar.animations.ts
 // - Player: src/components/player/player.animations.ts  
 // - Buttons: src/components/ui/animations/buttons.animations.ts
 // - Transitions: src/components/ui/animations/transitions.animations.ts

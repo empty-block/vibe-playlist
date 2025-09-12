@@ -9,7 +9,6 @@ export * from './core';
 export * from '../animations';
 
 // New modular animations are available for direct import:
-// import { sidebarToggle } from '@/components/layout/Sidebar/sidebar.animations'
 // import { playButtonPulse } from '@/components/player/player.animations' 
 // import { buttonHover } from '@/components/ui/animations/buttons.animations'
 // import { slideIn } from '@/components/ui/animations/transitions.animations'

@@ -223,19 +223,19 @@ export interface SidebarSection {
 // Shared navigation configuration - single source of truth
 export const navigationSections: readonly SidebarSection[] = [
   {
-    id: 'home',
+    id: 'library',
     href: '/',
-    label: 'Home',
-    icon: HomeIcon,
-    color: 'blue',
+    label: 'Library',
+    icon: LibraryIcon,
+    color: 'cyan',
     isPrimary: true
   },
   {
-    id: 'library',
-    href: '/library',
-    label: 'Library',
-    icon: LibraryIcon,
-    color: 'cyan'
+    id: 'home',
+    href: '/home',
+    label: 'Home',
+    icon: HomeIcon,
+    color: 'blue'
   },
   {
     id: 'stats',
