@@ -1,14 +1,14 @@
 import { Component } from 'solid-js';
-import { allTracks } from '../../../stores/libraryStore';
-import { selectedNetwork } from '../../../stores/networkStore';
-import './WinampLibraryFooter.css';
+import { allTracks } from '../../stores/libraryStore';
+import { selectedNetwork } from '../../stores/networkStore';
+import './LibraryFooter.css';
 
-interface WinampLibraryFooterProps {
+interface LibraryFooterProps {
   mode?: 'library' | 'profile';
   personalTracks?: any[];
 }
 
-const WinampLibraryFooter: Component<WinampLibraryFooterProps> = (props) => {
+const LibraryFooter: Component<LibraryFooterProps> = (props) => {
   
   const getTrackCount = () => {
     if (props.mode === 'profile' && props.personalTracks) {
@@ -36,4 +36,4 @@ const WinampLibraryFooter: Component<WinampLibraryFooterProps> = (props) => {
   );
 };
 
-export default WinampLibraryFooter;
+export default LibraryFooter;

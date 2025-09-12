@@ -1,19 +1,19 @@
 import { Component, Show } from 'solid-js';
-import { PersonalTrack, PersonalFilterType } from '../LibraryTable';
-import LibraryTableFilters from '../LibraryTableFilters';
-import LibraryTableHeader from '../LibraryTableHeader';
-import LibraryTableRow from '../LibraryTableRow';
-import TableLoadingSkeleton from '../shared/TableLoadingSkeleton';
-import TableEmptyState from '../shared/TableEmptyState';
-import TableErrorState from '../shared/TableErrorState';
-import TablePagination from '../shared/TablePagination';
+import { PersonalTrack, PersonalFilterType } from './LibraryTable';
+import LibraryTableFilters from './LibraryTableFilters';
+import LibraryTableHeader from './LibraryTableHeader';
+import LibraryTableRow from './LibraryTableRow';
+import TableLoadingSkeleton from './shared/TableLoadingSkeleton';
+import TableEmptyState from './shared/TableEmptyState';
+import TableErrorState from './shared/TableErrorState';
+import TablePagination from './shared/TablePagination';
 import MobileSidebarToggle from './MobileSidebarToggle';
-import BrowseSectionsContainer, { LibraryFilters } from './BrowseSectionsContainer';
+import BrowseSectionsContainer, { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';
 // WinampLibraryFooter removed - functionality moved to WinampSidebarFooter
-import { filterTracksByArtist, filterTracksByGenre } from './utils/browseDataExtractors';
-import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage } from '../../../stores/libraryStore';
-import { selectedNetwork } from '../../../stores/networkStore';
-import { currentUser } from '../../../stores/authStore';
+import { filterTracksByArtist, filterTracksByGenre } from './BrowseSections/utils/browseDataExtractors';
+import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage, loadAllTracks } from '../../stores/libraryStore';
+import { selectedNetwork } from '../../stores/networkStore';
+import { currentUser } from '../../stores/authStore';
 import { useNavigate } from '@solidjs/router';
 import { For, createSignal, onMount, createMemo } from 'solid-js';
 
@@ -41,6 +41,18 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
   const navigate = useNavigate();
 
   const isProfileMode = () => props.mode === 'profile';
+
+  // Load tracks on mount for library mode
+  onMount(async () => {
+    if (!isProfileMode()) {
+      try {
+        await loadAllTracks();
+      } catch (error) {
+        console.error('Error loading tracks:', error);
+        setLoadingError('Failed to load tracks');
+      }
+    }
+  });
 
   // Profile mode data handling with artist/genre filtering
   const personalFilteredTracks = () => {

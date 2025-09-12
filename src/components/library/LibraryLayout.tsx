@@ -1,12 +1,12 @@
 import { Component, createSignal, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import { PersonalTrack, PersonalFilterType } from '../LibraryTable';
-import WinampSidebar from './WinampSidebar';
-import WinampMainContent from './WinampMainContent';
-import { LibraryFilters } from './BrowseSectionsContainer';
+import { PersonalTrack, PersonalFilterType } from './LibraryTable';
+import LibrarySidebar from './LibrarySidebar';
+import LibraryMainContent from './LibraryMainContent';
+import { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';
 import './winamp-library.css';
 
-interface WinampLibraryLayoutProps {
+interface LibraryLayoutProps {
   mode?: 'library' | 'profile';
   userId?: string;
   initialSection?: string;
@@ -18,7 +18,7 @@ interface WinampLibraryLayoutProps {
   onAddMusic?: () => void;
 }
 
-const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
+const LibraryLayout: Component<LibraryLayoutProps> = (props) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = createSignal(false);
   
   // Browse filters state for artist/genre filtering
@@ -69,7 +69,7 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
       </Show>
 
       {/* Sidebar */}
-      <WinampSidebar 
+      <LibrarySidebar 
         isOpen={isMobileSidebarOpen()}
         onClose={() => setIsMobileSidebarOpen(false)}
         mode={props.mode}
@@ -79,7 +79,7 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
       />
 
       {/* Main Content */}
-      <WinampMainContent
+      <LibraryMainContent
         mode={props.mode}
         onSidebarToggle={handleSidebarToggle}
         isSidebarOpen={isMobileSidebarOpen()}
@@ -98,4 +98,4 @@ const WinampLibraryLayout: Component<WinampLibraryLayoutProps> = (props) => {
   );
 };
 
-export default WinampLibraryLayout;
+export default LibraryLayout;
