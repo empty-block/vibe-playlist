@@ -1,4 +1,4 @@
-import { Track } from '../../../../stores/playlistStore';
+import { Track } from '../../../../stores/playerStore';
 import { PersonalTrack } from '../../LibraryTable';
 
 // Types for browse data

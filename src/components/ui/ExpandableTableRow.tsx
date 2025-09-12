@@ -1,5 +1,5 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track } from '../../stores/playlistStore';
+import { Track } from '../../stores/playerStore';
 import LibraryTableRow from '../library/LibraryTableRow';
 
 interface ExpandableTableRowProps {

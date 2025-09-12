@@ -1,7 +1,7 @@
 import { Component } from 'solid-js';
 import { For } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
-import { setCurrentSection, currentSection } from '../../../stores/sidebarStore';
+import { setCurrentSection, currentSection } from '../../../stores/navigationStore';
 import { navigationSections } from '../Sidebar/NavigationData';
 import './mobileNavigation.css';
 

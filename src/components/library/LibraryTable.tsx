@@ -1,6 +1,6 @@
 import { Component, onMount, For, Show, createSignal } from 'solid-js';
 import { paginatedTracks, loadAllTracks, isLoading, filteredTracks, totalPages, currentPage, setCurrentPage } from '../../stores/libraryStore';
-import { Track } from '../../stores/playlistStore';
+import { Track } from '../../stores/playerStore';
 // LibraryLayout import removed - now used at page level
 import './retro-table.css';
 

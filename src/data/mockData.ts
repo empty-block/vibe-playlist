@@ -1,4 +1,4 @@
-import { Track, Playlist, TrackSource } from '../stores/playlistStore';
+import { Track, Playlist, TrackSource } from '../stores/playerStore';
 
 export interface User {
   id: string;

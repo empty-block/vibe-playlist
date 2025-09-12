@@ -317,7 +317,7 @@ const createSidebarFilter = (section: string, type: SidebarLibraryFilter['type']
 };
 
 // Create a store factory function for component use
-export const createWinampSidebarStore = () => {
+export const createLibrarySidebarStore = () => {
   return {
     // State
     activeSection,

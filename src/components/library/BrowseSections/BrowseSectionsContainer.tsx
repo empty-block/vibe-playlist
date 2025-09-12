@@ -1,5 +1,5 @@
 import { Component, Show, createMemo } from 'solid-js';
-import { Track } from '../../../stores/playlistStore';
+import { Track } from '../../../stores/playerStore';
 import { PersonalTrack } from '../LibraryTable';
 import ArtistBrowseSection from './ArtistBrowseSection';
 import GenreBrowseSection from './GenreBrowseSection';

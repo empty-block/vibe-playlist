@@ -1,7 +1,7 @@
 import { Component, createSignal, onMount, For, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import LibrarySidebarSection from './LibrarySidebarSection';
-import { createWinampSidebarStore, createSidebarFilter } from '../../stores/winampSidebarStore';
+import { createLibrarySidebarStore, createSidebarFilter } from '../../stores/librarySidebarStore';
 import { allTracks } from '../../stores/libraryStore';
 import { selectedNetwork, setSelectedNetwork, fetchNetworkData } from '../../stores/networkStore';
 
@@ -38,7 +38,7 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
     isExpanded,
     applyFilter,
     getSidebarCounts
-  } = createWinampSidebarStore();
+  } = createLibrarySidebarStore();
   
   // Get real-time counts
   const counts = getSidebarCounts();

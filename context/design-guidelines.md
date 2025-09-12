@@ -2,7 +2,7 @@
 
 ## 🎨 Core Design Principles
 ### Retro UI, Modern Style
-Jamzy is designed by retro tech and design, especially from the 90s and 00s. Early digital music libraries like Grooveshark, iTunes, Napster, Limeware, etc. Classic Mac OS GUI's, Windows 95, iPods, portable CD Players, digital radio UI, etc.
+Jamzy is designed by retro tech and design, especially from the 90s and 00s. Early digital music libraries and players like Winamp, Grooveshark, Napster, Limeware, iTunes,etc. 
 
 But Jamzy also embraces modern tech and best practices, and aims for a fast, accessible, lightweight feel in both its UI and technical architecture. 
 

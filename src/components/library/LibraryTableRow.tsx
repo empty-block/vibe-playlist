@@ -1,5 +1,5 @@
 import { Component, createSignal, Show, onMount, createEffect, For } from 'solid-js';
-import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playlistStore';
+import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
 import { heartBeat, particleBurst, socialButtonClick } from '../../utils/animations';

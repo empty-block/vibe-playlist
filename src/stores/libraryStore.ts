@@ -1,6 +1,6 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import { Track } from './playlistStore';
+import { Track } from './playerStore';
 import { mockDataService } from '../data/mockData';
 import { selectedNetwork } from './networkStore';
 

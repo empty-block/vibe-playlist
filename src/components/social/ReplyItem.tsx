@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import { Reply } from '../../stores/playlistStore';
+import { Reply } from '../../stores/playerStore';
 import { getThemeColors, contrastColors } from '../../utils/contrastColors';
 
 interface ReplyItemProps {
