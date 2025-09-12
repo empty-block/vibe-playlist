@@ -1,5 +1,4 @@
 import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
-import Sidebar from './Sidebar/Sidebar';
 import MobileNavigation from './MobileNavigation/MobileNavigation';
 import CompactHeader from './CompactHeader';
 import Terminal from '../chat/Terminal';
@@ -18,22 +17,19 @@ const Layout: Component<LayoutProps> = (props) => {
   (window as any).showTerminal = () => setShowTerminal(true);
 
   return (
-    <div class="app-container">
+    <div class="app-container no-sidebar">
       {/* Enhanced retro background */}
       <div class="retro-background"></div>
       
       {/* Compact Header */}
       <CompactHeader onTerminalClick={() => setShowTerminal(true)} />
       
-      {/* Desktop Sidebar */}
-      <Sidebar onTerminalClick={() => setShowTerminal(true)} />
-      
       {/* Mobile Navigation */}
       <MobileNavigation />
       
-      {/* Main Content (with compact header offset) */}
+      {/* Main Content (full width without sidebar) */}
       <main 
-        class="main-content compact-layout"
+        class="main-content full-width-layout"
         classList={{ 'has-player': !!currentTrack() }}
       >
         <div class="content-wrapper">

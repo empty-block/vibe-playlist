@@ -13,6 +13,8 @@ import BrowseSectionsContainer, { LibraryFilters } from './BrowseSectionsContain
 import { filterTracksByArtist, filterTracksByGenre } from './utils/browseDataExtractors';
 import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage } from '../../../stores/libraryStore';
 import { selectedNetwork } from '../../../stores/networkStore';
+import { currentUser } from '../../../stores/authStore';
+import { useNavigate } from '@solidjs/router';
 import { For, createSignal, onMount, createMemo } from 'solid-js';
 
 interface WinampMainContentProps {
@@ -36,6 +38,7 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
   const [loadingError, setLoadingError] = createSignal<string>('');
   const [personalCurrentPage, setPersonalCurrentPage] = createSignal(1);
   const ITEMS_PER_PAGE = 50;
+  const navigate = useNavigate();
 
   const isProfileMode = () => props.mode === 'profile';
 
@@ -175,6 +178,27 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
           isOpen={props.isSidebarOpen}
         />
         <h1 class="content-title">LIBRARY_DATA</h1>
+        
+        {/* Profile Access - Top Right */}
+        <div class="profile-access">
+          <button 
+            onClick={() => navigate('/profile')}
+            class="profile-button group"
+            title={`View ${currentUser().displayName}'s profile`}
+          >
+            <div class="profile-avatar">
+              <img 
+                src={currentUser().avatar} 
+                alt={currentUser().displayName}
+                class="avatar-image"
+              />
+              <div class="avatar-border"></div>
+            </div>
+            <span class="profile-username">
+              {currentUser().username}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters */}

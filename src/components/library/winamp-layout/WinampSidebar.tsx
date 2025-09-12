@@ -71,23 +71,20 @@ const WinampSidebar: Component<WinampSidebarProps> = (props) => {
           { id: 'community-net', label: 'Community', count: 48392 },
           { id: 'genre-networks', label: 'Genre Networks', count: 6 },
         ]
-      }
-    ];
-
-    // Add Social section for library mode
-    if (props.mode !== 'profile') {
-      baseSections.push({
-        id: 'social',
-        label: 'Social',
-        icon: '🌐',
+      },
+      {
+        id: 'analytics',
+        label: 'Analytics',
+        icon: '📊',
         isExpandable: true,
         children: [
-          { id: 'my-activity', label: 'My Activity', count: currentCounts.myActivity },
-          { id: 'following', label: 'Following', count: currentCounts.following },
-          { id: 'discover', label: 'Discover', count: currentCounts.discover },
+          { id: 'network-analytics', label: 'Network Analytics', count: 4 },
+          { id: 'track-analytics', label: 'Track Analytics', count: currentCounts.allTracks },
+          { id: 'discovery-stats', label: 'Discovery Stats', count: 12 },
+          { id: 'influence-metrics', label: 'Influence Metrics', count: 87 },
         ]
-      });
-    }
+      }
+    ];
 
     return baseSections;
   };
@@ -154,13 +151,13 @@ const WinampSidebar: Component<WinampSidebarProps> = (props) => {
         // This could expand to show individual genre networks
         return createSidebarFilter(itemId, 'network', 'genre-networks');
         
-      // Social items
-      case 'my-activity':
-        return createSidebarFilter(itemId, 'social', 'my-activity');
-      case 'following':
-        return createSidebarFilter(itemId, 'social', 'following');
-      case 'discover':
-        return createSidebarFilter(itemId, 'social', 'discover');
+      // Analytics items - navigate to stats page
+      case 'network-analytics':
+      case 'track-analytics':
+      case 'discovery-stats':
+      case 'influence-metrics':
+        navigate('/network');
+        return null; // Navigation handled above, no filter needed
         
       default:
         return null;

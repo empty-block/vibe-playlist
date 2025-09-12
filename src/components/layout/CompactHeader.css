@@ -123,4 +123,9 @@
   .compact-header-content {
     padding-left: 68px; /* 60px sidebar + 8px padding */
   }
+  
+  /* No sidebar layout - full width */
+  .app-container.no-sidebar .compact-header-content {
+    padding-left: 8px; /* Standard padding without sidebar */
+  }
 }

@@ -50,7 +50,7 @@
   padding-bottom: 24px;
 }
 
-/* Desktop Layout with optimized sidebar */
+/* Desktop Layout with sidebar */
 @media (min-width: 768px) {
   .main-content {
     left: 60px; /* Exact match with --sidebar-width */
@@ -58,6 +58,18 @@
   }
   
   .main-content.compact-layout {
+    top: 24px; /* Offset for compact header */
+  }
+  
+  /* Full width layout without sidebar */
+  .app-container.no-sidebar .main-content,
+  .main-content.full-width-layout {
+    left: 0;
+    width: 100vw;
+  }
+  
+  .app-container.no-sidebar .main-content.compact-layout,
+  .main-content.full-width-layout.compact-layout {
     top: 24px; /* Offset for compact header */
   }
 }

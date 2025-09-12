@@ -304,6 +304,7 @@
   padding: var(--space-4) var(--space-6);
   border-bottom: 1px solid var(--content-border);
   background: rgba(4, 202, 244, 0.03);
+  justify-content: space-between; /* Space between items */
 }
 
 .content-title {
@@ -314,6 +315,87 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0;
+  flex: 1; /* Allow title to take available space */
+}
+
+/* Profile Access - Top Right */
+.profile-access {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  border: 2px solid var(--sidebar-border);
+  padding: var(--space-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-mono);
+  color: var(--sidebar-text);
+  font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.profile-button:hover {
+  border-color: var(--sidebar-accent);
+  background: rgba(4, 202, 244, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+}
+
+.profile-avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0; /* Sharp corners for retro feel */
+}
+
+.avatar-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+  pointer-events: none;
+}
+
+.profile-button:hover .avatar-border {
+  border-color: var(--sidebar-accent);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.5);
+}
+
+.profile-username {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Hide username on smaller screens */
+@media (max-width: 640px) {
+  .profile-username {
+    display: none;
+  }
+  
+  .profile-button {
+    padding: var(--space-1);
+  }
+  
+  .profile-avatar {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 /* Mobile Sidebar Toggle */
