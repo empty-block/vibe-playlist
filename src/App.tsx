@@ -47,6 +47,9 @@ const App: Component = () => {
       <Route path="/me" component={ProfilePage} />
       <Route path="/profile/:username" component={ProfilePage} />
       <Route path="/profile" component={ProfilePage} />
+      
+      {/* Redirect old /add route back to library */}
+      <Route path="/add" component={LibraryPage} />
     </Router>
   );
 };
