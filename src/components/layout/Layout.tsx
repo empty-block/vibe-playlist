@@ -1,7 +1,7 @@
 import { Component, createSignal, Show, JSX, createEffect } from 'solid-js';
 import MobileNavigation from './MobileNavigation/MobileNavigation';
 import CompactHeader from './CompactHeader';
-import Terminal from '../chat/Terminal';
+import Terminal from '../terminal/Terminal';
 import MediaPlayer from '../player/MediaPlayer';
 import { currentTrack } from '../../stores/playlistStore';
 import './HeaderBar.css';

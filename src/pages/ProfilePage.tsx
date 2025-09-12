@@ -2,7 +2,7 @@ import { Component, createSignal, onMount } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
 import LibraryTable, { PersonalTrack, PersonalFilterType } from '../components/library/LibraryTable';
-import AddButton from '../components/shared/AddButton';
+import AddButton from '../components/common/AddButton';
 import { currentUser } from '../stores/authStore';
 
 const ProfilePage: Component = () => {
