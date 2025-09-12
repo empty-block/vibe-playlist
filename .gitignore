@@ -70,3 +70,6 @@ build/
 # Temporary folders
 tmp/
 temp/
+
+# Serena cache files
+.serena/

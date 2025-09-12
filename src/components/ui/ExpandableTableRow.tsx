@@ -1,5 +1,5 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track } from '../../stores/playlistStore';
+import { Track } from '../../stores/playerStore';
 import LibraryTableRow from '../library/LibraryTableRow';
 
 interface ExpandableTableRowProps {
@@ -23,7 +23,7 @@ const ExpandableTableRow: Component<ExpandableTableRowProps> = (props) => {
   return (
     <>
       {/* Regular table row */}
-      <LibraryTableRow track={props.track} />
+      <LibraryTableRow track={props.track} trackNumber={1} />
       
       {/* Expandable details row */}
       <Show when={hasLongContent()}>

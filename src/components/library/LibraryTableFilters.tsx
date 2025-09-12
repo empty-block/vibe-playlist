@@ -1,7 +1,32 @@
 import { Component, createSignal, onCleanup, Show } from 'solid-js';
-import { filters, updateFilters, resetFilters, FilterPlatform, isShuffled, shuffleTracks, filteredTracks } from '../../stores/libraryStore';
+import { filters, updateFilters, resetFilters, FilterPlatform, filteredTracks } from '../../stores/libraryStore';
 
-const LibraryTableFilters: Component = () => {
+// Import types for profile mode
+export interface PersonalTrack {
+  id: string;
+  userInteraction: {
+    type: 'shared' | 'liked' | 'conversation' | 'recast';
+    timestamp: string;
+    context?: string;
+    socialStats?: {
+      likes: number;
+      replies: number;
+      recasts: number;
+    };
+  };
+  // ... other track properties
+}
+
+export type PersonalFilterType = 'all' | 'shared' | 'liked' | 'conversations' | 'recasts';
+
+interface LibraryTableFiltersProps {
+  profileMode?: boolean;
+  personalFilter?: PersonalFilterType;
+  onPersonalFilterChange?: (filter: PersonalFilterType) => void;
+  personalTracks?: PersonalTrack[];
+}
+
+const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
   const [searchInput, setSearchInput] = createSignal(filters.search);
   const [showFilters, setShowFilters] = createSignal(false);
   let searchTimeout: any;
@@ -70,12 +95,32 @@ const LibraryTableFilters: Component = () => {
     }
   };
 
+  // Calculate personal stats for profile mode
+  const getPersonalStats = () => {
+    if (!props.profileMode || !props.personalTracks) {
+      return { all: 0, shared: 0, liked: 0, conversations: 0, recasts: 0 };
+    }
+    
+    const tracks = props.personalTracks;
+    return {
+      all: tracks.length,
+      shared: tracks.filter(t => t.userInteraction.type === 'shared').length,
+      liked: tracks.filter(t => t.userInteraction.type === 'liked').length,
+      conversations: tracks.filter(t => t.userInteraction.type === 'conversation').length,
+      recasts: tracks.filter(t => t.userInteraction.type === 'recast').length,
+    };
+  };
+
   // Auto-expand when filters are active
   const hasActiveFilters = () => {
-    return filters.search || 
+    const baseFilters = filters.search || 
            filters.platform !== 'all' || 
            filters.dateRange !== 'all' || 
            filters.minEngagement > 0;
+    
+    const personalFilter = props.profileMode && props.personalFilter && props.personalFilter !== 'all';
+    
+    return baseFilters || personalFilter;
   };
 
   // Auto-expand effect
@@ -91,9 +136,10 @@ const LibraryTableFilters: Component = () => {
     <div class="terminal-query-interface bg-[#0d0d0d] border-2 border-[#04caf4]/20 font-mono">
 
       <div class="p-4">
-        {/* Search Input - Always visible */}
-        <div class="mb-3">
-          <div class="relative">
+        {/* Main Row Layout - Search Input with Buttons */}
+        <div class="flex items-center gap-3 flex-wrap">
+          {/* Search Input - Takes most space */}
+          <div class="flex-1 min-w-[200px] relative">
             <input
               type="text"
               placeholder="SEARCH_QUERY > "
@@ -112,62 +158,50 @@ const LibraryTableFilters: Component = () => {
               _
             </div>
           </div>
-        </div>
 
-        {/* Quick Actions - Always visible */}
-        <div class="flex items-center justify-between mb-3">
-          <button
-            onClick={toggleFilters}
-            class={`text-xs font-mono uppercase tracking-wider transition-all duration-200
-                   ${showFilters() 
-                     ? 'text-[#f906d6] hover:text-[#f906d6]/80' 
-                     : 'text-[#04caf4]/60 hover:text-[#04caf4]'}`}
-          >
-            <i class={`fas ${showFilters() ? 'fa-chevron-up' : 'fa-chevron-down'} mr-2 transition-transform duration-200`}></i>
-            {showFilters() ? 'HIDE FILTERS' : 'SHOW FILTERS'}
-            {hasActiveFilters() && !showFilters() && (
-              <span class="ml-2 text-[#00f92a] animate-pulse">●</span>
-            )}
-          </button>
-
+          {/* Action Buttons - Now on same row as search */}
           <div class="flex items-center gap-2">
-            {/* Shuffle Button */}
+            {/* Show Filters Toggle */}
             <button
-              onClick={shuffleTracks}
-              class={`terminal-action-btn bg-[rgba(0,249,42,0.1)] border border-[#00f92a] text-[#00f92a] font-mono text-[10px] 
-                     px-3 py-2 uppercase tracking-wider font-bold transition-all duration-200 relative overflow-hidden
-                     hover:bg-[rgba(0,249,42,0.2)] hover:shadow-[0_0_10px_rgba(0,249,42,0.3)]
-                     ${isShuffled() ? 'animate-pulse shadow-[0_0_15px_rgba(0,249,42,0.4)]' : ''}`}
-              style="border-radius: 0; text-shadow: 0 0 6px rgba(0, 249, 42, 0.4);"
+              onClick={toggleFilters}
+              class={`text-[10px] font-mono uppercase tracking-wider transition-all duration-200 px-3 py-2.5 border
+                     ${showFilters() 
+                       ? 'text-[#f906d6] border-[#f906d6]/50 bg-[rgba(249,6,214,0.1)] hover:text-[#f906d6]/80' 
+                       : 'text-[#04caf4]/60 border-[#04caf4]/30 bg-[rgba(4,202,244,0.05)] hover:text-[#04caf4]'}`}
+              style="border-radius: 0;"
             >
-              <span class="opacity-70">RUN </span>SHUFFLE
+              SHOW FILTERS
+              {hasActiveFilters() && !showFilters() && (
+                <span class="ml-1 text-[#00f92a] animate-pulse">●</span>
+              )}
             </button>
 
             {/* Reset Button */}
             <button
               onClick={handleReset}
               class="terminal-action-btn bg-[rgba(255,107,53,0.1)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[10px] 
-                     px-3 py-2 uppercase tracking-wider font-bold transition-all duration-200 relative overflow-hidden
+                     px-3 py-2.5 uppercase tracking-wider font-bold transition-all duration-200 relative overflow-hidden
                      hover:bg-[rgba(255,107,53,0.2)] hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]"
               style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 107, 53, 0.4);"
             >
-              <span class="opacity-70">CLEAR </span>RESET
+              RESET
             </button>
           </div>
         </div>
 
-        {/* Collapsible Filter Content */}
-        <div 
-          ref={filterContainerRef}
-          class={`filter-container overflow-hidden transition-all duration-300 ease-out
-                 ${showFilters() ? 'opacity-100' : 'opacity-0 h-0'}`}
-          style={showFilters() ? {} : { height: '0px' }}
-        >
-          <div class="border-t border-[#04caf4]/20 pt-3">
-            {/* Basic Filters */}
-            <div class="flex flex-wrap items-center gap-2 mb-3">
+        {/* Collapsible Advanced Filters Section */}
+        <Show when={showFilters()}>
+          <div 
+            ref={filterContainerRef}
+            class="filter-container overflow-hidden transition-all duration-300 ease-out mt-3 border-t border-[#04caf4]/20 pt-3"
+          >
+            {/* Advanced Filter Controls */}
+            <div class="flex flex-wrap items-center gap-3 mb-3">
               {/* Platform Dropdown */}
               <div class="relative">
+                <label class="text-[#04caf4] font-mono text-[8px] uppercase tracking-wide block mb-1 opacity-70">
+                  PLATFORM
+                </label>
                 <select
                   value={filters.platform}
                   onChange={(e) => handlePlatformChange(e.target.value as FilterPlatform)}
@@ -177,16 +211,19 @@ const LibraryTableFilters: Component = () => {
                          focus:outline-none focus:shadow-[0_0_12px_rgba(4,202,244,0.3)]"
                   style="border-radius: 0; text-shadow: 0 0 6px rgba(4, 202, 244, 0.4);"
                 >
-                  <option value="all" class="bg-[#0d0d0d] text-[#04caf4]">PLATFORM_ALL</option>
-                  <option value="youtube" class="bg-[#0d0d0d] text-[#04caf4]">PLATFORM_YOUTUBE</option>
-                  <option value="spotify" class="bg-[#0d0d0d] text-[#04caf4]">PLATFORM_SPOTIFY</option>
-                  <option value="soundcloud" class="bg-[#0d0d0d] text-[#04caf4]">PLATFORM_SOUNDCLOUD</option>
-                  <option value="bandcamp" class="bg-[#0d0d0d] text-[#04caf4]">PLATFORM_BANDCAMP</option>
+                  <option value="all" class="bg-[#0d0d0d] text-[#04caf4]">ALL PLATFORMS</option>
+                  <option value="youtube" class="bg-[#0d0d0d] text-[#04caf4]">YOUTUBE</option>
+                  <option value="spotify" class="bg-[#0d0d0d] text-[#04caf4]">SPOTIFY</option>
+                  <option value="soundcloud" class="bg-[#0d0d0d] text-[#04caf4]">SOUNDCLOUD</option>
+                  <option value="bandcamp" class="bg-[#0d0d0d] text-[#04caf4]">BANDCAMP</option>
                 </select>
               </div>
 
               {/* Time Period Dropdown */}
               <div class="relative">
+                <label class="text-[#ffff00] font-mono text-[8px] uppercase tracking-wide block mb-1 opacity-70">
+                  TIME PERIOD
+                </label>
                 <select
                   value={filters.dateRange}
                   onChange={(e) => handleDateRangeChange(e.target.value as 'all' | 'today' | 'week' | 'month')}
@@ -196,32 +233,57 @@ const LibraryTableFilters: Component = () => {
                          focus:outline-none focus:shadow-[0_0_12px_rgba(255,255,0,0.3)]"
                   style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 255, 0, 0.4);"
                 >
-                  <option value="all" class="bg-[#0d0d0d] text-[#ffff00]">TIME_ALL</option>
-                  <option value="today" class="bg-[#0d0d0d] text-[#ffff00]">TIME_TODAY</option>
-                  <option value="week" class="bg-[#0d0d0d] text-[#ffff00]">TIME_WEEK</option>
-                  <option value="month" class="bg-[#0d0d0d] text-[#ffff00]">TIME_MONTH</option>
+                  <option value="all" class="bg-[#0d0d0d] text-[#ffff00]">ALL TIME</option>
+                  <option value="today" class="bg-[#0d0d0d] text-[#ffff00]">TODAY</option>
+                  <option value="week" class="bg-[#0d0d0d] text-[#ffff00]">THIS WEEK</option>
+                  <option value="month" class="bg-[#0d0d0d] text-[#ffff00]">THIS MONTH</option>
                 </select>
               </div>
 
               {/* Min Engagement Input */}
-              <div class="flex items-center">
-                <input
-                  type="number"
-                  min="0"
-                  value={filters.minEngagement}
-                  onChange={(e) => handleEngagementChange(parseInt(e.target.value) || 0)}
-                  class="terminal-input bg-[rgba(0,0,0,0.9)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[10px] 
-                         px-3 py-2 w-20 text-center uppercase cursor-pointer transition-all duration-200
-                         hover:shadow-[0_0_8px_rgba(255,107,53,0.2)]
-                         focus:outline-none focus:shadow-[0_0_12px_rgba(255,107,53,0.3)]"
-                  placeholder="0"
-                  style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 107, 53, 0.4);"
-                />
-                <span class="text-[#ff6b35] font-mono text-[9px] ml-2 opacity-70 uppercase tracking-wide">MIN_ENGAGEMENT</span>
+              <div class="flex flex-col">
+                <label class="text-[#ff6b35] font-mono text-[8px] uppercase tracking-wide block mb-1 opacity-70">
+                  MIN ENGAGEMENT
+                </label>
+                <div class="flex items-center">
+                  <input
+                    type="number"
+                    min="0"
+                    value={filters.minEngagement}
+                    onChange={(e) => handleEngagementChange(parseInt(e.target.value) || 0)}
+                    class="terminal-input bg-[rgba(0,0,0,0.9)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[10px] 
+                           px-3 py-2 w-20 text-center uppercase cursor-pointer transition-all duration-200
+                           hover:shadow-[0_0_8px_rgba(255,107,53,0.2)]
+                           focus:outline-none focus:shadow-[0_0_12px_rgba(255,107,53,0.3)]"
+                    placeholder="0"
+                    style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 107, 53, 0.4);"
+                  />
+                </div>
               </div>
+
+              {/* Activity Filter - Only show in profile mode */}
+              <Show when={props.profileMode}>
+                <div class="relative">
+                  <select
+                    value={props.personalFilter || 'all'}
+                    onChange={(e) => props.onPersonalFilterChange?.(e.target.value as PersonalFilterType)}
+                    class="terminal-select bg-[rgba(0,0,0,0.9)] border border-[#f906d6] text-[#f906d6] font-mono text-[10px] 
+                           px-3 py-2 min-w-[120px] uppercase tracking-wide cursor-pointer transition-all duration-200
+                           hover:border-[#f906d6] hover:shadow-[0_0_8px_rgba(249,6,214,0.2)]
+                           focus:outline-none focus:shadow-[0_0_12px_rgba(249,6,214,0.3)]"
+                    style="border-radius: 0; text-shadow: 0 0 6px rgba(249, 6, 214, 0.4);"
+                  >
+                    <option value="all" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_ALL ({getPersonalStats().all})</option>
+                    <option value="shared" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_SHARED ({getPersonalStats().shared})</option>
+                    <option value="liked" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_LIKED ({getPersonalStats().liked})</option>
+                    <option value="conversations" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_CONVERSATIONS ({getPersonalStats().conversations})</option>
+                    <option value="recasts" class="bg-[#0d0d0d] text-[#f906d6]">ACTIVITY_RECASTS ({getPersonalStats().recasts})</option>
+                  </select>
+                </div>
+              </Show>
             </div>
           </div>
-        </div>
+        </Show>
 
         {/* Active Filters Display */}
         {hasActiveFilters() && (

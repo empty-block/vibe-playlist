@@ -12,7 +12,7 @@ import {
   currentTime,
   duration,
   isSeekable
-} from '../../stores/playlistStore';
+} from '../../stores/playerStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
 import styles from './player.module.css';
 

@@ -34,10 +34,13 @@ const App: Component = () => {
 
   return (
     <Router root={Layout}>
-      {/* Home page - dual splash/personalized functionality */}
-      <Route path="/" component={HomePage} />
+      {/* Library as default route - main interface */}
+      <Route path="/" component={LibraryPage} />
       
-      {/* Main navigation routes */}
+      {/* Home page available but not primary */}
+      <Route path="/home" component={HomePage} />
+      
+      {/* Other navigation routes */}
       <Route path="/library" component={LibraryPage} />
       <Route path="/network" component={StatsPage} />
       <Route path="/me/:username" component={ProfilePage} />

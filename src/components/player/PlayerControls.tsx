@@ -1,5 +1,5 @@
 import { Component, Show, createSignal, onMount, onCleanup } from 'solid-js';
-import { isPlaying } from '../../stores/playlistStore';
+import { isPlaying } from '../../stores/playerStore';
 import { NEON_COLORS, STATE_COLORS, PLAYER_CONSTANTS } from './styles/neonTheme';
 import { createNeonButton, PLAYER_STYLES } from './styles/neonStyles';
 import { playbackButtonHover } from '../../utils/animations';

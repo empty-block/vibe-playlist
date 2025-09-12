@@ -1,95 +1,96 @@
 import { Component, onMount, For, Show, createSignal } from 'solid-js';
 import { paginatedTracks, loadAllTracks, isLoading, filteredTracks, totalPages, currentPage, setCurrentPage } from '../../stores/libraryStore';
-import LibraryTableHeader from './LibraryTableHeader';
-import LibraryTableRow from './LibraryTableRow';
-import LibraryTableFilters from './LibraryTableFilters';
-import TableLoadingSkeleton from './shared/TableLoadingSkeleton';
-import TableEmptyState from './shared/TableEmptyState';
-import TableErrorState from './shared/TableErrorState';
-import TablePagination from './shared/TablePagination';
+import { Track } from '../../stores/playerStore';
+// LibraryLayout import removed - now used at page level
 import './retro-table.css';
 
-const LibraryTable: Component = () => {
-  let tableRef: HTMLTableElement | undefined;
-  const [loadingError, setLoadingError] = createSignal<string>('');
+// Import PersonalTrack type from PersonalLibraryTable
+export interface PersonalTrack extends Track {
+  userInteraction: {
+    type: 'shared' | 'liked' | 'conversation' | 'recast';
+    timestamp: string;
+    context?: string;
+    socialStats?: {
+      likes: number;
+      replies: number;
+      recasts: number;
+    };
+  };
+}
 
+export type PersonalFilterType = 'all' | 'shared' | 'liked' | 'conversations' | 'recasts';
+
+interface LibraryTableProps {
+  mode?: 'library' | 'profile';
+  // Profile mode props
+  personalTracks?: PersonalTrack[];
+  personalLoading?: boolean;
+  personalFilter?: PersonalFilterType;
+  onPersonalFilterChange?: (filter: PersonalFilterType) => void;
+  onAddMusic?: () => void;
+  userId?: string;
+}
+
+// Removed PersonalFilters - now integrated into LibraryTableFilters
+
+const LibraryTable: Component<LibraryTableProps> = (props) => {
+  // Load all tracks on mount for library mode
   onMount(async () => {
-    try {
-      await loadAllTracks();
-    } catch (error) {
-      setLoadingError('Failed to load music library. Please try again.');
-      console.error('Error loading tracks:', error);
+    if (props.mode !== 'profile') {
+      try {
+        await loadAllTracks();
+      } catch (error) {
+        console.error('Error loading tracks:', error);
+      }
     }
   });
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // Scroll to top of table
-    if (tableRef) {
-      tableRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Get tracks based on mode
+  const tracks = () => {
+    if (props.mode === 'profile' && props.personalTracks) {
+      return props.personalTracks;
     }
-  };
-
-  const handleRetry = () => {
-    setLoadingError('');
-    loadAllTracks();
+    return paginatedTracks();
   };
 
   return (
-    <div class="retro-music-terminal relative">
-      {/* Filters with integrated track count */}
-      <LibraryTableFilters />
+    <div class="library-table">
+      {/* Loading State */}
+      <Show when={isLoading() || (props.mode === 'profile' && props.personalLoading)}>
+        <div class="table-loading">Loading tracks...</div>
+      </Show>
 
-      {/* Library Data Grid */}
-      <div class="overflow-x-auto relative z-20">
-        <table ref={tableRef!} class="retro-data-grid">
-          <LibraryTableHeader />
-          
-          <Show 
-            when={!isLoading() && !loadingError()} 
-            fallback={
-              <Show when={loadingError()} 
-                fallback={<TableLoadingSkeleton columnCount={10} />}>
-                <TableErrorState 
-                  columnSpan={10} 
-                  errorMessage={loadingError()} 
-                  onRetry={handleRetry} 
-                />
-              </Show>
-            }
-          >
-            <Show when={paginatedTracks().length > 0} 
-              fallback={
-                <TableEmptyState
-                  columnSpan={10}
-                  icon="🎵"
-                  title="No tracks found"
-                  subtitle="Try adjusting your filters or check back later"
-                />
-              }>
-              <tbody>
-                <For each={paginatedTracks()}>
-                  {(track, index) => (
-                    <LibraryTableRow 
-                      track={track} 
-                      trackNumber={((currentPage() - 1) * 50) + index() + 1}
-                    />
-                  )}
-                </For>
-              </tbody>
-            </Show>
-          </Show>
-        </table>
-      </div>
+      {/* Empty State */}
+      <Show when={!isLoading() && tracks().length === 0}>
+        <div class="table-empty">No tracks found</div>
+      </Show>
 
-      {/* Pagination */}
-      <TablePagination 
-        currentPage={currentPage()}
-        totalPages={totalPages()}
-        totalItems={filteredTracks().length}
-        itemsPerPage={50}
-        onPageChange={handlePageChange}
-      />
+      {/* Table Content */}
+      <Show when={!isLoading() && tracks().length > 0}>
+        <div class="retro-table">
+          {/* Table Header */}
+          <div class="table-header">
+            <div class="header-cell track">Track</div>
+            <div class="header-cell artist">Artist</div>
+            <div class="header-cell platform">Platform</div>
+            <div class="header-cell duration">Duration</div>
+          </div>
+
+          {/* Table Body */}
+          <div class="table-body">
+            <For each={tracks()}>
+              {(track) => (
+                <div class="table-row">
+                  <div class="cell track">{track.title}</div>
+                  <div class="cell artist">{track.artist}</div>
+                  <div class="cell platform">{track.source}</div>
+                  <div class="cell duration">{track.duration}</div>
+                </div>
+              )}
+            </For>
+          </div>
+        </div>
+      </Show>
     </div>
   );
 };

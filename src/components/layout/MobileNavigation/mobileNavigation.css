@@ -7,6 +7,21 @@
   --mobile-nav-icon-size: 24px;
   --mobile-nav-bg: rgba(10, 10, 10, 0.95);
   --mobile-nav-border: rgba(4, 202, 244, 0.25);
+  
+  /* Color variables for consistency with sidebar */
+  --terminal-text-secondary: #cccccc;
+  --home-primary: #3b00fd;
+  --library-primary: #04caf4;
+  --stats-primary: #00f92a;
+  --profile-primary: #f906d6;
+  --home-hover: rgba(59, 0, 253, 0.1);
+  --library-hover: rgba(4, 202, 244, 0.1);
+  --stats-hover: rgba(0, 249, 42, 0.1);
+  --profile-hover: rgba(249, 6, 214, 0.1);
+  --home-glow: rgba(59, 0, 253, 0.4);
+  --library-glow: rgba(4, 202, 244, 0.4);
+  --stats-glow: rgba(0, 249, 42, 0.4);
+  --profile-glow: rgba(249, 6, 214, 0.4);
 }
 
 /* Main Mobile Navigation Container */

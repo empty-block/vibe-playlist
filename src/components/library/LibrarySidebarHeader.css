@@ -1,0 +1,39 @@
+/* Sidebar Header - Match LIBRARY_DATA style exactly */
+
+.sidebar-header {
+  background: var(--content-bg, #1a1a1a);
+  border-bottom: 1px solid rgba(4, 202, 244, 0.2);
+  padding: 8px 16px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-title {
+  color: var(--neon-cyan, #04caf4);
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .winamp-sidebar-header {
+    padding: var(--space-1, 4px) var(--space-3, 12px);
+    min-height: 28px;
+  }
+  
+  .sidebar-title {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 479px) {
+  .sidebar-title {
+    font-size: 10px;
+  }
+}
