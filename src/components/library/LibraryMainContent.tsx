@@ -9,6 +9,10 @@ import TableErrorState from './shared/TableErrorState';
 import TablePagination from './shared/TablePagination';
 import MobileSidebarToggle from './MobileSidebarToggle';
 import BrowseSectionsContainer, { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';
+import ThreadStarter from './ThreadStarter';
+import ThreadStatus from './ThreadStatus';
+import './ThreadStarter.css';
+import './ThreadStatus.css';
 // WinampLibraryFooter removed - functionality moved to WinampSidebarFooter
 import { filterTracksByArtist, filterTracksByGenre } from './BrowseSections/utils/browseDataExtractors';
 import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage, loadAllTracks } from '../../stores/libraryStore';
@@ -31,6 +35,10 @@ interface WinampMainContentProps {
   // Browse filters
   browseFilters?: LibraryFilters;
   onBrowseFiltersChange?: (filters: Partial<LibraryFilters>) => void;
+  // Thread mode props
+  threadMode?: boolean;
+  threadStarter?: any; // Track | PersonalTrack;
+  onExitThread?: () => void;
 }
 
 const WinampMainContent: Component<WinampMainContentProps> = (props) => {
@@ -137,11 +145,80 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
     props.onPersonalFilterChange?.(filter);
   };
 
+  // Mock thread data
+  const mockThreadTracks = [
+    {
+      id: 'thread-1',
+      title: 'Take On Me',
+      artist: 'a-ha',
+      album: 'Hunting High and Low',
+      duration: 225,
+      likes: 42,
+      replies: 8,
+      albumArt: 'https://via.placeholder.com/64x64/1a1a1a/00ffff?text=♪'
+    },
+    {
+      id: 'thread-2', 
+      title: 'Blue Monday',
+      artist: 'New Order',
+      album: 'Power, Corruption & Lies',
+      duration: 447,
+      likes: 38,
+      replies: 12,
+      albumArt: 'https://via.placeholder.com/64x64/1a1a1a/00ffff?text=♪'
+    },
+    {
+      id: 'thread-3',
+      title: 'Sweet Dreams',
+      artist: 'Eurythmics', 
+      album: 'Sweet Dreams (Are Made of This)',
+      duration: 216,
+      likes: 55,
+      replies: 6,
+      albumArt: 'https://via.placeholder.com/64x64/1a1a1a/00ffff?text=♪'
+    },
+    {
+      id: 'thread-4',
+      title: 'Tainted Love',
+      artist: 'Soft Cell',
+      album: 'Non-Stop Erotic Cabaret',
+      duration: 164,
+      likes: 31,
+      replies: 4,
+      albumArt: 'https://via.placeholder.com/64x64/1a1a1a/00ffff?text=♪'
+    }
+  ];
+
   // Helper functions for consistent data access
-  const getCurrentPaginated = () => isProfileMode() ? personalPaginatedTracks() : paginatedTracks();
-  const getCurrentTotalPages = () => isProfileMode() ? personalTotalPages() : totalPages();
-  const getCurrentPage = () => isProfileMode() ? personalCurrentPage() : currentPage();
-  const getCurrentFiltered = () => isProfileMode() ? personalFilteredTracks() : libraryFilteredTracks();
+  const getCurrentPaginated = () => {
+    if (props.threadMode) {
+      // In thread mode, show mock thread tracks
+      return mockThreadTracks;
+    }
+    return isProfileMode() ? personalPaginatedTracks() : paginatedTracks();
+  };
+  
+  const getCurrentTotalPages = () => {
+    if (props.threadMode) {
+      return Math.ceil(mockThreadTracks.length / ITEMS_PER_PAGE);
+    }
+    return isProfileMode() ? personalTotalPages() : totalPages();
+  };
+  
+  const getCurrentPage = () => {
+    if (props.threadMode) {
+      return 1; // Thread mode always shows page 1 for now
+    }
+    return isProfileMode() ? personalCurrentPage() : currentPage();
+  };
+  
+  const getCurrentFiltered = () => {
+    if (props.threadMode) {
+      return mockThreadTracks;
+    }
+    return isProfileMode() ? personalFilteredTracks() : libraryFilteredTracks();
+  };
+  
   const getCurrentLoading = () => isProfileMode() ? props.personalLoading : isLoading();
   const columnCount = isProfileMode() ? 7 : 9; // Images simplified to play buttons
   
@@ -223,15 +300,33 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
         />
       </div>
 
-      {/* Browse Sections - Artist and Genre filtering */}
-      <Show when={props.browseFilters && props.onBrowseFiltersChange}>
-        <BrowseSectionsContainer
-          tracks={getAllTracks()}
-          filters={props.browseFilters!}
-          onFiltersChange={props.onBrowseFiltersChange!}
+      {/* Thread Starter OR Browse Sections - Conditional rendering */}
+      <Show 
+        when={props.threadMode && props.threadStarter}
+        fallback={
+          <Show when={props.browseFilters && props.onBrowseFiltersChange}>
+            <BrowseSectionsContainer
+              tracks={getAllTracks()}
+              filters={props.browseFilters!}
+              onFiltersChange={props.onBrowseFiltersChange!}
+              isLoading={getCurrentLoading()}
+            />
+          </Show>
+        }
+      >
+        <ThreadStarter 
+          threadStarter={props.threadStarter!}
+          conversationText="Hey everyone! I've been diving deep into 80s synthpop lately and discovered some incredible tracks that I think you'll all love. What are your absolute favorite synthpop songs from that era? I'm always looking for hidden gems and lesser-known artists that capture that perfect retro-futuristic vibe. Drop your recommendations below!"
+          username="musiclover"
+          userAvatar="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=64&h=64&fit=crop&crop=face"
+          timestamp="2h ago"
+          replyCount={42}
+          onClose={props.onExitThread}
           isLoading={getCurrentLoading()}
         />
       </Show>
+
+      {/* Thread Status Indicator removed per user feedback */}
 
       {/* Track Table */}
       <div class="table-wrapper">

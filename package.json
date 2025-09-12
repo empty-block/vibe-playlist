@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "bun --bun vite",
+    "dev:bun": "bun --bun vite",
     "dev:server": "bun run --watch server.ts",
-    "build": "bun --bun vite build",
-    "preview": "bun --bun vite preview",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "bun run server.ts",
     "typecheck": "tsc --noEmit"
   },

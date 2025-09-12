@@ -4,6 +4,7 @@ import { PersonalTrack, PersonalFilterType } from './LibraryTable';
 import LibrarySidebar from './LibrarySidebar';
 import LibraryMainContent from './LibraryMainContent';
 import { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';
+import { threadMode, threadStarter, exitThreadMode } from '../../stores/threadStore';
 import './winamp-library.css';
 
 interface LibraryLayoutProps {
@@ -93,6 +94,10 @@ const LibraryLayout: Component<LibraryLayoutProps> = (props) => {
         // Browse filters
         browseFilters={browseFilters}
         onBrowseFiltersChange={handleBrowseFiltersChange}
+        // Thread mode props
+        threadMode={threadMode()}
+        threadStarter={threadStarter()}
+        onExitThread={exitThreadMode}
       />
     </div>
   );

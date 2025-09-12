@@ -3,6 +3,7 @@ import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '.
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
 import { heartBeat, particleBurst, socialButtonClick } from '../../utils/animations';
+import { enterThreadMode } from '../../stores/threadStore';
 
 // Import PersonalTrack from LibraryTable
 export interface PersonalTrack extends Track {
@@ -76,6 +77,9 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   };
 
   const formatTimeAgo = (timestamp: string) => {
+    // Handle undefined or null timestamps
+    if (!timestamp) return '';
+    
     // If it's already a relative time string, convert to compact format
     if (timestamp.includes('ago') || timestamp === 'now') {
       return timestamp
@@ -197,7 +201,8 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
     e.stopPropagation();
     if (chatButtonRef) {
       socialButtonClick(chatButtonRef);
-      // TODO: Open modal for chat functionality
+      // Enter thread mode with this track as the starter
+      enterThreadMode(props.track);
     }
   };
 

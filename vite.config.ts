@@ -12,23 +12,9 @@ export default defineConfig(() => {
       'import.meta.env.PROD': JSON.stringify(process.env.NODE_ENV === 'production'),
     },
   server: {
-    host: 'localhost', // For local development
+    host: 'localhost',
     port: 3001,
-    hmr: {
-      port: 3002,
-      protocol: 'ws',
-      host: 'localhost'
-    },
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true
-      },
-      '/ws': {
-        target: 'ws://localhost:3000',
-        ws: true
-      }
-    }
+    hmr: false, // Disable HMR to avoid WebSocket issues with Bun
   },
     build: {
       target: 'esnext'
