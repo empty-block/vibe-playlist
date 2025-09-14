@@ -1,6 +1,7 @@
-import { Component, createSignal, onMount, For, Show } from 'solid-js';
+import { Component, createSignal, createEffect, onMount, For, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import LibrarySidebarSection from './LibrarySidebarSection';
+import AddTrackModal from './AddTrackModal';
 import { createLibrarySidebarStore, createSidebarFilter } from '../../stores/librarySidebarStore';
 import { allTracks } from '../../stores/libraryStore';
 import { selectedNetwork, setSelectedNetwork, fetchNetworkData } from '../../stores/networkStore';
@@ -39,6 +40,10 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
     applyFilter,
     getSidebarCounts
   } = createLibrarySidebarStore();
+  
+  // Modal state management
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
+  
   
   // Get real-time counts
   const counts = getSidebarCounts();
@@ -175,6 +180,20 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
     }
   };
 
+  const handleAddTrackSubmit = (data: { songUrl: string; comment: string }) => {
+    // Process the form submission
+    console.log('Track data:', data);
+    
+    // TODO: Integrate with existing track creation logic
+    // This will likely involve calling existing API endpoints
+    
+    // Close modal on successful submission
+    setShowAddTrackModal(false);
+    
+    // Optional: Show success feedback
+    // Could trigger a toast notification or temporary success state
+  };
+
   return (
     <div 
       class={`winamp-sidebar ${props.isOpen ? 'mobile-open' : ''}`}
@@ -191,7 +210,7 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
         {/* ADD_TRACK Button */}
         <button 
           class="header-add-track-btn"
-          onClick={() => navigate('/add')}
+          onClick={() => setShowAddTrackModal(true)}
           aria-label="Add new track"
         >
           <span class="add-icon">[</span>
@@ -235,6 +254,13 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
           </span>
         </div>
       </div>
+      
+      {/* Add Track Modal */}
+      <AddTrackModal
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleAddTrackSubmit}
+      />
     </div>
   );
 };

@@ -846,3 +846,114 @@ export const musicPlayerSync = {
     }
   }
 };
+
+// ====== MODAL ANIMATIONS ======
+
+// Modal animation system for AddTrackModal
+export const modalAnimations = {
+  enter: (modalElement: HTMLElement, backdropElement: HTMLElement) => {
+    // Backdrop fade in
+    anime({
+      targets: backdropElement,
+      opacity: [0, 1],
+      duration: 300,
+      easing: 'easeOutQuad'
+    });
+    
+    // Modal slide and scale in
+    anime({
+      targets: modalElement,
+      translateY: [-50, 0],
+      scale: [0.9, 1],
+      opacity: [0, 1],
+      duration: 400,
+      delay: 200,
+      easing: 'easeOutCubic'
+    });
+  },
+  
+  exit: (modalElement: HTMLElement, backdropElement: HTMLElement) => {
+    return Promise.all([
+      anime({
+        targets: modalElement,
+        translateY: [0, -30],
+        scale: [1, 0.95],
+        opacity: [1, 0],
+        duration: 300,
+        easing: 'easeInCubic'
+      }).finished,
+      
+      anime({
+        targets: backdropElement,
+        opacity: [1, 0],
+        duration: 400,
+        delay: 100,
+        easing: 'easeInQuad'
+      }).finished
+    ]);
+  },
+  
+  // Terminal boot sequence for modal
+  terminalBootSequence: (headerElement: HTMLElement, formElement: HTMLElement) => {
+    // Terminal header typewriter effect
+    const pathElement = headerElement.querySelector('.terminal-path');
+    if (pathElement) {
+      typewriter(pathElement as HTMLElement, 'library/add-track/', 30);
+    }
+    
+    // Form inputs staggered fade-in
+    const formChildren = formElement.querySelectorAll('.text-input, .animated-button');
+    if (formChildren.length > 0) {
+      anime({
+        targets: formChildren,
+        translateY: [20, 0],
+        opacity: [0, 1],
+        duration: 300,
+        delay: anime.stagger(100, {start: 500}),
+        easing: 'easeOutQuad'
+      });
+    }
+  },
+  
+  // Input focus effects
+  inputFocus: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      boxShadow: [
+        '0 0 0 rgba(4, 202, 244, 0)',
+        '0 0 12px rgba(4, 202, 244, 0.4)'
+      ],
+      borderColor: ['rgba(4, 202, 244, 0.3)', 'rgba(4, 202, 244, 1)'],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  inputBlur: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      boxShadow: [
+        '0 0 12px rgba(4, 202, 244, 0.4)',
+        '0 0 0 rgba(4, 202, 244, 0)'
+      ],
+      borderColor: ['rgba(4, 202, 244, 1)', 'rgba(4, 202, 244, 0.3)'],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  },
+  
+  // Submit button success state
+  submitSuccess: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: [1, 1.05, 1],
+      boxShadow: [
+        '0 0 16px rgba(4, 202, 244, 0.4)',
+        '0 0 24px rgba(0, 249, 42, 0.6)',
+        '0 0 16px rgba(4, 202, 244, 0.4)'
+      ],
+      duration: 600,
+      easing: 'easeOutCubic'
+    });
+  }
+};
