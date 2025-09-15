@@ -813,7 +813,7 @@ export const musicPlayerSync = {
     const platformColors: Record<string, string> = {
       'spotify': '#00f92a',
       'youtube': '#ff0000',
-      'soundcloud': '#ff7700',
+      'soundcloud': '#e010e0',
       'default': '#04caf4'
     };
     

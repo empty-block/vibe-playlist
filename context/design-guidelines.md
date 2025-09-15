@@ -59,7 +59,8 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 ```css
 /* Colors (copy-paste ready) */
 --neon-blue: #3b00fd; --neon-green: #00f92a; --neon-cyan: #04caf4;
---neon-pink: #f906d6; --neon-orange: #ff9b00; --neon-yellow: #d1f60a;
+--neon-pink: #f906d6; --neon-magenta: #e010e0; --neon-magenta-bright: #ff1aff; --neon-magenta-soft: #cc0ecc;
+--neon-orange: #ff9b00; --neon-yellow: #d1f60a;
 --dark-bg: #1a1a1a; --darker-bg: #0f0f0f; --light-text: #ffffff; --muted-text: #cccccc;
 
 /* Spacing (8px base) */
@@ -95,8 +96,15 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 --neon-green: #00f92a   /* Bright Green - Success states, play buttons */
 --neon-cyan: #04caf4    /* Bright Cyan - Links, info, interactive elements */
 --neon-pink: #f906d6    /* Bright Pink - Special emphasis, accents */
---neon-orange: #ff9b00  /* Orange - Text highlights, active states */
---neon-yellow: #d1f60a  /* Yellow - Warnings and alerts ONLY */
+
+/* NEW: Primary Magenta System */
+--neon-magenta: #e010e0     /* Primary highlight, active states, text emphasis */
+--neon-magenta-bright: #ff1aff  /* Intense highlights, peak activity */
+--neon-magenta-soft: #cc0ecc    /* Subtle backgrounds, secondary highlights */
+
+/* Preserved Orange (Limited Use) */
+--neon-orange: #ff9b00  /* Warnings/alerts backup only */
+--neon-yellow: #d1f60a  /* Critical warnings and system alerts */
 
 /* Supporting Colors */
 --dark-bg: #1a1a1a      /* Primary background */
@@ -111,8 +119,10 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 - **Success & Play States**: Neon green for confirmations, play buttons, positive feedback
 - **Interactive Elements**: Neon cyan for links, hover states, navigation
 - **Special Emphasis**: Neon pink sparingly for unique features, special callouts
-- **Text Highlights**: Neon orange for readable emphasis, active states, current selections
-- **Warnings Only**: Neon yellow exclusively for errors, warnings, urgent alerts
+- **Primary Highlights**: Neon magenta for active states, text emphasis, current selections (replaces orange)
+- **Peak Activity**: Neon magenta bright for intense highlights and glow effects
+- **Subtle Highlights**: Neon magenta soft for backgrounds and secondary emphasis
+- **Warnings Only**: Neon orange limited to warnings/alerts, neon yellow for critical alerts
 
 ## ⚡ Animation & Interaction
 
@@ -410,7 +420,7 @@ leave: (element) => {
 <div class="social-item">
   <header class="social-header">
     <img class="user-avatar" />                  <!-- 32x32px -->
-    <span class="username">{{ username }}</span> <!-- text-sm, neon-orange, clickable -->
+    <span class="username">{{ username }}</span> <!-- text-sm, neon-magenta, clickable -->
     <time class="timestamp">{{ time }}</time>    <!-- text-xs, muted-text -->
   </header>
   <main class="social-content">

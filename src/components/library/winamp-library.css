@@ -8,7 +8,7 @@
   --sidebar-border: rgba(4, 202, 244, 0.2);
   --sidebar-text: var(--light-text, #ffffff);
   --sidebar-accent: var(--neon-cyan, #04caf4);
-  --sidebar-active: var(--neon-orange, #ff9b00);
+  --sidebar-active: var(--neon-magenta, #e010e0);
 
   /* Main Content Colors */
   --content-bg: var(--dark-bg, #1a1a1a);
@@ -501,8 +501,8 @@
 
 .browse-item.selected {
   background: rgba(255, 155, 0, 0.15);
-  border-left-color: var(--neon-orange);
-  color: var(--neon-orange);
+  border-left-color: var(--neon-magenta);
+  color: var(--neon-magenta);
   box-shadow: 0 0 8px rgba(255, 155, 0, 0.3);
 }
 
@@ -767,8 +767,8 @@
 
 .error-retry-btn {
   background: rgba(255, 107, 53, 0.2);
-  border: 1px solid #ff6b35;
-  color: #ff6b35;
+  border: 1px solid #e010e0;
+  color: #e010e0;
   padding: var(--space-2) var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-xs);

@@ -134,7 +134,7 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
       case 'spotify':
         return 'bg-green-500/20 border-green-500/40 text-green-400';
       case 'soundcloud':
-        return 'bg-orange-500/20 border-orange-500/40 text-orange-400';
+        return 'bg-[#e010e0]/20 border-[#e010e0]/40 text-[#e010e0]';
       case 'bandcamp':
         return 'bg-blue-500/20 border-blue-500/40 text-blue-400';
       default:

@@ -95,7 +95,7 @@ const StatsPage: Component = () => {
               {/* Left section: Window controls and title */}
               <div class="flex items-center gap-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-3 h-3 bg-[#ff9b00] rounded-full animate-pulse"></div>
+                  <div class="w-3 h-3 bg-[#e010e0] rounded-full animate-pulse"></div>
                   <div class="w-3 h-3 bg-[#d1f60a] rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
                   <div class="w-3 h-3 bg-[#00f92a] rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
                 </div>
@@ -155,13 +155,13 @@ const StatsPage: Component = () => {
                 <div class="text-[#00f92a] opacity-90">[14:18:23] NEON_DREAMS shared "Digital Nights" → +47 nodes</div>
                 <div class="text-[#04caf4] opacity-80">[14:17:52] BEAT_MATRIX joined Electronic Network</div>
                 <div class="text-[#f906d6] opacity-90">[14:17:31] "Cyber Cascade" trending → 890 shares</div>
-                <div class="text-[#ff9b00] opacity-80">[14:16:45] Network velocity +23.4% (connections/hour)</div>
+                <div class="text-[#e010e0] opacity-80">[14:16:45] Network velocity +23.4% (connections/hour)</div>
                 <div class="text-[#04caf4] opacity-80">[14:16:12] SOUND_ARCHITECT created new playlist</div>
                 <div class="text-[#00f92a] opacity-90">[14:15:58] RETRO_PULSE gained 12 new followers</div>
                 <div class="text-[#f906d6] opacity-80">[14:15:23] "Neon Velocity" shared by VIBE_CURATOR</div>
                 <div class="text-[#3b00fd] opacity-90">[14:14:47] Extended Network: +15 connections</div>
                 <div class="text-[#04caf4] opacity-80">[14:14:02] CYBER_SOUND released new track</div>
-                <div class="text-[#ff9b00] opacity-90">[14:13:38] Peak activity window started</div>
+                <div class="text-[#e010e0] opacity-90">[14:13:38] Peak activity window started</div>
                 <div class="text-[#00f92a] opacity-80">[14:13:15] MusicLover42 joined Hip Hop Network</div>
                 <div class="text-[#f906d6] opacity-90">[14:12:44] "Synthetic Dreams" gained momentum</div>
                 <div class="text-[#04caf4] opacity-80">[14:12:20] Network health: 89% (excellent)</div>
@@ -266,8 +266,8 @@ const StatsPage: Component = () => {
                     <div class="flex items-center justify-between">
                       <p class="text-[#04caf4] font-mono font-bold text-sm truncate">SYNTH_WIZARD</p>
                       <div class="flex items-center gap-1">
-                        <i class="fas fa-minus text-[#ff9b00] text-xs"></i>
-                        <span class="text-[#ff9b00] font-mono text-xs">-2%</span>
+                        <i class="fas fa-minus text-[#e010e0] text-xs"></i>
+                        <span class="text-[#e010e0] font-mono text-xs">-2%</span>
                       </div>
                     </div>
                     <div class="flex items-center justify-between mt-1">
@@ -364,8 +364,8 @@ const StatsPage: Component = () => {
                     <div class="flex items-center justify-between">
                       <p class="text-[#f906d6] font-mono font-bold text-sm truncate">Synthetic Dreams</p>
                       <div class="flex items-center gap-1">
-                        <i class="fas fa-minus text-[#ff9b00] text-xs"></i>
-                        <span class="text-[#ff9b00] font-mono text-xs">-5</span>
+                        <i class="fas fa-minus text-[#e010e0] text-xs"></i>
+                        <span class="text-[#e010e0] font-mono text-xs">-5</span>
                       </div>
                     </div>
                     <div class="flex items-center justify-between mt-1">
@@ -444,8 +444,8 @@ const StatsPage: Component = () => {
                     <div class="flex items-center justify-between mt-1">
                       <p class="text-[#3b00fd]/70 font-mono text-xs">6 mutual • 28 shared</p>
                       <div class="flex items-center gap-1">
-                        <div class="w-2 h-2 bg-[#ff9b00] opacity-70"></div>
-                        <span class="text-[#ff9b00] font-mono text-xs">IDLE</span>
+                        <div class="w-2 h-2 bg-[#cc0ecc] opacity-70"></div>
+                        <span class="text-[#cc0ecc] font-mono text-xs">IDLE</span>
                       </div>
                     </div>
                   </div>
@@ -460,7 +460,7 @@ const StatsPage: Component = () => {
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
                       <p class="text-[#3b00fd] font-mono font-bold text-sm truncate">RHYTHM_SAGE</p>
-                      <span class="text-[#ff9b00] font-mono text-lg font-bold">83%</span>
+                      <span class="text-[#e010e0] font-mono text-lg font-bold">83%</span>
                     </div>
                     <div class="flex items-center justify-between mt-1">
                       <p class="text-[#3b00fd]/70 font-mono text-xs">4 mutual • 21 shared</p>
@@ -528,7 +528,7 @@ const StatsPage: Component = () => {
                   <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
                     <td class="py-4 text-white font-mono font-bold">VinylCollector</td>
                     <td class="py-4 text-[#04caf4] font-mono">38</td>
-                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#e010e0] font-mono">MED</td>
                     <td class="py-4 text-[#3b00fd] font-mono">ROCK/JAZZ</td>
                     <td class="py-4">
                       <div class="w-3 h-3 bg-[#00f92a]"></div>
@@ -538,10 +538,10 @@ const StatsPage: Component = () => {
                   <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
                     <td class="py-4 text-white font-mono font-bold">BeatExplorer</td>
                     <td class="py-4 text-[#04caf4] font-mono">32</td>
-                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#e010e0] font-mono">MED</td>
                     <td class="py-4 text-[#3b00fd] font-mono">HIP-HOP</td>
                     <td class="py-4">
-                      <div class="w-3 h-3 bg-[#ff9b00] opacity-70"></div>
+                      <div class="w-3 h-3 bg-[#cc0ecc] opacity-70"></div>
                     </td>
                     <td class="py-4 text-[#d1f60a] font-mono font-bold">84%</td>
                   </tr>
@@ -558,7 +558,7 @@ const StatsPage: Component = () => {
                   <tr class="border-b border-[#d1f60a]/20 hover:bg-[#d1f60a]/5 transition-colors">
                     <td class="py-4 text-white font-mono font-bold">RetroWave</td>
                     <td class="py-4 text-[#04caf4] font-mono">25</td>
-                    <td class="py-4 text-[#ff9b00] font-mono">MED</td>
+                    <td class="py-4 text-[#e010e0] font-mono">MED</td>
                     <td class="py-4 text-[#3b00fd] font-mono">SYNTHWAVE</td>
                     <td class="py-4">
                       <div class="w-3 h-3 bg-[#00f92a]"></div>
@@ -579,8 +579,8 @@ const StatsPage: Component = () => {
                   <span class="text-[#00f92a] font-mono text-sm">ACTIVE</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <div class="w-3 h-3 bg-[#ff9b00] opacity-70"></div>
-                  <span class="text-[#ff9b00] font-mono text-sm">IDLE</span>
+                  <div class="w-3 h-3 bg-[#cc0ecc] opacity-70"></div>
+                  <span class="text-[#cc0ecc] font-mono text-sm">IDLE</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <div class="w-3 h-3 border-2 border-gray-400"></div>

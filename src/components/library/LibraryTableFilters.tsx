@@ -179,10 +179,10 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
             {/* Reset Button */}
             <button
               onClick={handleReset}
-              class="terminal-action-btn bg-[rgba(255,107,53,0.1)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[10px] 
+              class="terminal-action-btn bg-[rgba(255,155,0,0.1)] border border-[#ff9b00] text-[#ff9b00] font-mono text-[10px] 
                      px-3 py-2.5 uppercase tracking-wider font-bold transition-all duration-200 relative overflow-hidden
-                     hover:bg-[rgba(255,107,53,0.2)] hover:shadow-[0_0_10px_rgba(255,107,53,0.3)]"
-              style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 107, 53, 0.4);"
+                     hover:bg-[rgba(255,155,0,0.2)] hover:shadow-[0_0_10px_rgba(255,155,0,0.3)]"
+              style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 155, 0, 0.4);"
             >
               RESET
             </button>
@@ -242,7 +242,7 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
 
               {/* Min Engagement Input */}
               <div class="flex flex-col">
-                <label class="text-[#ff6b35] font-mono text-[8px] uppercase tracking-wide block mb-1 opacity-70">
+                <label class="text-[#e010e0] font-mono text-[8px] uppercase tracking-wide block mb-1 opacity-70">
                   MIN ENGAGEMENT
                 </label>
                 <div class="flex items-center">
@@ -251,12 +251,12 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
                     min="0"
                     value={filters.minEngagement}
                     onChange={(e) => handleEngagementChange(parseInt(e.target.value) || 0)}
-                    class="terminal-input bg-[rgba(0,0,0,0.9)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[10px] 
+                    class="terminal-input bg-[rgba(0,0,0,0.9)] border border-[#e010e0] text-[#e010e0] font-mono text-[10px] 
                            px-3 py-2 w-20 text-center uppercase cursor-pointer transition-all duration-200
-                           hover:shadow-[0_0_8px_rgba(255,107,53,0.2)]
-                           focus:outline-none focus:shadow-[0_0_12px_rgba(255,107,53,0.3)]"
+                           hover:shadow-[0_0_8px_rgba(224,16,224,0.2)]
+                           focus:outline-none focus:shadow-[0_0_12px_rgba(224,16,224,0.3)]"
                     placeholder="0"
-                    style="border-radius: 0; text-shadow: 0 0 6px rgba(255, 107, 53, 0.4);"
+                    style="border-radius: 0; text-shadow: 0 0 6px rgba(224, 16, 224, 0.4);"
                   />
                 </div>
               </div>
@@ -302,7 +302,7 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
                     setSearchInput('');
                     updateFilters({ search: '' });
                   }}
-                  class="text-[#ff6b35] hover:text-[#ff0000] transition-colors ml-1 font-bold"
+                  class="text-[#e010e0] hover:text-[#ff0000] transition-colors ml-1 font-bold"
                 >
                   ×
                 </button>
@@ -316,7 +316,7 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
                 <span>PLATFORM:{filters.platform.toUpperCase()}</span>
                 <button 
                   onClick={() => updateFilters({ platform: 'all' })}
-                  class="text-[#ff6b35] hover:text-[#ff0000] transition-colors ml-1 font-bold"
+                  class="text-[#e010e0] hover:text-[#ff0000] transition-colors ml-1 font-bold"
                 >
                   ×
                 </button>
@@ -330,7 +330,7 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
                 <span>TIME:{filters.dateRange.toUpperCase()}</span>
                 <button 
                   onClick={() => updateFilters({ dateRange: 'all' })}
-                  class="text-[#ff6b35] hover:text-[#ff0000] transition-colors ml-1 font-bold"
+                  class="text-[#e010e0] hover:text-[#ff0000] transition-colors ml-1 font-bold"
                 >
                   ×
                 </button>
@@ -338,13 +338,13 @@ const LibraryTableFilters: Component<LibraryTableFiltersProps> = (props) => {
             )}
 
             {filters.minEngagement > 0 && (
-              <div class="terminal-filter-pill bg-[rgba(255,107,53,0.1)] border border-[#ff6b35] text-[#ff6b35] font-mono text-[9px] 
+              <div class="terminal-filter-pill bg-[rgba(224,16,224,0.1)] border border-[#e010e0] text-[#e010e0] font-mono text-[9px] 
                           px-2 py-1 flex items-center gap-1 uppercase tracking-wide"
-                   style="border-radius: 0; text-shadow: 0 0 4px rgba(255, 107, 53, 0.4);">
+                   style="border-radius: 0; text-shadow: 0 0 4px rgba(224, 16, 224, 0.4);">
                 <span>MIN_ENG:≥{filters.minEngagement}</span>
                 <button 
                   onClick={() => updateFilters({ minEngagement: 0 })}
-                  class="text-[#ff6b35] hover:text-[#ff0000] transition-colors ml-1 font-bold"
+                  class="text-[#e010e0] hover:text-[#ff0000] transition-colors ml-1 font-bold"
                 >
                   ×
                 </button>

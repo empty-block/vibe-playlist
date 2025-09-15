@@ -100,7 +100,7 @@ const NetworkAnalytics: Component<NetworkAnalyticsProps> = (props) => {
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-gradient-to-br from-slate-800/60 to-slate-700/40 border border-cyan-400/20 rounded-xl p-4">
             <div class="flex items-center gap-2 mb-3">
-              <i class="fas fa-fire text-orange-400"></i>
+              <i class="fas fa-fire text-[#e010e0]"></i>
               <h3 class="text-cyan-300 font-semibold">Hot in Your Network</h3>
             </div>
             <div class="space-y-2">

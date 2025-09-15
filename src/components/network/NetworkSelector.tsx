@@ -52,7 +52,7 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       name: 'Hip Hop Network',
       description: 'Hip hop enthusiasts and artists',
       icon: 'fas fa-microphone',
-      color: 'from-yellow-400 to-orange-400',
+      color: 'from-yellow-400 to-[#e010e0]',
       userCount: 12847
     },
     {
@@ -76,7 +76,7 @@ const NetworkSelector: Component<NetworkSelectorProps> = (props) => {
       name: 'Trending Network',
       description: 'Most active users this week',
       icon: 'fas fa-fire',
-      color: 'from-red-400 to-orange-400',
+      color: 'from-red-400 to-[#cc0ecc]',
       userCount: 3847,
       isLocked: false
     }

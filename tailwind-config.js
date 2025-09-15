@@ -15,6 +15,17 @@ tailwind.config = {
           darkgray: '#808080',
           blue: '#0000ff',
           teal: '#008080'
+        },
+        neon: {
+          blue: '#3b00fd',
+          green: '#00f92a',
+          cyan: '#04caf4',
+          pink: '#f906d6',
+          magenta: '#e010e0',
+          'magenta-bright': '#ff1aff',
+          'magenta-soft': '#cc0ecc',
+          orange: '#ff9b00',
+          yellow: '#d1f60a'
         }
       },
       fontFamily: {
