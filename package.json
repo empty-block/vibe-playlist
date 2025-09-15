@@ -10,7 +10,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "bun run server.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch"
   },
   "devDependencies": {
     "@rollup/rollup-darwin-x64": "^4.46.2",
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "@solidjs/router": "^0.15.3",
+    "@supabase/supabase-js": "^2.57.4",
     "animejs": "3.2.1",
     "solid-js": "^1.9.7"
   }

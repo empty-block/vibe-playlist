@@ -1,5 +1,8 @@
 import { serve } from 'bun'
 import { readFileSync } from 'fs'
+import { LibraryAPI } from './api/library'
+
+const libraryAPI = new LibraryAPI()
 
 serve({
   port: 4201,
@@ -8,6 +11,11 @@ serve({
     const pathname = url.pathname
     
     try {
+      // API routes
+      if (pathname === '/api/library') {
+        return libraryAPI.handleRequest(request)
+      }
+      
       // Serve different file types
       if (pathname === '/' || pathname === '/index.html') {
         const html = readFileSync('./vibes-themes.html', 'utf8')
