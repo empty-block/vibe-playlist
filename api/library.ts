@@ -12,7 +12,9 @@ export class LibraryAPI {
     const method = request.method
 
     try {
-      if (method === 'GET') {
+      if (method === 'OPTIONS') {
+        return this.handleOptions()
+      } else if (method === 'GET') {
         return await this.handleGet(url)
       } else if (method === 'POST') {
         return await this.handlePost(request)
@@ -23,6 +25,18 @@ export class LibraryAPI {
       console.error('Library API error:', error)
       return this.errorResponse('INTERNAL_ERROR', 'Internal server error', 500)
     }
+  }
+
+  private handleOptions(): Response {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Max-Age': '86400'
+      }
+    })
   }
 
   private async handleGet(url: URL): Promise<Response> {
@@ -114,7 +128,12 @@ export class LibraryAPI {
       }
 
       return new Response(JSON.stringify(response), {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }
       })
     } catch (error) {
       console.error('Query execution error:', error)
@@ -130,7 +149,12 @@ export class LibraryAPI {
 
     return new Response(JSON.stringify(error), {
       status,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
     })
   }
 }

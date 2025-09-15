@@ -1,8 +1,8 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { Track } from './playerStore';
-import { mockDataService } from '../data/mockData';
 import { selectedNetwork } from './networkStore';
+import { libraryApiService } from '../services/libraryApiService';
 
 export type SortColumn = 'track' | 'artist' | 'sharedBy' | 'timestamp' | 'platform' | 'engagement' | 'likes' | 'replies';
 export type SortDirection = 'asc' | 'desc';
@@ -205,7 +205,7 @@ export const totalPages = createMemo(() =>
 export const loadAllTracks = async () => {
   setIsLoading(true);
   try {
-    const tracks = await mockDataService.getAllTracks();
+    const tracks = await libraryApiService.getAllTracks();
     setAllTracks(tracks);
   } catch (error) {
     console.error('Failed to load tracks:', error);

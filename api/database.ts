@@ -154,6 +154,7 @@ export class DatabaseService {
   private async transformToTracks(dbRecords: any[]): Promise<Track[]> {
     // Get unique author_fids to fetch user info
     const authorFids = [...new Set(dbRecords.map(record => record.author_fid))]
+    const castIds = [...new Set(dbRecords.map(record => record.cast_id))]
     
     // Fetch user info for all authors
     const { data: users } = await this.supabase
@@ -161,13 +162,25 @@ export class DatabaseService {
       .select('node_id, fname, display_name, avatar_url')
       .in('node_id', authorFids)
     
+    // Fetch cast text for all casts
+    const { data: casts } = await this.supabase
+      .from('cast_nodes')
+      .select('node_id, cast_text')
+      .in('node_id', castIds)
+    
     const userMap = new Map()
     users?.forEach(user => {
       userMap.set(user.node_id, user)
     })
+    
+    const castMap = new Map()
+    casts?.forEach(cast => {
+      castMap.set(cast.node_id, cast)
+    })
 
     return dbRecords.map(record => {
       const user = userMap.get(record.author_fid)
+      const cast = castMap.get(record.cast_id)
       
       // Generate source URL based on platform  
       let sourceUrl = ''
@@ -196,7 +209,7 @@ export class DatabaseService {
         userInteraction: {
           type: 'shared', // From Farcaster, everything is "shared"
           timestamp: record.created_at,
-          context: undefined // Will fetch cast text later
+          context: cast?.cast_text || undefined
         },
         
         // TODO: Aggregate social stats from cast_edges

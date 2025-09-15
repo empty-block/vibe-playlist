@@ -244,7 +244,6 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
               {props.track.artist}
             </div>
             <div class="flex items-center gap-2 text-xs">
-              <span class="text-lg">{props.track.userAvatar}</span>
               <span class="retro-user-name truncate">
                 {props.track.addedBy}
               </span>
@@ -467,7 +466,6 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
       }>
         <td class="retro-grid-cell">
           <div class="flex items-center gap-2">
-            <span class="text-lg">{props.track.userAvatar}</span>
             <span class="retro-user-name">
               {props.track.addedBy}
             </span>
