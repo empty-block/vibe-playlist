@@ -1,0 +1,168 @@
+/* ExpandableText.css - TASK-453 Expandable Text Component */
+
+.expandable-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Collapsed State */
+.expandable-text-collapsed {
+  position: relative;
+  line-height: 1.4;
+  font-family: var(--font-monospace, 'Courier New', monospace);
+  font-size: var(--text-sm, 14px);
+  color: var(--light-text, #ffffff);
+  overflow: hidden;
+}
+
+/* Gradient fade-out effect */
+.expandable-text-collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 60px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, var(--dark-bg, #1a1a1a));
+  pointer-events: none;
+}
+
+/* Icon-Only Expand Button */
+.expand-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-left: var(--space-2, 8px);
+  padding: 0;
+  border: 1px solid var(--neon-cyan, #04caf4);
+  background: rgba(4, 202, 244, 0.05);
+  color: var(--neon-cyan, #04caf4);
+  font-size: 12px;
+  font-family: var(--font-monospace, 'Courier New', monospace);
+  border-radius: 2px; /* Sharp corners for retro feel */
+  cursor: pointer;
+  transition: all 200ms ease;
+  vertical-align: top;
+  box-shadow: 0 0 2px rgba(4, 202, 244, 0.2);
+}
+
+.expand-icon-button:hover {
+  background: rgba(4, 202, 244, 0.15);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
+  transform: translateY(-1px);
+  border-color: rgba(4, 202, 244, 1);
+}
+
+.expand-icon-button:focus {
+  outline: 2px solid var(--neon-cyan, #04caf4);
+  outline-offset: 2px;
+}
+
+.expand-icon-button:active {
+  transform: translateY(0);
+}
+
+.expand-icon-button.rotated span {
+  transform: rotate(90deg);
+}
+
+/* Clickable text container */
+.expandable-text-collapsed.clickable:hover {
+  background: rgba(4, 202, 244, 0.02);
+  border-radius: 2px;
+}
+
+.expandable-text-expanded.clickable:hover {
+  background: rgba(4, 202, 244, 0.04);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Expanded State */
+.expandable-text-expanded {
+  font-family: var(--font-monospace, 'Courier New', monospace);
+  font-size: var(--text-sm, 14px);
+  color: var(--light-text, #ffffff);
+  line-height: 1.5;
+  padding: var(--space-3, 12px) 0; /* 12px vertical */
+  background: rgba(4, 202, 244, 0.02);
+  border-left: 2px solid var(--neon-cyan, #04caf4);
+  padding-left: var(--space-3, 12px);
+  margin-left: calc(-1 * var(--space-3, 12px));
+  border-radius: 0 4px 4px 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.expandable-text-expanded .collapse-button {
+  margin-top: var(--space-2, 8px);
+  margin-left: 0;
+}
+
+/* Icon rotation states */
+.expand-button span[aria-hidden="true"] {
+  display: inline-block;
+  transition: transform 200ms ease;
+  font-size: 10px;
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .expand-button {
+    min-height: 44px; /* Larger touch target on mobile */
+    padding: var(--space-2, 8px) var(--space-3, 12px);
+    font-size: var(--text-sm, 14px);
+  }
+  
+  .expandable-text-collapsed {
+    font-size: var(--text-sm, 14px);
+  }
+  
+  .expandable-text-expanded {
+    font-size: var(--text-sm, 14px);
+    padding: var(--space-4, 16px) 0;
+    padding-left: var(--space-4, 16px);
+    margin-left: calc(-1 * var(--space-4, 16px));
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .expand-button {
+    border-width: 2px;
+  }
+  
+  .expandable-text-expanded {
+    border-left-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .expand-button {
+    transition: none;
+  }
+  
+  .expand-button span[aria-hidden="true"] {
+    transition: none;
+  }
+}
