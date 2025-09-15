@@ -957,3 +957,65 @@ export const modalAnimations = {
     });
   }
 };
+
+// ================================================================
+// EXPANDABLE TEXT ANIMATIONS - TASK-453
+// ================================================================
+
+export const expandText = {
+  enter: (element: HTMLElement, targetHeight: number) => {
+    element.style.height = '0px';
+    element.style.overflow = 'hidden';
+    element.style.transition = 'none';
+    
+    anime({
+      targets: element,
+      height: `${targetHeight}px`,
+      opacity: [0, 1],
+      duration: 200,
+      easing: 'easeOutQuart',
+      complete: () => {
+        element.style.height = 'auto';
+        element.style.overflow = 'visible';
+      }
+    });
+  },
+  
+  leave: (element: HTMLElement) => {
+    const currentHeight = element.offsetHeight;
+    element.style.height = `${currentHeight}px`;
+    element.style.overflow = 'hidden';
+    
+    anime({
+      targets: element,
+      height: '0px',
+      opacity: [1, 0],
+      duration: 200,
+      easing: 'easeInQuart',
+      complete: () => {
+        element.style.height = '';
+        element.style.overflow = '';
+      }
+    });
+  }
+};
+
+export const rotateExpandIcon = {
+  expand: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      rotate: '180deg',
+      duration: 200,
+      easing: 'easeOutQuart'
+    });
+  },
+  
+  collapse: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      rotate: '0deg',
+      duration: 200,
+      easing: 'easeOutQuart'
+    });
+  }
+};

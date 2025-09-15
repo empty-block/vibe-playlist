@@ -251,7 +251,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'grunge_master_93',
     userAvatar: '🎸',
     timestamp: '2 hours ago',
-    comment: 'This song changed everything. Peak 90s grunge energy! 🔥',
+    comment: 'This song absolutely changed the entire landscape of rock music forever. The way it captures that whole 90s grunge angst and rebellion while still being incredibly melodic is just perfect. Kurt Cobain was a genius songwriter who knew how to channel raw emotion into these incredible hooks. Peak 90s grunge energy that still gives me chills every single time! 🔥',
     likes: 89,
     replies: 23,
     recasts: 45,
@@ -268,7 +268,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'grunge_master_93',
     userAvatar: '🎸',
     timestamp: '4 hours ago',
-    comment: 'Another Nirvana classic. Kurt\'s guitar tone is unmatched.',
+    comment: 'Another absolutely essential Nirvana classic that showcases everything great about their sound. Kurt\'s guitar tone on this track is completely unmatched - that distorted yet melodic quality that became the signature sound of an entire generation. The bass line is hypnotic and the lyrics are pure poetry.',
     likes: 67,
     replies: 18,
     recasts: 32,
@@ -285,7 +285,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'grunge_master_93',
     userAvatar: '🎸',
     timestamp: '6 hours ago',
-    comment: 'Eddie Vedder\'s vocals hit different on this one. Pure emotion.',
+    comment: 'Eddie Vedder\'s vocals absolutely hit different on this track - there\'s something so raw and vulnerable about his delivery here that just cuts straight to your soul. The way he builds from that quiet, contemplative verse to the explosive chorus is pure emotional catharsis. This is Pearl Jam at their most introspective and powerful.',
     likes: 74,
     replies: 21,
     recasts: 38
@@ -301,7 +301,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'grunge_master_93',
     userAvatar: '🎸',
     timestamp: '8 hours ago',
-    comment: 'Chris Cornell and Eddie Vedder together. Doesn\'t get better.',
+    comment: 'Having Chris Cornell and Eddie Vedder on the same track is basically like witnessing two of the greatest voices in rock history having a conversation through music. The harmonies they create together are otherworldly, and you can feel the mutual respect and admiration in every note. This collaboration was lightning in a bottle and it honestly doesn\'t get any better than this.',
     likes: 56,
     replies: 15,
     recasts: 29
@@ -335,7 +335,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'synth_prophet_85',
     userAvatar: '🌈',
     timestamp: '1 hour ago',
-    comment: 'That saxophone solo at the end... pure synthwave perfection! 🌈',
+    comment: 'That saxophone solo at the end is absolutely transcendent - it\'s like the perfect marriage of 80s nostalgia and modern production sensibilities. The way it builds and builds until it just explodes into pure synthwave euphoria is incredible. This track captures everything I love about the genre: the neon-soaked atmosphere, the nostalgic melodies, and that sense of driving through a cyberpunk cityscape at midnight. Pure perfection! 🌈',
     likes: 145,
     replies: 34,
     recasts: 67
@@ -351,7 +351,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'synth_prophet_85',
     userAvatar: '🌈',
     timestamp: '3 hours ago',
-    comment: 'Daft Punk mastered the art of electronic emotion. RIP robots 🤖',
+    comment: 'Daft Punk absolutely mastered the art of making electronic music feel deeply emotional and human, which is such a beautiful paradox considering their robot personas. This track perfectly showcases their ability to blend nostalgic elements with futuristic production in a way that feels both timeless and cutting-edge. The vocoder work is incredible and those guitar licks are pure magic. RIP to the greatest electronic duo of all time 🤖',
     likes: 123,
     replies: 28,
     recasts: 56
@@ -367,7 +367,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'synth_prophet_85',
     userAvatar: '🌈',
     timestamp: '5 hours ago',
-    comment: '80s synthpop at its absolute peak. That falsetto! 🎹',
+    comment: '80s synthpop at its absolute peak - this song is basically the blueprint for everything that came after. That falsetto is completely otherworldly and the synth work is so layered and intricate. The music video was revolutionary too, blending animation with live action in a way that had never been done before. This track still sounds fresh and innovative decades later. 🎹',
     likes: 198,
     replies: 42,
     recasts: 89
@@ -515,7 +515,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'synth_prophet_85',
     userAvatar: '🌈',
     timestamp: '13 hours ago',
-    comment: 'Modern synthwave at its most emotional. Love these guys.',
+    comment: 'The Midnight represents modern synthwave at its most emotional and sophisticated - they\'ve managed to take all the nostalgic elements of 80s music and filter them through a contemporary lens that feels both familiar and completely fresh. The saxophone work on this track is absolutely gorgeous and the way they layer the synthesizers creates this incredible wall of nostalgic sound. I absolutely love these guys and everything they create.',
     likes: 98,
     replies: 29,
     recasts: 52
@@ -549,7 +549,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'underground_oracle',
     userAvatar: '🔮',
     timestamp: '30 minutes ago',
-    comment: 'Hidden emotional masterpiece. Sufjan never misses. 💎',
+    comment: 'This is such a hidden emotional masterpiece that completely showcases Sufjan Stevens\' incredible ability to write deeply personal, introspective music that somehow feels universal. The orchestration is breathtaking and the way he layers all these different instruments creates this incredibly rich tapestry of sound. Every time I listen to this I discover new details and nuances. Sufjan literally never misses. 💎',
     likes: 67,
     replies: 23,
     recasts: 41
@@ -631,7 +631,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'vinyl_archaeologist',
     userAvatar: '💿',
     timestamp: '1 hour ago',
-    comment: 'Eddie Hazel\'s guitar solo is 10 minutes of pure soul. Essential listening.',
+    comment: 'Eddie Hazel\'s guitar solo on this track is legitimately 10 minutes of pure, unfiltered soul being channeled through six strings. The story behind this recording is incredible - George Clinton told him to play like his mother had just died, and the result is one of the most emotionally devastating guitar performances ever committed to tape. This is absolutely essential listening for anyone who wants to understand the power of music to convey raw human emotion.',
     likes: 123,
     replies: 45,
     recasts: 67
@@ -681,7 +681,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'beats_historian',
     userAvatar: '🎤',
     timestamp: '45 minutes ago',
-    comment: 'G-funk perfection. This beat changed the game forever. 🔥',
+    comment: 'This is G-funk perfection in its purest form - the way Dre crafted this beat was absolutely revolutionary and changed the entire trajectory of hip-hop forever. The synthesizer work, the laid-back groove, Snoop\'s incredibly smooth flow, it all comes together to create something that feels effortless but is actually incredibly sophisticated. This track basically defined West Coast hip-hop and its influence can still be heard in music today. 🔥',
     likes: 156,
     replies: 48,
     recasts: 89
@@ -697,7 +697,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'beats_historian',
     userAvatar: '🎤',
     timestamp: '2 hours ago',
-    comment: 'Illmatic is the greatest hip-hop album ever. This track proves it.',
+    comment: 'Illmatic is hands down the greatest hip-hop album ever recorded, and this track is absolute proof of that statement. The way Nas paints these incredibly vivid pictures of New York street life over that perfect DJ Premier production is pure artistry. Every single line is quotable and the flow is just immaculate. This is storytelling at its absolute finest and it set the standard for conscious rap forever.',
     likes: 134,
     replies: 42,
     recasts: 71
@@ -731,7 +731,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'my_jamzy',
     userAvatar: '🎵',
     timestamp: '1 hour ago',
-    comment: 'This song hits different every time I listen to it. Thom Yorke\'s vocals are haunting.',
+    comment: 'This song absolutely hits different every single time I listen to it - there\'s something about Thom Yorke\'s incredibly haunting vocals combined with those melancholy guitar melodies that just cuts straight through to your soul. The way Radiohead manages to make music that feels both deeply personal and universally relatable is just incredible. This track perfectly captures that sense of modern alienation and disconnection.',
     likes: 15,
     replies: 4,
     recasts: 7
@@ -779,7 +779,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'my_jamzy',
     userAvatar: '🎵',
     timestamp: '8 hours ago',
-    comment: 'Still one of the best anthems ever made. Never gets old!',
+    comment: 'This is still one of the greatest rock anthems ever made and it honestly never gets old no matter how many times you hear it. The way The Killers captured that perfect mix of indie rock energy and mainstream appeal was absolutely brilliant. Brandon Flowers\' vocals are incredible and that guitar riff is completely iconic. This song defined an entire era of rock music and it still sounds as fresh today as it did when it first came out.',
     likes: 31,
     replies: 12,
     recasts: 18
@@ -859,7 +859,7 @@ export const mockTrackSubmissions: Track[] = [
     addedBy: 'my_jamzy',
     userAvatar: '🎵',
     timestamp: '2 days ago',
-    comment: 'That bassline is iconic. Everyone knows this one!',
+    comment: 'That bassline is absolutely iconic and instantly recognizable - literally everyone knows this one the second those opening notes hit. Jack White\'s minimalist approach on this track was revolutionary, proving that you don\'t need a full band to create something massive and powerful. The way he creates such a huge sound with just guitar and drums is incredible, and Meg\'s drumming provides the perfect foundation for Jack\'s guitar wizardry.',
     likes: 45,
     replies: 16,
     recasts: 22

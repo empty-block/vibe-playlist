@@ -2,6 +2,7 @@ import { Component, createSignal, Show, onMount, createEffect, For } from 'solid
 import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
+import ExpandableText from '../ui/ExpandableText';
 import { heartBeat, particleBurst, socialButtonClick } from '../../utils/animations';
 import { enterThreadMode } from '../../stores/threadStore';
 
@@ -30,7 +31,6 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   const [isHovered, setIsHovered] = createSignal(false);
   const [isTitleTruncated, setIsTitleTruncated] = createSignal(false);
   const [isArtistTruncated, setIsArtistTruncated] = createSignal(false);
-  const [isCommentTruncated, setIsCommentTruncated] = createSignal(false);
   const [isLiked, setIsLiked] = createSignal(false);
   const [likeCount, setLikeCount] = createSignal(props.track.likes);
   const [replyCount, setReplyCount] = createSignal(props.track.replies);
@@ -42,7 +42,6 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   
   let titleRef: HTMLDivElement | undefined;
   let artistRef: HTMLDivElement | undefined;
-  let commentRef: HTMLDivElement | undefined;
   let likeButtonRef: HTMLButtonElement | undefined;
   let chatButtonRef: HTMLButtonElement | undefined;
   
@@ -52,9 +51,6 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
     }
     if (artistRef) {
       setIsArtistTruncated(artistRef.scrollWidth > artistRef.clientWidth);
-    }
-    if (commentRef) {
-      setIsCommentTruncated(commentRef.scrollHeight > commentRef.clientHeight);
     }
   };
   
@@ -283,9 +279,12 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
           <div class="flex items-center justify-between gap-2">
             <div class="flex-1 min-w-0">
               {props.track.comment && (
-                <div class="text-xs text-white/60 truncate font-mono">
-                  {props.track.comment}
-                </div>
+                <ExpandableText 
+                  text={props.track.comment}
+                  maxLength={60} 
+                  className="text-xs text-white/60 font-mono"
+                  expandedClassName="text-xs text-white/80 font-mono leading-relaxed"
+                />
               )}
             </div>
             <div class="flex items-center gap-2">
@@ -393,38 +392,22 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
       <td class="retro-grid-cell hidden lg:table-cell">
         <Show when={!(isProfileMode() && isPersonalTrack(props.track))} fallback={
           isPersonalTrack(props.track) && props.track.userInteraction.context ? (
-            <Show 
-              when={isCommentTruncated()} 
-              fallback={
-                <div ref={commentRef} class="text-sm text-white/60 truncate font-mono">
-                  {props.track.userInteraction.context}
-                </div>
-              }
-            >
-              <RetroTooltip content={props.track.userInteraction.context} maxWidth={300} delay={200}>
-                <div ref={commentRef} class="text-sm text-white/60 truncate font-mono cursor-help">
-                  {props.track.userInteraction.context}
-                </div>
-              </RetroTooltip>
-            </Show>
+            <ExpandableText 
+              text={props.track.userInteraction.context}
+              maxLength={80}
+              className="text-sm text-white/60 font-mono"
+              expandedClassName="text-sm text-white/80 font-mono"
+            />
           ) : (
             <span class="text-gray-500 italic">No comment</span>
           )
         }>
-          <Show 
-            when={props.track.comment && isCommentTruncated()} 
-            fallback={
-              <div ref={commentRef} class="text-sm text-white/60 truncate font-mono">
-                {props.track.comment || <span class="text-gray-500 italic">No comment</span>}
-              </div>
-            }
-          >
-            <RetroTooltip content={props.track.comment || ''} maxWidth={400} delay={200}>
-              <div ref={commentRef} class="text-sm text-white/60 truncate font-mono cursor-help">
-                {props.track.comment}
-              </div>
-            </RetroTooltip>
-          </Show>
+          <ExpandableText 
+            text={props.track.comment || 'No comment'}
+            maxLength={80}
+            className="text-sm text-white/60 font-mono"
+            expandedClassName="text-sm text-white/80 font-mono"
+          />
         </Show>
       </td>
 
