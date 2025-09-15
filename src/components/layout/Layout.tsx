@@ -3,7 +3,7 @@ import MobileNavigation from './MobileNavigation/MobileNavigation';
 import CompactHeader from './CompactHeader';
 import Terminal from '../terminal/Terminal';
 import MediaPlayer from '../player/MediaPlayer';
-import { currentTrack } from '../../stores/playerStore';
+import { currentTrack, isPlayerVisible } from '../../stores/playerStore';
 import './HeaderBar.css';
 
 interface LayoutProps {
@@ -30,7 +30,8 @@ const Layout: Component<LayoutProps> = (props) => {
       {/* Main Content (full width without sidebar) */}
       <main 
         class="main-content full-width-layout"
-        classList={{ 'has-player': !!currentTrack() }}
+        classList={{ 'has-player': isPlayerVisible() }}
+        style=""
       >
         <div class="content-wrapper">
           {props.children}

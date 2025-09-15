@@ -41,7 +41,7 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   grid-template-rows: 1fr;
-  height: calc(100vh - 160px); /* Account for header + player */
+  height: calc(100vh - 24px); /* Account for compact header only */
   gap: 0;
   position: relative;
 }

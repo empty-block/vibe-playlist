@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js';
+import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 
@@ -76,6 +76,9 @@ export const [playingPlaylistId, setPlayingPlaylistId] = createSignal<string>('g
 export const [playlistTracks, setPlaylistTracks] = createStore<Record<string, Track[]>>(playlistSongs);
 export const [currentTrack, setCurrentTrack] = createSignal<Track | null>(null);
 export const [isPlaying, setIsPlaying] = createSignal(false);
+
+// Derived signal for player visibility - true when player should occupy space
+export const isPlayerVisible = createMemo(() => !!currentTrack());
 
 // Player controls state
 export const [shuffleMode, setShuffleMode] = createSignal(false);

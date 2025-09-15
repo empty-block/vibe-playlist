@@ -6,9 +6,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: 50; /* Higher than sidebar (40) to ensure it's on top */
   border-top: 1px solid var(--neon-cyan);
-  background: linear-gradient(180deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); /* Solid opaque background */
+  backdrop-filter: blur(8px); /* Extra blur for better visibility */
   display: grid;
   grid-template-columns: 400px 1fr 400px;
   grid-template-areas: "info controls media";

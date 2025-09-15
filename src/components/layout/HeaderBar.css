@@ -77,7 +77,7 @@
 /* Mobile Layout */
 @media (max-width: 767px) {
   .main-content {
-    bottom: 64px; /* Mobile nav height */
+    bottom: 72px; /* Mobile nav height - matches --mobile-nav-height */
   }
   
   .main-content.compact-layout {
@@ -85,7 +85,7 @@
   }
   
   .main-content.has-player {
-    bottom: calc(64px + 80px); /* Mobile nav + player height */
+    bottom: calc(72px + 80px); /* Mobile nav + player height */
   }
 }
 
