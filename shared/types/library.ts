@@ -31,7 +31,8 @@ export interface Track {
   title: string
   artist: string
   source: 'youtube' | 'spotify' | 'soundcloud'
-  sourceUrl: string
+  sourceId: string        // Video ID for YouTube, track ID for Spotify, etc.
+  sourceUrl: string       // Full URL from embeds_metadata
   thumbnailUrl?: string
   duration?: number
   

@@ -17,7 +17,7 @@ export class DatabaseService {
   }
 
   async queryLibrary(query: LibraryQuery): Promise<{ tracks: Track[], hasMore: boolean, nextCursor?: string }> {
-    // Start with simple query, we'll add joins later
+    // Start with simple query - no joins
     let supabaseQuery = this.supabase
       .from('music_library')
       .select('*')
@@ -168,6 +168,12 @@ export class DatabaseService {
       .select('node_id, cast_text')
       .in('node_id', castIds)
     
+    // Fetch embeds_metadata separately
+    const { data: embeds } = await this.supabase
+      .from('embeds_metadata')
+      .select('cast_id, embed_index, url')
+      .in('cast_id', castIds)
+    
     const userMap = new Map()
     users?.forEach(user => {
       userMap.set(user.node_id, user)
@@ -177,18 +183,32 @@ export class DatabaseService {
     casts?.forEach(cast => {
       castMap.set(cast.node_id, cast)
     })
+    
+    const embedMap = new Map()
+    embeds?.forEach(embed => {
+      embedMap.set(`${embed.cast_id}-${embed.embed_index}`, embed)
+    })
 
     return dbRecords.map(record => {
       const user = userMap.get(record.author_fid)
       const cast = castMap.get(record.cast_id)
+      const embed = embedMap.get(`${record.cast_id}-${record.embed_index}`)
       
-      // Generate source URL based on platform  
-      let sourceUrl = ''
-      // Note: source_id is not in our current schema, so using cast_id for now
-      if (record.platform_name === 'youtube') {
-        sourceUrl = `https://www.youtube.com/watch?v=${record.cast_id}`
-      } else if (record.platform_name === 'spotify') {
-        sourceUrl = `https://open.spotify.com/track/${record.cast_id}`
+      // Get actual URL from embeds_metadata
+      const embedUrl = embed?.url || ''
+      
+      // Extract video ID from YouTube URL for sourceId
+      let sourceId = record.cast_id // fallback
+      if (record.platform_name === 'youtube' && embedUrl) {
+        const videoIdMatch = embedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)
+        if (videoIdMatch) {
+          sourceId = videoIdMatch[1]
+        }
+      } else if (record.platform_name === 'spotify' && embedUrl) {
+        const trackIdMatch = embedUrl.match(/spotify\.com\/track\/([^?]+)/)
+        if (trackIdMatch) {
+          sourceId = trackIdMatch[1]
+        }
       }
 
       return {
@@ -196,7 +216,8 @@ export class DatabaseService {
         title: record.title,
         artist: record.artist || 'Unknown Artist',
         source: record.platform_name as 'youtube' | 'spotify' | 'soundcloud',
-        sourceUrl,
+        sourceId: sourceId,
+        sourceUrl: embedUrl,
         thumbnailUrl: undefined, // Not in current schema
         duration: undefined, // Not in current schema
         

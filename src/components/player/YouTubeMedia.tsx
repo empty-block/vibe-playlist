@@ -61,7 +61,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       player = new window.YT.Player(playerContainer, {
         height: '100%',
         width: '100%',
-        videoId: 'hTWKbfoikeg',
+        videoId: '', // Start without a video, will load via createEffect
         playerVars: {
           autoplay: 0,
           controls: 1,
@@ -81,7 +81,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           onError: onPlayerError
         }
       });
-      console.log('YouTube player instance created successfully');
+      console.log('YouTube player instance created successfully without initial video');
     } catch (error) {
       console.error('Error creating YouTube player:', error);
     }
@@ -141,15 +141,33 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       track: track?.title, 
       source: track?.source,
       sourceId: track?.sourceId,
+      fullTrack: track,
       playerReady: playerReady(), 
       hasPlayer: !!player 
     });
     
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
-      console.log('Loading YouTube video:', track.title, track.sourceId);
+      // Extract YouTube video ID from URL if sourceId is a full URL
+      const getVideoId = (url: string) => {
+        // Handle various YouTube URL formats
+        const patterns = [
+          /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+          /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
+        ];
+        
+        for (const pattern of patterns) {
+          const match = url.match(pattern);
+          if (match) return match[1];
+        }
+        return url; // Return as-is if no pattern matches
+      };
+      
+      const videoId = getVideoId(track.sourceId);
+      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
+      
       try {
         player.loadVideoById({
-          videoId: track.sourceId,
+          videoId: videoId,
           startSeconds: 0
         });
       } catch (error) {
