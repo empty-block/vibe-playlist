@@ -272,6 +272,23 @@
   background: rgba(4, 202, 244, 0.05);
   display: flex;
   justify-content: center;
+  
+  /* Default mobile clearance */
+  padding-bottom: var(--space-4);
+}
+
+/* Desktop: Minimal clearance needed */
+@media (min-width: 1024px) {
+  .winamp-sidebar-footer {
+    padding-bottom: var(--space-6); /* 24px */
+  }
+}
+
+/* Tablet: Full player clearance */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .winamp-sidebar-footer {
+    padding-bottom: calc(140px + var(--space-4)); /* Player height + buffer */
+  }
 }
 
 .footer-status {
@@ -294,6 +311,21 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  
+  /* Base content padding */
+  padding-bottom: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .winamp-main-content {
+    padding-bottom: var(--space-6); /* Desktop padding */
+  }
+}
+
+@media (max-width: 1023px) {
+  .winamp-main-content {
+    padding-bottom: calc(140px + var(--space-4)); /* Player + buffer */
+  }
 }
 
 /* Main Content Header */

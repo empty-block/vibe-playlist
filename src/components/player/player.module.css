@@ -1,11 +1,8 @@
 /* Container - CSS Grid layout with controls on left */
 .playerContainer {
   height: 140px;
-  width: 100%;
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
   z-index: 50; /* Higher than sidebar (40) to ensure it's on top */
   border-top: 1px solid var(--neon-cyan);
   background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); /* Solid opaque background */
@@ -16,6 +13,26 @@
   gap: var(--space-6);
   padding: 0 var(--space-6);
   align-items: center;
+  
+  /* Mobile default: full width */
+  left: 0;
+  width: 100vw;
+}
+
+/* Desktop: Sidebar-aware positioning */
+@media (min-width: 1024px) {
+  .playerContainer {
+    left: 282px;                    /* After sidebar (280px) + border (2px) */
+    width: calc(100vw - 282px);     /* Remaining width */
+  }
+}
+
+/* Tablet: Full width with considerations */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .playerContainer {
+    left: 0;
+    width: 100vw;
+  }
 }
 
 /* Track Info Section - Left side */
