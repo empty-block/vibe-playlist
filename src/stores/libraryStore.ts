@@ -42,6 +42,9 @@ export const [itemsPerPage] = createSignal(50);
 export const [isShuffled, setIsShuffled] = createSignal(false);
 export const [shuffledOrder, setShuffledOrder] = createSignal<number[]>([]);
 
+// Global sorting
+export const [globalSortEnabled, setGlobalSortEnabled] = createSignal(false);
+
 // Utility function to shuffle array using Fisher-Yates algorithm
 const shuffleArray = <T>(array: T[]): T[] => {
   const shuffled = [...array];
@@ -214,15 +217,46 @@ export const loadAllTracks = async () => {
   }
 };
 
-export const updateSort = (column: SortColumn) => {
+export const loadFilteredTracksWithGlobalSort = async () => {
+  setIsLoading(true);
+  try {
+    // Create a query that includes filters AND current sort state
+    const queryWithSort = {
+      ...filters,
+      sortBy: sortState.column === 'track' ? 'title' : 
+              sortState.column === 'sharedBy' ? 'timestamp' :
+              sortState.column === 'timestamp' ? 'timestamp' :
+              sortState.column === 'platform' ? 'timestamp' :
+              sortState.column,
+      sortDirection: sortState.direction,
+      globalSort: true
+    };
+    
+    const response = await libraryApiService.queryLibrary(queryWithSort);
+    
+    // Update tracks with globally sorted results
+    setAllTracks(response.tracks);
+  } catch (error) {
+    console.error('Failed to load globally sorted tracks:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const updateSort = (column: SortColumn, direction?: SortDirection) => {
   setSortState(prev => ({
     column,
-    direction: prev.column === column && prev.direction === 'asc' ? 'desc' : 'asc'
+    direction: direction || (prev.column === column && prev.direction === 'asc' ? 'desc' : 'asc')
   }));
   
   // Clear shuffle state when user manually sorts
   setIsShuffled(false);
   setShuffledOrder([]);
+  
+  if (globalSortEnabled()) {
+    // Trigger API call with global sorting
+    loadFilteredTracksWithGlobalSort();
+  }
 };
 
 export const updateFilters = (newFilters: Partial<LibraryFilters>) => {

@@ -102,12 +102,17 @@ export class DatabaseService {
         supabaseQuery = supabaseQuery.order('created_at', { ascending: sortDirection === 'asc' })
     }
 
-    // Pagination
-    const limit = Math.min(query.limit || 50, 250) // Max 250 as per spec
-    supabaseQuery = supabaseQuery.limit(limit + 1) // +1 to check if there are more
+    // Pagination - skip if we want the full dataset for aggregations
+    let limit = 50
+    let skipPagination = query.returnFullDataset
+    
+    if (!skipPagination) {
+      limit = Math.min(query.limit || 50, 250) // Max 250 as per spec
+      supabaseQuery = supabaseQuery.limit(limit + 1) // +1 to check if there are more
+    }
 
-    // Cursor-based pagination
-    if (query.cursor) {
+    // Cursor-based pagination (skip for full dataset)
+    if (query.cursor && !skipPagination) {
       try {
         const cursorData = JSON.parse(atob(query.cursor))
         supabaseQuery = supabaseQuery.gt('created_at', cursorData.created_at)
@@ -127,9 +132,14 @@ export class DatabaseService {
       return { tracks: [], hasMore: false }
     }
 
-    // Check if there are more results
-    const hasMore = data.length > limit
-    const tracks = data.slice(0, limit) // Remove the extra record
+    // Check if there are more results and handle pagination
+    let hasMore = false
+    let tracks = data
+    
+    if (!skipPagination) {
+      hasMore = data.length > limit
+      tracks = data.slice(0, limit) // Remove the extra record
+    }
 
     // Generate next cursor
     let nextCursor: string | undefined
@@ -155,37 +165,63 @@ export class DatabaseService {
     // Get unique author_fids to fetch user info
     const authorFids = [...new Set(dbRecords.map(record => record.author_fid))]
     const castIds = [...new Set(dbRecords.map(record => record.cast_id))]
+    const CHUNK_SIZE = 100 // Limit to avoid URI too large error
     
-    // Fetch user info for all authors
-    const { data: users } = await this.supabase
-      .from('user_nodes')
-      .select('node_id, fname, display_name, avatar_url')
-      .in('node_id', authorFids)
+    // Fetch user info for all authors in chunks
+    let users: any[] = []
+    for (let i = 0; i < authorFids.length; i += CHUNK_SIZE) {
+      const chunk = authorFids.slice(i, i + CHUNK_SIZE)
+      const { data: chunkUsers } = await this.supabase
+        .from('user_nodes')
+        .select('node_id, fname, display_name, avatar_url')
+        .in('node_id', chunk)
+      if (chunkUsers) {
+        users.push(...chunkUsers)
+      }
+    }
     
-    // Fetch cast text for all casts
-    const { data: casts } = await this.supabase
-      .from('cast_nodes')
-      .select('node_id, cast_text')
-      .in('node_id', castIds)
+    // Fetch cast text for all casts in chunks to avoid 414 error
+    let casts: any[] = []
     
-    // Fetch embeds_metadata separately
-    const { data: embeds } = await this.supabase
-      .from('embeds_metadata')
-      .select('cast_id, embed_index, url')
-      .in('cast_id', castIds)
+    for (let i = 0; i < castIds.length; i += CHUNK_SIZE) {
+      const chunk = castIds.slice(i, i + CHUNK_SIZE)
+      const { data: chunkCasts, error: castError } = await this.supabase
+        .from('cast_nodes')
+        .select('node_id, cast_text')
+        .in('node_id', chunk)
+      
+      if (castError) {
+        console.error('Cast query error for chunk:', castError)
+      } else if (chunkCasts) {
+        casts.push(...chunkCasts)
+      }
+    }
+    
+    // Fetch embeds_metadata in chunks
+    let embeds: any[] = []
+    for (let i = 0; i < castIds.length; i += CHUNK_SIZE) {
+      const chunk = castIds.slice(i, i + CHUNK_SIZE)
+      const { data: chunkEmbeds } = await this.supabase
+        .from('embeds_metadata')
+        .select('cast_id, embed_index, url')
+        .in('cast_id', chunk)
+      if (chunkEmbeds) {
+        embeds.push(...chunkEmbeds)
+      }
+    }
     
     const userMap = new Map()
-    users?.forEach(user => {
+    users.forEach(user => {
       userMap.set(user.node_id, user)
     })
     
     const castMap = new Map()
-    casts?.forEach(cast => {
+    casts.forEach(cast => {
       castMap.set(cast.node_id, cast)
     })
     
     const embedMap = new Map()
-    embeds?.forEach(embed => {
+    embeds.forEach(embed => {
       embedMap.set(`${embed.cast_id}-${embed.embed_index}`, embed)
     })
 

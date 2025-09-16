@@ -24,6 +24,10 @@ export interface LibraryQuery {
   sortDirection?: 'asc' | 'desc'
   limit?: number
   cursor?: string
+  
+  // New: Global sorting and aggregations support
+  globalSort?: boolean
+  returnFullDataset?: boolean
 }
 
 export interface Track {
@@ -83,4 +87,26 @@ export interface ErrorResponse {
     details?: any
   }
   timestamp: string
+}
+
+// New: Aggregation types for library statistics
+export interface ArtistData {
+  name: string
+  count: number
+}
+
+export interface GenreData {
+  name: string
+  count: number
+}
+
+export interface LibraryAggregations {
+  artists: ArtistData[]
+  genres: GenreData[]
+  totalTracks: number
+  appliedFilters: LibraryQuery
+  meta?: {
+    queryTime: number
+    cached: boolean
+  }
 }

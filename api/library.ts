@@ -1,4 +1,4 @@
-import type { LibraryQuery, LibraryResponse, ErrorResponse } from '../shared/types/library'
+import type { LibraryQuery, LibraryResponse, ErrorResponse, Track } from '../shared/types/library'
 import { DatabaseService } from './database'
 
 export class LibraryAPI {
@@ -110,15 +110,49 @@ export class LibraryAPI {
     const startTime = Date.now()
 
     try {
-      const { tracks, hasMore, nextCursor } = await this.db.queryLibrary(query)
+      let tracks: any[]
+      let hasMore: boolean
+      let nextCursor: string | undefined
+      let totalTracks: number | undefined
+
+      if (query.globalSort) {
+        // Get full dataset, sort, then paginate
+        const fullResult = await this.db.queryLibrary({
+          ...query,
+          limit: undefined,
+          cursor: undefined,
+          returnFullDataset: true
+        })
+        
+        // Apply sorting to full dataset
+        const sortedTracks = this.applySorting(fullResult.tracks, query)
+        
+        // Apply pagination to sorted results
+        const paginationResult = this.applyPagination(
+          sortedTracks, 
+          query.limit || 50, 
+          query.cursor
+        )
+        
+        tracks = paginationResult.paginatedTracks
+        hasMore = paginationResult.hasMore
+        nextCursor = paginationResult.nextCursor
+        totalTracks = sortedTracks.length
+      } else {
+        // Existing behavior - paginate then sort (limited)
+        const result = await this.db.queryLibrary(query)
+        tracks = result.tracks
+        hasMore = result.hasMore
+        nextCursor = result.nextCursor
+        totalTracks = tracks.length < 50 ? tracks.length : undefined
+      }
 
       const response: LibraryResponse = {
         tracks,
         pagination: {
           hasMore,
           nextCursor,
-          // Only include total for small result sets to avoid expensive counts
-          total: tracks.length < 50 ? tracks.length : undefined
+          total: totalTracks
         },
         appliedFilters: query,
         meta: {
@@ -138,6 +172,86 @@ export class LibraryAPI {
     } catch (error) {
       console.error('Query execution error:', error)
       return this.errorResponse('QUERY_ERROR', 'Failed to execute query', 500)
+    }
+  }
+
+  private applySorting(tracks: Track[], query: LibraryQuery): Track[] {
+    const sortBy = query.sortBy || 'timestamp'
+    const sortDirection = query.sortDirection || 'desc'
+    
+    const sortedTracks = [...tracks].sort((a, b) => {
+      let comparison = 0
+      
+      switch (sortBy) {
+        case 'timestamp':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          break
+        case 'artist':
+          comparison = (a.artist || '').localeCompare(b.artist || '')
+          break
+        case 'title':
+          comparison = (a.title || '').localeCompare(b.title || '')
+          break
+        case 'likes':
+          comparison = a.socialStats.likes - b.socialStats.likes
+          break
+        case 'replies':
+          comparison = a.socialStats.replies - b.socialStats.replies
+          break
+        case 'recasts':
+          comparison = a.socialStats.recasts - b.socialStats.recasts
+          break
+        default:
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      }
+      
+      return sortDirection === 'asc' ? comparison : -comparison
+    })
+    
+    return sortedTracks
+  }
+
+  private applyPagination(tracks: Track[], limit: number, cursor?: string): {
+    paginatedTracks: Track[]
+    hasMore: boolean
+    nextCursor?: string
+  } {
+    let startIndex = 0
+    
+    // Handle cursor-based pagination for globally sorted results
+    if (cursor) {
+      try {
+        const cursorData = JSON.parse(atob(cursor))
+        // Find the index of the track with this ID
+        startIndex = tracks.findIndex(track => track.id === cursorData.trackId)
+        if (startIndex >= 0) {
+          startIndex += 1 // Start from the next track
+        } else {
+          startIndex = 0 // Fallback if cursor track not found
+        }
+      } catch (error) {
+        console.warn('Invalid cursor provided:', cursor)
+        startIndex = 0
+      }
+    }
+    
+    const endIndex = startIndex + limit
+    const paginatedTracks = tracks.slice(startIndex, endIndex)
+    const hasMore = endIndex < tracks.length
+    
+    let nextCursor: string | undefined
+    if (hasMore && paginatedTracks.length > 0) {
+      const lastTrack = paginatedTracks[paginatedTracks.length - 1]
+      nextCursor = btoa(JSON.stringify({ 
+        trackId: lastTrack.id,
+        createdAt: lastTrack.createdAt
+      }))
+    }
+    
+    return {
+      paginatedTracks,
+      hasMore,
+      nextCursor
     }
   }
 

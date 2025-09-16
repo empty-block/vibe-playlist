@@ -1,4 +1,4 @@
-import type { LibraryQuery, LibraryResponse, Track as ApiTrack } from '../../shared/types/library'
+import type { LibraryQuery, LibraryResponse, LibraryAggregations, Track as ApiTrack } from '../../shared/types/library'
 import type { Track as FrontendTrack } from '../stores/playerStore'
 import type { LibraryFilters } from '../stores/libraryStore'
 
@@ -10,18 +10,45 @@ export class LibraryApiService {
     return response.tracks
   }
 
-  async getFilteredTracks(filters: LibraryFilters): Promise<{
+  async getFilteredTracks(
+    filters: LibraryFilters, 
+    options: { globalSort?: boolean } = {}
+  ): Promise<{
     tracks: FrontendTrack[]
     pagination: LibraryResponse['pagination']
     meta: LibraryResponse['meta']
   }> {
-    const query = this.convertFiltersToQuery(filters)
+    const query = {
+      ...this.convertFiltersToQuery(filters),
+      globalSort: options.globalSort
+    }
     const response = await this.queryLibrary(query)
     
     return {
       tracks: response.tracks,
       pagination: response.pagination,
       meta: response.meta
+    }
+  }
+
+  async getLibraryAggregations(filters: LibraryFilters): Promise<LibraryAggregations> {
+    const query = this.convertFiltersToQuery(filters)
+    
+    try {
+      const response = await fetch(`${this.baseUrl}/library/aggregations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(query)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Aggregations API request failed: ${response.status}`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Library aggregations error:', error)
+      throw error
     }
   }
 

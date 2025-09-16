@@ -1,9 +1,10 @@
-import { Component, Show, createMemo } from 'solid-js';
+import { Component, Show, createMemo, createEffect } from 'solid-js';
 import { Track } from '../../../stores/playerStore';
 import { PersonalTrack } from '../LibraryTable';
 import ArtistBrowseSection from './ArtistBrowseSection';
 import GenreBrowseSection from './GenreBrowseSection';
 import { extractArtistsFromTracks, extractGenresFromTracks } from './utils/browseDataExtractors';
+import { artistsData, genresData, loadAggregations, isLoadingAggregations } from '../../../stores/libraryAggregationsStore';
 
 export interface LibraryFilters {
   selectedArtist: string | null;
@@ -22,9 +23,25 @@ interface BrowseSectionsContainerProps {
 }
 
 const BrowseSectionsContainer: Component<BrowseSectionsContainerProps> = (props) => {
-  // Extract artist and genre data from tracks
-  const artistsData = createMemo(() => extractArtistsFromTracks(props.tracks));
-  const genresData = createMemo(() => extractGenresFromTracks(props.tracks));
+  // Load aggregations on mount and when filters change
+  createEffect(() => {
+    loadAggregations();
+  });
+
+  // Fallback to client-side extraction if aggregations aren't loaded yet
+  const fallbackArtistsData = createMemo(() => extractArtistsFromTracks(props.tracks));
+  const fallbackGenresData = createMemo(() => extractGenresFromTracks(props.tracks));
+
+  // Use store data if available, otherwise fall back to client-side extraction
+  const finalArtistsData = createMemo(() => {
+    const storeData = artistsData();
+    return storeData.length > 0 ? storeData : fallbackArtistsData();
+  });
+
+  const finalGenresData = createMemo(() => {
+    const storeData = genresData();
+    return storeData.length > 0 ? storeData : fallbackGenresData();
+  });
 
   const handleArtistSelect = (artist: string | null) => {
     props.onFiltersChange({ selectedArtist: artist });
@@ -38,17 +55,17 @@ const BrowseSectionsContainer: Component<BrowseSectionsContainerProps> = (props)
     <Show when={props.showBrowseSections !== false}>
       <div class="browse-sections-container">
         <ArtistBrowseSection
-          artists={artistsData()}
+          artists={finalArtistsData()}
           selectedArtist={props.filters.selectedArtist}
           onArtistSelect={handleArtistSelect}
-          isLoading={props.isLoading}
+          isLoading={props.isLoading || isLoadingAggregations()}
         />
         
         <GenreBrowseSection
-          genres={genresData()}
+          genres={finalGenresData()}
           selectedGenre={props.filters.selectedGenre}
           onGenreSelect={handleGenreSelect}
-          isLoading={props.isLoading}
+          isLoading={props.isLoading || isLoadingAggregations()}
         />
       </div>
     </Show>

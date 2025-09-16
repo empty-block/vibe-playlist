@@ -1,5 +1,5 @@
 import { Component, Show } from 'solid-js';
-import { sortState, updateSort, SortColumn } from '../../stores/libraryStore';
+import { sortState, updateSort, SortColumn, globalSortEnabled, setGlobalSortEnabled } from '../../stores/libraryStore';
 
 interface LibraryTableHeaderProps {
   mode?: 'library' | 'profile';
@@ -28,10 +28,19 @@ const LibraryTableHeader: Component<LibraryTableHeaderProps> = (props) => {
   return (
     <thead class="retro-grid-header">
       <tr>
-        {/* Track Number Column */}
-        <th class="retro-grid-header-cell w-12 text-center">
-          <div class="flex items-center justify-center">
-            #
+        {/* Track Number Column with Global Sort Toggle */}
+        <th class="retro-grid-header-cell w-16 text-center">
+          <div class="flex flex-col items-center justify-center gap-1">
+            <span>#</span>
+            <label class="flex items-center gap-1 text-xs" title="Enable global sorting (sorts entire library instead of current page)">
+              <input 
+                type="checkbox" 
+                checked={globalSortEnabled()}
+                onChange={(e) => setGlobalSortEnabled(e.target.checked)}
+                class="retro-checkbox"
+              />
+              <span class="text-purple-400">Global</span>
+            </label>
           </div>
         </th>
 

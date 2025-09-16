@@ -1,8 +1,10 @@
 import { serve } from 'bun'
 import { readFileSync } from 'fs'
 import { LibraryAPI } from './api/library'
+import { AggregationsAPI } from './api/aggregations'
 
 const libraryAPI = new LibraryAPI()
+const aggregationsAPI = new AggregationsAPI()
 
 serve({
   port: 4201,
@@ -14,6 +16,8 @@ serve({
       // API routes
       if (pathname === '/api/library') {
         return libraryAPI.handleRequest(request)
+      } else if (pathname === '/api/library/aggregations') {
+        return aggregationsAPI.handleRequest(request)
       }
       
       // Serve different file types
