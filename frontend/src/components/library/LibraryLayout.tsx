@@ -1,6 +1,6 @@
 import { Component, createSignal, onMount, Show } from 'solid-js';
 import { createStore } from 'solid-js/store';
-import { PersonalTrack, PersonalFilterType } from './LibraryTable';
+import { PersonalTrack, PersonalFilterType } from '../../types/library';
 import LibrarySidebar from './LibrarySidebar';
 import LibraryMainContent from './LibraryMainContent';
 import { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';

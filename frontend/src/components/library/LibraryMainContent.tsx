@@ -1,5 +1,5 @@
 import { Component, Show } from 'solid-js';
-import { PersonalTrack, PersonalFilterType } from './LibraryTable';
+import { PersonalTrack, PersonalFilterType } from '../../types/library';
 import LibraryTableFilters from './LibraryTableFilters';
 import LibraryTableHeader from './LibraryTableHeader';
 import LibraryTableRow from './LibraryTableRow';
@@ -15,11 +15,11 @@ import './ThreadStarter.css';
 import './ThreadStatus.css';
 // WinampLibraryFooter removed - functionality moved to WinampSidebarFooter
 import { filterTracksByArtist, filterTracksByGenre } from './BrowseSections/utils/browseDataExtractors';
-import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage, loadAllTracks } from '../../stores/libraryStore';
+import { paginatedTracks, isLoading, filteredTracks, totalPages, currentPage, loadAllTracks, loadFilteredTracks, filters } from '../../stores/libraryStore';
 import { selectedNetwork } from '../../stores/networkStore';
 import { currentUser } from '../../stores/authStore';
 import { useNavigate } from '@solidjs/router';
-import { For, createSignal, onMount, createMemo } from 'solid-js';
+import { For, createSignal, onMount, createMemo, createEffect } from 'solid-js';
 
 interface WinampMainContentProps {
   mode?: 'library' | 'profile';
@@ -59,6 +59,44 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
         console.error('Error loading tracks:', error);
         setLoadingError('Failed to load tracks');
       }
+    }
+  });
+
+  // React to filter changes - reload tracks when filters change
+  createEffect(() => {
+    if (!isProfileMode()) {
+      // Access reactive store properties to trigger effect
+      const currentSearch = filters.search;
+      const currentPlatform = filters.platform;
+      const currentDateRange = filters.dateRange;
+      const currentMinEngagement = filters.minEngagement;
+      
+      const hasActiveFilters = currentSearch?.trim() || currentPlatform !== 'all' || 
+                               currentDateRange !== 'all' || currentMinEngagement > 0;
+      
+      console.log('LibraryMainContent: Filter change detected:', { 
+        search: currentSearch, 
+        platform: currentPlatform,
+        dateRange: currentDateRange,
+        minEngagement: currentMinEngagement,
+        hasActiveFilters 
+      });
+      
+      // Use async function inside effect
+      (async () => {
+        try {
+          if (hasActiveFilters) {
+            console.log('LibraryMainContent: Loading filtered tracks...');
+            await loadFilteredTracks();
+          } else {
+            console.log('LibraryMainContent: Loading all tracks...');
+            await loadAllTracks();
+          }
+        } catch (error) {
+          console.error('Error reloading tracks after filter change:', error);
+          setLoadingError('Failed to reload tracks');
+        }
+      })();
     }
   });
 

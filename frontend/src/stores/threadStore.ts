@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
 import { Track } from './playerStore';
-import { PersonalTrack } from '../components/library/LibraryTable';
+import { PersonalTrack } from '../types/library';
 
 // Thread state management
 const [threadMode, setThreadMode] = createSignal<boolean>(false);

@@ -1,5 +1,5 @@
 import { Track } from '../../../../stores/playerStore';
-import { PersonalTrack } from '../../LibraryTable';
+import { PersonalTrack } from '../../../../types/library';
 
 // Types for browse data
 export interface ArtistData {

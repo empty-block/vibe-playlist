@@ -1,7 +1,8 @@
 import { Component, createSignal, onMount } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import { pageEnter, staggeredFadeIn } from '../utils/animations';
-import LibraryTable, { PersonalTrack, PersonalFilterType } from '../components/library/LibraryTable';
+import { LibraryLayout } from '../components/library';
+import { PersonalTrack, PersonalFilterType } from '../types/library';
 import AddButton from '../components/common/AddButton';
 import { currentUser } from '../stores/authStore';
 
@@ -257,7 +258,7 @@ const ProfilePage: Component = () => {
 
         {/* Personal Music Library */}
         <div class="me-section personal-library-section">
-          <LibraryTable 
+          <LibraryLayout 
             mode="profile"
             userId={userWithStats.username}
             personalTracks={tracks()}

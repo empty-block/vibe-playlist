@@ -1,6 +1,6 @@
 import { Component, Show, createMemo, createEffect } from 'solid-js';
 import { Track } from '../../../stores/playerStore';
-import { PersonalTrack } from '../LibraryTable';
+import { PersonalTrack } from '../../../types/library';
 import ArtistBrowseSection from './ArtistBrowseSection';
 import GenreBrowseSection from './GenreBrowseSection';
 import { extractArtistsFromTracks, extractGenresFromTracks } from './utils/browseDataExtractors';

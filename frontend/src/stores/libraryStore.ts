@@ -94,16 +94,8 @@ export const filteredTracks = createMemo(() => {
     });
   }
   
-  // Apply search filter
-  if (filters.search) {
-    const searchLower = filters.search.toLowerCase();
-    tracks = tracks.filter(track => 
-      track.title.toLowerCase().includes(searchLower) ||
-      track.artist.toLowerCase().includes(searchLower) ||
-      track.addedBy.toLowerCase().includes(searchLower) ||
-      track.comment.toLowerCase().includes(searchLower)
-    );
-  }
+  // Note: Search filtering is now handled server-side via the API
+  // Client-side search has been removed to use PostgreSQL functions
   
   // Apply platform filter
   if (filters.platform !== 'all') {
@@ -212,6 +204,23 @@ export const loadAllTracks = async () => {
     setAllTracks(tracks);
   } catch (error) {
     console.error('Failed to load tracks:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+export const loadFilteredTracks = async () => {
+  console.log('loadFilteredTracks called with filters:', filters);
+  setIsLoading(true);
+  try {
+    // Use server-side functions for search and filters
+    const response = await libraryApiService.getFilteredTracks(filters, { 
+      globalSort: globalSortEnabled() 
+    });
+    console.log('Filtered tracks response:', response.tracks.length, 'tracks');
+    setAllTracks(response.tracks);
+  } catch (error) {
+    console.error('Failed to load filtered tracks:', error);
   } finally {
     setIsLoading(false);
   }
