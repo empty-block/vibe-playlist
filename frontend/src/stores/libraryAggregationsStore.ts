@@ -22,7 +22,15 @@ const loadAggregations = async (forceRefresh = false) => {
   setAggregationsError('')
 
   try {
-    const data = await libraryApiService.getLibraryAggregations(filters)
+    // Use empty filters for aggregations to get complete library stats
+    // We want to see total counts for all artists/genres, not filtered counts
+    const emptyFilters = {
+      search: '',
+      platform: 'all' as const,
+      dateRange: 'all' as const,
+      minEngagement: 0
+    }
+    const data = await libraryApiService.getLibraryAggregations(emptyFilters)
     setAggregations(data)
   } catch (error) {
     console.error('Failed to load aggregations:', error)
