@@ -3,7 +3,6 @@ export { default as LibrarySidebar } from './LibrarySidebar';
 export { default as LibrarySidebarSection } from './LibrarySidebarSection';
 export { default as LibraryMainContent } from './LibraryMainContent';
 export { default as MobileSidebarToggle } from './MobileSidebarToggle';
-export { default as LibraryTable } from './LibraryTable';
 export { default as LibraryTableFilters } from './LibraryTableFilters';
 export { default as LibraryTableHeader } from './LibraryTableHeader';
 export { default as LibraryTableRow } from './LibraryTableRow';

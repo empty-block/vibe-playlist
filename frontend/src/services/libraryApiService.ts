@@ -6,7 +6,12 @@ export class LibraryApiService {
   private baseUrl = 'http://localhost:4201/api'
 
   async getAllTracks(): Promise<FrontendTrack[]> {
-    const response = await this.queryLibrary({})
+    // Use PostgreSQL sort function with default timestamp sorting to get complete data
+    const response = await this.queryLibrary({
+      sortBy: 'timestamp',
+      sortDirection: 'desc',
+      globalSort: true
+    })
     return response.tracks
   }
 
@@ -18,9 +23,12 @@ export class LibraryApiService {
     pagination: LibraryResponse['pagination']
     meta: LibraryResponse['meta']
   }> {
-    const query = {
+    const query: LibraryQuery = {
       ...this.convertFiltersToQuery(filters),
-      globalSort: options.globalSort
+      globalSort: options.globalSort,
+      useServerSideSearch: this.shouldUseServerSideSearch(filters),
+      useServerSideSort: this.shouldUseServerSideSort(filters),
+      includeEngagementMetrics: true
     }
     const response = await this.queryLibrary(query)
     
@@ -89,6 +97,23 @@ export class LibraryApiService {
       console.error('Library API error:', error)
       throw error
     }
+  }
+
+  // Add method to determine when to use server-side functions
+  private shouldUseServerSideSearch(filters: LibraryFilters): boolean {
+    // Use server-side search for:
+    // 1. Any search query
+    // 2. Large expected result sets
+    return !!(
+      filters.search?.trim()
+    )
+  }
+
+  private shouldUseServerSideSort(filters: LibraryFilters): boolean {
+    // Use server-side sort for:
+    // 1. Engagement-based sorting (determined elsewhere)
+    // 2. When global sort is explicitly requested (passed via options)
+    return false // Default to false, will be overridden by globalSort option
   }
 
   private convertFiltersToQuery(filters: LibraryFilters): LibraryQuery {

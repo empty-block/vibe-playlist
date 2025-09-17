@@ -110,49 +110,40 @@ export class LibraryAPI {
     const startTime = Date.now()
 
     try {
-      let tracks: any[]
-      let hasMore: boolean
-      let nextCursor: string | undefined
-      let totalTracks: number | undefined
-
-      if (query.globalSort) {
-        // Get full dataset, sort, then paginate
-        const fullResult = await this.db.queryLibrary({
-          ...query,
-          limit: undefined,
-          cursor: undefined,
-          returnFullDataset: true
-        })
-        
-        // Apply sorting to full dataset
-        const sortedTracks = this.applySorting(fullResult.tracks, query)
-        
-        // Apply pagination to sorted results
-        const paginationResult = this.applyPagination(
-          sortedTracks, 
-          query.limit || 50, 
-          query.cursor
-        )
-        
-        tracks = paginationResult.paginatedTracks
-        hasMore = paginationResult.hasMore
-        nextCursor = paginationResult.nextCursor
-        totalTracks = sortedTracks.length
+      let result: { tracks: any[], totalCount: number, hasMore: boolean }
+      
+      // Use appropriate function based on operation type
+      if (query.search && query.search.trim() !== '') {
+        // Use search function for text queries
+        result = await this.db.searchLibraryWithPagination(query)
+      } else if (query.sortBy || query.globalSort) {
+        // Use sort function for any sorting (PostgreSQL supports all columns now)
+        result = await this.db.sortLibraryWithPagination(query)
       } else {
-        // Existing behavior - paginate then sort (limited)
-        const result = await this.db.queryLibrary(query)
-        tracks = result.tracks
-        hasMore = result.hasMore
-        nextCursor = result.nextCursor
-        totalTracks = tracks.length < 50 ? tracks.length : undefined
+        // Fall back to existing implementation for simple queries
+        const oldResult = await this.db.queryLibrary(query)
+        result = {
+          tracks: oldResult.tracks,
+          totalCount: oldResult.tracks.length,
+          hasMore: oldResult.hasMore
+        }
       }
 
+      // Transform to frontend format
+      const transformedTracks = await this.transformTracksWithEngagement(result.tracks)
+      
+      // Generate cursor for pagination
+      const currentOffset = this.calculateOffset(query.cursor, query.limit || 50)
+      const nextCursor = result.hasMore 
+        ? btoa(JSON.stringify({ offset: currentOffset + transformedTracks.length }))
+        : undefined
+
       const response: LibraryResponse = {
-        tracks,
+        tracks: transformedTracks,
         pagination: {
-          hasMore,
+          hasMore: result.hasMore,
           nextCursor,
-          total: totalTracks
+          total: result.totalCount
         },
         appliedFilters: query,
         meta: {
@@ -270,5 +261,90 @@ export class LibraryAPI {
         'Access-Control-Allow-Headers': 'Content-Type'
       }
     })
+  }
+
+  private async transformTracksWithEngagement(dbRecords: any[]): Promise<Track[]> {
+    // Enhanced transformation that includes engagement data from function results
+    
+    if (!dbRecords || dbRecords.length === 0) {
+      return []
+    }
+
+    // Get user and cast data (same as existing logic)
+    const authorFids = [...new Set(dbRecords.map(record => record.author_fid))]
+    const castIds = [...new Set(dbRecords.map(record => record.cast_id))]
+    
+    // Fetch user info in chunks
+    const users = await this.db.fetchUsersInChunks(authorFids)
+    const casts = await this.db.fetchCastsInChunks(castIds)  
+    const embeds = await this.db.fetchEmbedsInChunks(castIds)
+    
+    // Create lookup maps
+    const userMap = new Map(users.map(user => [user.node_id, user]))
+    const castMap = new Map(casts.map(cast => [cast.node_id, cast]))
+    const embedMap = new Map(embeds.map(embed => [`${embed.cast_id}-${embed.embed_index}`, embed]))
+
+    return dbRecords.map(record => {
+      const user = userMap.get(record.author_fid)
+      const cast = castMap.get(record.cast_id)
+      const embed = embedMap.get(`${record.cast_id}-${record.embed_index}`)
+      
+      const embedUrl = embed?.url || ''
+      let sourceId = record.cast_id
+      
+      // Extract platform-specific IDs
+      if (record.platform_name === 'youtube' && embedUrl) {
+        const videoIdMatch = embedUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)
+        if (videoIdMatch) sourceId = videoIdMatch[1]
+      } else if (record.platform_name === 'spotify' && embedUrl) {
+        const trackIdMatch = embedUrl.match(/spotify\.com\/track\/([^?]+)/)
+        if (trackIdMatch) sourceId = trackIdMatch[1]
+      }
+
+      return {
+        id: `${record.cast_id}-${record.embed_index}`,
+        title: record.title,
+        artist: record.artist || 'Unknown Artist',
+        source: record.platform_name as 'youtube' | 'spotify' | 'soundcloud',
+        sourceId: sourceId,
+        sourceUrl: embedUrl,
+        thumbnailUrl: undefined,
+        duration: undefined,
+        
+        user: {
+          username: user?.fname || 'unknown',
+          displayName: user?.display_name || 'Unknown User',
+          avatar: user?.avatar_url
+        },
+        
+        userInteraction: {
+          type: 'shared',
+          timestamp: record.created_at,
+          context: cast?.cast_text || undefined
+        },
+        
+        // Use engagement data from function results
+        socialStats: {
+          likes: record.likes_count || 0,
+          replies: record.replies_count || 0,
+          recasts: record.recasts_count || 0
+        },
+        
+        tags: record.genre || [],
+        createdAt: record.created_at
+      } as Track
+    })
+  }
+
+  private calculateOffset(cursor?: string, pageSize: number = 50): number {
+    if (!cursor) return 0
+    
+    try {
+      const cursorData = JSON.parse(atob(cursor))
+      return cursorData.offset || 0
+    } catch (error) {
+      console.warn('Invalid cursor provided:', cursor)
+      return 0
+    }
   }
 }

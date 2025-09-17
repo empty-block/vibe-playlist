@@ -12,10 +12,10 @@ export default defineConfig(() => {
       'import.meta.env.MODE': JSON.stringify(process.env.NODE_ENV || 'development'),
       'import.meta.env.PROD': JSON.stringify(process.env.NODE_ENV === 'production'),
     },
-  server: {
-    host: 'localhost',
-    hmr: false, // Disable HMR to avoid WebSocket issues with Bun
-  },
+    server: {
+      host: 'localhost',
+      hmr: false, // Disable HMR to avoid WebSocket issues with Bun
+    },
     build: {
       target: 'esnext'
     }

@@ -28,6 +28,11 @@ export interface LibraryQuery {
   // New: Global sorting and aggregations support
   globalSort?: boolean
   returnFullDataset?: boolean
+  
+  // New options for server-side functions
+  useServerSideSearch?: boolean     // Use postgres search function
+  useServerSideSort?: boolean       // Use postgres sort function
+  includeEngagementMetrics?: boolean // Include likes/replies/recasts in results
 }
 
 export interface Track {

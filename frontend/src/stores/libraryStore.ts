@@ -59,9 +59,18 @@ const shuffleArray = <T>(array: T[]): T[] => {
 export const filteredTracks = createMemo(() => {
   let tracks = allTracks();
   
-  // Apply network filter
+  // Skip network filtering when doing a search or when any filters are active
+  // This ensures users see all results when actively filtering/searching/sorting
+  const hasActiveSearch = filters.search?.trim();
+  const hasActiveFilters = filters.platform !== 'all' || 
+                          filters.dateRange !== 'all' || 
+                          filters.minEngagement > 0;
+  const hasActiveSorting = sortState.column !== 'timestamp' || sortState.direction !== 'desc';
+  
+  // Apply network filter (but not when actively using the library features)
   const networkFilter = selectedNetwork();
-  if (networkFilter && networkFilter !== 'community') {
+  if (!hasActiveSearch && !hasActiveFilters && !hasActiveSorting && 
+      networkFilter && networkFilter !== 'community') {
     // Simulate network filtering based on the selected network
     // In a real app, tracks would have network source metadata
     tracks = tracks.filter((track, index) => {
@@ -94,16 +103,8 @@ export const filteredTracks = createMemo(() => {
     });
   }
   
-  // Apply search filter
-  if (filters.search) {
-    const searchLower = filters.search.toLowerCase();
-    tracks = tracks.filter(track => 
-      track.title.toLowerCase().includes(searchLower) ||
-      track.artist.toLowerCase().includes(searchLower) ||
-      track.addedBy.toLowerCase().includes(searchLower) ||
-      track.comment.toLowerCase().includes(searchLower)
-    );
-  }
+  // Note: Search filtering is now handled server-side via the API
+  // Client-side search has been removed to use PostgreSQL functions
   
   // Apply platform filter
   if (filters.platform !== 'all') {
@@ -217,6 +218,23 @@ export const loadAllTracks = async () => {
   }
 };
 
+export const loadFilteredTracks = async () => {
+  console.log('loadFilteredTracks called with filters:', filters);
+  setIsLoading(true);
+  try {
+    // Use server-side functions for search and filters
+    const response = await libraryApiService.getFilteredTracks(filters, { 
+      globalSort: globalSortEnabled() 
+    });
+    console.log('Filtered tracks response:', response.tracks.length, 'tracks');
+    setAllTracks(response.tracks);
+  } catch (error) {
+    console.error('Failed to load filtered tracks:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 export const loadFilteredTracksWithGlobalSort = async () => {
   setIsLoading(true);
   try {
@@ -224,9 +242,9 @@ export const loadFilteredTracksWithGlobalSort = async () => {
     const queryWithSort = {
       ...filters,
       sortBy: sortState.column === 'track' ? 'title' : 
-              sortState.column === 'sharedBy' ? 'timestamp' :
+              sortState.column === 'sharedBy' ? 'sharedBy' :
               sortState.column === 'timestamp' ? 'timestamp' :
-              sortState.column === 'platform' ? 'timestamp' :
+              sortState.column === 'platform' ? 'platform' :
               sortState.column,
       sortDirection: sortState.direction,
       globalSort: true

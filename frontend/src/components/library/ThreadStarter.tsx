@@ -1,6 +1,6 @@
 import { Component, Show, onMount, onCleanup } from 'solid-js';
 import { Track } from '../../stores/playerStore';
-import { PersonalTrack } from './LibraryTable';
+import { PersonalTrack } from '../../types/library';
 import anime from 'animejs';
 
 interface ThreadStarterProps {
