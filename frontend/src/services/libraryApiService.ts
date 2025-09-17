@@ -6,7 +6,12 @@ export class LibraryApiService {
   private baseUrl = 'http://localhost:4201/api'
 
   async getAllTracks(): Promise<FrontendTrack[]> {
-    const response = await this.queryLibrary({})
+    // Use PostgreSQL sort function with default timestamp sorting to get complete data
+    const response = await this.queryLibrary({
+      sortBy: 'timestamp',
+      sortDirection: 'desc',
+      globalSort: true
+    })
     return response.tracks
   }
 
