@@ -1,5 +1,5 @@
 -- Get top artists by unique users within time range
--- Purpose: Returns the top 10 artists ranked by number of unique users who shared their music
+-- Purpose: Returns the top 50 artists ranked by number of unique users who shared their music
 -- Parameters: time_filter (optional) - only include records after this timestamp
 -- Returns: artist name and unique user count
 CREATE OR REPLACE FUNCTION get_top_artists_by_time_range(time_filter timestamptz DEFAULT NULL)
@@ -15,7 +15,7 @@ BEGIN
     AND (time_filter IS NULL OR ml.processed_at >= time_filter)
   GROUP BY ml.artist
   ORDER BY unique_users DESC
-  LIMIT 10;
+  LIMIT 50;
 END;
 $$ LANGUAGE plpgsql;
 

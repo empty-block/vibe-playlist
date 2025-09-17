@@ -1,5 +1,5 @@
 -- Get top genres within time range
--- Purpose: Returns the top 10 genres ranked by frequency across all songs
+-- Purpose: Returns the top 50 genres ranked by frequency across all songs
 -- Parameters: time_filter (optional) - only include records after this timestamp
 -- Returns: genre name and occurrence count
 -- Note: Handles PostgreSQL array fields by unnesting genre arrays
@@ -21,7 +21,7 @@ BEGIN
     AND genre_unnested != ''
   GROUP BY genre_unnested
   ORDER BY count DESC
-  LIMIT 10;
+  LIMIT 50;
 END;
 $$ LANGUAGE plpgsql;
 
