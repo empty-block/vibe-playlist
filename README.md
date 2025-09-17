@@ -147,6 +147,60 @@ python -m flow
 - **AI Integration**: Anthropic Claude for music metadata extraction
 
 
+### Database Migrations
+
+This project uses Supabase PostgreSQL with custom migrations stored in `/database/migrations/`. Here's how to deploy them properly:
+
+#### Prerequisites
+1. Install Supabase CLI:
+   ```bash
+   npm install -g @supabase/cli
+   ```
+
+2. Set up your environment variables in `.env`:
+   ```
+   SUPABASE_URL=your-supabase-project-url
+   SUPABASE_KEY=your-supabase-anon-key
+   SUPABASE_DB_PASSWORD=your-database-password
+   ```
+
+#### Running Migrations
+
+**Method 1: Direct PostgreSQL Connection (Recommended)**
+```bash
+# Run migrations in order using psql directly
+psql "postgresql://postgres:YOUR_PASSWORD@db.PROJECT_ID.supabase.co:5432/postgres" \
+  -f database/migrations/20250917000001_create_library_functions.sql
+
+psql "postgresql://postgres:YOUR_PASSWORD@db.PROJECT_ID.supabase.co:5432/postgres" \
+  -f database/migrations/20250917000002_add_library_performance_indexes.sql
+
+psql "postgresql://postgres:YOUR_PASSWORD@db.PROJECT_ID.supabase.co:5432/postgres" \
+  -f database/migrations/20250917000003_grant_function_permissions.sql
+```
+
+**Method 2: Supabase Dashboard SQL Editor**
+1. Go to your Supabase project dashboard
+2. Navigate to SQL Editor
+3. Copy and paste each migration file content in order
+4. Execute each migration one by one
+
+#### Key Functions Deployed
+- `search_music_library()` - Full-text search across entire music library (not limited to 1,000 results)
+- `sort_music_library()` - Global sorting with engagement metrics (likes, replies, recasts)  
+- `get_engagement_stats_batch()` - Optimized batch loading of social engagement data
+
+#### Migration Notes
+- **Timestamp Types**: Functions use `TIMESTAMP` (not `TIMESTAMPTZ`) to match existing schema
+- **Edge Types**: Uses uppercase values (`LIKED`, `REPLIED`, `RECASTED`) as stored in database
+- **Performance**: Includes GIN indexes for full-text search and engagement aggregation
+- **Permissions**: Functions granted to both `authenticated` and `anon` roles
+
+#### Troubleshooting
+- If functions fail with type mismatches, check your table schema with `\d table_name` 
+- For edge type errors, verify values with `SELECT DISTINCT edge_type FROM cast_edges`
+- Performance indexes are created with `CONCURRENTLY` to avoid blocking production queries
+
 ### Development Notes
 ⚠️ **Important**: There are specific setup quirks for YouTube/Spotify integration documented in [`CLAUDE.md`](./CLAUDE.md) - essential reading for developers.
 

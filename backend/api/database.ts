@@ -281,4 +281,159 @@ export class DatabaseService {
       } as Track
     })
   }
+
+  async searchLibraryWithPagination(query: LibraryQuery): Promise<{
+    tracks: any[]
+    totalCount: number
+    hasMore: boolean
+  }> {
+    // Convert username filters to FIDs if needed
+    let userFids: string[] | null = null
+    if (query.users && query.users.length > 0) {
+      const { data: userNodes } = await this.supabase
+        .from('user_nodes')
+        .select('node_id')
+        .in('fname', query.users)
+      userFids = userNodes?.map(user => user.node_id) || []
+    }
+
+    const { data, error } = await this.supabase.rpc('search_music_library', {
+      search_query: query.search || null,
+      sources: query.sources || null,
+      users: userFids,
+      tags: query.tags || null,
+      date_after: query.after || null,
+      date_before: query.before || null,
+      page_size: Math.min(query.limit || 50, 250),
+      page_offset: this.calculateOffset(query.cursor, query.limit || 50)
+    })
+
+    if (error) {
+      console.error('Search function error:', error)
+      throw new Error('Database search failed')
+    }
+
+    const totalCount = data?.[0]?.total_count || 0
+    const tracks = data || []
+    const pageSize = query.limit || 50
+    const currentOffset = this.calculateOffset(query.cursor, pageSize)
+    const hasMore = (currentOffset + tracks.length) < totalCount
+
+    return { tracks, totalCount, hasMore }
+  }
+
+  async sortLibraryWithPagination(query: LibraryQuery): Promise<{
+    tracks: any[]
+    totalCount: number
+    hasMore: boolean
+  }> {
+    // Convert username filters to FIDs if needed
+    let userFids: string[] | null = null
+    if (query.users && query.users.length > 0) {
+      const { data: userNodes } = await this.supabase
+        .from('user_nodes')
+        .select('node_id')
+        .in('fname', query.users)
+      userFids = userNodes?.map(user => user.node_id) || []
+    }
+
+    const { data, error } = await this.supabase.rpc('sort_music_library', {
+      sort_column: query.sortBy || 'created_at',
+      sort_direction: query.sortDirection || 'desc',
+      search_query: query.search || null,
+      sources: query.sources || null,
+      users: userFids,
+      tags: query.tags || null,
+      date_after: query.after || null,
+      date_before: query.before || null,
+      page_size: Math.min(query.limit || 50, 250),
+      page_offset: this.calculateOffset(query.cursor, query.limit || 50)
+    })
+
+    if (error) {
+      console.error('Sort function error:', error)
+      throw new Error('Database sort failed')
+    }
+
+    const totalCount = data?.[0]?.total_count || 0
+    const tracks = data || []
+    const pageSize = query.limit || 50
+    const currentOffset = this.calculateOffset(query.cursor, pageSize)
+    const hasMore = (currentOffset + tracks.length) < totalCount
+
+    return { tracks, totalCount, hasMore }
+  }
+
+  private calculateOffset(cursor?: string, pageSize: number = 50): number {
+    if (!cursor) return 0
+    
+    try {
+      const cursorData = JSON.parse(atob(cursor))
+      return cursorData.offset || 0
+    } catch (error) {
+      console.warn('Invalid cursor provided:', cursor)
+      return 0
+    }
+  }
+
+  private generateNextCursor(currentOffset: number, pageSize: number, hasMore: boolean): string | undefined {
+    if (!hasMore) return undefined
+    
+    const nextOffset = currentOffset + pageSize
+    return btoa(JSON.stringify({ offset: nextOffset }))
+  }
+
+  async fetchUsersInChunks(authorFids: string[]): Promise<any[]> {
+    const CHUNK_SIZE = 100
+    let users: any[] = []
+    
+    for (let i = 0; i < authorFids.length; i += CHUNK_SIZE) {
+      const chunk = authorFids.slice(i, i + CHUNK_SIZE)
+      const { data: chunkUsers } = await this.supabase
+        .from('user_nodes')
+        .select('node_id, fname, display_name, avatar_url')
+        .in('node_id', chunk)
+      if (chunkUsers) {
+        users.push(...chunkUsers)
+      }
+    }
+    
+    return users
+  }
+
+  async fetchCastsInChunks(castIds: string[]): Promise<any[]> {
+    const CHUNK_SIZE = 100
+    let casts: any[] = []
+    
+    for (let i = 0; i < castIds.length; i += CHUNK_SIZE) {
+      const chunk = castIds.slice(i, i + CHUNK_SIZE)
+      const { data: chunkCasts } = await this.supabase
+        .from('cast_nodes')
+        .select('node_id, cast_text')
+        .in('node_id', chunk)
+      if (chunkCasts) {
+        casts.push(...chunkCasts)
+      }
+    }
+    
+    return casts
+  }
+
+  async fetchEmbedsInChunks(castIds: string[]): Promise<any[]> {
+    const CHUNK_SIZE = 100
+    let embeds: any[] = []
+    
+    for (let i = 0; i < castIds.length; i += CHUNK_SIZE) {
+      const chunk = castIds.slice(i, i + CHUNK_SIZE)
+      const { data: chunkEmbeds } = await this.supabase
+        .from('embeds_metadata')
+        .select('cast_id, embed_index, url')
+        .in('cast_id', chunk)
+      if (chunkEmbeds) {
+        embeds.push(...chunkEmbeds)
+      }
+    }
+    
+    return embeds
+  }
 }
