@@ -6,19 +6,16 @@ import GenreBrowseSection from './GenreBrowseSection';
 import { extractArtistsFromTracks, extractGenresFromTracks } from './utils/browseDataExtractors';
 import { artistsData, genresData, loadAggregations, isLoadingAggregations } from '../../../stores/libraryAggregationsStore';
 
-export interface LibraryFilters {
-  selectedArtist: string | null;
-  selectedGenre: string | null;
-  searchQuery: string;
-  personalFilter: string;
-}
+// Remove local LibraryFilters interface - use the one from libraryStore
 
 interface BrowseSectionsContainerProps {
   tracks: (Track | PersonalTrack)[];
-  filters: LibraryFilters;
-  onFiltersChange: (filters: Partial<LibraryFilters>) => void;
+  // NEW: Use store filters directly
+  selectedArtist: string | null;
+  selectedGenre: string | null;
+  onArtistSelect: (artist: string | null) => void;
+  onGenreSelect: (genre: string | null) => void;
   isLoading?: boolean;
-  // Show/hide control for mobile
   showBrowseSections?: boolean;
 }
 
@@ -43,12 +40,13 @@ const BrowseSectionsContainer: Component<BrowseSectionsContainerProps> = (props)
     return storeData.length > 0 ? storeData : fallbackGenresData();
   });
 
+  // Remove local state management - delegate to parent
   const handleArtistSelect = (artist: string | null) => {
-    props.onFiltersChange({ selectedArtist: artist });
+    props.onArtistSelect(artist);
   };
 
   const handleGenreSelect = (genre: string | null) => {
-    props.onFiltersChange({ selectedGenre: genre });
+    props.onGenreSelect(genre);
   };
 
   return (
@@ -56,14 +54,14 @@ const BrowseSectionsContainer: Component<BrowseSectionsContainerProps> = (props)
       <div class="browse-sections-container">
         <ArtistBrowseSection
           artists={finalArtistsData()}
-          selectedArtist={props.filters.selectedArtist}
+          selectedArtist={props.selectedArtist}
           onArtistSelect={handleArtistSelect}
           isLoading={props.isLoading || isLoadingAggregations()}
         />
         
         <GenreBrowseSection
           genres={finalGenresData()}
-          selectedGenre={props.filters.selectedGenre}
+          selectedGenre={props.selectedGenre}
           onGenreSelect={handleGenreSelect}
           isLoading={props.isLoading || isLoadingAggregations()}
         />

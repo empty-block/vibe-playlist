@@ -13,6 +13,9 @@ export interface LibraryFilters {
   platform: FilterPlatform;
   dateRange: 'all' | 'today' | 'week' | 'month';
   minEngagement: number;
+  // NEW: Browse filters
+  selectedArtist: string | null;
+  selectedGenre: string | null;
 }
 
 export interface LibrarySortState {
@@ -31,7 +34,9 @@ export const [filters, setFilters] = createStore<LibraryFilters>({
   search: '',
   platform: 'all',
   dateRange: 'all',
-  minEngagement: 0
+  minEngagement: 0,
+  selectedArtist: null,
+  selectedGenre: null
 });
 
 // Pagination
@@ -278,8 +283,34 @@ export const updateSort = (column: SortColumn, direction?: SortDirection) => {
 };
 
 export const updateFilters = (newFilters: Partial<LibraryFilters>) => {
-  setFilters(prev => ({ ...prev, ...newFilters }));
-  setCurrentPage(1); // Reset to first page when filters change
+  setFilters(prev => {
+    const updated = { ...prev, ...newFilters };
+    
+    // Clear browse filters when user types in main search
+    if (newFilters.search !== undefined && newFilters.search.trim()) {
+      updated.selectedArtist = null;
+      updated.selectedGenre = null;
+    }
+    
+    return updated;
+  });
+  setCurrentPage(1);
+};
+
+// NEW: Function to update browse filters
+export const updateBrowseFilters = (browseFilters: {
+  selectedArtist?: string | null
+  selectedGenre?: string | null
+}) => {
+  setFilters(prev => ({ 
+    ...prev, 
+    selectedArtist: browseFilters.selectedArtist ?? prev.selectedArtist,
+    selectedGenre: browseFilters.selectedGenre ?? prev.selectedGenre
+  }));
+  setCurrentPage(1); // Reset pagination
+  
+  // Trigger server-side filtering
+  loadFilteredTracks();
 };
 
 export const resetFilters = () => {
@@ -287,7 +318,9 @@ export const resetFilters = () => {
     search: '',
     platform: 'all',
     dateRange: 'all',
-    minEngagement: 0
+    minEngagement: 0,
+    selectedArtist: null,    // NEW
+    selectedGenre: null      // NEW
   });
   setCurrentPage(1);
   

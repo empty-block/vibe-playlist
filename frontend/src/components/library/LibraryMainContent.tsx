@@ -8,7 +8,7 @@ import TableEmptyState from './shared/TableEmptyState';
 import TableErrorState from './shared/TableErrorState';
 import TablePagination from './shared/TablePagination';
 import MobileSidebarToggle from './MobileSidebarToggle';
-import BrowseSectionsContainer, { LibraryFilters } from './BrowseSections/BrowseSectionsContainer';
+import BrowseSectionsContainer from './BrowseSections/BrowseSectionsContainer';
 import ThreadStarter from './ThreadStarter';
 import ThreadStatus from './ThreadStatus';
 import './ThreadStarter.css';
@@ -25,19 +25,19 @@ interface WinampMainContentProps {
   mode?: 'library' | 'profile';
   onSidebarToggle: () => void;
   isSidebarOpen: boolean;
-  // Profile mode props
   personalTracks?: PersonalTrack[];
   personalLoading?: boolean;
   personalFilter?: PersonalFilterType;
   onPersonalFilterChange?: (filter: PersonalFilterType) => void;
   onAddMusic?: () => void;
   userId?: string;
-  // Browse filters
-  browseFilters?: LibraryFilters;
-  onBrowseFiltersChange?: (filters: Partial<LibraryFilters>) => void;
-  // Thread mode props
+  // NEW: Direct browse filter props
+  selectedArtist?: string | null;
+  selectedGenre?: string | null;
+  onArtistSelect?: (artist: string | null) => void;
+  onGenreSelect?: (genre: string | null) => void;
   threadMode?: boolean;
-  threadStarter?: any; // Track | PersonalTrack;
+  threadStarter?: any;
   onExitThread?: () => void;
 }
 
@@ -70,15 +70,20 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
       const currentPlatform = filters.platform;
       const currentDateRange = filters.dateRange;
       const currentMinEngagement = filters.minEngagement;
+      const currentSelectedArtist = filters.selectedArtist;
+      const currentSelectedGenre = filters.selectedGenre;
       
       const hasActiveFilters = currentSearch?.trim() || currentPlatform !== 'all' || 
-                               currentDateRange !== 'all' || currentMinEngagement > 0;
+                               currentDateRange !== 'all' || currentMinEngagement > 0 ||
+                               currentSelectedArtist || currentSelectedGenre;
       
       console.log('LibraryMainContent: Filter change detected:', { 
         search: currentSearch, 
         platform: currentPlatform,
         dateRange: currentDateRange,
         minEngagement: currentMinEngagement,
+        selectedArtist: currentSelectedArtist,
+        selectedGenre: currentSelectedGenre,
         hasActiveFilters 
       });
       
@@ -100,13 +105,15 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
     }
   });
 
-  // Profile mode data handling with artist/genre filtering
+  // Remove local browse filtering logic - rely on server-side filtering
+  
+  // Profile mode data handling 
   const personalFilteredTracks = () => {
     if (!isProfileMode()) return [];
     let tracks = props.personalTracks || [];
     const filter = props.personalFilter || 'all';
     
-    // Apply personal filter first
+    // Apply personal filter
     switch (filter) {
       case 'shared':
         tracks = tracks.filter(track => track.userInteraction.type === 'shared');
@@ -124,37 +131,9 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
         // Keep all tracks
         break;
     }
-
-    // Apply browse filters if available
-    if (props.browseFilters) {
-      if (props.browseFilters.selectedArtist) {
-        tracks = filterTracksByArtist(tracks, props.browseFilters.selectedArtist);
-      }
-      if (props.browseFilters.selectedGenre) {
-        tracks = filterTracksByGenre(tracks, props.browseFilters.selectedGenre);
-      }
-    }
     
     return tracks;
   };
-
-  // Library mode data handling with artist/genre filtering
-  const libraryFilteredTracks = createMemo(() => {
-    if (isProfileMode()) return [];
-    let tracks = filteredTracks();
-    
-    // Apply browse filters if available
-    if (props.browseFilters) {
-      if (props.browseFilters.selectedArtist) {
-        tracks = filterTracksByArtist(tracks, props.browseFilters.selectedArtist);
-      }
-      if (props.browseFilters.selectedGenre) {
-        tracks = filterTracksByGenre(tracks, props.browseFilters.selectedGenre);
-      }
-    }
-    
-    return tracks;
-  });
 
   const personalPaginatedTracks = () => {
     const tracks = personalFilteredTracks();
@@ -254,7 +233,7 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
     if (props.threadMode) {
       return mockThreadTracks;
     }
-    return isProfileMode() ? personalFilteredTracks() : libraryFilteredTracks();
+    return isProfileMode() ? personalFilteredTracks() : filteredTracks();
   };
   
   const getCurrentLoading = () => isProfileMode() ? props.personalLoading : isLoading();
@@ -342,11 +321,13 @@ const WinampMainContent: Component<WinampMainContentProps> = (props) => {
       <Show 
         when={props.threadMode && props.threadStarter}
         fallback={
-          <Show when={props.browseFilters && props.onBrowseFiltersChange}>
+          <Show when={props.onArtistSelect && props.onGenreSelect}>
             <BrowseSectionsContainer
               tracks={getAllTracks()}
-              filters={props.browseFilters!}
-              onFiltersChange={props.onBrowseFiltersChange!}
+              selectedArtist={props.selectedArtist || null}
+              selectedGenre={props.selectedGenre || null}
+              onArtistSelect={props.onArtistSelect!}
+              onGenreSelect={props.onGenreSelect!}
               isLoading={getCurrentLoading()}
             />
           </Show>

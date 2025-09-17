@@ -103,9 +103,12 @@ export class LibraryApiService {
   private shouldUseServerSideSearch(filters: LibraryFilters): boolean {
     // Use server-side search for:
     // 1. Any search query
-    // 2. Large expected result sets
+    // 2. Artist filtering
+    // 3. Genre filtering
     return !!(
-      filters.search?.trim()
+      filters.search?.trim() ||
+      filters.selectedArtist ||  // NEW: Artist filtering
+      filters.selectedGenre     // NEW: Genre filtering
     )
   }
 
@@ -119,6 +122,7 @@ export class LibraryApiService {
   private convertFiltersToQuery(filters: LibraryFilters): LibraryQuery {
     const query: LibraryQuery = {}
 
+    // Existing filters
     if (filters.search.trim()) {
       query.search = filters.search.trim()
     }
@@ -133,6 +137,23 @@ export class LibraryApiService {
 
     if (filters.minEngagement > 0) {
       query.minEngagement = filters.minEngagement
+    }
+
+    // NEW: Browse filters
+    if (filters.selectedArtist) {
+      // Use search field for artist filtering to leverage PostgreSQL search
+      const artistSearch = filters.selectedArtist.trim()
+      if (query.search) {
+        // Combine with existing search
+        query.search = `${query.search} ${artistSearch}`
+      } else {
+        query.search = artistSearch
+      }
+    }
+
+    if (filters.selectedGenre) {
+      // Use tags field for genre filtering
+      query.tags = [filters.selectedGenre]
     }
 
     return query
