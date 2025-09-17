@@ -59,9 +59,18 @@ const shuffleArray = <T>(array: T[]): T[] => {
 export const filteredTracks = createMemo(() => {
   let tracks = allTracks();
   
-  // Apply network filter
+  // Skip network filtering when doing a search or when any filters are active
+  // This ensures users see all results when actively filtering/searching/sorting
+  const hasActiveSearch = filters.search?.trim();
+  const hasActiveFilters = filters.platform !== 'all' || 
+                          filters.dateRange !== 'all' || 
+                          filters.minEngagement > 0;
+  const hasActiveSorting = sortState.column !== 'timestamp' || sortState.direction !== 'desc';
+  
+  // Apply network filter (but not when actively using the library features)
   const networkFilter = selectedNetwork();
-  if (networkFilter && networkFilter !== 'community') {
+  if (!hasActiveSearch && !hasActiveFilters && !hasActiveSorting && 
+      networkFilter && networkFilter !== 'community') {
     // Simulate network filtering based on the selected network
     // In a real app, tracks would have network source metadata
     tracks = tracks.filter((track, index) => {
