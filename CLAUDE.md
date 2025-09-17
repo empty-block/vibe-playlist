@@ -22,27 +22,49 @@ All detailed documentation is in the `/context/` directory:
 
 ## 🛠 Key Commands
 
+**Frontend Development:**
 ```bash
 bun run dev       # Start dev server (localhost:3001)
 bun run build     # Production build
 bun run typecheck # TypeScript validation
 ```
 
-## 📁 Project Structure
+**Python Data Processing:**
+```bash
+cd data/pipelines
+python -m flow    # Run data pipelines
+pip install -r requirements.txt  # Install Python deps
+```
+
+## 📁 Ultra-Clean Project Structure
 
 ```
-/context/          # All detailed documentation
-/src/components/   # Feature-based component organization
-/src/stores/       # State management (SolidJS signals)
-/src/utils/        # Utilities including animations.ts
+/frontend/        # All frontend code + build artifacts
+  /src/           # Source code (components, stores, utils)
+  /node_modules/  # Dependencies
+  /dist/          # Build output
+/backend/         # All backend APIs (TypeScript)
+  /api/           # Main REST API endpoints
+  /analytics/     # Analytics service  
+  /server.ts      # Main server file
+/data/            # Python data processing
+  /pipelines/     # Data import and processing flows
+  /lib/           # Python utilities
+/database/        # Database migrations and functions
+/shared/          # Types shared between frontend/backend
+/docs/            # All documentation and guides
 ```
 
 ## 🎯 Common Tasks Quick Reference
-- **Add new component**: `/src/components/[feature]/`
-- **Modify animations**: `/src/utils/animations.ts`
-- **Update state management**: `/src/stores/`
-- **Style changes**: Follow DESIGN-GUIDELINES.md retro aesthetic
+- **Add new component**: `/frontend/src/components/[feature]/`
+- **Modify animations**: `/frontend/src/utils/animations.ts`
+- **Update state management**: `/frontend/src/stores/`
+- **Style changes**: Follow docs/DESIGN-GUIDELINES.md retro aesthetic
+- **Add data pipeline**: `/data/pipelines/`
+- **Update database schema**: `/database/migrations/`
+- **Python utilities**: `/data/lib/`
+- **Add API endpoint**: `/backend/api/`
 
 
 ---
-*This file serves as an index. All detailed information is in the `/context/` directory files.*
+*This file serves as an index. All detailed information is in the `/docs/` directory files.*

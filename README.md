@@ -74,13 +74,36 @@ This philosophy ensures that technology serves creativity rather than constraini
 
 ## 🛠️ For Developers
 
-### Quick Start
+### ✨ Ultra-Clean Repository Structure
+Perfectly organized with clear single-word directories:
+
+```
+vibes-playlist/
+├── frontend/              # All frontend code + build artifacts
+│   ├── src/              # Source code (components, stores, pages)
+│   ├── node_modules/     # Dependencies (where they belong)
+│   ├── dist/             # Build output
+│   └── index.html        # App entry point
+├── backend/              # All backend APIs (TypeScript)
+│   ├── api/              # Main REST API endpoints  
+│   ├── analytics/        # Analytics service
+│   └── server.ts         # Main server file
+├── data/                 # Python data processing
+│   ├── pipelines/        # Data import and processing flows
+│   ├── lib/             # Python utilities
+│   └── test_algorithms/  # Algorithm testing
+├── database/             # Database migrations and functions
+├── shared/               # TypeScript types (used by frontend + backend)
+└── docs/                 # All documentation and guides
+```
+
+### Quick Start - Frontend
 ```bash
 # Clone the repo
 git clone https://github.com/your-org/vibes-playlist.git
 cd vibes-playlist
 
-# Install dependencies (requires Bun)
+# Install TypeScript dependencies (requires Bun)
 bun install
 
 # Set up environment
@@ -91,14 +114,37 @@ cp .env.example .env
 bun run dev
 ```
 
+### Quick Start - Python Data Processing
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Set up environment variables for Python services
+export SUPABASE_URL="your-supabase-url"
+export SUPABASE_SERVICE_KEY="your-service-key"
+export DUNE_API_KEY="your-dune-api-key"
+
+# Run data pipelines
+cd data/pipelines
+python -m flow
+```
+
 ### Technical Architecture
+**Frontend Stack:**
 - **Frontend**: SolidJS + TypeScript for reactive UI
 - **Styling**: TailwindCSS with custom Win95 components
 - **Animations**: anime.js v3.2.1 for smooth UI interactions
 - **Audio**: YouTube IFrame API + Spotify Web Playback SDK
 - **Backend**: Farcaster protocol for social features
 - **Deployment**: Cloudflare Pages
-- **Component System**: Reusable social components following DRY principles
+
+**Data Processing Stack:**
+- **Language**: Python 3.8+
+- **Database**: Supabase (PostgreSQL)
+- **Data Source**: Dune Analytics for Farcaster data
+- **Pipeline Framework**: Prefect for workflow orchestration
+- **Data Processing**: Pandas, Polars for data manipulation
+- **AI Integration**: Anthropic Claude for music metadata extraction
 
 
 ### Development Notes

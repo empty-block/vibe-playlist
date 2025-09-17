@@ -6,13 +6,19 @@
   "scripts": {
     "dev": "bun --bun vite",
     "dev:bun": "bun --bun vite",
-    "dev:server": "bun run --watch server.ts",
+    "dev:server": "bun run --watch backend/server.ts",
+    "dev:full": "bun run dev & bun run dev:server",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "bun run server.ts",
+    "start": "bun run backend/server.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "test:watch": "bun test --watch"
+    "test:watch": "bun test --watch",
+    "data:install": "pip install -r requirements.txt",
+    "data:run": "cd data/pipelines && python -m flow",
+    "data:import": "cd data/pipelines/data_importer && python -m flow",
+    "data:parser": "cd data/pipelines/cast_music_parser && python -m flow",
+    "data:graph": "cd data/pipelines/graph_analysis && python -m flow"
   },
   "devDependencies": {
     "@rollup/rollup-darwin-x64": "^4.46.2",
