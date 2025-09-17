@@ -116,11 +116,8 @@ export class LibraryAPI {
       if (query.search && query.search.trim() !== '') {
         // Use search function for text queries
         result = await this.db.searchLibraryWithPagination(query)
-      } else if (query.sortBy && ['likes', 'replies', 'recasts'].includes(query.sortBy)) {
-        // Use sort function for engagement-based sorting
-        result = await this.db.sortLibraryWithPagination(query)
-      } else if (query.globalSort) {
-        // Use sort function for any global sorting
+      } else if (query.sortBy || query.globalSort) {
+        // Use sort function for any sorting (PostgreSQL supports all columns now)
         result = await this.db.sortLibraryWithPagination(query)
       } else {
         // Fall back to existing implementation for simple queries

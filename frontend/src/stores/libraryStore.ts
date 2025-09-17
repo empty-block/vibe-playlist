@@ -242,9 +242,9 @@ export const loadFilteredTracksWithGlobalSort = async () => {
     const queryWithSort = {
       ...filters,
       sortBy: sortState.column === 'track' ? 'title' : 
-              sortState.column === 'sharedBy' ? 'timestamp' :
+              sortState.column === 'sharedBy' ? 'sharedBy' :
               sortState.column === 'timestamp' ? 'timestamp' :
-              sortState.column === 'platform' ? 'timestamp' :
+              sortState.column === 'platform' ? 'platform' :
               sortState.column,
       sortDirection: sortState.direction,
       globalSort: true

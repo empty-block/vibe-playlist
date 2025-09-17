@@ -22,6 +22,8 @@ RETURNS TABLE(
   likes_count BIGINT,
   replies_count BIGINT,
   recasts_count BIGINT,
+  engagement_total BIGINT,
+  shared_by TEXT,
   total_count BIGINT
 ) AS $$
 DECLARE
@@ -90,7 +92,9 @@ BEGIN
         fm.*,
         COALESCE(ce_likes.likes_count, 0) as likes_count,
         COALESCE(ce_replies.replies_count, 0) as replies_count,
-        COALESCE(ce_recasts.recasts_count, 0) as recasts_count
+        COALESCE(ce_recasts.recasts_count, 0) as recasts_count,
+        (COALESCE(ce_likes.likes_count, 0) + COALESCE(ce_replies.replies_count, 0) + COALESCE(ce_recasts.recasts_count, 0)) as engagement_total,
+        COALESCE(un.fname, un.display_name, ''Unknown'') as shared_by
       FROM filtered_music fm
       LEFT JOIN (
         SELECT cast_id, COUNT(*) as likes_count
@@ -110,6 +114,7 @@ BEGIN
         WHERE edge_type = ''RECASTED''
         GROUP BY cast_id
       ) ce_recasts ON fm.cast_id = ce_recasts.cast_id
+      LEFT JOIN user_nodes un ON fm.author_fid = un.node_id
     )
     SELECT 
       cast_id,
@@ -123,6 +128,8 @@ BEGIN
       likes_count,
       replies_count,
       recasts_count,
+      engagement_total,
+      shared_by,
       $2 as total_count
     FROM music_with_engagement
     ORDER BY %s %s, created_at DESC
@@ -134,6 +141,10 @@ BEGIN
     WHEN sort_column = 'likes' THEN 'likes_count'
     WHEN sort_column = 'replies' THEN 'replies_count'
     WHEN sort_column = 'recasts' THEN 'recasts_count'
+    WHEN sort_column = 'engagement' THEN 'engagement_total'
+    WHEN sort_column = 'platform' THEN 'platform_name'
+    WHEN sort_column = 'sharedBy' THEN 'shared_by'
+    WHEN sort_column = 'timestamp' THEN 'created_at'
     ELSE 'created_at'
   END,
   sort_order)
