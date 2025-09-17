@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import type { LibraryQuery, Track } from '../../shared/types/library'
+import type { LibraryQuery, Track, ArtistData, GenreData } from '../../shared/types/library'
 
 export class DatabaseService {
   private supabase: SupabaseClient
@@ -163,8 +163,8 @@ export class DatabaseService {
 
   private async transformToTracks(dbRecords: any[]): Promise<Track[]> {
     // Get unique author_fids to fetch user info
-    const authorFids = [...new Set(dbRecords.map(record => record.author_fid))]
-    const castIds = [...new Set(dbRecords.map(record => record.cast_id))]
+    const authorFids = Array.from(new Set(dbRecords.map(record => record.author_fid)))
+    const castIds = Array.from(new Set(dbRecords.map(record => record.cast_id)))
     const CHUNK_SIZE = 100 // Limit to avoid URI too large error
     
     // Fetch user info for all authors in chunks
@@ -280,5 +280,63 @@ export class DatabaseService {
         createdAt: record.created_at
       } as Track
     })
+  }
+
+  async getTopArtistsByTimeRange(timeFilter?: string): Promise<ArtistData[]> {
+    try {
+      const { data, error } = await this.supabase.rpc('get_top_artists_by_time_range', {
+        time_filter: timeFilter
+      })
+
+      if (error) {
+        console.error('PostgreSQL function error (artists):', error)
+        throw new Error('Failed to get top artists from database')
+      }
+
+      if (!data || !Array.isArray(data)) {
+        return []
+      }
+
+      // Map database results to ArtistData type and sort by count descending
+      return data
+        .map(row => ({
+          name: row.artist || 'Unknown Artist',
+          count: Number(row.unique_users) || 0
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 50) // Limit to top 50
+    } catch (error) {
+      console.error('Error calling get_top_artists_by_time_range:', error)
+      throw new Error('Database function call failed')
+    }
+  }
+
+  async getTopGenresByTimeRange(timeFilter?: string): Promise<GenreData[]> {
+    try {
+      const { data, error } = await this.supabase.rpc('get_top_genres_by_time_range', {
+        time_filter: timeFilter
+      })
+
+      if (error) {
+        console.error('PostgreSQL function error (genres):', error)
+        throw new Error('Failed to get top genres from database')
+      }
+
+      if (!data || !Array.isArray(data)) {
+        return []
+      }
+
+      // Map database results to GenreData type and sort by count descending
+      return data
+        .map(row => ({
+          name: row.genre || 'Unknown Genre',
+          count: Number(row.count) || 0
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 50) // Limit to top 50
+    } catch (error) {
+      console.error('Error calling get_top_genres_by_time_range:', error)
+      throw new Error('Database function call failed')
+    }
   }
 }

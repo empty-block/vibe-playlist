@@ -98,22 +98,44 @@ export class AggregationsAPI {
     const startTime = Date.now()
 
     try {
-      // Query full dataset with filters but no pagination
-      const { tracks } = await this.db.queryLibrary({
-        ...query,
-        limit: undefined,
-        cursor: undefined,
-        returnFullDataset: true
-      })
-
-      // Generate aggregations
-      const artists = this.extractArtistsFromTracks(tracks)
-      const genres = this.extractGenresFromTracks(tracks)
+      // Check if we have complex filters that PostgreSQL functions don't support
+      const hasComplexFilters = this.hasComplexFilters(query)
+      
+      let artists: ArtistData[]
+      let genres: GenreData[]
+      let totalTracks: number
+      
+      if (hasComplexFilters) {
+        // Fallback to client-side aggregation for complex filters
+        const { tracks } = await this.db.queryLibrary({
+          ...query,
+          limit: undefined,
+          cursor: undefined,
+          returnFullDataset: true
+        })
+        
+        artists = this.extractArtistsFromTracks(tracks)
+        genres = this.extractGenresFromTracks(tracks)
+        totalTracks = tracks.length
+      } else {
+        // Use PostgreSQL functions for simple time-only filtering
+        const timeFilter = this.convertQueryToTimeFilter(query)
+        
+        const [artistsResult, genresResult, totalTracksResult] = await Promise.all([
+          this.db.getTopArtistsByTimeRange(timeFilter),
+          this.db.getTopGenresByTimeRange(timeFilter),
+          this.getTotalTracksCount(query)
+        ])
+        
+        artists = artistsResult
+        genres = genresResult
+        totalTracks = totalTracksResult
+      }
 
       const aggregations: LibraryAggregations = {
         artists,
         genres,
-        totalTracks: tracks.length,
+        totalTracks,
         appliedFilters: query,
         meta: {
           queryTime: Date.now() - startTime,
@@ -132,6 +154,71 @@ export class AggregationsAPI {
     } catch (error) {
       console.error('Aggregations generation error:', error)
       return this.errorResponse('AGGREGATION_ERROR', 'Failed to generate aggregations', 500)
+    }
+  }
+
+  private hasComplexFilters(query: LibraryQuery): boolean {
+    // Check for filters that PostgreSQL functions don't currently support
+    return !!(
+      query.users?.length ||
+      query.networks?.length ||
+      query.search ||
+      query.tags?.length ||
+      query.sources?.length ||
+      query.minEngagement ||
+      query.interactionType ||
+      query.before  // before filters need special handling
+    )
+  }
+
+  private convertQueryToTimeFilter(query: LibraryQuery): string | undefined {
+    // Handle dateRange filters
+    if (query.dateRange) {
+      const now = new Date()
+      let afterDate: Date
+      
+      switch (query.dateRange) {
+        case 'today':
+          afterDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+          break
+        case 'week':
+          afterDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+          break
+        case 'month':
+          afterDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+          break
+        case 'all':
+        default:
+          return undefined // No time filter
+      }
+      
+      return afterDate.toISOString()
+    }
+    
+    // Handle explicit after/before filters
+    if (query.after) {
+      return query.after
+    }
+    
+    // For before filters or no time constraints, return undefined
+    return undefined
+  }
+
+  private async getTotalTracksCount(query: LibraryQuery): Promise<number> {
+    try {
+      // For now, get count by querying with the same filters
+      // This could be optimized with a dedicated count function later
+      const { tracks } = await this.db.queryLibrary({
+        ...query,
+        limit: undefined,
+        cursor: undefined,
+        returnFullDataset: true
+      })
+      
+      return tracks.length
+    } catch (error) {
+      console.error('Error getting total tracks count:', error)
+      return 0
     }
   }
 
