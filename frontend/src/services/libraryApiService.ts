@@ -161,26 +161,31 @@ export class LibraryApiService {
 
   private convertApiTrackToFrontendTrack(apiTrack: ApiTrack): FrontendTrack {
     // Map the new API Track format to the existing frontend Track interface
-    return {
+    console.log('Converting API track:', apiTrack);
+    
+    const converted = {
       id: apiTrack.id,
       title: apiTrack.title,
       artist: apiTrack.artist,
-      duration: apiTrack.duration || '0:00', // Frontend expects string format
+      duration: apiTrack.duration || '3:30', // Default duration when missing
       source: this.mapSourceToTrackSource(apiTrack.source),
       sourceId: this.extractSourceId(apiTrack.sourceUrl, apiTrack.source),
       thumbnail: apiTrack.thumbnailUrl || '/placeholder-album.png',
-      addedBy: apiTrack.user.username,
-      userAvatar: apiTrack.user.avatar || '🎵',
-      timestamp: this.formatTimestamp(apiTrack.userInteraction.timestamp),
-      comment: apiTrack.userInteraction.context || '',
-      likes: apiTrack.socialStats.likes,
-      replies: apiTrack.socialStats.replies,
-      recasts: apiTrack.socialStats.recasts,
-      tags: apiTrack.tags,
+      addedBy: apiTrack.user?.username || 'Unknown',
+      userAvatar: apiTrack.user?.avatar || '🎵',
+      timestamp: apiTrack.userInteraction?.timestamp ? this.formatTimestamp(apiTrack.userInteraction.timestamp) : 'Unknown',
+      comment: apiTrack.userInteraction?.context || '',
+      likes: apiTrack.socialStats?.likes || 0,
+      replies: apiTrack.socialStats?.replies || 0,
+      recasts: apiTrack.socialStats?.recasts || 0,
+      tags: apiTrack.tags || [],
       
       // Legacy compatibility
       videoId: apiTrack.source === 'youtube' ? this.extractSourceId(apiTrack.sourceUrl, 'youtube') : undefined
-    }
+    };
+    
+    console.log('Converted track:', converted);
+    return converted;
   }
 
   private mapSourceToTrackSource(source: ApiTrack['source']): FrontendTrack['source'] {

@@ -304,8 +304,8 @@ export const updateBrowseFilters = (browseFilters: {
 }) => {
   setFilters(prev => ({ 
     ...prev, 
-    selectedArtist: browseFilters.selectedArtist ?? prev.selectedArtist,
-    selectedGenre: browseFilters.selectedGenre ?? prev.selectedGenre
+    selectedArtist: browseFilters.selectedArtist !== undefined ? browseFilters.selectedArtist : prev.selectedArtist,
+    selectedGenre: browseFilters.selectedGenre !== undefined ? browseFilters.selectedGenre : prev.selectedGenre
   }));
   setCurrentPage(1); // Reset pagination
   
