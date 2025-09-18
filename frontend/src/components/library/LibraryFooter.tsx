@@ -1,6 +1,5 @@
 import { Component } from 'solid-js';
 import { allTracks } from '../../stores/libraryStore';
-import { selectedNetwork } from '../../stores/networkStore';
 import './LibraryFooter.css';
 
 interface LibraryFooterProps {
@@ -17,19 +16,11 @@ const LibraryFooter: Component<LibraryFooterProps> = (props) => {
     return allTracks().length;
   };
 
-  const getNetworkStatus = () => {
-    const network = selectedNetwork();
-    return network === 'personal' ? 'PERSONAL' : 
-           network === 'extended' ? 'EXTENDED' : 
-           network === 'community' ? 'COMMUNITY' : 'PERSONAL';
-  };
-
   return (
     <div class="winamp-library-footer">
-      {/* Network Status - Clean and minimal */}
       <div class="footer-status">
         <span class="network-status">
-          NET: {getNetworkStatus()} • TRACKS: {getTrackCount()}
+          TRACKS: {getTrackCount()}
         </span>
       </div>
     </div>

@@ -139,16 +139,10 @@ export class LibraryApiService {
       query.minEngagement = filters.minEngagement
     }
 
-    // NEW: Browse filters
+    // FIXED: Use dedicated fields for browse filters instead of search
     if (filters.selectedArtist) {
-      // Use search field for artist filtering to leverage PostgreSQL search
-      const artistSearch = filters.selectedArtist.trim()
-      if (query.search) {
-        // Combine with existing search
-        query.search = `${query.search} ${artistSearch}`
-      } else {
-        query.search = artistSearch
-      }
+      // Use artist field for artist filtering - this will need backend support
+      query.artist = filters.selectedArtist.trim()
     }
 
     if (filters.selectedGenre) {

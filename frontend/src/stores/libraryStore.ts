@@ -1,7 +1,6 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { Track } from './playerStore';
-import { selectedNetwork } from './networkStore';
 import { libraryApiService } from '../services/libraryApiService';
 
 export type SortColumn = 'track' | 'artist' | 'sharedBy' | 'timestamp' | 'platform' | 'engagement' | 'likes' | 'replies';
@@ -13,9 +12,6 @@ export interface LibraryFilters {
   platform: FilterPlatform;
   dateRange: 'all' | 'today' | 'week' | 'month';
   minEngagement: number;
-  // NEW: Browse filters
-  selectedArtist: string | null;
-  selectedGenre: string | null;
 }
 
 export interface LibrarySortState {
@@ -34,9 +30,7 @@ export const [filters, setFilters] = createStore<LibraryFilters>({
   search: '',
   platform: 'all',
   dateRange: 'all',
-  minEngagement: 0,
-  selectedArtist: null,
-  selectedGenre: null
+  minEngagement: 0
 });
 
 // Pagination
@@ -63,53 +57,6 @@ const shuffleArray = <T>(array: T[]): T[] => {
 // Computed filtered and sorted tracks
 export const filteredTracks = createMemo(() => {
   let tracks = allTracks();
-  
-  // Skip network filtering when doing a search or when any filters are active
-  // This ensures users see all results when actively filtering/searching/sorting
-  const hasActiveSearch = filters.search?.trim();
-  const hasActiveFilters = filters.platform !== 'all' || 
-                          filters.dateRange !== 'all' || 
-                          filters.minEngagement > 0;
-  const hasActiveSorting = sortState.column !== 'timestamp' || sortState.direction !== 'desc';
-  
-  // Apply network filter (but not when actively using the library features)
-  const networkFilter = selectedNetwork();
-  if (!hasActiveSearch && !hasActiveFilters && !hasActiveSorting && 
-      networkFilter && networkFilter !== 'community') {
-    // Simulate network filtering based on the selected network
-    // In a real app, tracks would have network source metadata
-    tracks = tracks.filter((track, index) => {
-      if (networkFilter === 'personal') {
-        // Show ~60% of tracks for personal network
-        return index % 5 !== 0 && index % 5 !== 1;
-      } else if (networkFilter === 'extended') {
-        // Show ~80% of tracks for extended network
-        return index % 5 !== 0;
-      } else if (networkFilter.startsWith('genre-')) {
-        // Filter by genre - simulate based on track characteristics
-        const genre = networkFilter.replace('genre-', '');
-        if (genre === 'hiphop') {
-          return track.artist.toLowerCase().includes('hip') || 
-                 track.title.toLowerCase().includes('rap') ||
-                 index % 4 === 0;
-        } else if (genre === 'electronic') {
-          return track.artist.toLowerCase().includes('electr') || 
-                 track.title.toLowerCase().includes('synth') ||
-                 index % 4 === 1;
-        } else if (genre === 'indie') {
-          return track.artist.toLowerCase().includes('indie') || 
-                 index % 4 === 2;
-        }
-      } else if (networkFilter === 'trending') {
-        // Show tracks with high engagement
-        return (track.likes + track.recasts + track.replies) > 10;
-      }
-      return true;
-    });
-  }
-  
-  // Note: Search filtering is now handled server-side via the API
-  // Client-side search has been removed to use PostgreSQL functions
   
   // Apply platform filter
   if (filters.platform !== 'all') {
@@ -146,7 +93,7 @@ export const filteredTracks = createMemo(() => {
   }
   
   return tracks;
-});
+});;;
 
 export const sortedTracks = createMemo(() => {
   const tracks = [...filteredTracks()];
@@ -283,51 +230,24 @@ export const updateSort = (column: SortColumn, direction?: SortDirection) => {
 };
 
 export const updateFilters = (newFilters: Partial<LibraryFilters>) => {
-  setFilters(prev => {
-    const updated = { ...prev, ...newFilters };
-    
-    // Clear browse filters when user types in main search
-    if (newFilters.search !== undefined && newFilters.search.trim()) {
-      updated.selectedArtist = null;
-      updated.selectedGenre = null;
-    }
-    
-    return updated;
-  });
+  setFilters(prev => ({ ...prev, ...newFilters }));
   setCurrentPage(1);
-};
+};;
 
-// NEW: Function to update browse filters
-export const updateBrowseFilters = (browseFilters: {
-  selectedArtist?: string | null
-  selectedGenre?: string | null
-}) => {
-  setFilters(prev => ({ 
-    ...prev, 
-    selectedArtist: browseFilters.selectedArtist !== undefined ? browseFilters.selectedArtist : prev.selectedArtist,
-    selectedGenre: browseFilters.selectedGenre !== undefined ? browseFilters.selectedGenre : prev.selectedGenre
-  }));
-  setCurrentPage(1); // Reset pagination
-  
-  // Trigger server-side filtering
-  loadFilteredTracks();
-};
 
 export const resetFilters = () => {
   setFilters({
     search: '',
     platform: 'all',
     dateRange: 'all',
-    minEngagement: 0,
-    selectedArtist: null,    // NEW
-    selectedGenre: null      // NEW
+    minEngagement: 0
   });
   setCurrentPage(1);
   
   // Also reset shuffle state
   setIsShuffled(false);
   setShuffledOrder([]);
-};
+};;
 
 export const shuffleTracks = () => {
   // Always shuffle - generate new random indices for current filtered tracks

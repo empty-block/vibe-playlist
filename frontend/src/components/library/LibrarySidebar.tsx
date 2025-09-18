@@ -1,10 +1,9 @@
-import { Component, createSignal, createEffect, onMount, For, Show } from 'solid-js';
+import { Component, createSignal, onMount, For, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import LibrarySidebarSection from './LibrarySidebarSection';
 import AddTrackModal from './AddTrackModal';
 import { createLibrarySidebarStore, createSidebarFilter } from '../../stores/librarySidebarStore';
 import { allTracks } from '../../stores/libraryStore';
-import { selectedNetwork, setSelectedNetwork, fetchNetworkData } from '../../stores/networkStore';
 
 export interface SidebarItem {
   id: string;
@@ -44,7 +43,6 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
   // Modal state management
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
   
-  
   // Get real-time counts
   const counts = getSidebarCounts();
 
@@ -66,27 +64,13 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
         ]
       },
       {
-        id: 'networks',
-        label: 'Networks',
-        icon: '🌐',
-        isExpandable: true,
-        children: [
-          { id: 'personal-net', label: 'Personal', count: 147 },
-          { id: 'extended-net', label: 'Extended', count: 2843 },
-          { id: 'community-net', label: 'Community', count: 48392 },
-          { id: 'genre-networks', label: 'Genre Networks', count: 6 },
-        ]
-      },
-      {
         id: 'analytics',
         label: 'Analytics',
         icon: '📊',
         isExpandable: true,
         children: [
-          { id: 'network-analytics', label: 'Network Analytics', count: 4 },
           { id: 'track-analytics', label: 'Track Analytics', count: currentCounts.allTracks },
           { id: 'discovery-stats', label: 'Discovery Stats', count: 12 },
-          { id: 'influence-metrics', label: 'Influence Metrics', count: 87 },
         ]
       }
     ];
@@ -139,28 +123,9 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
       case 'liked':
         return createSidebarFilter(itemId, 'basic', 'liked');
         
-      // Networks - switch network and apply filter
-      case 'personal-net':
-        setSelectedNetwork('personal');
-        fetchNetworkData('personal');
-        return createSidebarFilter(itemId, 'network', 'personal');
-      case 'extended-net':
-        setSelectedNetwork('extended');
-        fetchNetworkData('extended');
-        return createSidebarFilter(itemId, 'network', 'extended');
-      case 'community-net':
-        setSelectedNetwork('community');
-        fetchNetworkData('community');
-        return createSidebarFilter(itemId, 'network', 'community');
-      case 'genre-networks':
-        // This could expand to show individual genre networks
-        return createSidebarFilter(itemId, 'network', 'genre-networks');
-        
       // Analytics items - navigate to stats page
-      case 'network-analytics':
       case 'track-analytics':
       case 'discovery-stats':
-      case 'influence-metrics':
         navigate('/network');
         return null; // Navigation handled above, no filter needed
         
@@ -250,7 +215,7 @@ const LibrarySidebar: Component<LibrarySidebarProps> = (props) => {
       <div class="winamp-sidebar-footer">
         <div class="footer-status">
           <span class="network-status">
-            NET: {selectedNetwork() === 'personal' ? 'PERSONAL' : selectedNetwork() === 'extended' ? 'EXTENDED' : selectedNetwork() === 'community' ? 'COMMUNITY' : 'PERSONAL'} • TRACKS: {allTracks().length}
+            TRACKS: {allTracks().length}
           </span>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { PersonalTrack, PersonalFilterType } from '../../types/library';
 import LibrarySidebar from './LibrarySidebar';
 import LibraryMainContent from './LibraryMainContent';
 // Remove local browse filters store - use library store directly
-import { filters, updateBrowseFilters } from '../../stores/libraryStore';
+import { filters, updateFilters } from '../../stores/libraryStore';
 import { threadMode, threadStarter, exitThreadMode } from '../../stores/threadStore';
 import './winamp-library.css';
 
@@ -46,11 +46,23 @@ const LibraryLayout: Component<LibraryLayoutProps> = (props) => {
 
   // Update library store directly
   const handleArtistSelect = (artist: string | null) => {
-    updateBrowseFilters({ selectedArtist: artist });
+    if (artist) {
+      // Set search field with the artist name (this was the original working behavior)
+      updateFilters({ search: artist });
+    } else {
+      // Clear search when "All Artists" is selected
+      updateFilters({ search: '' });
+    }
   };
 
   const handleGenreSelect = (genre: string | null) => {
-    updateBrowseFilters({ selectedGenre: genre });
+    if (genre && genre !== 'All Genres') {
+      // Set search field with the genre name
+      updateFilters({ search: genre });
+    } else {
+      // Clear search when "All Genres" is selected
+      updateFilters({ search: '' });
+    }
   };
 
   return (
