@@ -1,6 +1,6 @@
 import { Component, For, Show } from 'solid-js';
 import type { Track } from '../HomePage';
-import { BaseTrackCard } from '../../common/TrackCard';
+import { HeroTrackCard } from '../../common/TrackCard/NEW';
 import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
 import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
@@ -75,7 +75,7 @@ export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
         <div class="new-tracks-grid">
           <For each={newTracks()}>
             {(track) => {
-              // Convert HomePage Track to PlayerTrack format for BaseTrackCard
+              // Convert HomePage Track to PlayerTrack format for HeroTrackCard
               const playerTrack: PlayerTrack = {
                 ...track,
                 source: track.source as any,
@@ -92,19 +92,13 @@ export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
               };
 
               return (
-                <div class="relative">
-                  <div class="new-badge absolute top-2 left-2 z-20 bg-[#00f92a]/20 border border-[#00f92a]/60 text-[#00f92a] text-xs px-2 py-1 rounded font-bold">
-                    NEW
-                  </div>
-                  <BaseTrackCard
-                    track={playerTrack}
-                    variant="grid"
-                    showSocialActions={false}
-                    showUserContext={false}
-                    onPlay={handleTrackClick}
-                    className="new-track-theme"
-                  />
-                </div>
+                <HeroTrackCard
+                  track={playerTrack}
+                  onPlay={handleTrackClick}
+                  onLike={() => {}}
+                  onReply={() => {}}
+                  showSocialContext={false}
+                />
               );
             }}
           </For>

@@ -5,7 +5,7 @@ import RetroTooltip from '../ui/RetroTooltip';
 import ExpandableText from '../ui/ExpandableText';
 import { heartBeat, particleBurst, socialButtonClick } from '../../utils/animations';
 import { enterThreadMode } from '../../stores/threadStore';
-import { BaseTrackCard } from '../common/TrackCard';
+import { RowTrackCard } from '../common/TrackCard/NEW';
 
 // Import PersonalTrack from LibraryTable
 export interface PersonalTrack extends Track {
@@ -204,18 +204,15 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
   };
 
 
-  // Mobile Card Layout - Using BaseTrackCard
+  // Mobile Card Layout - Using NEW RowTrackCard
   if (props.isMobile) {
     return (
-      <BaseTrackCard
+      <RowTrackCard
         track={props.track}
-        variant="list"
-        showSocialActions={true}
-        showUserContext={true}
-        showExpandableComment={true}
         onPlay={handlePlayTrack}
         onLike={handleLikeClick}
         onReply={handleChatClick}
+        showComment={true}
       />
     );
   }

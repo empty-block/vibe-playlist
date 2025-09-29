@@ -1,7 +1,7 @@
 import { Component, For, Show, onMount } from 'solid-js';
 import { buttonHover, shimmer, staggeredFadeIn } from '../../../utils/animations';
 import type { Track } from '../HomePage';
-import { BaseTrackCard } from '../../common/TrackCard';
+import { CompactTrackCard } from '../../common/TrackCard/NEW';
 import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
 import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
@@ -74,7 +74,7 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
         <div ref={tracksGridRef} class="tracks-grid">
           <For each={props.tracks}>
             {(track) => {
-              // Convert HomePage Track to PlayerTrack format for BaseTrackCard
+              // Convert HomePage Track to PlayerTrack format for CompactTrackCard
               const playerTrack: PlayerTrack = {
                 ...track,
                 source: track.source as any,
@@ -91,15 +91,10 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
               };
 
               return (
-                <div class="track-item">
-                  <BaseTrackCard
-                    track={playerTrack}
-                    variant="compact"
-                    showSocialActions={false}
-                    showUserContext={false}
-                    onPlay={handlePlayTrack}
-                  />
-                </div>
+                <CompactTrackCard
+                  track={playerTrack}
+                  onPlay={handlePlayTrack}
+                />
               );
             }}
           </For>

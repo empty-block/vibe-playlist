@@ -1,0 +1,250 @@
+/* Row Track Card - REDESIGNED */
+
+.row-card {
+  width: 100%;
+  min-height: 76px;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 16px;
+  background: transparent;
+  transition: background 150ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.row-card:hover {
+  background: rgba(4, 202, 244, 0.05);
+}
+
+.row-card--playing {
+  background: rgba(0, 249, 42, 0.08);
+  border-left: 3px solid #00f92a;
+  padding-left: 13px;
+}
+
+/* Main Row */
+.row-card__main {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Album Thumbnail */
+.row-card__thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.row-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.row-card__error {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg,
+    rgba(4, 202, 244, 0.1),
+    rgba(224, 16, 224, 0.1)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+/* Info Column */
+.row-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.row-card__title-artist {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row-card__separator {
+  margin: 0 4px;
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+.row-card__artist {
+  color: #04caf4;
+  font-weight: 600;
+}
+
+.row-card__context {
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+
+.row-card__username {
+  color: #e010e0;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.row-card__timestamp {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+}
+
+/* Action Group */
+.row-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.row-card__platform {
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-card__play-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(4, 202, 244, 0.2);
+  border: 2px solid #04caf4;
+  color: #04caf4;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.row-card__play-button:hover {
+  background: rgba(4, 202, 244, 0.3);
+  transform: scale(1.05);
+}
+
+.row-card__play-button:active {
+  transform: scale(0.95);
+}
+
+/* Comment Row */
+.row-card__comment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 74px;
+}
+
+.row-card__comment {
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+}
+
+.row-card__social {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.row-card__social-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 150ms ease;
+  min-width: 44px;
+  min-height: 36px;
+}
+
+.row-card__social-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.row-card__social-btn:active {
+  transform: scale(0.95);
+}
+
+/* Card Entrance Animation */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row-card {
+  animation: card-enter 300ms ease-out;
+}
+
+/* Stagger delays */
+.row-card:nth-child(1) { animation-delay: 0ms; }
+.row-card:nth-child(2) { animation-delay: 40ms; }
+.row-card:nth-child(3) { animation-delay: 80ms; }
+.row-card:nth-child(4) { animation-delay: 120ms; }
+.row-card:nth-child(5) { animation-delay: 160ms; }
+
+/* Desktop - hide row cards (use table instead) */
+@media (min-width: 768px) {
+  .row-card {
+    display: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .row-card,
+  .row-card *,
+  .row-card__play-button,
+  .row-card__social-btn {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
