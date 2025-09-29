@@ -1,5 +1,5 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track, currentTrack, isPlaying } from '../../../../stores/playerStore';
+import { Track, currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
 import './rowCard.css';
 
 interface RowTrackCardProps {
@@ -14,17 +14,19 @@ interface RowTrackCardProps {
 const RowTrackCard: Component<RowTrackCardProps> = (props) => {
   const [imageLoaded, setImageLoaded] = createSignal(false);
   const [imageError, setImageError] = createSignal(false);
+  const [commentExpanded, setCommentExpanded] = createSignal(false);
 
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   const handleCardClick = () => {
-    props.onPlay(props.track);
-  };
-
-  const handlePlayClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    props.onPlay(props.track);
+    if (isTrackPlaying()) {
+      // If this track is playing, pause it
+      setIsPlaying(false);
+    } else {
+      // Otherwise, play this track
+      props.onPlay(props.track);
+    }
   };
 
   const handleLikeClick = (e: MouseEvent) => {
@@ -35,6 +37,17 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
   const handleReplyClick = (e: MouseEvent) => {
     e.stopPropagation();
     props.onReply(props.track);
+  };
+
+  const handleExpandClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    setCommentExpanded(!commentExpanded());
+  };
+
+  const truncateText = (text: string, maxLength: number): string => {
+    if (text.length <= maxLength) return text;
+    const cutPoint = text.lastIndexOf(' ', maxLength);
+    return text.substring(0, cutPoint > 0 ? cutPoint : maxLength);
   };
 
   const getPlatformIcon = (source: string) => {
@@ -107,30 +120,22 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
             <span class="row-card__artist">{props.track.artist}</span>
           </div>
           <div class="row-card__context">
-            <span class="row-card__username">@{props.track.addedBy}</span>
-            <span>•</span>
+            <span class="row-card__shared-by-label">shared by</span>
+            <span class="row-card__username">{props.track.addedBy}</span>
+            <span class="row-card__separator-dot">•</span>
             <span class="row-card__timestamp">{formatTimeAgo(props.track.timestamp)}</span>
           </div>
         </div>
 
-        {/* Action Group */}
-        <div class="row-card__actions">
-          <div class="row-card__platform">{getPlatformIcon(props.track.source)}</div>
-          <button
-            class="row-card__play-button"
-            onClick={handlePlayClick}
-            aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
-          >
-            <span>{isTrackPlaying() ? '⏸' : '▶'}</span>
-          </button>
-        </div>
+        {/* Platform Badge */}
+        <div class="row-card__platform">{getPlatformIcon(props.track.source)}</div>
       </div>
 
-      {/* Comment Row - REDESIGNED */}
+      {/* Comment Row - Social buttons on left, comment on right */}
       <Show when={props.showComment !== false && props.track.comment}>
         <div class="row-card__comment-row">
-          <div class="row-card__comment">{props.track.comment}</div>
-          <div class="row-card__social">
+          {/* Social buttons - under thumbnail */}
+          <div class="row-card__social-buttons">
             <button
               class="row-card__social-btn"
               onClick={handleReplyClick}
@@ -148,6 +153,30 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
               <span>{props.track.likes}</span>
             </button>
           </div>
+
+          {/* Comment text - expandable */}
+          <div
+            class="row-card__comment-text"
+            onClick={props.track.comment.length > 60 ? handleExpandClick : undefined}
+            style={{ cursor: props.track.comment.length > 60 ? 'pointer' : 'default' }}
+          >
+            <div class={commentExpanded() ? "row-card__comment row-card__comment--expanded" : "row-card__comment"}>
+              {commentExpanded() ? props.track.comment : truncateText(props.track.comment, 60)}
+            </div>
+          </div>
+
+          {/* Expand arrow - separate column on far right */}
+          <Show when={props.track.comment && props.track.comment.length > 60}>
+            <div class="row-card__expand-column">
+              <button
+                class="row-card__expand-btn"
+                onClick={handleExpandClick}
+                aria-label={commentExpanded() ? "Collapse comment" : "Expand comment"}
+              >
+                {commentExpanded() ? '▲' : '▼'}
+              </button>
+            </div>
+          </Show>
         </div>
       </Show>
     </div>

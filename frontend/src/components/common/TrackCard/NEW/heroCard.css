@@ -68,6 +68,61 @@
   }
 }
 
+/* Play icon overlay on hover */
+.hero-card:not(.hero-card--playing):hover .hero-card__image-container::before {
+  content: '▶';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 16px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  animation: play-reveal 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 5;
+}
+
+/* Pause icon overlay when playing and hovering */
+.hero-card.hero-card--playing:hover .hero-card__image-container::before {
+  content: '⏸';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 16px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  animation: play-reveal 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 5;
+}
+
+@keyframes play-reveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Image Container */
 .hero-card__image-container {
   width: 100%;
@@ -196,19 +251,32 @@
 }
 
 .hero-card__context {
-  font-size: 13px;
-  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
   gap: 6px;
-  line-height: 1.2;
+  line-height: 1.4;
+}
+
+.hero-card__shared-by-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  font-size: 14px;
 }
 
 .hero-card__username {
   color: #e010e0;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.hero-card__username:hover {
+  color: #ff1aff;
+  text-shadow: 0 0 8px rgba(224, 16, 224, 0.4);
 }
 
 .hero-card__context-separator {
@@ -221,12 +289,12 @@
   font-size: 13px;
 }
 
-/* Action Bar - REDESIGNED */
+/* Social Action Bar */
 .hero-card__actions {
   padding: 10px 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -234,7 +302,7 @@
 
 .hero-card__social-stats {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -249,8 +317,9 @@
   padding: 6px 10px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.08);
-  transition: all 150ms ease;
-  min-height: 32px;
+  transition: all 200ms ease;
+  min-height: 36px;
+  min-width: 44px;
   border: none;
   cursor: pointer;
   pointer-events: auto;
@@ -263,34 +332,6 @@
 
 .hero-card__stat:active {
   transform: scale(0.95);
-}
-
-/* Play Button */
-.hero-card__play-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #04caf4 0%, #00f92a 100%);
-  border: none;
-  box-shadow: 0 4px 12px rgba(4, 202, 244, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  color: #000000;
-  cursor: pointer;
-  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: auto;
-}
-
-.hero-card__play-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(4, 202, 244, 0.5);
-}
-
-.hero-card__play-button:active {
-  transform: scale(0.92);
-  box-shadow: 0 2px 8px rgba(4, 202, 244, 0.6);
 }
 
 /* Card Entrance Animation */

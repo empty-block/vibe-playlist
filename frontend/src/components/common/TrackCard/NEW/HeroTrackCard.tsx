@@ -1,5 +1,6 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track, currentTrack, isPlaying } from '../../../../stores/playerStore';
+import { Track, currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
+import ExpandableText from '../../../ui/ExpandableText';
 import './heroCard.css';
 
 interface HeroTrackCardProps {
@@ -20,12 +21,13 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   const handleCardClick = () => {
-    props.onPlay(props.track);
-  };
-
-  const handlePlayClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    props.onPlay(props.track);
+    if (isTrackPlaying()) {
+      // If this track is playing, pause it
+      setIsPlaying(false);
+    } else {
+      // Otherwise, play this track
+      props.onPlay(props.track);
+    }
   };
 
   const handleLikeClick = (e: MouseEvent) => {
@@ -123,7 +125,8 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
           {/* Inline Context */}
           <Show when={props.showSocialContext !== false}>
             <div class="hero-card__context">
-              <span class="hero-card__username">@{props.track.addedBy}</span>
+              <span class="hero-card__shared-by-label">shared by</span>
+              <span class="hero-card__username">{props.track.addedBy}</span>
               <span class="hero-card__context-separator">•</span>
               <span class="hero-card__timestamp">{formatTimeAgo(props.track.timestamp)}</span>
             </div>
@@ -131,7 +134,7 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
         </div>
       </div>
 
-      {/* Action Bar */}
+      {/* Social + Comment Bar */}
       <div class="hero-card__actions">
         <div class="hero-card__social-stats">
           <button
@@ -151,14 +154,6 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
             <span>{props.track.likes}</span>
           </button>
         </div>
-
-        <button
-          class="hero-card__play-button"
-          onClick={handlePlayClick}
-          aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
-        >
-          <span>{isTrackPlaying() ? '⏸' : '▶'}</span>
-        </button>
       </div>
     </div>
   );
