@@ -14,11 +14,11 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "data:install": "pip install -r requirements.txt",
-    "data:run": "cd data/pipelines && python -m flow",
-    "data:import": "cd data/pipelines/data_importer && python -m flow",
-    "data:parser": "cd data/pipelines/cast_music_parser && python -m flow",
-    "data:graph": "cd data/pipelines/graph_analysis && python -m flow"
+    "data:install": "arch -arm64 ./venv/bin/pip install -r requirements-fixed.txt",
+    "data:run": "cd data/pipelines && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist POLARS_SKIP_CPU_CHECK=1 arch -arm64 ../../venv/bin/python -m flow",
+    "data:import": "cd data/pipelines/data_importer && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
+    "data:parser": "cd data/pipelines/cast_music_parser && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
+    "data:graph": "cd data/pipelines/graph_analysis && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow"
   },
   "devDependencies": {
     "@rollup/rollup-darwin-x64": "^4.46.2",
@@ -29,6 +29,7 @@
     "vite-plugin-solid": "^2.11.8"
   },
   "dependencies": {
+    "@anthropic-ai/claude-code": "^2.0.0",
     "@solidjs/router": "^0.15.3",
     "@supabase/supabase-js": "^2.57.4",
     "animejs": "3.2.1",
