@@ -27,7 +27,8 @@ interface PlayerProps {
 
 const Player: Component<PlayerProps> = (props) => {
   const navigate = useNavigate();
-  
+  const [isTouchDevice, setIsTouchDevice] = createSignal(false);
+
   let playButtonRef: HTMLButtonElement | undefined;
   let prevButtonRef: HTMLButtonElement | undefined;
   let nextButtonRef: HTMLButtonElement | undefined;
@@ -85,25 +86,32 @@ const Player: Component<PlayerProps> = (props) => {
 
   // Set up animations
   onMount(() => {
-    // Primary playback buttons
-    [playButtonRef, prevButtonRef, nextButtonRef, chatButtonRef]
-      .filter(Boolean)
-      .forEach(button => {
-        button!.addEventListener('mouseenter', () => playbackButtonHover.enter(button!));
-        button!.addEventListener('mouseleave', () => playbackButtonHover.leave(button!));
-      });
+    // Detect touch device
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    setIsTouchDevice(hasTouch);
 
-    // Shuffle button
-    if (shuffleButtonRef) {
-      shuffleButtonRef.addEventListener('mouseenter', () => 
-        stateButtonHover.enter(shuffleButtonRef!, shuffleMode())
-      );
-      shuffleButtonRef.addEventListener('mouseleave', () => 
-        stateButtonHover.leave(shuffleButtonRef!)
-      );
+    // Only add hover animations on non-touch devices
+    if (!hasTouch) {
+      // Primary playback buttons
+      [playButtonRef, prevButtonRef, nextButtonRef, chatButtonRef]
+        .filter(Boolean)
+        .forEach(button => {
+          button!.addEventListener('mouseenter', () => playbackButtonHover.enter(button!));
+          button!.addEventListener('mouseleave', () => playbackButtonHover.leave(button!));
+        });
+
+      // Shuffle button
+      if (shuffleButtonRef) {
+        shuffleButtonRef.addEventListener('mouseenter', () =>
+          stateButtonHover.enter(shuffleButtonRef!, shuffleMode())
+        );
+        shuffleButtonRef.addEventListener('mouseleave', () =>
+          stateButtonHover.leave(shuffleButtonRef!)
+        );
+      }
     }
 
-    // Status indicator pulsing animation
+    // Status indicator pulsing animation (works on all devices)
     if (statusIndicatorRef && isPlaying()) {
       statusPulse(statusIndicatorRef);
     }
