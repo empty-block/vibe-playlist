@@ -79,19 +79,26 @@
   .main-content {
     bottom: 72px; /* Mobile nav height - matches --mobile-nav-height */
   }
-  
+
   .main-content.compact-layout {
     top: 24px; /* Offset for compact header */
   }
-  
+
   .main-content.has-player {
-    bottom: calc(72px + 80px); /* Mobile nav + player height */
+    bottom: 72px; /* Mobile nav only - player is outside now */
+  }
+
+  /* Add padding to content wrapper to prevent overlap with player */
+  .main-content.has-player .content-wrapper {
+    padding-bottom: 136px !important; /* Player height (120px) + spacing (16px) */
   }
 }
 
-/* Player space adjustment */
-.main-content.has-player .content-wrapper {
-  padding-bottom: 96px; /* Space for player */
+/* Player space adjustment - Desktop/Tablet */
+@media (min-width: 768px) {
+  .main-content.has-player .content-wrapper {
+    padding-bottom: 156px; /* Desktop player height (140px) + spacing */
+  }
 }
 
 .header-bar {

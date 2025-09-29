@@ -28,7 +28,7 @@ const Layout: Component<LayoutProps> = (props) => {
       <MobileNavigation />
       
       {/* Main Content (full width without sidebar) */}
-      <main 
+      <main
         class="main-content full-width-layout"
         classList={{ 'has-player': isPlayerVisible() }}
         style=""
@@ -36,12 +36,12 @@ const Layout: Component<LayoutProps> = (props) => {
         <div class="content-wrapper">
           {props.children}
         </div>
-        
-        {/* Player - Always bottom */}
-        <Show when={currentTrack()}>
-          <MediaPlayer />
-        </Show>
       </main>
+
+      {/* Player - Outside main-content to avoid stacking context issues */}
+      <Show when={currentTrack()}>
+        <MediaPlayer />
+      </Show>
       
       {/* Terminal Overlay */}
       <Show when={showTerminal()}>

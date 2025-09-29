@@ -2,18 +2,18 @@
 .playerContainer {
   height: 140px;
   position: fixed;
-  bottom: 0;
-  z-index: 50; /* Higher than sidebar (40) to ensure it's on top */
+  bottom: 0; /* Desktop default */
+  z-index: 60; /* Higher than mobile nav (50) and sidebar (40) */
   border-top: 1px solid var(--neon-cyan);
-  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%); /* Solid opaque background */
-  backdrop-filter: blur(8px); /* Extra blur for better visibility */
+  background: #0d0d0d !important; /* Fully opaque solid background */
+  background-color: #0d0d0d !important;
   display: grid;
   grid-template-columns: 400px 1fr 400px;
   grid-template-areas: "info controls media";
   gap: var(--space-6);
   padding: 0 var(--space-6);
   align-items: center;
-  
+
   /* Mobile default: full width */
   left: 0;
   width: 100vw;
@@ -289,48 +289,266 @@
   box-shadow: 0 0 12px rgba(0, 249, 42, 0.4);
 }
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
+/* ========================================
+   MOBILE RESPONSIVE (0-767px)
+   Compact player above mobile nav
+   ======================================== */
+@media (max-width: 767px) {
   .playerContainer {
-    height: 140px;
+    /* Core Mobile Layout */
+    height: auto !important; /* Let content determine height */
+    max-height: 50vh; /* Don't take up more than half screen */
+    bottom: 72px !important; /* Above mobile nav - FORCE IT */
+    background: #0d0d0d !important;
+    background-color: #0d0d0d !important;
+    opacity: 1 !important;
+    position: fixed !important;
+    isolation: isolate;
+
+    /* Stacked Grid: Embed + Info + Controls */
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-    grid-template-areas: 
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "media"
       "info"
       "controls";
-    gap: var(--space-3);
+    gap: var(--space-2);
     padding: var(--space-3) var(--space-4);
+    padding-bottom: var(--space-2);
+    overflow-y: auto; /* Allow scroll if needed */
   }
-  
+
+  /* Track Info - Compact Stacked Layout */
   .trackInfo {
     width: 100%;
-    text-align: center;
-    gap: var(--space-1);
+    min-width: auto;
+    padding: 0;
+    gap: 2px; /* Tighter spacing */
+    align-items: center; /* Center all elements */
   }
-  
+
+  .trackTitle {
+    font-size: var(--text-base); /* Smaller on mobile */
+    text-align: center;
+    justify-content: center;
+  }
+
+  .artistName {
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+
+  .socialContext {
+    font-size: 11px; /* Extra small */
+    justify-content: center;
+  }
+
+  /* Controls - Horizontal Row */
   .controls {
     justify-content: center;
-    gap: var(--space-6);
+    gap: var(--space-3); /* Compact spacing */
+    align-items: center;
   }
-  
-  .mediaSection {
-    display: none;
+
+  /* Control Buttons - Touch Targets */
+  .controlButton {
+    width: 48px; /* Touch-friendly */
+    height: 48px;
+    font-size: 18px;
   }
-  
-  .chatButton {
-    display: block;
-  }
-  
+
   .playButton {
-    width: 64px;
+    width: 64px; /* Prominent */
     height: 64px;
     font-size: 24px;
   }
-  
-  .progressContainer {
-    position: static;
-    height: 2px;
+
+  /* Show YouTube embed on mobile */
+  .mediaSection {
+    display: block !important;
     width: 100%;
-    border-radius: 1px;
+    height: 200px; /* Compact embed height */
+    margin-bottom: var(--space-2);
+  }
+
+  .shuffleButton,
+  .repeatButton {
+    display: none; /* Hide shuffle/repeat on mobile */
+  }
+
+  .chatButton {
+    display: none; /* Hide chat button on mobile */
+  }
+
+  /* Progress Bar - Inline at bottom */
+  .progressContainer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .progressHandle {
+    width: 16px; /* Larger for touch */
+    height: 16px;
+    top: -6px;
+    right: -8px;
+  }
+
+  /* Touch-Optimized Interactions */
+  .controlButton:hover {
+    /* Disable hover animations on touch devices */
+    transform: none;
+    box-shadow: none;
+  }
+
+  .controlButton:active {
+    /* Enhanced active state for touch feedback */
+    background: var(--neon-cyan);
+    color: var(--darker-bg);
+    box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
+    transform: scale(0.95);
+  }
+
+  .playButton:active {
+    background: var(--light-text);
+    color: var(--neon-blue);
+    box-shadow: 0 0 16px rgba(59, 0, 253, 0.8);
+    transform: scale(0.95);
+  }
+
+  .progressContainer:hover .progressHandle {
+    opacity: 1; /* Always show handle on mobile for better touch targeting */
+  }
+
+  .artistName:hover {
+    /* Disable hover on mobile */
+    color: var(--neon-magenta);
+    text-shadow: none;
+  }
+
+  .artistName:active {
+    /* Active state for touch feedback */
+    color: var(--light-text);
+    text-shadow: 0 0 8px var(--neon-magenta);
+  }
+}
+
+/* ========================================
+   TABLET RESPONSIVE (768px-1023px)
+   Desktop player, full width
+   ======================================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .playerContainer {
+    /* Full width on tablet */
+    left: 0;
+    width: 100vw;
+    height: 140px; /* Desktop height */
+
+    /* Desktop grid layout */
+    grid-template-columns: 400px 1fr 400px;
+    grid-template-areas: "info controls media";
+    gap: var(--space-6);
+    padding: 0 var(--space-6);
+  }
+
+  /* Show all desktop elements */
+  .mediaSection {
+    display: block;
+  }
+
+  .shuffleButton,
+  .repeatButton,
+  .chatButton {
+    display: flex;
+  }
+
+  /* Desktop-sized controls */
+  .controlButton {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .playButton {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  /* Desktop track info */
+  .trackInfo {
+    align-items: flex-start;
+    text-align: left;
+    min-width: 300px;
+    padding: 0 var(--space-4);
+  }
+
+  .trackTitle,
+  .artistName {
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .trackTitle {
+    font-size: var(--text-xl);
+  }
+
+  .artistName {
+    font-size: var(--text-lg);
+  }
+
+  .socialContext {
+    font-size: var(--text-sm);
+    justify-content: flex-start;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY & POLISH
+   ======================================== */
+
+/* Safe area insets for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  @media (max-width: 767px) {
+    .playerContainer {
+      padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+      bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .controlButton,
+  .playButton,
+  .progressHandle {
+    transition: none;
+  }
+
+  .controlButton:active,
+  .playButton:active {
+    transform: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 8px var(--neon-green); }
+    50% { box-shadow: 0 0 8px var(--neon-green); }
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .playerContainer {
+    border-top: 2px solid var(--neon-cyan);
+  }
+
+  .controlButton {
+    border-width: 3px;
+  }
+
+  .playButton {
+    border-width: 4px;
   }
 }
