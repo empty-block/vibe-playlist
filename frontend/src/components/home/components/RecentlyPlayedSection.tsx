@@ -1,6 +1,9 @@
 import { Component, For, Show, onMount } from 'solid-js';
 import { buttonHover, shimmer, staggeredFadeIn } from '../../../utils/animations';
 import type { Track } from '../HomePage';
+import { BaseTrackCard } from '../../common/TrackCard';
+import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
+import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
 interface RecentlyPlayedSectionProps {
   tracks: Track[];
@@ -20,7 +23,23 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
 
   const handlePlayTrack = (track: Track) => {
     console.log('Playing track:', track.title);
-    // TODO: Integrate with player
+    // Convert HomePage Track to PlayerTrack format
+    const playerTrack: PlayerTrack = {
+      ...track,
+      source: track.source as any,
+      sourceId: track.id,
+      duration: '0:00',
+      thumbnail: track.thumbnail || '',
+      addedBy: 'You',
+      userAvatar: '',
+      timestamp: new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0
+    };
+    setCurrentTrack(playerTrack);
+    setIsPlaying(true);
   };
 
   return (
@@ -54,26 +73,35 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
       >
         <div ref={tracksGridRef} class="tracks-grid">
           <For each={props.tracks}>
-            {(track) => (
-              <div 
-                class={`track-item ${track.isNew ? 'new-track' : ''}`}
-                onClick={() => handlePlayTrack(track)}
-              >
-                <div class="track-thumbnail">
-                  <img src={track.thumbnail} alt={`${track.title} thumbnail`} />
-                  <div class="play-overlay">
-                    <div class="play-icon">▶</div>
-                  </div>
-                  {track.isNew && <div class="new-badge">NEW</div>}
+            {(track) => {
+              // Convert HomePage Track to PlayerTrack format for BaseTrackCard
+              const playerTrack: PlayerTrack = {
+                ...track,
+                source: track.source as any,
+                sourceId: track.id,
+                duration: '0:00',
+                thumbnail: track.thumbnail || '',
+                addedBy: 'You',
+                userAvatar: '',
+                timestamp: new Date().toISOString(),
+                comment: '',
+                likes: 0,
+                replies: 0,
+                recasts: 0
+              };
+
+              return (
+                <div class="track-item">
+                  <BaseTrackCard
+                    track={playerTrack}
+                    variant="compact"
+                    showSocialActions={false}
+                    showUserContext={false}
+                    onPlay={handlePlayTrack}
+                  />
                 </div>
-                
-                <div class="track-info">
-                  <div class="track-title">{track.title}</div>
-                  <div class="track-artist">{track.artist}</div>
-                  <div class="track-source">{track.source}</div>
-                </div>
-              </div>
-            )}
+              );
+            }}
           </For>
         </div>
       </Show>

@@ -1,5 +1,8 @@
 import { Component, For, Show } from 'solid-js';
 import type { Track } from '../HomePage';
+import { BaseTrackCard } from '../../common/TrackCard';
+import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
+import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
 interface NewTracksSectionProps {
   tracks: Track[];
@@ -11,7 +14,23 @@ export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
 
   const handleTrackClick = (track: Track) => {
     console.log('Playing track:', track.title);
-    // TODO: Implement play functionality
+    // Convert HomePage Track to PlayerTrack format
+    const playerTrack: PlayerTrack = {
+      ...track,
+      source: track.source as any, // Type assertion for source
+      sourceId: track.id,
+      duration: '0:00',
+      thumbnail: track.thumbnail || '',
+      addedBy: 'Network',
+      userAvatar: '',
+      timestamp: new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0
+    };
+    setCurrentTrack(playerTrack);
+    setIsPlaying(true);
   };
 
   const handleKeyPress = (e: KeyboardEvent, track: Track) => {
@@ -55,38 +74,39 @@ export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
       >
         <div class="new-tracks-grid">
           <For each={newTracks()}>
-            {(track) => (
-              <div
-                class="new-track-card"
-                role="button"
-                tabIndex={0}
-                aria-label={`New track: ${track.title} by ${track.artist}, discovered from network`}
-                onClick={() => handleTrackClick(track)}
-                onKeyDown={(e) => handleKeyPress(e, track)}
-              >
-                <div class="new-badge">NEW</div>
-                
-                <div class="track-thumbnail">
-                  <img
-                    src={track.thumbnail}
-                    alt={`${track.title} album cover`}
-                    loading="lazy"
-                  />
-                  <div class="play-overlay">
-                    <div class="play-icon">▶</div>
-                  </div>
-                </div>
+            {(track) => {
+              // Convert HomePage Track to PlayerTrack format for BaseTrackCard
+              const playerTrack: PlayerTrack = {
+                ...track,
+                source: track.source as any,
+                sourceId: track.id,
+                duration: '0:00',
+                thumbnail: track.thumbnail || '',
+                addedBy: 'Network',
+                userAvatar: '',
+                timestamp: new Date().toISOString(),
+                comment: '',
+                likes: 0,
+                replies: 0,
+                recasts: 0
+              };
 
-                <div class="track-info">
-                  <h3 class="track-title">{track.title}</h3>
-                  <p class="track-artist">{track.artist}</p>
-                  <div class="track-meta">
-                    <span class="track-source">{track.source}</span>
-                    <span class="discovery-source">from network</span>
+              return (
+                <div class="relative">
+                  <div class="new-badge absolute top-2 left-2 z-20 bg-[#00f92a]/20 border border-[#00f92a]/60 text-[#00f92a] text-xs px-2 py-1 rounded font-bold">
+                    NEW
                   </div>
+                  <BaseTrackCard
+                    track={playerTrack}
+                    variant="grid"
+                    showSocialActions={false}
+                    showUserContext={false}
+                    onPlay={handleTrackClick}
+                    className="new-track-theme"
+                  />
                 </div>
-              </div>
-            )}
+              );
+            }}
           </For>
         </div>
       </Show>
