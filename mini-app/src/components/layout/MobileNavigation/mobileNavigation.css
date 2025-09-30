@@ -1,0 +1,270 @@
+/* Mobile Bottom Navigation Styles */
+
+:root {
+  /* Mobile nav specific variables */
+  --mobile-nav-height: 72px;
+  --mobile-nav-item-size: 56px;
+  --mobile-nav-icon-size: 24px;
+  --mobile-nav-bg: rgba(10, 10, 10, 0.95);
+  --mobile-nav-border: rgba(4, 202, 244, 0.25);
+  
+  /* Color variables for consistency with sidebar */
+  --terminal-text-secondary: #cccccc;
+  --home-primary: #3b00fd;
+  --library-primary: #04caf4;
+  --stats-primary: #00f92a;
+  --profile-primary: #f906d6;
+  --home-hover: rgba(59, 0, 253, 0.1);
+  --library-hover: rgba(4, 202, 244, 0.1);
+  --stats-hover: rgba(0, 249, 42, 0.1);
+  --profile-hover: rgba(249, 6, 214, 0.1);
+  --home-glow: rgba(59, 0, 253, 0.4);
+  --library-glow: rgba(4, 202, 244, 0.4);
+  --stats-glow: rgba(0, 249, 42, 0.4);
+  --profile-glow: rgba(249, 6, 214, 0.4);
+}
+
+/* Main Mobile Navigation Container */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mobile-nav-height);
+  background: var(--mobile-nav-bg);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--mobile-nav-border);
+  z-index: 50; /* Above player (40) and sidebar (30) */
+  
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform;
+  
+  /* Support for devices with safe areas (iPhone X+) */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Mobile Navigation Container */
+.mobile-nav-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  height: var(--mobile-nav-height);
+  max-width: 100vw;
+  margin: 0 auto;
+}
+
+/* Individual Mobile Navigation Items */
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 8px 4px 12px 4px;
+  text-decoration: none;
+  color: var(--terminal-text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  /* Smooth transitions */
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  will-change: transform, color, background-color;
+  
+  /* Touch optimization */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Mobile Navigation Icon Container */
+.mobile-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--mobile-nav-icon-size);
+  height: var(--mobile-nav-icon-size);
+  margin-bottom: 2px;
+}
+
+/* Mobile Navigation Icon SVG */
+.mobile-nav-icon-svg {
+  width: var(--mobile-nav-icon-size);
+  height: var(--mobile-nav-icon-size);
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile Navigation Label */
+.mobile-nav-label {
+  font-family: var(--font-terminal);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 12px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  
+  /* Text rendering optimization */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Color-Specific Hover States */
+.mobile-nav-item-blue:hover,
+.mobile-nav-item-blue:active {
+  color: var(--home-primary);
+  background: var(--home-hover);
+  box-shadow: 0 0 8px var(--home-glow);
+}
+
+.mobile-nav-item-cyan:hover,
+.mobile-nav-item-cyan:active {
+  color: var(--library-primary);
+  background: var(--library-hover);
+  box-shadow: 0 0 8px var(--library-glow);
+}
+
+.mobile-nav-item-green:hover,
+.mobile-nav-item-green:active {
+  color: var(--stats-primary);
+  background: var(--stats-hover);
+  box-shadow: 0 0 8px var(--stats-glow);
+}
+
+.mobile-nav-item-pink:hover,
+.mobile-nav-item-pink:active {
+  color: var(--profile-primary);
+  background: var(--profile-hover);
+  box-shadow: 0 0 8px var(--profile-glow);
+}
+
+/* Active States (Current Page) */
+.mobile-nav-item-active.mobile-nav-item-blue {
+  color: var(--home-primary);
+  background: rgba(59, 0, 253, 0.08);
+}
+
+.mobile-nav-item-active.mobile-nav-item-cyan {
+  color: var(--library-primary);
+  background: rgba(4, 202, 244, 0.08);
+}
+
+.mobile-nav-item-active.mobile-nav-item-green {
+  color: var(--stats-primary);
+  background: rgba(0, 249, 42, 0.08);
+}
+
+.mobile-nav-item-active.mobile-nav-item-pink {
+  color: var(--profile-primary);
+  background: rgba(249, 6, 214, 0.08);
+}
+
+/* Active Icon Glow Effect */
+.mobile-nav-item-active .mobile-nav-icon-svg {
+  filter: drop-shadow(0 0 2px currentColor);
+}
+
+/* Touch Feedback */
+.mobile-nav-item:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.mobile-nav-item:active .mobile-nav-icon-svg {
+  transform: scale(0.9);
+}
+
+/* Focus States for Keyboard Navigation */
+.mobile-nav-item:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 2px var(--library-primary),
+    0 0 8px var(--library-glow);
+}
+
+/* Hide mobile navigation on desktop */
+@media (min-width: 768px) {
+  .mobile-nav {
+    display: none;
+  }
+}
+
+/* Landscape Phone Adjustments */
+@media (max-width: 767px) and (orientation: landscape) and (max-height: 500px) {
+  .mobile-nav {
+    --mobile-nav-height: 60px;
+    --mobile-nav-icon-size: 20px;
+  }
+  
+  .mobile-nav-label {
+    font-size: 9px;
+    line-height: 10px;
+  }
+  
+  .mobile-nav-item {
+    padding: 6px 4px 8px 4px;
+    gap: 2px;
+  }
+}
+
+/* Very Small Screens */
+@media (max-width: 320px) {
+  .mobile-nav-label {
+    font-size: 9px;
+    line-height: 10px;
+  }
+  
+  .mobile-nav-item {
+    padding: 8px 2px 12px 2px;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-item,
+  .mobile-nav-icon-svg {
+    transition: none !important;
+  }
+  
+  .mobile-nav-item:active {
+    transform: none !important;
+  }
+  
+  .mobile-nav-item-active .mobile-nav-icon-svg {
+    filter: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .mobile-nav {
+    border-top-width: 2px;
+    background: rgba(0, 0, 0, 1);
+  }
+  
+  .mobile-nav-item {
+    border: 1px solid transparent;
+  }
+  
+  .mobile-nav-item-active {
+    border-color: currentColor;
+  }
+}
+
+/* Support for very tall phones */
+@media (min-height: 800px) and (max-width: 767px) {
+  .mobile-nav {
+    --mobile-nav-height: 76px;
+  }
+  
+  .mobile-nav-item {
+    padding: 10px 4px 14px 4px;
+  }
+}

@@ -4,7 +4,6 @@ import solidPlugin from 'vite-plugin-solid';
 export default defineConfig(() => {
   return {
     plugins: [solidPlugin()],
-    root: 'frontend',
     define: {
       // Force Vite to use process.env variables (what Cloudflare provides during build)
       'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || 'your-spotify-client-id'),

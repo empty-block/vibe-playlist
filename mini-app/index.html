@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎧 JAMZY Mini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* JAMZY DESIGN SYSTEM - Neon 90s Color Palette */
+            --neon-blue: #3b00fd;
+            --neon-green: #00f92a;
+            --neon-cyan: #04caf4;
+            --neon-pink: #f906d6;
+            --neon-orange: #ff9b00;
+            --neon-yellow: #d1f60a;
+
+            --dark-bg: #1a1a1a;
+            --darker-bg: #0f0f0f;
+            --light-text: #ffffff;
+            --muted-text: #cccccc;
+
+            --primary-color: var(--neon-blue);
+            --secondary-color: var(--neon-cyan);
+            --accent-color: var(--neon-green);
+
+            /* Spacing System */
+            --space-2: 8px;
+            --space-4: 16px;
+            --space-6: 24px;
+            --space-8: 32px;
+
+            /* Typography */
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 20px;
+            --text-xl: 24px;
+        }
+
+        /* Modern translucent scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+        }
+
+        /* Safe area padding for mobile devices */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        #root {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-black font-pixel overflow-hidden m-0 p-0" style="color: var(--primary-color); height: 100vh; position: fixed; width: 100%; top: 0; left: 0;">
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+</body>
+</html>
