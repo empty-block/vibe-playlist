@@ -130,11 +130,10 @@ const Player: Component<PlayerProps> = (props) => {
             {currentTrack()?.artist}
           </div>
           <div class={styles.socialContext}>
-            <span>Added by {currentTrack()?.addedBy}</span>
+            <span class={styles.sharedByLabel}>shared by</span>
+            <span class={styles.username}>{currentTrack()?.addedBy}</span>
             <span>•</span>
             <span class={styles.platformBadge}>{currentTrack()?.source?.toUpperCase()}</span>
-            <span>•</span>
-            <span>now</span>
           </div>
         </div>
 

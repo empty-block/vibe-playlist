@@ -305,62 +305,72 @@
     position: fixed !important;
     isolation: isolate;
 
-    /* Stacked Grid: Embed + Info + Controls */
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    /* 2-Row Grid: Embed on top, Info + Controls side by side below */
+    grid-template-columns: 60% 40%;
+    grid-template-rows: auto auto;
     grid-template-areas:
-      "media"
-      "info"
-      "controls";
-    gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
-    padding-bottom: var(--space-2);
+      "media media"
+      "info controls";
+    gap: var(--space-3);
+    padding: 16px 16px 12px;
+    align-items: center;
     overflow-y: auto; /* Allow scroll if needed */
   }
 
-  /* Track Info - Compact Stacked Layout */
+  /* Track Info - Left Side, Compact */
   .trackInfo {
     width: 100%;
     min-width: auto;
-    padding: 0;
-    gap: 2px; /* Tighter spacing */
-    align-items: center; /* Center all elements */
+    padding: 0 var(--space-2) 0 0;
+    gap: var(--space-1); /* 4px spacing */
+    align-items: flex-start; /* Left align */
   }
 
   .trackTitle {
-    font-size: var(--text-base); /* Smaller on mobile */
-    text-align: center;
-    justify-content: center;
+    font-size: var(--text-sm); /* Smaller on mobile */
+    text-align: left;
+    justify-content: flex-start;
   }
 
   .artistName {
-    font-size: var(--text-sm);
-    text-align: center;
+    font-size: 12px;
+    text-align: left;
   }
 
   .socialContext {
-    font-size: 11px; /* Extra small */
-    justify-content: center;
+    font-size: 10px; /* Extra small */
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
-  /* Controls - Horizontal Row */
+  .sharedByLabel {
+    opacity: 0.6;
+  }
+
+  .username {
+    color: var(--neon-cyan);
+    font-weight: 500;
+  }
+
+  /* Controls - Right Side, Compact Row */
   .controls {
-    justify-content: center;
-    gap: var(--space-3); /* Compact spacing */
+    justify-content: flex-end;
+    gap: var(--space-2); /* Tighter spacing */
     align-items: center;
+    padding: 0 0 0 var(--space-2);
   }
 
-  /* Control Buttons - Touch Targets */
+  /* Control Buttons - Smaller Touch Targets */
   .controlButton {
-    width: 48px; /* Touch-friendly */
-    height: 48px;
-    font-size: 18px;
+    width: 40px; /* Smaller */
+    height: 40px;
+    font-size: 16px;
   }
 
   .playButton {
-    width: 64px; /* Prominent */
-    height: 64px;
-    font-size: 24px;
+    width: 52px; /* Smaller but prominent */
+    height: 52px;
+    font-size: 20px;
   }
 
   /* Show YouTube embed on mobile */
