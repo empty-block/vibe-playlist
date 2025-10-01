@@ -2,6 +2,7 @@ import { Router, Route } from '@solidjs/router';
 import { Component, Show, JSX } from 'solid-js';
 import ThreadsPage from './pages/ThreadsPage';
 import ThreadViewPage from './pages/ThreadViewPage';
+import ProfilePage from './pages/ProfilePage';
 import MediaPlayer from './components/player/MediaPlayer';
 import { currentTrack } from './stores/playerStore';
 
@@ -24,6 +25,7 @@ const App: Component = () => {
     <Router root={RootLayout}>
       <Route path="/" component={ThreadsPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
+      <Route path="/profile" component={ProfilePage} />
     </Router>
   );
 };

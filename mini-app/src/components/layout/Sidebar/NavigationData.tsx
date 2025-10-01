@@ -246,7 +246,7 @@ export const navigationSections: readonly SidebarSection[] = [
   },
   {
     id: 'profile',
-    href: '/me',
+    href: '/profile',
     label: 'Profile',
     icon: ProfileIcon,
     color: 'pink'
