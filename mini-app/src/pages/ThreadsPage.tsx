@@ -1,11 +1,15 @@
-import { Component, createSignal, For } from 'solid-js';
+import { Component, createSignal, createMemo, For, onMount } from 'solid-js';
 import { A } from '@solidjs/router';
 import { RowTrackCard } from '../components/common/TrackCard/NEW';
+import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { mockThreads } from '../data/mockThreads';
+import { sortThreads, SortType } from '../utils/threadSorting';
+import anime from 'animejs';
+import './threads.css';
 
-// Placeholder functions for track actions
+// Track action handlers
 const playTrack = (track: Track) => {
   setCurrentTrack(track);
   setIsPlaying(true);
@@ -20,106 +24,116 @@ const replyToTrack = (track: Track) => {
 };
 
 const ThreadsPage: Component = () => {
-  const [sortBy, setSortBy] = createSignal<'recent' | 'popular'>('recent');
-  const [threads] = createSignal<Thread[]>(mockThreads);
+  const [sortBy, setSortBy] = createSignal<SortType>('hot');
+  const [isLoading, setIsLoading] = createSignal(false);
+
+  // Sorted threads based on filter
+  const sortedThreads = createMemo(() => {
+    return sortThreads(mockThreads, sortBy());
+  });
+
+  // Filter change handler with animation
+  const handleFilterChange = (newFilter: SortType) => {
+    if (newFilter === sortBy()) return; // No change
+
+    const cards = document.querySelectorAll('.thread-card-wrapper');
+
+    // Fade out current cards
+    anime({
+      targets: cards,
+      opacity: 0,
+      translateY: -20,
+      duration: 200,
+      easing: 'easeInCubic',
+      complete: () => {
+        // Update filter
+        setSortBy(newFilter);
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Fade in new cards with stagger
+        setTimeout(() => {
+          const newCards = document.querySelectorAll('.thread-card-wrapper');
+          anime({
+            targets: newCards,
+            opacity: [0, 1],
+            translateY: [-20, 0],
+            delay: anime.stagger(60),
+            duration: 300,
+            easing: 'easeOutCubic'
+          });
+        }, 50);
+      }
+    });
+  };
+
+  // Initial entrance animation
+  onMount(() => {
+    const cards = document.querySelectorAll('.thread-card-wrapper');
+    anime({
+      targets: cards,
+      opacity: [0, 1],
+      translateY: [20, 0],
+      delay: anime.stagger(80),
+      duration: 400,
+      easing: 'easeOutCubic'
+    });
+  });
 
   return (
-    <div style={{
-      display: 'flex',
-      'flex-direction': 'column',
-      height: '100vh',
-      background: 'var(--dark-bg)',
-      color: 'var(--light-text)'
-    }}>
-      {/* Header with Sort */}
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        'z-index': 10,
-        background: 'var(--darker-bg)',
-        'border-bottom': '1px solid rgba(59, 0, 253, 0.3)',
-        padding: 'var(--space-4)'
-      }}>
-        <div style={{
-          display: 'flex',
-          'align-items': 'center',
-          'justify-content': 'space-between'
-        }}>
-          <h1 style={{
-            margin: 0,
-            'font-size': 'var(--text-xl)',
-            color: 'var(--neon-cyan)',
-            'font-family': 'var(--font-display)'
-          }}>
-            Threads
-          </h1>
+    <div class="threads-page">
+      {/* Sticky Header */}
+      <header class="threads-header" role="banner">
+        <h1 class="threads-title">Threads</h1>
 
-          {/* Sort Buttons */}
-          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-            <button
-              onClick={() => setSortBy('recent')}
-              class="interactive"
-              style={{
-                padding: '8px 16px',
-                'border-radius': '4px',
-                border: 'none',
-                background: sortBy() === 'recent'
-                  ? 'var(--neon-blue)'
-                  : 'rgba(255, 255, 255, 0.1)',
-                color: 'var(--light-text)',
-                cursor: 'pointer',
-                'font-family': 'var(--font-display)',
-                'font-size': 'var(--text-sm)'
-              }}
-            >
-              Recent
-            </button>
-            <button
-              onClick={() => setSortBy('popular')}
-              class="interactive"
-              style={{
-                padding: '8px 16px',
-                'border-radius': '4px',
-                border: 'none',
-                background: sortBy() === 'popular'
-                  ? 'var(--neon-blue)'
-                  : 'rgba(255, 255, 255, 0.1)',
-                color: 'var(--light-text)',
-                cursor: 'pointer',
-                'font-family': 'var(--font-display)',
-                'font-size': 'var(--text-sm)'
-              }}
-            >
-              Popular
-            </button>
-          </div>
-        </div>
-      </div>
+        <ThreadFilterBar
+          filters={[
+            { value: 'hot', label: 'Hot' },
+            { value: 'latest', label: 'Latest' },
+            { value: 'top', label: 'Top' }
+          ]}
+          activeFilter={sortBy()}
+          onFilterChange={handleFilterChange}
+        />
+      </header>
 
-      {/* Scrollable Threads List */}
-      <div style={{
-        flex: 1,
-        'overflow-y': 'auto',
-        padding: 'var(--space-4)',
-        'padding-bottom': '120px' // Space for bottom nav + player
-      }}>
-        <For each={threads()}>
-          {(thread) => (
-            <A href={`/thread/${thread.id}`} style={{ 'text-decoration': 'none' }}>
-              {thread.initialPost.track && (
-                <div style={{ 'margin-bottom': 'var(--space-4)' }}>
-                  <RowTrackCard
-                    track={thread.initialPost.track}
-                    onPlay={playTrack}
-                    onLike={likeTrack}
-                    onReply={replyToTrack}
-                    showComment={true}
-                  />
-                </div>
-              )}
-            </A>
+      {/* Scrollable Feed */}
+      <main
+        class="thread-feed"
+        role="feed"
+        aria-label="Music conversation threads"
+        aria-busy={isLoading()}
+      >
+        <For each={sortedThreads()}>
+          {(thread, index) => (
+            <article
+              class="thread-card-wrapper"
+              role="article"
+              aria-posinset={index() + 1}
+              aria-setsize={sortedThreads().length}
+            >
+              <A
+                href={`/thread/${thread.id}`}
+                style={{ 'text-decoration': 'none' }}
+                aria-label={`View thread started by ${thread.initialPost.author.displayName}`}
+              >
+                <RowTrackCard
+                  track={thread.initialPost.track}
+                  onPlay={playTrack}
+                  onLike={likeTrack}
+                  onReply={replyToTrack}
+                  showComment={true}
+                />
+              </A>
+            </article>
           )}
         </For>
+      </main>
+
+      {/* Screen reader announcements */}
+      <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+        {`Viewing ${sortBy()} threads. ${sortedThreads().length} threads found.`}
       </div>
 
       {/* Bottom Navigation */}
