@@ -43,7 +43,7 @@ export interface Thread {
     author: ThreadAuthor;
     text: string;
     timestamp: string;
-    track: ThreadTrack;
+    track?: ThreadTrack; // Optional - threads may not have a starter track
   };
   replies: ThreadReply[];
   replyCount: number;
@@ -51,7 +51,7 @@ export interface Thread {
 }
 
 // Mock users
-const mockUsers: ThreadAuthor[] = [
+export const mockUsers: ThreadAuthor[] = [
   { fid: 1, username: 'musiclover420', displayName: 'Music Lover', pfpUrl: 'https://i.pravatar.cc/150?img=1' },
   { fid: 2, username: 'vinylhead', displayName: 'Vinyl Head', pfpUrl: 'https://i.pravatar.cc/150?img=2' },
   { fid: 3, username: 'beatmaster', displayName: 'Beat Master', pfpUrl: 'https://i.pravatar.cc/150?img=3' },
@@ -75,25 +75,7 @@ export const mockThreads: Thread[] = [
       castHash: 'thread1_post',
       author: mockUsers[0],
       text: 'What are you jamming to right now? 🎧',
-      timestamp: getRandomTimestamp(2),
-      track: {
-        id: 'track1',
-        title: 'Everlong',
-        artist: 'Foo Fighters',
-        url: 'https://www.youtube.com/watch?v=eBG7P-K-r1Y',
-        source: 'youtube',
-        sourceId: 'eBG7P-K-r1Y',
-        thumbnail: 'https://i.ytimg.com/vi/eBG7P-K-r1Y/default.jpg',
-        likes: 24,
-        comments: 8,
-        timestamp: getRandomTimestamp(2),
-        comment: 'This song completely changed my perspective on what rock music could be in the late 90s. The way Dave Grohl builds from that quiet intro into the explosive chorus still gives me chills every single time. It\'s become my go-to track when I need to feel something real.',
-        duration: '4:10',
-        addedBy: 'musiclover420',
-        userAvatar: 'https://i.pravatar.cc/150?img=1',
-        replies: 2,
-        recasts: 5
-      }
+      timestamp: getRandomTimestamp(2)
     },
     replies: [
       {
@@ -146,20 +128,7 @@ export const mockThreads: Thread[] = [
       castHash: 'thread2_post',
       author: mockUsers[3],
       text: 'Name your favorite 90s jams 📼',
-      timestamp: getRandomTimestamp(5),
-      track: {
-        id: 'track4',
-        title: 'Wonderwall',
-        artist: 'Oasis',
-        url: 'https://www.youtube.com/watch?v=bx1Bh8ZvH84',
-        source: 'youtube',
-        sourceId: 'bx1Bh8ZvH84',
-        thumbnail: 'https://i.ytimg.com/vi/bx1Bh8ZvH84/default.jpg',
-        likes: 42,
-        comments: 12,
-        timestamp: getRandomTimestamp(5),
-        comment: 'I don\'t care what anyone says about this being overplayed at every party - Wonderwall is an absolute masterpiece of songwriting. Noel Gallagher captured something timeless here. The chord progression is deceptively simple but it works perfectly with Liam\'s distinctive vocals. This song basically WAS the 90s for me and my friends.'
-      }
+      timestamp: getRandomTimestamp(5)
     },
     replies: [
       {
@@ -232,20 +201,7 @@ export const mockThreads: Thread[] = [
       castHash: 'thread3_post',
       author: mockUsers[5],
       text: 'Who are the best hip hop artists ever? 🎤',
-      timestamp: getRandomTimestamp(8),
-      track: {
-        id: 'track8',
-        title: 'Juicy',
-        artist: 'The Notorious B.I.G.',
-        url: 'https://www.youtube.com/watch?v=_JZom_gVfuw',
-        source: 'youtube',
-        sourceId: '_JZom_gVfuw',
-        thumbnail: 'https://i.ytimg.com/vi/_JZom_gVfuw/default.jpg',
-        likes: 56,
-        comments: 15,
-        timestamp: getRandomTimestamp(8),
-        comment: 'Biggie\'s storytelling on this track is absolutely legendary. The way he chronicles his come-up from struggle to success over that smooth Mtume sample is hip-hop perfection. His flow is effortless, his wordplay is iconic, and the production is timeless. This is THE rags-to-riches anthem. When that "It was all a dream" line hits, you know you\'re about to hear something special.'
-      }
+      timestamp: getRandomTimestamp(8)
     },
     replies: [
       {
@@ -298,20 +254,7 @@ export const mockThreads: Thread[] = [
       castHash: 'thread4_post',
       author: mockUsers[4],
       text: 'Hot indie tracks 🔥',
-      timestamp: getRandomTimestamp(12),
-      track: {
-        id: 'track11',
-        title: 'Electric Feel',
-        artist: 'MGMT',
-        url: 'https://www.youtube.com/watch?v=MmZexg8sxyk',
-        source: 'youtube',
-        sourceId: 'MmZexg8sxyk',
-        thumbnail: 'https://i.ytimg.com/vi/MmZexg8sxyk/default.jpg',
-        likes: 33,
-        comments: 9,
-        timestamp: getRandomTimestamp(12),
-        comment: 'MGMT captured lightning in a bottle with this track. The psychedelic synth work, that funky bassline, and those trippy vocals create this perfect summer anthem vibe. Oracular Spectacular was such a groundbreaking album for indie music, and Electric Feel is its most infectious moment. Still sounds fresh and innovative after all these years.'
-      }
+      timestamp: getRandomTimestamp(12)
     },
     replies: [
       {
@@ -384,20 +327,7 @@ export const mockThreads: Thread[] = [
       castHash: 'thread5_post',
       author: mockUsers[6],
       text: 'Classic rock vibes only 🎸',
-      timestamp: getRandomTimestamp(15),
-      track: {
-        id: 'track15',
-        title: 'Bohemian Rhapsody',
-        artist: 'Queen',
-        url: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ',
-        source: 'youtube',
-        sourceId: 'fJ9rUzIMcZQ',
-        thumbnail: 'https://i.ytimg.com/vi/fJ9rUzIMcZQ/default.jpg',
-        likes: 78,
-        comments: 18,
-        timestamp: getRandomTimestamp(15),
-        comment: 'This isn\'t just a song, it\'s a complete musical journey. Freddie Mercury and Queen created something that transcends genres and generations. The operatic middle section, the hard rock breakdown, those gorgeous harmonies - it\'s all impossibly ambitious and yet it works perfectly. Nearly 6 minutes of pure genius. There will never be another song like Bohemian Rhapsody.'
-      }
+      timestamp: getRandomTimestamp(15)
     },
     replies: [
       {

@@ -1,9 +1,9 @@
 import { Component, createSignal, For } from 'solid-js';
 import { A } from '@solidjs/router';
-import { RowTrackCard } from '../components/common/TrackCard/NEW';
+import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
-import { mockThreads } from '../data/mockThreads';
+import { mockThreads, Thread } from '../data/mockThreads';
 
 // Placeholder functions for track actions
 const playTrack = (track: Track) => {
@@ -22,6 +22,15 @@ const replyToTrack = (track: Track) => {
 const ThreadsPage: Component = () => {
   const [sortBy, setSortBy] = createSignal<'recent' | 'popular'>('recent');
   const [threads] = createSignal<Thread[]>(mockThreads);
+
+  const handleUsernameClick = (username: string) => {
+    window.location.href = `/user/${username}`;
+  };
+
+  const handleArtistClick = (artist: string) => {
+    console.log('Filter by artist:', artist);
+    // TODO: Implement artist filtering or navigation
+  };
 
   return (
     <div style={{
@@ -105,19 +114,25 @@ const ThreadsPage: Component = () => {
       }}>
         <For each={threads()}>
           {(thread) => (
-            <A href={`/thread/${thread.id}`} style={{ 'text-decoration': 'none' }}>
-              {thread.initialPost.track && (
-                <div style={{ 'margin-bottom': 'var(--space-4)' }}>
-                  <RowTrackCard
-                    track={thread.initialPost.track}
-                    onPlay={playTrack}
-                    onLike={likeTrack}
-                    onReply={replyToTrack}
-                    showComment={true}
-                  />
-                </div>
-              )}
-            </A>
+            <ThreadCard
+              threadId={thread.id}
+              threadText={thread.initialPost.text}
+              creatorUsername={thread.initialPost.author.username}
+              creatorAvatar={thread.initialPost.author.pfpUrl}
+              timestamp={thread.initialPost.timestamp}
+              replyCount={thread.replyCount}
+              likeCount={thread.likeCount}
+              starterTrack={thread.initialPost.track ? {
+                id: thread.initialPost.track.id,
+                title: thread.initialPost.track.title,
+                artist: thread.initialPost.track.artist,
+                albumArt: thread.initialPost.track.thumbnail,
+                source: thread.initialPost.track.source
+              } : undefined}
+              onCardClick={() => window.location.href = `/thread/${thread.id}`}
+              onUsernameClick={() => handleUsernameClick(thread.initialPost.author.username)}
+              onArtistClick={() => thread.initialPost.track && handleArtistClick(thread.initialPost.track.artist)}
+            />
           )}
         </For>
       </div>

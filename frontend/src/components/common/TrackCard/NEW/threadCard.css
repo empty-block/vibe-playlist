@@ -1,0 +1,144 @@
+/* Thread Card - Simple & Clean Design */
+
+.thread-card {
+  width: 100%;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: transparent;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.thread-card:hover {
+  background: rgba(4, 202, 244, 0.02); /* subtle cyan tint */
+}
+
+/* Thread Text (The Question/Title) */
+.thread-card__text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+/* Expandable text inherits card styling */
+.thread-card__text .expandable-text {
+  /* ExpandableText component handles truncation and expansion */
+  /* See: /web-app/src/components/ui/ExpandableText.tsx */
+}
+
+/* Starter Track Row */
+.thread-card__track {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.thread-card__album-art {
+  width: 64px;
+  height: 64px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.thread-card__track-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.thread-card__track-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-card__track-artist {
+  font-size: 13px;
+  font-weight: 500;
+  color: #04caf4; /* neon-cyan */
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: text-shadow 200ms ease;
+}
+
+.thread-card__track-artist:hover {
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.6);
+}
+
+/* Creator & Stats Row */
+.thread-card__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.thread-card__creator {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.thread-card__username {
+  color: #e010e0; /* neon-magenta */
+  font-weight: 500;
+  cursor: pointer;
+  transition: text-shadow 200ms ease;
+}
+
+.thread-card__username:hover {
+  text-shadow: 0 0 8px rgba(224, 16, 224, 0.6);
+}
+
+.thread-card__timestamp {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.thread-card__stats {
+  display: flex;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.thread-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Responsive Behavior - Mobile */
+@media (max-width: 640px) {
+  .thread-card {
+    padding: 16px;
+  }
+
+  .thread-card__text {
+    font-size: 15px;
+  }
+
+  .thread-card__album-art {
+    width: 56px;
+    height: 56px;
+  }
+
+  .thread-card__track-title {
+    font-size: 13px;
+  }
+
+  .thread-card__track-artist {
+    font-size: 12px;
+  }
+
+  .thread-card__footer {
+    font-size: 12px;
+  }
+}

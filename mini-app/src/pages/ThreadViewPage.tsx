@@ -1,6 +1,6 @@
 import { Component, createSignal, For, createMemo } from 'solid-js';
 import { useParams, A } from '@solidjs/router';
-import { RowTrackCard } from '../components/common/TrackCard/NEW';
+import { RowTrackCard, ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { getThreadById, mockThreads } from '../data/mockThreads';
@@ -69,14 +69,24 @@ const ThreadViewPage: Component = () => {
         padding: 'var(--space-4)',
         'padding-bottom': '120px' // Space for bottom nav + player
       }}>
-        {/* Initial Post */}
+        {/* Thread Starter - Prominent Display */}
         <div style={{ 'margin-bottom': 'var(--space-6)' }}>
-          <RowTrackCard
-            track={thread().initialPost.track}
-            onPlay={playTrack}
-            onLike={likeTrack}
-            onReply={replyToTrack}
-            showComment={true}
+          <ThreadCard
+            threadId={thread().id}
+            threadText={thread().initialPost.text}
+            creatorUsername={thread().initialPost.author.username}
+            creatorAvatar={thread().initialPost.author.pfpUrl}
+            timestamp={thread().initialPost.timestamp}
+            replyCount={thread().replyCount}
+            likeCount={thread().likeCount}
+            starterTrack={thread().initialPost.track ? {
+              id: thread().initialPost.track.id,
+              title: thread().initialPost.track.title,
+              artist: thread().initialPost.track.artist,
+              albumArt: thread().initialPost.track.thumbnail,
+              source: thread().initialPost.track.source
+            } : undefined}
+            // No onCardClick - we're already on the thread detail page
           />
         </div>
 
