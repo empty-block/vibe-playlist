@@ -2,7 +2,7 @@ import { Component } from 'solid-js';
 
 // Navigation section types
 export type SectionColor = 'blue' | 'cyan' | 'green' | 'pink';
-export type SectionId = 'home' | 'library' | 'stats' | 'profile';
+export type SectionId = 'home' | 'library' | 'activity' | 'stats' | 'profile';
 
 // SVG Icon Components
 export interface IconProps {
@@ -175,6 +175,28 @@ export const ProfileIcon: Component<IconProps> = (props) => (
   </svg>
 );
 
+// Activity Icon (Network Pulse) - Shows activity/network stream
+export const ActivityIcon: Component<IconProps> = (props) => (
+  <svg class={`activity-icon ${props.class || ''}`} width="28" height="28" viewBox="0 0 28 28" fill="none">
+    {/* Network nodes */}
+    <circle cx="14" cy="6" r="2" fill="currentColor"/>
+    <circle cx="8" cy="14" r="2" fill="currentColor"/>
+    <circle cx="20" cy="14" r="2" fill="currentColor"/>
+    <circle cx="14" cy="22" r="2" fill="currentColor"/>
+
+    {/* Connecting lines */}
+    <line x1="14" y1="8" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+    <line x1="12" y1="7" x2="9" y2="12" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+    <line x1="16" y1="7" x2="19" y2="12" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+
+    {/* Pulse rings */}
+    <circle cx="14" cy="6" r="4" stroke="currentColor" stroke-width="1" fill="none" opacity="0.3">
+      <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+);
+
 // Terminal Icon - Retro terminal/command prompt
 export const TerminalIcon: Component<IconProps> = (props) => (
   <svg class={`terminal-icon ${props.class || ''}`} width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -229,6 +251,13 @@ export const navigationSections: readonly SidebarSection[] = [
     icon: LibraryIcon,
     color: 'cyan',
     isPrimary: true
+  },
+  {
+    id: 'activity',
+    href: '/activity',
+    label: 'Activity',
+    icon: ActivityIcon,
+    color: 'blue'
   },
   {
     id: 'home',

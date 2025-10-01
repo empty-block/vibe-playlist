@@ -51,7 +51,7 @@ export interface Thread {
 }
 
 // Mock users
-const mockUsers: ThreadAuthor[] = [
+export const mockUsers: ThreadAuthor[] = [
   { fid: 1, username: 'musiclover420', displayName: 'Music Lover', pfpUrl: 'https://i.pravatar.cc/150?img=1' },
   { fid: 2, username: 'vinylhead', displayName: 'Vinyl Head', pfpUrl: 'https://i.pravatar.cc/150?img=2' },
   { fid: 3, username: 'beatmaster', displayName: 'Beat Master', pfpUrl: 'https://i.pravatar.cc/150?img=3' },
