@@ -169,3 +169,14 @@
   font-family: var(--font-interface);
   line-height: 1.5;
 }
+
+/* ===== Responsive - Tablet and Desktop ===== */
+
+/* Constrained width for better readability on wide screens */
+@media (min-width: 768px) {
+  .profile-content {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-6);
+  }
+}

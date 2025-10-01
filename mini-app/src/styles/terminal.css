@@ -751,6 +751,15 @@
   }
 }
 
+/* Tablet and desktop - constrained width for readability */
+@media (min-width: 768px) {
+  .activity-page > div:nth-child(2) {
+    /* Target the scrollable feed div */
+    max-width: 640px;
+    margin: 0 auto;
+  }
+}
+
 /* Mobile optimizations */
 @media (max-width: 640px) {
   .terminal-activity-block {
