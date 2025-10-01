@@ -39,19 +39,6 @@ const ActivityPage: Component = () => {
           <span class="border-v">│</span>
         </div>
 
-        {/* Status line */}
-        <div class="terminal-status-line">
-          <span class="border-v">│</span>
-          <span class="status-indicator">[●]</span>
-          <span class="status-text">CONNECTED</span>
-          <span class="status-separator">|</span>
-          <span>{mockActivityFeed.length} NODES</span>
-          <span class="status-separator">|</span>
-          <span>LATENCY: 12ms</span>
-          <span style={{ 'margin-left': 'auto' }}></span>
-          <span class="border-v">│</span>
-        </div>
-
         {/* Bottom border */}
         <div style={{ color: 'var(--terminal-muted)' }}>
           <span>└────────────────────────────────────────────────────────────────┘</span>

@@ -136,14 +136,8 @@
 }
 
 .terminal-cursor {
-  animation: cursor-blink 1s step-end infinite;
   color: var(--terminal-white);
   background: var(--terminal-white);
-}
-
-@keyframes cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 .terminal-status-line {
@@ -753,6 +747,11 @@
 
 /* Tablet and desktop - constrained width for readability */
 @media (min-width: 768px) {
+  .terminal-header {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
   .activity-page > div:nth-child(2) {
     /* Target the scrollable feed div */
     max-width: 640px;

@@ -17,13 +17,9 @@ const ReplyActivity: Component<ReplyActivityProps> = (props) => {
 
   return (
     <div class="terminal-activity-block terminal-activity-block--reply">
-      {/* Top border with metadata */}
+      {/* Top border */}
       <div class="terminal-block-header">
-        <span>╭─[</span>
-        <span class="packet-type">THREAD_TRACE</span>
-        <span>]──────────────────────────────[</span>
-        <span class="packet-id">ID: 0x{packetId}</span>
-        <span>]─╮</span>
+        <span>╭─────────────────────────────────────────────────────────────┬──[0x{packetId}]─╮</span>
       </div>
 
       {/* Metadata line */}
