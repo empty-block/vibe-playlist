@@ -125,40 +125,39 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
             <span class="row-card__separator-dot">•</span>
             <span class="row-card__timestamp">{formatTimeAgo(props.track.timestamp)}</span>
           </div>
-        </div>
 
-        {/* Platform Badge */}
-        <div class="row-card__platform">{getPlatformIcon(props.track.source)}</div>
-      </div>
-
-      {/* Comment Row - Social buttons on left, comment on right */}
-      <Show when={props.showComment !== false && props.track.comment}>
-        <div class="row-card__comment-row">
-          {/* Social buttons - under thumbnail */}
-          <div class="row-card__social-buttons">
+          {/* Social Row - Third row within info column */}
+          <div class="row-card__social-row">
             <button
               class="row-card__social-btn"
               onClick={handleReplyClick}
               aria-label={`${props.track.replies} replies`}
             >
-              <span>💬</span>
-              <span>{props.track.replies}</span>
+              <span class="row-card__social-icon">💬</span>
+              <span class="row-card__social-count">{props.track.replies} replies</span>
             </button>
             <button
               class="row-card__social-btn"
               onClick={handleLikeClick}
               aria-label={`${props.track.likes} likes`}
             >
-              <span>❤️</span>
-              <span>{props.track.likes}</span>
+              <span class="row-card__social-icon">❤️</span>
+              <span class="row-card__social-count">{props.track.likes} likes</span>
             </button>
           </div>
+        </div>
 
+        {/* Platform Badge */}
+        <div class="row-card__platform">{getPlatformIcon(props.track.source)}</div>
+      </div>
+
+      {/* Comment Row - Only if comment exists */}
+      <Show when={props.showComment !== false && props.track.comment}>
+        <div class="row-card__comment-row">
           {/* Comment text - expandable */}
           <div
             class="row-card__comment-text"
             onClick={props.track.comment.length > 60 ? handleExpandClick : undefined}
-            style={{ cursor: props.track.comment.length > 60 ? 'pointer' : 'default' }}
           >
             <div class={commentExpanded() ? "row-card__comment row-card__comment--expanded" : "row-card__comment"}>
               {commentExpanded() ? props.track.comment : truncateText(props.track.comment, 60)}

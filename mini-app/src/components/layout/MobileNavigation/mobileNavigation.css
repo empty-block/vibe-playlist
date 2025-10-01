@@ -189,12 +189,7 @@
     0 0 8px var(--library-glow);
 }
 
-/* Hide mobile navigation on desktop */
-@media (min-width: 768px) {
-  .mobile-nav {
-    display: none;
-  }
-}
+/* Mobile-only app - no need to hide */
 
 /* Landscape Phone Adjustments */
 @media (max-width: 767px) and (orientation: landscape) and (max-height: 500px) {

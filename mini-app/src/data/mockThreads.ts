@@ -87,7 +87,7 @@ export const mockThreads: Thread[] = [
         likes: 24,
         comments: 8,
         timestamp: getRandomTimestamp(2),
-        comment: 'What are you jamming to right now? 🎧',
+        comment: 'This song completely changed my perspective on what rock music could be in the late 90s. The way Dave Grohl builds from that quiet intro into the explosive chorus still gives me chills every single time. It\'s become my go-to track when I need to feel something real.',
         duration: '4:10',
         addedBy: 'musiclover420',
         userAvatar: 'https://i.pravatar.cc/150?img=1',
@@ -112,7 +112,7 @@ export const mockThreads: Thread[] = [
           likes: 15,
           comments: 0,
           timestamp: getRandomTimestamp(1.5),
-          comment: 'This is my jam rn! 🔥'
+          comment: 'I know everyone says this song is overplayed but honestly I don\'t care - it hits different every single time. Brandon Flowers\' vocals on this track are absolutely perfect, and that guitar riff is just chef\'s kiss. Been on repeat all week and I\'m not ashamed.'
         },
         likes: 15
       },
@@ -132,7 +132,7 @@ export const mockThreads: Thread[] = [
           likes: 18,
           comments: 0,
           timestamp: getRandomTimestamp(1),
-          comment: 'Can\'t stop listening to this one'
+          comment: 'There\'s something about Kurt\'s raw vocal delivery that just cuts straight through to your soul. This track defined an entire generation and somehow it still sounds as urgent and relevant today as it did in 1991. The dirty guitar tone, the explosive drums - it\'s all just perfect chaos. Still my favorite song to blast in the car when I need to let it all out.'
         },
         likes: 18
       }
@@ -158,7 +158,7 @@ export const mockThreads: Thread[] = [
         likes: 42,
         comments: 12,
         timestamp: getRandomTimestamp(5),
-        comment: 'Name your favorite 90s jams 📼'
+        comment: 'I don\'t care what anyone says about this being overplayed at every party - Wonderwall is an absolute masterpiece of songwriting. Noel Gallagher captured something timeless here. The chord progression is deceptively simple but it works perfectly with Liam\'s distinctive vocals. This song basically WAS the 90s for me and my friends.'
       }
     },
     replies: [
@@ -178,7 +178,7 @@ export const mockThreads: Thread[] = [
           likes: 28,
           comments: 0,
           timestamp: getRandomTimestamp(4.5),
-          comment: 'Absolute classic!'
+          comment: 'Green Day\'s Dookie album was the soundtrack to my teenage years, and Basket Case is the crown jewel. Billie Joe\'s lyrics about anxiety and paranoia were so ahead of their time. The fast-paced punk energy combined with that insanely catchy melody - it\'s no wonder this track became an anthem. Still gets me pumped every time I hear those opening power chords.'
         },
         likes: 28
       },
@@ -198,7 +198,7 @@ export const mockThreads: Thread[] = [
           likes: 22,
           comments: 0,
           timestamp: getRandomTimestamp(4),
-          comment: 'This was THE song'
+          comment: 'Chris Cornell had one of the most incredible voices in rock history, and this track showcases it perfectly. The psychedelic guitar work, the haunting melody, those surreal lyrics - Black Hole Sun is a masterclass in creating atmosphere. The music video was absolutely iconic too. RIP to a legend who gave us so many incredible songs.'
         },
         likes: 22
       },
@@ -218,7 +218,7 @@ export const mockThreads: Thread[] = [
           likes: 31,
           comments: 0,
           timestamp: getRandomTimestamp(3),
-          comment: 'Peak 90s right here'
+          comment: 'Before OK Computer made them art rock gods, Radiohead gave us this raw, vulnerable anthem about feeling like you don\'t belong. Thom Yorke\'s falsetto in the chorus hits so hard emotionally. That explosive guitar breakdown by Jonny Greenwood is pure catharsis. This song spoke to every outsider in the 90s and it still resonates today.'
         },
         likes: 31
       }
@@ -244,7 +244,7 @@ export const mockThreads: Thread[] = [
         likes: 56,
         comments: 15,
         timestamp: getRandomTimestamp(8),
-        comment: 'Who are the best hip hop artists ever? 🎤'
+        comment: 'Biggie\'s storytelling on this track is absolutely legendary. The way he chronicles his come-up from struggle to success over that smooth Mtume sample is hip-hop perfection. His flow is effortless, his wordplay is iconic, and the production is timeless. This is THE rags-to-riches anthem. When that "It was all a dream" line hits, you know you\'re about to hear something special.'
       }
     },
     replies: [
@@ -264,7 +264,7 @@ export const mockThreads: Thread[] = [
           likes: 38,
           comments: 0,
           timestamp: getRandomTimestamp(7),
-          comment: 'The GOAT 🐐'
+          comment: 'Nas is a poet and this track proves it beyond any doubt. The vivid street narratives, the introspective lyrics, that legendary DJ Premier beat with the piano loop - everything about this song is pure hip-hop excellence. Illmatic is a perfect album and this is its crown jewel. Nas painted pictures with words like nobody else could.'
         },
         likes: 38
       },
@@ -284,7 +284,7 @@ export const mockThreads: Thread[] = [
           likes: 29,
           comments: 0,
           timestamp: getRandomTimestamp(6),
-          comment: 'Can\'t forget this one'
+          comment: 'This is where conscious hip-hop truly began. Grandmaster Flash and Melle Mel gave voice to the struggles of inner-city life in a way that was both brutally honest and incredibly powerful. The Message showed that rap could be more than just party music - it could tell real stories and shine a light on social issues. An absolute foundational track for the entire genre.'
         },
         likes: 29
       }
@@ -310,7 +310,7 @@ export const mockThreads: Thread[] = [
         likes: 33,
         comments: 9,
         timestamp: getRandomTimestamp(12),
-        comment: 'Hot indie tracks 🔥'
+        comment: 'MGMT captured lightning in a bottle with this track. The psychedelic synth work, that funky bassline, and those trippy vocals create this perfect summer anthem vibe. Oracular Spectacular was such a groundbreaking album for indie music, and Electric Feel is its most infectious moment. Still sounds fresh and innovative after all these years.'
       }
     },
     replies: [
@@ -330,7 +330,7 @@ export const mockThreads: Thread[] = [
           likes: 26,
           comments: 0,
           timestamp: getRandomTimestamp(11),
-          comment: 'Love this vibe'
+          comment: 'That opening guitar riff is one of the most recognizable intros in indie rock history. Franz Ferdinand took post-punk revival and made it impossibly catchy. The way this song builds from that quiet intro into the explosive "I say don\'t you know" section is just perfect songwriting. This track made indie rock cool again and got everyone dancing.'
         },
         likes: 26
       },
@@ -350,7 +350,7 @@ export const mockThreads: Thread[] = [
           likes: 21,
           comments: 0,
           timestamp: getRandomTimestamp(10),
-          comment: 'This is fire 🔥'
+          comment: 'Florence Welch has one of the most powerful voices in modern music, and this track showcases it perfectly. The way it builds from those gentle harp plucks into this explosive, euphoric celebration is absolutely transcendent. This song makes you want to run through a field with your arms wide open. Pure emotional release in musical form.'
         },
         likes: 21
       },
@@ -370,7 +370,7 @@ export const mockThreads: Thread[] = [
           likes: 35,
           comments: 0,
           timestamp: getRandomTimestamp(9),
-          comment: 'Adding to my playlist rn'
+          comment: 'Arctic Monkeys evolved so much from their early days, and this track from AM shows them at their absolute peak. That sultry, heavy riff is hypnotic, and Alex Turner\'s vocals are dripping with swagger and vulnerability at the same time. The production is so tight and atmospheric. This song is pure late-night driving vibes. Absolutely iconic.'
         },
         likes: 35
       }
@@ -396,7 +396,7 @@ export const mockThreads: Thread[] = [
         likes: 78,
         comments: 18,
         timestamp: getRandomTimestamp(15),
-        comment: 'Classic rock vibes only 🎸'
+        comment: 'This isn\'t just a song, it\'s a complete musical journey. Freddie Mercury and Queen created something that transcends genres and generations. The operatic middle section, the hard rock breakdown, those gorgeous harmonies - it\'s all impossibly ambitious and yet it works perfectly. Nearly 6 minutes of pure genius. There will never be another song like Bohemian Rhapsody.'
       }
     },
     replies: [
@@ -416,7 +416,7 @@ export const mockThreads: Thread[] = [
           likes: 62,
           comments: 0,
           timestamp: getRandomTimestamp(14),
-          comment: 'Absolute masterpiece'
+          comment: 'Eight minutes of pure rock perfection. The way this song builds from that delicate acoustic intro through the mystical middle section to Jimmy Page\'s absolutely face-melting guitar solo is legendary. Robert Plant\'s vocals are incredible throughout. This is the definition of a classic rock epic. Every second of this song earns its place in rock history.'
         },
         likes: 62
       },
@@ -436,7 +436,7 @@ export const mockThreads: Thread[] = [
           likes: 54,
           comments: 0,
           timestamp: getRandomTimestamp(13),
-          comment: 'This never gets old'
+          comment: 'The storytelling in this song is absolutely captivating - you get drawn into this mysterious narrative about excess and entrapment. Don Henley\'s vocals are hauntingly perfect, and that dual guitar solo outro is one of the greatest moments in rock music history. The Eagles crafted something truly special here. A song that defines an era and still sounds incredible today.'
         },
         likes: 54
       }

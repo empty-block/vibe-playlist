@@ -1,61 +1,47 @@
-/* Container - CSS Grid layout with controls on left */
+/* Mobile-only player for mini-app */
 .playerContainer {
-  height: 140px;
-  position: fixed;
-  bottom: 0; /* Desktop default */
-  z-index: 60; /* Higher than mobile nav (50) and sidebar (40) */
-  border-top: 1px solid var(--neon-cyan);
-  background: #0d0d0d !important; /* Fully opaque solid background */
+  /* Core Mobile Layout */
+  height: auto !important;
+  max-height: 50vh;
+  bottom: 72px !important; /* Above mobile nav */
+  background: #0d0d0d !important;
   background-color: #0d0d0d !important;
-  display: grid;
-  grid-template-columns: 400px 1fr 400px;
-  grid-template-areas: "info controls media";
-  gap: var(--space-6);
-  padding: 0 var(--space-6);
-  align-items: center;
-
-  /* Mobile default: full width */
+  opacity: 1 !important;
+  position: fixed !important;
+  isolation: isolate;
+  z-index: 60;
+  border-top: 1px solid var(--neon-cyan);
   left: 0;
   width: 100vw;
+
+  /* 2-Row Grid: Embed on top, Info + Controls side by side below */
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "media media"
+    "info controls";
+  gap: var(--space-3);
+  padding: 16px 16px 12px;
+  align-items: center;
+  overflow-y: auto;
 }
 
-/* Desktop: Sidebar-aware positioning */
-@media (min-width: 1024px) {
-  .playerContainer {
-    left: 282px;                    /* After sidebar (280px) + border (2px) */
-    width: calc(100vw - 282px);     /* Remaining width */
-  }
-}
-
-/* Tablet: Full width with considerations */
-@media (max-width: 1023px) and (min-width: 768px) {
-  .playerContainer {
-    left: 0;
-    width: 100vw;
-  }
-}
-
-/* Track Info Section - Left side */
+/* Track Info - Left Side, Compact */
 .trackInfo {
   grid-area: info;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: var(--space-2);
-  min-width: 300px;
-  padding: 0 var(--space-4);
-}
-
-.trackHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
+  width: 100%;
+  padding: 0 var(--space-2) 0 0;
 }
 
 .trackTitle {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-sm);
   color: var(--neon-cyan);
   font-weight: 600;
   margin: 0;
@@ -67,31 +53,45 @@
   display: flex;
   align-items: center;
   width: 100%;
+  text-align: left;
+  justify-content: flex-start;
 }
 
 .artistName {
   font-family: var(--font-interface);
-  font-size: var(--text-lg);
+  font-size: 12px;
   color: var(--neon-magenta);
   cursor: pointer;
   transition: all 200ms ease;
   margin: 0;
   width: 100%;
+  text-align: left;
 }
 
-.artistName:hover {
+.artistName:active {
   color: var(--light-text);
   text-shadow: 0 0 8px var(--neon-magenta);
 }
 
 .socialContext {
   font-family: var(--font-interface);
-  font-size: var(--text-sm);
+  font-size: 10px;
   color: var(--muted-text);
   display: flex;
   align-items: center;
   gap: var(--space-2);
   width: 100%;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.sharedByLabel {
+  opacity: 0.6;
+}
+
+.username {
+  color: var(--neon-cyan);
+  font-weight: 500;
 }
 
 .statusIndicator {
@@ -124,19 +124,19 @@
   letter-spacing: 0.05em;
 }
 
-/* Controls Section - Center layout */
+/* Controls - Right Side, Compact Row */
 .controls {
   grid-area: controls;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: 0 0 0 var(--space-2);
 }
 
-
 .controlButton {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border: 2px solid var(--neon-cyan);
   background: var(--darker-bg);
   color: var(--neon-cyan);
@@ -150,15 +150,11 @@
   position: relative;
 }
 
-.controlButton:hover {
+.controlButton:active {
   background: var(--neon-cyan);
   color: var(--darker-bg);
-  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4);
-  transform: translateY(-1px);
-}
-
-.controlButton:active {
-  transform: translateY(0);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
+  transform: scale(0.95);
 }
 
 .controlButton:disabled {
@@ -168,38 +164,45 @@
 }
 
 .playButton {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border: 3px solid var(--neon-blue);
   background: var(--neon-blue);
   color: var(--light-text);
-  font-size: 22px;
+  font-size: 20px;
   position: relative;
   box-shadow: 0 0 16px rgba(59, 0, 253, 0.4);
 }
 
-.playButton:hover {
+.playButton:active {
   background: var(--light-text);
   color: var(--neon-blue);
-  box-shadow: 0 0 16px rgba(59, 0, 253, 0.6);
+  box-shadow: 0 0 16px rgba(59, 0, 253, 0.8);
+  transform: scale(0.95);
 }
 
-/* Media Section - Right side without border */
+/* Media Section - YouTube/Spotify embed */
 .mediaSection {
   grid-area: media;
+  display: block !important;
   width: 100%;
-  height: 120px;
+  height: 200px;
+  margin-bottom: var(--space-2);
   border: none;
   border-radius: 4px;
   overflow: hidden;
   background: var(--darker-bg);
+  transition: all 300ms ease;
 }
 
-.mediaSection.hidden {
-  display: none;
+.mediaSectionHidden {
+  height: 0 !important;
+  margin-bottom: 0 !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* Enhanced Progress Section */
+/* Progress Bar */
 .progressContainer {
   position: absolute;
   bottom: 0;
@@ -212,8 +215,8 @@
 
 .progressBar {
   height: 100%;
-  background: linear-gradient(90deg, 
-    var(--neon-blue) 0%, 
+  background: linear-gradient(90deg,
+    var(--neon-blue) 0%,
     var(--neon-cyan) 100%
   );
   position: relative;
@@ -222,310 +225,29 @@
 
 .progressHandle {
   position: absolute;
-  right: -6px;
-  top: -3px;
-  width: 12px;
-  height: 12px;
+  right: -8px;
+  top: -6px;
+  width: 16px;
+  height: 16px;
   background: var(--neon-cyan);
   border-radius: 50%;
-  opacity: 0;
+  opacity: 1;
   transition: opacity 200ms ease;
   box-shadow: 0 0 8px var(--neon-cyan);
 }
 
-.progressContainer:hover .progressHandle {
-  opacity: 1;
-}
-
-/* New: Shuffle Button Styles */
-.shuffleButton {
-  border-color: var(--neon-pink);
-  color: var(--neon-pink);
-}
-
-.shuffleButton.active {
-  background: var(--neon-pink);
-  color: var(--darker-bg);
-  box-shadow: 0 0 12px rgba(249, 6, 214, 0.4);
-}
-
-/* New: Repeat Button Styles */
-.repeatButton {
-  border-color: var(--neon-magenta);
-  color: var(--neon-magenta);
-}
-
-.repeatButton.active {
-  background: var(--neon-magenta);
-  color: var(--darker-bg);
-  box-shadow: 0 0 12px rgba(255, 155, 0, 0.4);
-}
-
-.repeatOne {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  font-size: 10px;
-  font-weight: bold;
-  width: 14px;
-  height: 14px;
-  background: var(--neon-magenta);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--darker-bg);
-}
-
-/* Chat Button Styles */
+/* Hide desktop-only controls */
+.shuffleButton,
+.repeatButton,
 .chatButton {
-  border-color: var(--neon-green);
-  color: var(--neon-green);
+  display: none;
 }
-
-.chatButton:hover {
-  background: var(--neon-green);
-  color: var(--darker-bg);
-  box-shadow: 0 0 12px rgba(0, 249, 42, 0.4);
-}
-
-/* ========================================
-   MOBILE RESPONSIVE (0-767px)
-   Compact player above mobile nav
-   ======================================== */
-@media (max-width: 767px) {
-  .playerContainer {
-    /* Core Mobile Layout */
-    height: auto !important; /* Let content determine height */
-    max-height: 50vh; /* Don't take up more than half screen */
-    bottom: 72px !important; /* Above mobile nav - FORCE IT */
-    background: #0d0d0d !important;
-    background-color: #0d0d0d !important;
-    opacity: 1 !important;
-    position: fixed !important;
-    isolation: isolate;
-
-    /* 2-Row Grid: Embed on top, Info + Controls side by side below */
-    grid-template-columns: 60% 40%;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "media media"
-      "info controls";
-    gap: var(--space-3);
-    padding: 16px 16px 12px;
-    align-items: center;
-    overflow-y: auto; /* Allow scroll if needed */
-  }
-
-  /* Track Info - Left Side, Compact */
-  .trackInfo {
-    width: 100%;
-    min-width: auto;
-    padding: 0 var(--space-2) 0 0;
-    gap: var(--space-1); /* 4px spacing */
-    align-items: flex-start; /* Left align */
-  }
-
-  .trackTitle {
-    font-size: var(--text-sm); /* Smaller on mobile */
-    text-align: left;
-    justify-content: flex-start;
-  }
-
-  .artistName {
-    font-size: 12px;
-    text-align: left;
-  }
-
-  .socialContext {
-    font-size: 10px; /* Extra small */
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .sharedByLabel {
-    opacity: 0.6;
-  }
-
-  .username {
-    color: var(--neon-cyan);
-    font-weight: 500;
-  }
-
-  /* Controls - Right Side, Compact Row */
-  .controls {
-    justify-content: flex-end;
-    gap: var(--space-2); /* Tighter spacing */
-    align-items: center;
-    padding: 0 0 0 var(--space-2);
-  }
-
-  /* Control Buttons - Smaller Touch Targets */
-  .controlButton {
-    width: 40px; /* Smaller */
-    height: 40px;
-    font-size: 16px;
-  }
-
-  .playButton {
-    width: 52px; /* Smaller but prominent */
-    height: 52px;
-    font-size: 20px;
-  }
-
-  /* Show YouTube embed on mobile */
-  .mediaSection {
-    display: block !important;
-    width: 100%;
-    height: 200px; /* Compact embed height */
-    margin-bottom: var(--space-2);
-  }
-
-  .shuffleButton,
-  .repeatButton {
-    display: none; /* Hide shuffle/repeat on mobile */
-  }
-
-  .chatButton {
-    display: none; /* Hide chat button on mobile */
-  }
-
-  /* Progress Bar - Inline at bottom */
-  .progressContainer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-  }
-
-  .progressHandle {
-    width: 16px; /* Larger for touch */
-    height: 16px;
-    top: -6px;
-    right: -8px;
-  }
-
-  /* Touch-Optimized Interactions */
-  .controlButton:hover {
-    /* Disable hover animations on touch devices */
-    transform: none;
-    box-shadow: none;
-  }
-
-  .controlButton:active {
-    /* Enhanced active state for touch feedback */
-    background: var(--neon-cyan);
-    color: var(--darker-bg);
-    box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
-    transform: scale(0.95);
-  }
-
-  .playButton:active {
-    background: var(--light-text);
-    color: var(--neon-blue);
-    box-shadow: 0 0 16px rgba(59, 0, 253, 0.8);
-    transform: scale(0.95);
-  }
-
-  .progressContainer:hover .progressHandle {
-    opacity: 1; /* Always show handle on mobile for better touch targeting */
-  }
-
-  .artistName:hover {
-    /* Disable hover on mobile */
-    color: var(--neon-magenta);
-    text-shadow: none;
-  }
-
-  .artistName:active {
-    /* Active state for touch feedback */
-    color: var(--light-text);
-    text-shadow: 0 0 8px var(--neon-magenta);
-  }
-}
-
-/* ========================================
-   TABLET RESPONSIVE (768px-1023px)
-   Desktop player, full width
-   ======================================== */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .playerContainer {
-    /* Full width on tablet */
-    left: 0;
-    width: 100vw;
-    height: 140px; /* Desktop height */
-
-    /* Desktop grid layout */
-    grid-template-columns: 400px 1fr 400px;
-    grid-template-areas: "info controls media";
-    gap: var(--space-6);
-    padding: 0 var(--space-6);
-  }
-
-  /* Show all desktop elements */
-  .mediaSection {
-    display: block;
-  }
-
-  .shuffleButton,
-  .repeatButton,
-  .chatButton {
-    display: flex;
-  }
-
-  /* Desktop-sized controls */
-  .controlButton {
-    width: 44px;
-    height: 44px;
-    font-size: 16px;
-  }
-
-  .playButton {
-    width: 56px;
-    height: 56px;
-    font-size: 22px;
-  }
-
-  /* Desktop track info */
-  .trackInfo {
-    align-items: flex-start;
-    text-align: left;
-    min-width: 300px;
-    padding: 0 var(--space-4);
-  }
-
-  .trackTitle,
-  .artistName {
-    text-align: left;
-    justify-content: flex-start;
-  }
-
-  .trackTitle {
-    font-size: var(--text-xl);
-  }
-
-  .artistName {
-    font-size: var(--text-lg);
-  }
-
-  .socialContext {
-    font-size: var(--text-sm);
-    justify-content: flex-start;
-  }
-}
-
-/* ========================================
-   ACCESSIBILITY & POLISH
-   ======================================== */
 
 /* Safe area insets for notched devices */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
-  @media (max-width: 767px) {
-    .playerContainer {
-      padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
-      bottom: calc(72px + env(safe-area-inset-bottom));
-    }
+  .playerContainer {
+    padding-bottom: max(var(--space-2), env(safe-area-inset-bottom));
+    bottom: calc(72px + env(safe-area-inset-bottom));
   }
 }
 

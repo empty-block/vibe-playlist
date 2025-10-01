@@ -192,8 +192,8 @@ const Player: Component<PlayerProps> = (props) => {
           </button>
         </div>
 
-        {/* Media Section - Right */}
-        <div class={styles.mediaSection}>
+        {/* Media Section - Right (hide when paused) */}
+        <div class={`${styles.mediaSection} ${!isPlaying() ? styles.mediaSectionHidden : ''}`}>
           {props.mediaComponent}
         </div>
 
