@@ -77,8 +77,11 @@ const ThreadViewPage: Component = () => {
               title: thread().initialPost.track.title,
               artist: thread().initialPost.track.artist,
               albumArt: thread().initialPost.track.thumbnail,
-              source: thread().initialPost.track.source
+              source: thread().initialPost.track.source,
+              url: thread().initialPost.track.url,
+              sourceId: thread().initialPost.track.sourceId
             } : undefined}
+            onTrackPlay={playTrack}
           />
         </div>
 
@@ -110,8 +113,11 @@ const ThreadViewPage: Component = () => {
                       title: reply.track.title,
                       artist: reply.track.artist,
                       albumArt: reply.track.thumbnail,
-                      source: reply.track.source
+                      source: reply.track.source,
+                      url: reply.track.url,
+                      sourceId: reply.track.sourceId
                     }}
+                    onTrackPlay={playTrack}
                   />
                 </div>
               )}

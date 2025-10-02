@@ -162,6 +162,30 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  cursor: pointer;
+  transition: background 200ms ease;
+}
+
+.thread-track-preview:hover {
+  background: rgba(224, 16, 224, 0.06);
+}
+
+.thread-track-preview--playing {
+  background: linear-gradient(90deg, rgba(0, 249, 42, 0.05), rgba(224, 16, 224, 0.03));
+  border-left: 2px solid #00f92a;
+}
+
+.thread-track-preview--playing .thread-track-thumbnail {
+  animation: playing-pulse 2s ease-in-out infinite;
+}
+
+@keyframes playing-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(0, 249, 42, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(0, 249, 42, 0.5);
+  }
 }
 
 .thread-track-thumbnail {
@@ -169,6 +193,50 @@
   height: 40px;
   flex-shrink: 0;
   object-fit: cover;
+  position: relative;
+  transition: all 200ms ease;
+}
+
+/* Play icon overlay on active (touch) */
+.thread-track-preview:not(.thread-track-preview--playing):active .thread-track-thumbnail::before {
+  content: '▶';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.7);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  z-index: 2;
+}
+
+/* Pause icon overlay when playing and touching */
+.thread-track-preview.thread-track-preview--playing:active .thread-track-thumbnail::before {
+  content: '⏸';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.7);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  z-index: 2;
 }
 
 .thread-track-info {
@@ -188,12 +256,6 @@
 .thread-track-artist {
   color: var(--neon-cyan);
   font-size: 11px;
-  cursor: pointer;
-  transition: text-shadow 200ms ease;
-}
-
-.thread-track-artist:hover {
-  text-shadow: 0 0 2px var(--neon-cyan);
 }
 
 /* ===== STATS FOOTER ===== */

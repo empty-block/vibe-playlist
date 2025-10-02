@@ -1,5 +1,6 @@
 import { Component, Show } from 'solid-js';
 import ExpandableText from '../../ExpandableText';
+import { currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
 import './threadCard.css';
 
 interface ThreadCardProps {
@@ -16,10 +17,13 @@ interface ThreadCardProps {
     artist: string;
     albumArt: string;
     source: string;
+    url?: string;
+    sourceId?: string;
   };
   onCardClick?: () => void;
   onUsernameClick?: (e: Event) => void;
   onArtistClick?: (e: Event) => void;
+  onTrackPlay?: (track: any) => void;
 }
 
 const ThreadCard: Component<ThreadCardProps> = (props) => {
@@ -42,6 +46,31 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
       props.onArtistClick(e);
     }
   };
+
+  const handleTrackClick = (e: Event) => {
+    e.stopPropagation();
+    if (props.starterTrack && props.onTrackPlay) {
+      const isCurrentTrack = currentTrack()?.id === props.starterTrack.id;
+      const isTrackPlaying = isCurrentTrack && isPlaying();
+
+      if (isTrackPlaying) {
+        setIsPlaying(false);
+      } else {
+        props.onTrackPlay({
+          id: props.starterTrack.id,
+          title: props.starterTrack.title,
+          artist: props.starterTrack.artist,
+          thumbnail: props.starterTrack.albumArt,
+          source: props.starterTrack.source,
+          url: props.starterTrack.url || '',
+          sourceId: props.starterTrack.sourceId || ''
+        });
+      }
+    }
+  };
+
+  const isCurrentTrack = () => props.starterTrack && currentTrack()?.id === props.starterTrack.id;
+  const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   const formatTimeAgo = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -105,42 +134,10 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
         <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
       </div>
 
-      {/* Divider between user and track */}
+      {/* Divider between user and content */}
       <div class="thread-card-divider">
         <span>├────────────────────────────────────────────────────────────────────────┤</span>
       </div>
-
-      {/* Track preview if present */}
-      <Show when={props.starterTrack}>
-        {(track) => (
-          <>
-            <div class="thread-track-preview">
-              <span class="border-v">│</span>
-              <img
-                src={track().albumArt}
-                class="thread-track-thumbnail"
-                alt={`Album art for ${track().title}`}
-                loading="lazy"
-              />
-              <div class="thread-track-info">
-                <div class="thread-track-title">"{track().title}"</div>
-                <div
-                  class="thread-track-artist"
-                  onClick={handleArtistClick}
-                  role="button"
-                  tabindex="0"
-                >
-                  {track().artist}
-                </div>
-              </div>
-              <span class="border-v">│</span>
-            </div>
-            <div class="thread-card-divider">
-              <span>├────────────────────────────────────────────────────────────────────────┤</span>
-            </div>
-          </>
-        )}
-      </Show>
 
       {/* Content - thread text */}
       <div class="thread-card-content">
@@ -154,6 +151,39 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
         </span>
         <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
       </div>
+
+      {/* Track preview if present */}
+      <Show when={props.starterTrack}>
+        {(track) => (
+          <>
+            <div class="thread-card-divider">
+              <span>├────────────────────────────────────────────────────────────────────────┤</span>
+            </div>
+            <div
+              class={`thread-track-preview ${isTrackPlaying() ? 'thread-track-preview--playing' : ''}`}
+              onClick={handleTrackClick}
+              role="button"
+              tabindex="0"
+              aria-label={`Play ${track().title} by ${track().artist}`}
+            >
+              <span class="border-v">│</span>
+              <img
+                src={track().albumArt}
+                class="thread-track-thumbnail"
+                alt={`Album art for ${track().title}`}
+                loading="lazy"
+              />
+              <div class="thread-track-info">
+                <div class="thread-track-title">"{track().title}"</div>
+                <div class="thread-track-artist">
+                  {track().artist}
+                </div>
+              </div>
+              <span class="border-v">│</span>
+            </div>
+          </>
+        )}
+      </Show>
 
       {/* Footer - stats only, no timestamp */}
       <div class="thread-card-divider">

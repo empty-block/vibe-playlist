@@ -165,11 +165,14 @@ const ThreadsPage: Component = () => {
                   title: thread.initialPost.track.title,
                   artist: thread.initialPost.track.artist,
                   albumArt: thread.initialPost.track.thumbnail,
-                  source: thread.initialPost.track.source
+                  source: thread.initialPost.track.source,
+                  url: thread.initialPost.track.url,
+                  sourceId: thread.initialPost.track.sourceId
                 } : undefined}
                 onCardClick={() => window.location.href = `/thread/${thread.id}`}
                 onUsernameClick={() => handleUsernameClick(thread.initialPost.author.username)}
                 onArtistClick={() => thread.initialPost.track && handleArtistClick(thread.initialPost.track.artist)}
+                onTrackPlay={playTrack}
               />
             </article>
           )}
