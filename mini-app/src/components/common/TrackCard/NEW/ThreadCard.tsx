@@ -105,31 +105,15 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
         <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
       </div>
 
-      {/* Divider between user and content */}
+      {/* Divider between user and track */}
       <div class="thread-card-divider">
         <span>├────────────────────────────────────────────────────────────────────────┤</span>
-      </div>
-
-      {/* Content - simplified, no username prefix */}
-      <div class="thread-card-content">
-        <span class="border-v">│</span>
-        <span class="thread-text">
-          <ExpandableText
-            text={props.threadText}
-            maxLength={80}
-            className="thread-text-content"
-          />
-        </span>
-        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
       </div>
 
       {/* Track preview if present */}
       <Show when={props.starterTrack}>
         {(track) => (
           <>
-            <div class="thread-card-divider">
-              <span>├────────────────────────────────────────────────────────────────────────┤</span>
-            </div>
             <div class="thread-track-preview">
               <span class="border-v">│</span>
               <img
@@ -151,9 +135,25 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
               </div>
               <span class="border-v">│</span>
             </div>
+            <div class="thread-card-divider">
+              <span>├────────────────────────────────────────────────────────────────────────┤</span>
+            </div>
           </>
         )}
       </Show>
+
+      {/* Content - thread text */}
+      <div class="thread-card-content">
+        <span class="border-v">│</span>
+        <span class="thread-text">
+          <ExpandableText
+            text={props.threadText}
+            maxLength={80}
+            className="thread-text-content"
+          />
+        </span>
+        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+      </div>
 
       {/* Footer - stats only, no timestamp */}
       <div class="thread-card-divider">

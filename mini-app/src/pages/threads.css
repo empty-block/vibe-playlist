@@ -21,7 +21,6 @@
   color: var(--terminal-text);
   padding-top: env(safe-area-inset-top);
   position: relative;
-  overflow: hidden;
 }
 
 /* Light scan lines on page background */

@@ -1,6 +1,6 @@
 import { Component, createSignal, For, createMemo, Show } from 'solid-js';
 import { useParams, A } from '@solidjs/router';
-import { RowTrackCard, ThreadCard } from '../components/common/TrackCard/NEW';
+import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { getThreadById, mockThreads } from '../data/mockThreads';
@@ -97,12 +97,21 @@ const ThreadViewPage: Component = () => {
             <For each={thread().replies}>
               {(reply, index) => (
                 <div class="thread-reply-wrapper">
-                  <RowTrackCard
-                    track={reply.track}
-                    onPlay={playTrack}
-                    onLike={likeTrack}
-                    onReply={replyToTrack}
-                    showComment={true}
+                  <ThreadCard
+                    threadId={reply.castHash}
+                    threadText={reply.text}
+                    creatorUsername={reply.author.username}
+                    creatorAvatar={reply.author.pfpUrl}
+                    timestamp={reply.timestamp}
+                    replyCount={0}
+                    likeCount={reply.likes}
+                    starterTrack={{
+                      id: reply.track.id,
+                      title: reply.track.title,
+                      artist: reply.track.artist,
+                      albumArt: reply.track.thumbnail,
+                      source: reply.track.source
+                    }}
                   />
                 </div>
               )}
