@@ -59,83 +59,117 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
 
   return (
     <article
-      class="thread-card"
+      class="terminal-thread-card"
       onClick={handleCardClick}
       role="article"
       aria-label={`Thread by ${props.creatorUsername}: ${props.threadText}`}
     >
-      {/* Thread Text (The Question/Title) - Expandable */}
-      <div class="thread-card__text">
-        <ExpandableText
-          text={props.threadText}
-          maxLength={80}
-          className="thread-card__text-content"
-        />
+      {/* Top border */}
+      <div class="thread-card-header">
+        <span>╭─ Thread </span>
+        <span class="thread-id">#{props.threadId.slice(-4)}</span>
+        <span> ─────────────────────────────────────────────────────────╮</span>
       </div>
 
-      {/* Starter Track (if present) */}
+      {/* User info line with avatar */}
+      <div class="thread-user-line">
+        <span class="border-v">│</span>
+        <Show
+          when={props.creatorAvatar}
+          fallback={
+            <div class="thread-avatar-fallback" aria-hidden="true">
+              <span>@</span>
+            </div>
+          }
+        >
+          <img
+            src={props.creatorAvatar}
+            class="thread-avatar"
+            alt={`${props.creatorUsername}'s avatar`}
+            role="img"
+            loading="lazy"
+          />
+        </Show>
+        <span
+          class="thread-username"
+          onClick={handleUsernameClick}
+          role="button"
+          tabindex="0"
+        >
+          @{props.creatorUsername}
+        </span>
+        <span class="thread-separator">·</span>
+        <span class="thread-timestamp-inline">
+          {formatTimeAgo(props.timestamp)}
+        </span>
+        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+      </div>
+
+      {/* Divider between user and content */}
+      <div class="thread-card-divider">
+        <span>├────────────────────────────────────────────────────────────────────────┤</span>
+      </div>
+
+      {/* Content - simplified, no username prefix */}
+      <div class="thread-card-content">
+        <span class="border-v">│</span>
+        <span class="thread-text">
+          <ExpandableText
+            text={props.threadText}
+            maxLength={80}
+            className="thread-text-content"
+          />
+        </span>
+        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+      </div>
+
+      {/* Track preview if present */}
       <Show when={props.starterTrack}>
         {(track) => (
-          <div class="thread-card__track">
-            <img
-              class="thread-card__album-art"
-              src={track().albumArt}
-              alt={`Album art for ${track().title}`}
-              loading="lazy"
-            />
-            <div class="thread-card__track-info">
-              <div class="thread-card__track-title">
-                {track().title}
-              </div>
-              <div
-                class="thread-card__track-artist"
-                onClick={handleArtistClick}
-                role="button"
-                tabindex="0"
-              >
-                {track().artist}
-              </div>
+          <>
+            <div class="thread-card-divider">
+              <span>├────────────────────────────────────────────────────────────────────────┤</span>
             </div>
-          </div>
+            <div class="thread-track-preview">
+              <span class="border-v">│</span>
+              <img
+                src={track().albumArt}
+                class="thread-track-thumbnail"
+                alt={`Album art for ${track().title}`}
+                loading="lazy"
+              />
+              <div class="thread-track-info">
+                <div class="thread-track-title">"{track().title}"</div>
+                <div
+                  class="thread-track-artist"
+                  onClick={handleArtistClick}
+                  role="button"
+                  tabindex="0"
+                >
+                  {track().artist}
+                </div>
+              </div>
+              <span class="border-v">│</span>
+            </div>
+          </>
         )}
       </Show>
 
-      {/* Footer: Creator & Stats */}
-      <div class="thread-card__footer">
-        <div class="thread-card__creator">
-          <Show when={props.creatorAvatar}>
-            <img
-              class="thread-card__avatar"
-              src={props.creatorAvatar}
-              alt={`${props.creatorUsername}'s avatar`}
-              loading="lazy"
-            />
-          </Show>
-          <span>shared by</span>
-          <span
-            class="thread-card__username"
-            onClick={handleUsernameClick}
-            role="button"
-            tabindex="0"
-          >
-            @{props.creatorUsername}
-          </span>
-          <span>•</span>
-          <span class="thread-card__timestamp">
-            {formatTimeAgo(props.timestamp)}
-          </span>
-        </div>
+      {/* Footer - stats only, no timestamp */}
+      <div class="thread-card-divider">
+        <span>├────────────────────────────────────────────────────────────────────────┤</span>
+      </div>
+      <div class="thread-card-footer">
+        <span class="border-v">│</span>
+        <span class="thread-stat">💬 {props.replyCount}</span>
+        <span>•</span>
+        <span class="thread-stat">❤ {props.likeCount}</span>
+        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+      </div>
 
-        <div class="thread-card__stats">
-          <span class="thread-card__stat">
-            <span class="thread-card__stat-icon">💬</span>
-            <span>{props.replyCount} replies</span>
-          </span>
-          <span class="thread-card__stat">
-            <span class="thread-card__stat-icon">❤️</span>
-            <span>{props.likeCount} likes</span>
-          </span>
-        </div>
+      {/* Bottom border */}
+      <div class="thread-card-header">
+        <span>╰─────────────────────────────────────────────────────────────────────╯</span>
       </div>
     </article>
   );

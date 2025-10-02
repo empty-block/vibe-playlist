@@ -1,9 +1,10 @@
-import { Component, createSignal, For, createMemo } from 'solid-js';
+import { Component, createSignal, For, createMemo, Show } from 'solid-js';
 import { useParams, A } from '@solidjs/router';
 import { RowTrackCard, ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { getThreadById, mockThreads } from '../data/mockThreads';
+import './threadView.css';
 
 // Placeholder functions for track actions
 const playTrack = (track: Track) => {
@@ -24,53 +25,45 @@ const ThreadViewPage: Component = () => {
   const thread = createMemo(() => getThreadById(params.id) || mockThreads[0]);
 
   return (
-    <div style={{
-      display: 'flex',
-      'flex-direction': 'column',
-      height: '100vh',
-      background: 'var(--dark-bg)',
-      color: 'var(--light-text)'
-    }}>
-      {/* Header with Back Button */}
-      <div style={{
-        position: 'sticky',
-        top: 0,
-        'z-index': 10,
-        background: 'var(--darker-bg)',
-        'border-bottom': '1px solid rgba(59, 0, 253, 0.3)',
-        padding: 'var(--space-4)'
-      }}>
-        <div style={{ display: 'flex', 'align-items': 'center', gap: 'var(--space-4)' }}>
-          <A
-            href="/"
-            style={{
-              color: 'var(--neon-cyan)',
-              'text-decoration': 'none',
-              'font-size': 'var(--text-xl)'
-            }}
-          >
-            ←
-          </A>
-          <h1 style={{
-            margin: 0,
-            'font-size': 'var(--text-xl)',
-            color: 'var(--neon-cyan)',
-            'font-family': 'var(--font-display)'
-          }}>
-            Thread
-          </h1>
+    <div class="thread-view-page">
+      {/* Terminal Header */}
+      <header class="thread-view-header">
+        {/* Title bar */}
+        <div class="terminal-title-bar">
+          <span>┌─[</span>
+          <span style={{ 'font-weight': 700 }}>JAMZY::THREAD_VIEW</span>
+          <span>]───────────[</span>
+          <span style={{ color: 'var(--neon-yellow)' }}>ID: #{params.id.slice(-4)}</span>
+          <span>]─┐</span>
         </div>
-      </div>
+
+        {/* Command prompt */}
+        <div class="terminal-prompt-line">
+          <span class="border-v">│</span>
+          <A href="/" class="thread-view-back-btn">
+            <span>[</span>
+            <span>← BACK</span>
+            <span>]</span>
+          </A>
+          <span class="terminal-user">user@jamzy</span>
+          <span class="terminal-colon">:</span>
+          <span class="terminal-path">~/threads/{params.id.slice(-4)}</span>
+          <span class="terminal-dollar">$</span>
+          <span class="terminal-command">cat thread</span>
+          <span style={{ 'margin-left': 'auto' }}></span>
+          <span class="border-v">│</span>
+        </div>
+
+        {/* Bottom border */}
+        <div style={{ color: 'var(--terminal-muted)' }}>
+          <span>└────────────────────────────────────────────┘</span>
+        </div>
+      </header>
 
       {/* Scrollable Thread Content */}
-      <div style={{
-        flex: 1,
-        'overflow-y': 'auto',
-        padding: 'var(--space-4)',
-        'padding-bottom': '120px' // Space for bottom nav + player
-      }}>
-        {/* Thread Starter - Prominent Display */}
-        <div style={{ 'margin-bottom': 'var(--space-6)' }}>
+      <div class="thread-view-content">
+        {/* Thread Root Post - Prominent Display */}
+        <div class="thread-root-wrapper">
           <ThreadCard
             threadId={thread().id}
             threadText={thread().initialPost.text}
@@ -86,26 +79,24 @@ const ThreadViewPage: Component = () => {
               albumArt: thread().initialPost.track.thumbnail,
               source: thread().initialPost.track.source
             } : undefined}
-            // No onCardClick - we're already on the thread detail page
           />
         </div>
 
         {/* Replies Section */}
-        {thread().replies.length > 0 && (
-          <>
-            <h2 style={{
-              'margin-top': 0,
-              'margin-bottom': 'var(--space-4)',
-              'font-size': 'var(--text-lg)',
-              color: 'var(--neon-pink)',
-              'font-family': 'var(--font-display)'
-            }}>
-              Replies ({thread().replies.length})
-            </h2>
+        <Show when={thread().replies.length > 0}>
+          <div class="replies-section-header">
+            <span>├─</span>
+            <span style={{ color: 'var(--neon-cyan)' }}>REPLIES</span>
+            <span> [</span>
+            <span class="reply-count">{thread().replies.length}</span>
+            <span>]</span>
+            <span style={{ 'margin-left': 'auto' }}>─┤</span>
+          </div>
 
-            <div style={{ display: 'flex', 'flex-direction': 'column', gap: 'var(--space-4)' }}>
-              <For each={thread().replies}>
-                {(reply) => (
+          <div class="replies-list">
+            <For each={thread().replies}>
+              {(reply, index) => (
+                <div class="thread-reply-wrapper">
                   <RowTrackCard
                     track={reply.track}
                     onPlay={playTrack}
@@ -113,11 +104,11 @@ const ThreadViewPage: Component = () => {
                     onReply={replyToTrack}
                     showComment={true}
                   />
-                )}
-              </For>
-            </div>
-          </>
-        )}
+                </div>
+              )}
+            </For>
+          </div>
+        </Show>
       </div>
 
       {/* Bottom Navigation */}

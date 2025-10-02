@@ -1,0 +1,218 @@
+/* Thread View Page - Terminal Deep Dive (Level 4) */
+
+.thread-view-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+  position: relative;
+}
+
+/* Light scan lines */
+.thread-view-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(4, 202, 244, 0.015) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(4, 202, 244, 0.015) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== TERMINAL HEADER ===== */
+
+.thread-view-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--terminal-bg);
+  border-bottom: 1px solid var(--neon-cyan);
+  font-family: var(--font-terminal);
+  font-size: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(4, 202, 244, 0.1);
+}
+
+.thread-view-back-btn {
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  padding: 4px 12px;
+  font-family: var(--font-terminal);
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 200ms ease;
+  margin-right: 8px;
+}
+
+.thread-view-back-btn:hover {
+  background: rgba(4, 202, 244, 0.05);
+  box-shadow: 0 0 4px rgba(4, 202, 244, 0.15);
+}
+
+/* ===== CONTENT ===== */
+
+.thread-view-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  padding-bottom: 120px;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 2;
+}
+
+/* Root thread post - prominent */
+.thread-root-wrapper {
+  margin-bottom: 24px;
+}
+
+.thread-root-wrapper .terminal-thread-card {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 6px rgba(4, 202, 244, 0.15);
+}
+
+/* Scan lines on root post only */
+.thread-root-wrapper .terminal-thread-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(4, 202, 244, 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(4, 202, 244, 0.03) 3px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== REPLIES SECTION ===== */
+
+.replies-section-header {
+  margin: 24px 0 16px 0;
+  padding: 8px 12px;
+  border-top: 1px solid var(--terminal-muted);
+  border-bottom: 1px solid var(--terminal-muted);
+  font-family: var(--font-terminal);
+  color: var(--neon-cyan);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reply-count {
+  color: var(--neon-yellow);
+  font-weight: 600;
+}
+
+.replies-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Reply wrapper with threading */
+.thread-reply-wrapper {
+  margin-left: 24px;
+  position: relative;
+  border-left: 2px solid var(--terminal-dim);
+  padding-left: 12px;
+}
+
+/* Thread connection line */
+.thread-reply-wrapper::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--terminal-muted);
+}
+
+/* Horizontal connection */
+.thread-reply-wrapper::after {
+  content: '├─';
+  position: absolute;
+  left: -11px;
+  top: 16px;
+  color: var(--terminal-muted);
+  font-family: var(--font-terminal);
+  font-size: 10px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet - constrained width */
+@media (min-width: 768px) {
+  .thread-view-header {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .thread-view-content {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--space-6);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .thread-view-header {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  .thread-reply-wrapper {
+    margin-left: 16px;
+    padding-left: 8px;
+  }
+
+  /* Remove scan lines on mobile for performance */
+  .thread-view-page::before {
+    display: none;
+  }
+
+  .thread-root-wrapper .terminal-thread-card::before {
+    display: none;
+  }
+}
+
+/* Small phones */
+@media (max-width: 375px) {
+  .thread-view-content {
+    padding: var(--space-3);
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Remove scan lines */
+  .thread-view-page::before,
+  .thread-root-wrapper .terminal-thread-card::before {
+    display: none;
+  }
+}

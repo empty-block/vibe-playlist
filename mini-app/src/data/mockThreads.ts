@@ -74,7 +74,7 @@ export const mockThreads: Thread[] = [
     initialPost: {
       castHash: 'thread1_post',
       author: mockUsers[0],
-      text: 'What are you jamming to right now? 🎧',
+      text: 'vibes check 🎧',
       timestamp: getRandomTimestamp(2)
     },
     replies: [
@@ -127,7 +127,7 @@ export const mockThreads: Thread[] = [
     initialPost: {
       castHash: 'thread2_post',
       author: mockUsers[3],
-      text: 'Name your favorite 90s jams 📼',
+      text: 'ok so I\'ve been diving deep into 90s music lately and honestly that decade was absolutely insane for variety and creativity. like you had grunge, britpop, hip hop\'s golden era, the rise of electronic music, and so many genre-defining albums all happening at once. what are some tracks from that era that you think still hold up today? trying to build the ultimate 90s playlist',
       timestamp: getRandomTimestamp(5)
     },
     replies: [
@@ -200,7 +200,7 @@ export const mockThreads: Thread[] = [
     initialPost: {
       castHash: 'thread3_post',
       author: mockUsers[5],
-      text: 'Who are the best hip hop artists ever? 🎤',
+      text: 'top 5 hip hop artists of all time go',
       timestamp: getRandomTimestamp(8)
     },
     replies: [
@@ -253,7 +253,7 @@ export const mockThreads: Thread[] = [
     initialPost: {
       castHash: 'thread4_post',
       author: mockUsers[4],
-      text: 'Hot indie tracks 🔥',
+      text: '🎸🔥🎧',
       timestamp: getRandomTimestamp(12)
     },
     replies: [
@@ -326,7 +326,7 @@ export const mockThreads: Thread[] = [
     initialPost: {
       castHash: 'thread5_post',
       author: mockUsers[6],
-      text: 'Classic rock vibes only 🎸',
+      text: 'been on a classic rock binge all week and I need MORE. drop your essential tracks',
       timestamp: getRandomTimestamp(15)
     },
     replies: [

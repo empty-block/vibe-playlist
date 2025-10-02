@@ -95,49 +95,72 @@ const ProfilePage: Component = () => {
 
   return (
     <div class="profile-page">
-      {/* Header */}
-      <div class="profile-header">
-        {/* Identity */}
-        <div class="profile-identity">
-          <img
-            class="profile-avatar"
-            src={user.avatar}
-            alt={`${user.displayName} profile picture`}
-          />
-          <div class="profile-info">
-            <h1 class="profile-display-name">{user.displayName}</h1>
-            <p class="profile-username">@{user.username}</p>
-          </div>
+      {/* Terminal Header */}
+      <header class="profile-terminal-header">
+        {/* Title bar */}
+        <div class="terminal-title-bar">
+          <span>┌─[</span>
+          <span style={{ 'font-weight': 700 }}>JAMZY::USER_PROFILE</span>
+          <span>]───────────[</span>
+          <span class="profile-username-display">@{user.username}</span>
+          <span>]─┐</span>
         </div>
 
-        {/* Filters */}
-        <div class="profile-filters">
-          <button
-            class="filter-tab"
-            data-active={currentFilter() === 'threads'}
-            onClick={() => setCurrentFilter('threads')}
-          >
-            Threads
-          </button>
-          <button
-            class="filter-tab"
-            data-active={currentFilter() === 'replies'}
-            onClick={() => setCurrentFilter('replies')}
-          >
-            Replies
-          </button>
-          <button
-            class="filter-tab"
-            data-active={currentFilter() === 'all'}
-            onClick={() => setCurrentFilter('all')}
-          >
-            All
-          </button>
+        {/* Command prompt */}
+        <div class="terminal-prompt-line">
+          <span class="border-v">│</span>
+          <span class="terminal-user">user@jamzy</span>
+          <span class="terminal-colon">:</span>
+          <span class="terminal-path">~/users/{user.username}</span>
+          <span class="terminal-dollar">$</span>
+          <span class="terminal-command">ls -la</span>
+          <span style={{ 'margin-left': 'auto' }}></span>
+          <span class="border-v">│</span>
+        </div>
+
+        {/* Bottom border */}
+        <div style={{ color: 'var(--terminal-muted)' }}>
+          <span>└────────────────────────────────────────────┘</span>
+        </div>
+      </header>
+
+      {/* Identity Card */}
+      <div class="profile-identity-card">
+        <img
+          class="profile-avatar"
+          src={user.avatar}
+          alt={`${user.displayName} profile picture`}
+        />
+        <div class="profile-info">
+          <h1 class="profile-display-name">{user.displayName}</h1>
+          <p class="profile-username-label">@{user.username}</p>
         </div>
       </div>
 
+      {/* Filter Tabs */}
+      <div class="profile-filter-tabs">
+        <button
+          class={`filter-tab ${currentFilter() === 'threads' ? 'filter-tab--active' : ''}`}
+          onClick={() => setCurrentFilter('threads')}
+        >
+          Threads
+        </button>
+        <button
+          class={`filter-tab ${currentFilter() === 'replies' ? 'filter-tab--active' : ''}`}
+          onClick={() => setCurrentFilter('replies')}
+        >
+          Replies
+        </button>
+        <button
+          class={`filter-tab ${currentFilter() === 'all' ? 'filter-tab--active' : ''}`}
+          onClick={() => setCurrentFilter('all')}
+        >
+          All
+        </button>
+      </div>
+
       {/* Content */}
-      <div class="profile-content">
+      <div class="profile-track-list">
         <Show when={filteredContent().length === 0}>
           <div class="profile-empty-state">
             <span class="empty-icon">🎵</span>
@@ -148,13 +171,15 @@ const ProfilePage: Component = () => {
         <Show when={filteredContent().length > 0}>
           <For each={filteredContent()}>
             {(item) => (
-              <RowTrackCard
-                track={item.track}
-                onPlay={playTrack}
-                onLike={likeTrack}
-                onReply={replyToTrack}
-                showComment={true}
-              />
+              <div class="profile-row-card-wrapper">
+                <RowTrackCard
+                  track={item.track}
+                  onPlay={playTrack}
+                  onLike={likeTrack}
+                  onReply={replyToTrack}
+                  showComment={true}
+                />
+              </div>
             )}
           </For>
         </Show>

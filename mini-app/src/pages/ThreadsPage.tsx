@@ -92,10 +92,37 @@ const ThreadsPage: Component = () => {
 
   return (
     <div class="threads-page">
-      {/* Sticky Header */}
-      <header class="threads-header" role="banner">
-        <h1 class="threads-title">Threads</h1>
+      {/* Terminal Header */}
+      <header class="threads-terminal-header" role="banner">
+        {/* Title bar */}
+        <div class="terminal-title-bar">
+          <span>┌─[</span>
+          <span style={{ 'font-weight': 700 }}>JAMZY::THREAD_BROWSER</span>
+          <span>]─────────────[</span>
+          <span style={{ color: 'var(--neon-magenta)' }}>
+            FILTER: {sortBy().toUpperCase()}
+          </span>
+          <span>]─┐</span>
+        </div>
 
+        {/* Command prompt */}
+        <div class="terminal-prompt-line">
+          <span class="border-v">│</span>
+          <span class="terminal-user">user@jamzy</span>
+          <span class="terminal-colon">:</span>
+          <span class="terminal-path">~/threads</span>
+          <span class="terminal-dollar">$</span>
+          <span class="terminal-command">list --sort={sortBy()}</span>
+          <span style={{ 'margin-left': 'auto' }}></span>
+          <span class="border-v">│</span>
+        </div>
+
+        {/* Bottom border */}
+        <div style={{ color: 'var(--terminal-muted)' }}>
+          <span>└────────────────────────────────────────────┘</span>
+        </div>
+
+        {/* Filter Bar */}
         <ThreadFilterBar
           filters={[
             { value: 'hot', label: 'Hot' },
@@ -105,6 +132,9 @@ const ThreadsPage: Component = () => {
           activeFilter={sortBy()}
           onFilterChange={handleFilterChange}
         />
+
+        {/* Hidden title for screen readers */}
+        <h1 class="threads-title">Threads</h1>
       </header>
 
       {/* Scrollable Feed */}

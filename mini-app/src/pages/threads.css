@@ -1,25 +1,116 @@
+/* Threads Page - Terminal UI (Level 2) */
+
+/* Terminal color variables */
+:root {
+  --neon-magenta: #ff00ff;
+  --terminal-bg: #0a0a0a;
+  --terminal-text: #e0e0e0;
+  --terminal-white: #ffffff;
+  --terminal-dim: #808080;
+  --terminal-muted: #404040;
+  --neon-cyan: #04caf4;
+  --neon-yellow: #ffff00;
+  --font-terminal: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Consolas', 'Courier New', monospace;
+}
+
 .threads-page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: var(--dark-bg);
-  color: var(--light-text);
+  height: 100vh;
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
   padding-top: env(safe-area-inset-top);
+  position: relative;
+  overflow: hidden;
 }
 
-/* ===== HEADER ===== */
-.threads-header {
+/* Light scan lines on page background */
+.threads-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(224, 16, 224, 0.015) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(224, 16, 224, 0.015) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Subtle vignette */
+.threads-page::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 80%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== TERMINAL HEADER ===== */
+
+.threads-terminal-header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: var(--darker-bg);
-  border-bottom: 1px solid rgba(59, 0, 253, 0.3);
-  padding: var(--space-4);
+  z-index: 100;
+  background: var(--terminal-bg);
+  border-bottom: 1px solid var(--neon-magenta);
+  font-family: var(--font-terminal);
+  font-size: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(224, 16, 224, 0.1);
+}
+
+.terminal-title-bar {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 2px var(--neon-magenta);
+  line-height: 1.6;
+}
+
+.terminal-prompt-line {
+  margin-top: 4px;
+  color: var(--terminal-text);
   display: flex;
-  flex-direction: row; /* Always horizontal */
-  justify-content: center; /* Center the filter bar */
   align-items: center;
-  min-height: 60px; /* Consistent height */
+  gap: 4px;
+}
+
+.terminal-user {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+.terminal-colon,
+.terminal-dollar {
+  color: var(--terminal-text);
+}
+
+.terminal-path {
+  color: var(--neon-cyan);
+}
+
+.terminal-command {
+  color: var(--terminal-white);
+  margin-left: 4px;
+}
+
+.border-v {
+  color: var(--terminal-muted);
+  user-select: none;
 }
 
 /* Hide title visually but keep for screen readers */
@@ -36,39 +127,231 @@
 }
 
 /* ===== FEED ===== */
+
 .thread-feed {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-4);
   padding-bottom: calc(120px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 2;
 }
 
 .thread-card-wrapper {
-  margin-bottom: var(--space-3);
-  border-radius: 4px;
+  margin-bottom: 12px;
   transition: all 200ms ease;
-  opacity: 1; /* For animations */
+  opacity: 1;
+  animation: thread-stream-in 300ms ease-out;
 }
+
+@keyframes thread-stream-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Stagger delays */
+.thread-card-wrapper:nth-child(1) { animation-delay: 0ms; }
+.thread-card-wrapper:nth-child(2) { animation-delay: 60ms; }
+.thread-card-wrapper:nth-child(3) { animation-delay: 120ms; }
+.thread-card-wrapper:nth-child(4) { animation-delay: 180ms; }
+.thread-card-wrapper:nth-child(5) { animation-delay: 240ms; }
 
 .thread-card-wrapper:last-child {
   margin-bottom: 0;
 }
 
-.thread-card-wrapper:active {
-  background: rgba(59, 0, 253, 0.06);
-  transform: scale(0.98);
+/* ===== TERMINAL THREAD CARD ===== */
+
+.terminal-thread-card {
+  background: var(--terminal-bg);
+  border: 1px solid var(--terminal-muted);
+  margin-bottom: 12px;
+  font-family: var(--font-terminal);
+  font-size: 11px;
+  line-height: 1.6;
+  position: relative;
+  transition: border-color 200ms ease;
+  cursor: pointer;
 }
 
-/* Desktop hover (if applicable) */
-@media (hover: hover) {
-  .thread-card-wrapper:hover {
-    background: rgba(59, 0, 253, 0.03);
-    transform: translateY(-1px);
-  }
+.terminal-thread-card:hover {
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 4px rgba(224, 16, 224, 0.15);
+}
+
+.terminal-thread-card:active {
+  transform: scale(0.99);
+}
+
+/* Top/bottom border - simpler than activity cards */
+.thread-card-header {
+  padding: 6px 12px;
+  color: var(--terminal-dim);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.thread-id {
+  color: var(--neon-yellow);
+}
+
+/* Divider */
+.thread-card-divider {
+  padding: 0 12px;
+  color: var(--terminal-muted);
+  font-weight: 400;
+  font-size: 10px;
+}
+
+/* User info line with avatar */
+.thread-user-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.thread-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--neon-magenta);
+  box-shadow: 0 0 3px rgba(224, 16, 224, 0.25);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--terminal-bg);
+}
+
+.thread-avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--neon-magenta);
+  background: var(--terminal-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neon-magenta);
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.thread-username {
+  color: var(--neon-magenta);
+  font-weight: 600;
+  cursor: pointer;
+  transition: text-shadow 200ms ease;
+}
+
+.thread-username:hover {
+  text-shadow: 0 0 2px var(--neon-magenta);
+}
+
+.thread-separator {
+  color: var(--terminal-dim);
+  font-weight: 400;
+  user-select: none;
+}
+
+.thread-timestamp-inline {
+  color: var(--terminal-dim);
+  font-size: 10px;
+  margin-left: auto;
+}
+
+/* Thread text content */
+.thread-card-content {
+  padding: 10px 14px;
+  color: var(--terminal-text);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.thread-text {
+  color: var(--terminal-white);
+  font-size: 14px;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.thread-text-content {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Track preview (if present) */
+.thread-track-preview {
+  padding: 8px 12px;
+  background: rgba(224, 16, 224, 0.03);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.thread-track-thumbnail {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.thread-track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.thread-track-title {
+  color: var(--terminal-white);
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thread-track-artist {
+  color: var(--neon-cyan);
+  font-size: 11px;
+  cursor: pointer;
+  transition: text-shadow 200ms ease;
+}
+
+.thread-track-artist:hover {
+  text-shadow: 0 0 2px var(--neon-cyan);
+}
+
+/* Footer stats - no timestamp (moved to user line) */
+.thread-card-footer {
+  padding: 6px 12px;
+  color: var(--terminal-dim);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+
+.thread-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ===== ACCESSIBILITY ===== */
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -82,49 +365,112 @@
 }
 
 /* Focus indicators */
-.thread-card-wrapper:focus-within {
+.terminal-thread-card:focus-within {
   outline: 2px solid var(--neon-cyan);
   outline-offset: -2px;
   box-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
 }
 
+.thread-username:focus {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Avatar interactive states */
+.thread-username:hover ~ .thread-avatar,
+.thread-username:hover + .thread-avatar {
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 6px rgba(224, 16, 224, 0.5);
+}
+
 /* ===== RESPONSIVE ===== */
-
-/* Small phones */
-@media (max-width: 375px) {
-  .threads-title {
-    font-size: var(--text-lg);
-  }
-
-  .thread-feed {
-    padding: var(--space-3);
-  }
-}
-
-/* Larger phones - keep header centered */
-@media (min-width: 390px) {
-  .threads-header {
-    /* Header already centered - no change needed */
-  }
-}
 
 /* Tablet - constrained width */
 @media (min-width: 768px) {
+  .threads-terminal-header {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
   .thread-feed {
-    max-width: 640px;
+    max-width: 900px;
     margin: 0 auto;
     padding: var(--space-6);
   }
 }
 
-/* Landscape mobile */
-@media (orientation: landscape) and (max-height: 450px) {
-  .threads-header {
-    padding: var(--space-2) var(--space-4);
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .threads-terminal-header {
+    font-size: 10px;
+    padding: 6px 8px;
   }
 
-  .threads-title {
-    font-size: var(--text-lg);
+  .terminal-thread-card {
+    font-size: 10px;
+  }
+
+  /* User line mobile adjustments */
+  .thread-user-line {
+    padding: 8px 10px;
+    font-size: 11px;
+    gap: 8px;
+  }
+
+  .thread-avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .thread-avatar-fallback {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .thread-timestamp-inline {
+    font-size: 10px;
+  }
+
+  .thread-text {
+    font-size: 13px;
+  }
+
+  .thread-track-title {
+    font-size: 11px;
+  }
+
+  .thread-track-artist {
+    font-size: 10px;
+  }
+
+  /* Remove scan lines on mobile for performance */
+  .threads-page::before {
+    display: none;
+  }
+
+  /* Lighter vignette */
+  .threads-page::after {
+    background: radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 85%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+  }
+}
+
+/* Small phones */
+@media (max-width: 375px) {
+  .thread-feed {
+    padding: var(--space-3);
+  }
+}
+
+/* Landscape mobile */
+@media (orientation: landscape) and (max-height: 450px) {
+  .threads-terminal-header {
+    padding: var(--space-2) var(--space-4);
   }
 
   .thread-feed {
@@ -133,9 +479,23 @@
 }
 
 /* ===== REDUCED MOTION ===== */
+
 @media (prefers-reduced-motion: reduce) {
   .thread-card-wrapper {
+    animation: none;
     transition: none;
-    transform: none !important;
+  }
+
+  .terminal-thread-card {
+    transition: none;
+  }
+
+  .terminal-thread-card:active {
+    transform: none;
+  }
+
+  /* Remove scan lines */
+  .threads-page::before {
+    display: none;
   }
 }
