@@ -34,7 +34,6 @@
 .activity-page {
   position: relative;
   overflow: hidden;
-  animation: terminal-boot 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Scan lines overlay */
@@ -171,7 +170,6 @@
   line-height: 1.6;
   position: relative;
   overflow: hidden;
-  animation: stream-in 400ms ease-out;
 }
 
 /* Scan line effect per block */
@@ -239,13 +237,6 @@
     filter: blur(0);
   }
 }
-
-/* Stagger delays */
-.terminal-activity-block:nth-child(1) { animation-delay: 0ms; }
-.terminal-activity-block:nth-child(2) { animation-delay: 80ms; }
-.terminal-activity-block:nth-child(3) { animation-delay: 160ms; }
-.terminal-activity-block:nth-child(4) { animation-delay: 240ms; }
-.terminal-activity-block:nth-child(5) { animation-delay: 320ms; }
 
 /* Header */
 .terminal-block-header {
