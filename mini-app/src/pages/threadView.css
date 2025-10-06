@@ -69,7 +69,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-4);
-  padding-bottom: 120px;
+  padding-bottom: 120px; /* Space for bottom player and navigation */
   -webkit-overflow-scrolling: touch;
   position: relative;
   z-index: 2;

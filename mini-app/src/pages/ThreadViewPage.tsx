@@ -2,6 +2,8 @@ import { Component, createSignal, For, createMemo, Show } from 'solid-js';
 import { useParams, A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import ThreadActionsBar from '../components/thread/ThreadActionsBar';
+import AddTrackModal from '../components/library/AddTrackModal';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { getThreadById, mockThreads } from '../data/mockThreads';
 import './threadView.css';
@@ -23,6 +25,35 @@ const replyToTrack = (track: Track) => {
 const ThreadViewPage: Component = () => {
   const params = useParams();
   const thread = createMemo(() => getThreadById(params.id) || mockThreads[0]);
+
+  // Modal state
+  const [showAddReplyModal, setShowAddReplyModal] = createSignal(false);
+
+  // Like state (would come from API in production)
+  const [isLiked, setIsLiked] = createSignal(false);
+
+  // Like handler
+  const handleLike = async () => {
+    setIsLiked(!isLiked());
+    // TODO: Call API to persist like
+    console.log('Like toggled:', isLiked());
+  };
+
+  // Reply handler
+  const handleAddReply = () => {
+    setShowAddReplyModal(true);
+  };
+
+  // Reply submission
+  const handleReplySubmit = async (data: { songUrl: string; comment: string }) => {
+    // TODO: Call API to create reply
+    console.log('Reply submitted:', data);
+
+    // Close modal
+    setShowAddReplyModal(false);
+
+    // TODO: Refresh thread to show new reply
+  };
 
   return (
     <div class="thread-view-page">
@@ -85,6 +116,15 @@ const ThreadViewPage: Component = () => {
           />
         </div>
 
+        {/* Action Bar - Right after root post */}
+        <ThreadActionsBar
+          threadId={thread().id}
+          isLiked={isLiked()}
+          likeCount={thread().likeCount}
+          onLike={handleLike}
+          onAddReply={handleAddReply}
+        />
+
         {/* Replies Section */}
         <Show when={thread().replies.length > 0}>
           <div class="replies-section-header">
@@ -128,6 +168,14 @@ const ThreadViewPage: Component = () => {
 
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
+
+      {/* Add Reply Modal (reuse AddTrackModal) */}
+      <AddTrackModal
+        isOpen={showAddReplyModal()}
+        onClose={() => setShowAddReplyModal(false)}
+        onSubmit={handleReplySubmit}
+        title="Add Reply to Thread"
+      />
     </div>
   );
 };
