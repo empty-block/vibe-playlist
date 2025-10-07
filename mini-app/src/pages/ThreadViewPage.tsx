@@ -1,11 +1,12 @@
-import { Component, createSignal, For, createMemo, Show } from 'solid-js';
+import { Component, createSignal, For, createMemo, Show, createResource } from 'solid-js';
 import { useParams, A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
-import { getThreadById, mockThreads } from '../data/mockThreads';
+import { fetchThread } from '../services/api';
+import { transformApiThreadDetail } from '../types/api';
 import './threadView.css';
 
 // Placeholder functions for track actions
@@ -24,7 +25,16 @@ const replyToTrack = (track: Track) => {
 
 const ThreadViewPage: Component = () => {
   const params = useParams();
-  const thread = createMemo(() => getThreadById(params.id) || mockThreads[0]);
+
+  // Fetch thread from API
+  const [threadData] = createResource(() => params.id, fetchThread);
+
+  // Transform API response to Thread format
+  const thread = createMemo(() => {
+    const data = threadData();
+    if (!data) return null;
+    return transformApiThreadDetail(data);
+  });
 
   // Modal state
   const [showAddReplyModal, setShowAddReplyModal] = createSignal(false);
@@ -93,76 +103,93 @@ const ThreadViewPage: Component = () => {
 
       {/* Scrollable Thread Content */}
       <div class="thread-view-content">
-        {/* Thread Root Post - Prominent Display */}
-        <div class="thread-root-wrapper">
-          <ThreadCard
-            threadId={thread().id}
-            threadText={thread().initialPost.text}
-            creatorUsername={thread().initialPost.author.username}
-            creatorAvatar={thread().initialPost.author.pfpUrl}
-            timestamp={thread().initialPost.timestamp}
-            replyCount={thread().replyCount}
-            likeCount={thread().likeCount}
-            starterTrack={thread().initialPost.track ? {
-              id: thread().initialPost.track.id,
-              title: thread().initialPost.track.title,
-              artist: thread().initialPost.track.artist,
-              albumArt: thread().initialPost.track.thumbnail,
-              source: thread().initialPost.track.source,
-              url: thread().initialPost.track.url,
-              sourceId: thread().initialPost.track.sourceId
-            } : undefined}
-            onTrackPlay={playTrack}
+        <Show when={threadData.loading}>
+          <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-cyan)' }}>
+            <div>Loading thread...</div>
+          </div>
+        </Show>
+
+        <Show when={threadData.error}>
+          <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-red)' }}>
+            <div>Error loading thread</div>
+            <div style={{ 'font-size': '0.875rem', 'margin-top': '0.5rem', color: 'var(--terminal-muted)' }}>
+              {threadData.error.message}
+            </div>
+          </div>
+        </Show>
+
+        <Show when={!threadData.loading && !threadData.error && thread()}>
+          {/* Thread Root Post - Prominent Display */}
+          <div class="thread-root-wrapper">
+            <ThreadCard
+              threadId={thread()!.id}
+              threadText={thread()!.initialPost.text}
+              creatorUsername={thread()!.initialPost.author.username}
+              creatorAvatar={thread()!.initialPost.author.pfpUrl}
+              timestamp={thread()!.initialPost.timestamp}
+              replyCount={thread()!.replyCount}
+              likeCount={thread()!.likeCount}
+              starterTrack={thread()!.initialPost.track ? {
+                id: thread()!.initialPost.track.id,
+                title: thread()!.initialPost.track.title,
+                artist: thread()!.initialPost.track.artist,
+                albumArt: thread()!.initialPost.track.thumbnail,
+                source: thread()!.initialPost.track.source,
+                url: thread()!.initialPost.track.url,
+                sourceId: thread()!.initialPost.track.sourceId
+              } : undefined}
+              onTrackPlay={playTrack}
+            />
+          </div>
+
+          {/* Action Bar - Right after root post */}
+          <ThreadActionsBar
+            threadId={thread()!.id}
+            isLiked={isLiked()}
+            likeCount={thread()!.likeCount}
+            onLike={handleLike}
+            onAddReply={handleAddReply}
           />
-        </div>
 
-        {/* Action Bar - Right after root post */}
-        <ThreadActionsBar
-          threadId={thread().id}
-          isLiked={isLiked()}
-          likeCount={thread().likeCount}
-          onLike={handleLike}
-          onAddReply={handleAddReply}
-        />
+          {/* Replies Section */}
+          <Show when={thread()!.replies.length > 0}>
+            <div class="replies-section-header">
+              <span>├─</span>
+              <span style={{ color: 'var(--neon-cyan)' }}>REPLIES</span>
+              <span> [</span>
+              <span class="reply-count">{thread()!.replies.length}</span>
+              <span>]</span>
+              <span style={{ 'margin-left': 'auto' }}>─┤</span>
+            </div>
 
-        {/* Replies Section */}
-        <Show when={thread().replies.length > 0}>
-          <div class="replies-section-header">
-            <span>├─</span>
-            <span style={{ color: 'var(--neon-cyan)' }}>REPLIES</span>
-            <span> [</span>
-            <span class="reply-count">{thread().replies.length}</span>
-            <span>]</span>
-            <span style={{ 'margin-left': 'auto' }}>─┤</span>
-          </div>
-
-          <div class="replies-list">
-            <For each={thread().replies}>
-              {(reply, index) => (
-                <div class="thread-reply-wrapper">
-                  <ThreadCard
-                    threadId={reply.castHash}
-                    threadText={reply.text}
-                    creatorUsername={reply.author.username}
-                    creatorAvatar={reply.author.pfpUrl}
-                    timestamp={reply.timestamp}
-                    replyCount={0}
-                    likeCount={reply.likes}
-                    starterTrack={{
-                      id: reply.track.id,
-                      title: reply.track.title,
-                      artist: reply.track.artist,
-                      albumArt: reply.track.thumbnail,
-                      source: reply.track.source,
-                      url: reply.track.url,
-                      sourceId: reply.track.sourceId
-                    }}
-                    onTrackPlay={playTrack}
-                  />
-                </div>
-              )}
-            </For>
-          </div>
+            <div class="replies-list">
+              <For each={thread()!.replies}>
+                {(reply, index) => (
+                  <div class="thread-reply-wrapper">
+                    <ThreadCard
+                      threadId={reply.castHash}
+                      threadText={reply.text}
+                      creatorUsername={reply.author.username}
+                      creatorAvatar={reply.author.pfpUrl}
+                      timestamp={reply.timestamp}
+                      replyCount={0}
+                      likeCount={reply.likes}
+                      starterTrack={{
+                        id: reply.track.id,
+                        title: reply.track.title,
+                        artist: reply.track.artist,
+                        albumArt: reply.track.thumbnail,
+                        source: reply.track.source,
+                        url: reply.track.url,
+                        sourceId: reply.track.sourceId
+                      }}
+                      onTrackPlay={playTrack}
+                    />
+                  </div>
+                )}
+              </For>
+            </div>
+          </Show>
         </Show>
       </div>
 

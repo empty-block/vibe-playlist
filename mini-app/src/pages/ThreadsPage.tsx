@@ -1,11 +1,13 @@
-import { Component, createSignal, createMemo, For, onMount } from 'solid-js';
+import { Component, createSignal, createMemo, For, onMount, createResource, Show } from 'solid-js';
 import { A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
-import { mockThreads, Thread } from '../data/mockThreads';
+import { Thread } from '../data/mockThreads';
 import { sortThreads, SortType } from '../utils/threadSorting';
+import { fetchThreads } from '../services/api';
+import { transformApiThread } from '../types/api';
 import anime from 'animejs';
 import './threads.css';
 
@@ -25,11 +27,20 @@ const replyToTrack = (track: Track) => {
 
 const ThreadsPage: Component = () => {
   const [sortBy, setSortBy] = createSignal<SortType>('hot');
-  const [isLoading, setIsLoading] = createSignal(false);
+
+  // Fetch threads from API
+  const [threadsData] = createResource(fetchThreads);
+
+  // Transform API response to Thread format
+  const threads = createMemo(() => {
+    const data = threadsData();
+    if (!data) return [];
+    return data.threads.map(transformApiThread);
+  });
 
   // Sorted threads based on filter
   const sortedThreads = createMemo(() => {
-    return sortThreads(mockThreads, sortBy());
+    return sortThreads(threads(), sortBy());
   });
 
   // Filter change handler with animation
@@ -142,41 +153,58 @@ const ThreadsPage: Component = () => {
         class="thread-feed"
         role="feed"
         aria-label="Music conversation threads"
-        aria-busy={isLoading()}
+        aria-busy={threadsData.loading}
       >
-        <For each={sortedThreads()}>
-          {(thread, index) => (
-            <article
-              class="thread-card-wrapper"
-              role="article"
-              aria-posinset={index() + 1}
-              aria-setsize={sortedThreads().length}
-            >
-              <ThreadCard
-                threadId={thread.id}
-                threadText={thread.initialPost.text}
-                creatorUsername={thread.initialPost.author.username}
-                creatorAvatar={thread.initialPost.author.pfpUrl}
-                timestamp={thread.initialPost.timestamp}
-                replyCount={thread.replyCount}
-                likeCount={thread.likeCount}
-                starterTrack={thread.initialPost.track ? {
-                  id: thread.initialPost.track.id,
-                  title: thread.initialPost.track.title,
-                  artist: thread.initialPost.track.artist,
-                  albumArt: thread.initialPost.track.thumbnail,
-                  source: thread.initialPost.track.source,
-                  url: thread.initialPost.track.url,
-                  sourceId: thread.initialPost.track.sourceId
-                } : undefined}
-                onCardClick={() => window.location.href = `/thread/${thread.id}`}
-                onUsernameClick={() => handleUsernameClick(thread.initialPost.author.username)}
-                onArtistClick={() => thread.initialPost.track && handleArtistClick(thread.initialPost.track.artist)}
-                onTrackPlay={playTrack}
-              />
-            </article>
-          )}
-        </For>
+        <Show when={threadsData.loading}>
+          <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-cyan)' }}>
+            <div>Loading threads...</div>
+          </div>
+        </Show>
+
+        <Show when={threadsData.error}>
+          <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-red)' }}>
+            <div>Error loading threads</div>
+            <div style={{ 'font-size': '0.875rem', 'margin-top': '0.5rem', color: 'var(--terminal-muted)' }}>
+              {threadsData.error.message}
+            </div>
+          </div>
+        </Show>
+
+        <Show when={!threadsData.loading && !threadsData.error}>
+          <For each={sortedThreads()}>
+            {(thread, index) => (
+              <article
+                class="thread-card-wrapper"
+                role="article"
+                aria-posinset={index() + 1}
+                aria-setsize={sortedThreads().length}
+              >
+                <ThreadCard
+                  threadId={thread.id}
+                  threadText={thread.initialPost.text}
+                  creatorUsername={thread.initialPost.author.username}
+                  creatorAvatar={thread.initialPost.author.pfpUrl}
+                  timestamp={thread.initialPost.timestamp}
+                  replyCount={thread.replyCount}
+                  likeCount={thread.likeCount}
+                  starterTrack={thread.initialPost.track ? {
+                    id: thread.initialPost.track.id,
+                    title: thread.initialPost.track.title,
+                    artist: thread.initialPost.track.artist,
+                    albumArt: thread.initialPost.track.thumbnail,
+                    source: thread.initialPost.track.source,
+                    url: thread.initialPost.track.url,
+                    sourceId: thread.initialPost.track.sourceId
+                  } : undefined}
+                  onCardClick={() => window.location.href = `/thread/${thread.id}`}
+                  onUsernameClick={() => handleUsernameClick(thread.initialPost.author.username)}
+                  onArtistClick={() => thread.initialPost.track && handleArtistClick(thread.initialPost.track.artist)}
+                  onTrackPlay={playTrack}
+                />
+              </article>
+            )}
+          </For>
+        </Show>
       </main>
 
       {/* Screen reader announcements */}
