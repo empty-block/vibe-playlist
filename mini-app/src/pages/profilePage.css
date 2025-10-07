@@ -1,4 +1,5 @@
 /* Profile Page - Terminal Accent (Level 1) */
+@import '../styles/layout.css';
 
 .profile-page {
   display: flex;
@@ -21,6 +22,45 @@
   font-family: var(--font-terminal);
   font-size: 12px;
   padding: 8px 12px;
+}
+
+.terminal-title-bar {
+  color: var(--neon-yellow);
+  line-height: 1.6;
+  width: 100%;
+}
+
+.terminal-prompt-line {
+  margin-top: 4px;
+  color: var(--terminal-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.terminal-user {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+.terminal-colon,
+.terminal-dollar {
+  color: var(--terminal-text);
+}
+
+.terminal-path {
+  color: var(--neon-cyan);
+}
+
+.terminal-command {
+  color: var(--terminal-white);
+  margin-left: 4px;
+}
+
+.border-v {
+  color: var(--terminal-muted);
+  user-select: none;
 }
 
 .profile-username-display {
@@ -164,15 +204,10 @@
 
 /* Tablet - constrained width */
 @media (min-width: 768px) {
-  .profile-terminal-header {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
   .profile-identity-card,
   .profile-filter-tabs,
   .profile-track-list {
-    max-width: 640px;
+    max-width: var(--page-content-max-width);
     margin-left: auto;
     margin-right: auto;
   }
