@@ -2,12 +2,12 @@
 
 ## 📚 Core Documentation
 
-All detailed documentation is in the `/context/` directory:
+All detailed documentation is in the `/docs/` directory:
 
-- **[PROJECT-OVERVIEW.md](./context/PROJECT-OVERVIEW.md)** - Product vision, philosophy, and goals
-- **[TECHNICAL-ARCHITECTURE.md](./context/TECHNICAL-ARCHITECTURE.md)** - Tech stack and system design
-- **[DEV-GUIDE.md](./context/DEV-GUIDE.md)** - Development setup, troubleshooting, and critical quirks
-- **[DESIGN-GUIDELINES.md](./context/DESIGN-GUIDELINES.md)** - UI/UX standards, animations, and component patterns
+- **[PROJECT-OVERVIEW.md](./docs/PROJECT-OVERVIEW.md)** - Product vision, philosophy, and goals
+- **[TECHNICAL-ARCHITECTURE.md](./docs/TECHNICAL-ARCHITECTURE.md)** - Tech stack and system design
+- **[DEV-GUIDE.md](./docs/DEV-GUIDE.md)** - Development setup, troubleshooting, and critical quirks
+- **[DESIGN-GUIDELINES.md](./docs/DESIGN-GUIDELINES.md)** - UI/UX standards, animations, and component patterns
 
 ## 🚀 Quick Start for AI Agents
 
@@ -56,7 +56,7 @@ pip install -r requirements.txt  # Install Python deps
   /lib/           # Python utilities
 /database/        # Database migrations and functions
 /shared/          # Types shared between frontend/backend
-/context/         # All documentation and guides
+/docs/            # All documentation and guides
 ```
 
 ## 🎯 Common Tasks Quick Reference
@@ -64,7 +64,7 @@ pip install -r requirements.txt  # Install Python deps
 - **Add mini-app component**: `/mini-app/src/components/[feature]/`
 - **Modify animations**: `/web-app/src/utils/animations.ts` or `/mini-app/src/utils/animations.ts`
 - **Update state management**: `/web-app/src/stores/` or `/mini-app/src/stores/`
-- **Style changes**: Follow context/DESIGN-GUIDELINES.md retro aesthetic
+- **Style changes**: Follow docs/DESIGN-GUIDELINES.md retro aesthetic
 - **Add data pipeline**: `/data/pipelines/`
 - **Update database schema**: `/database/migrations/`
 - **Python utilities**: `/data/lib/`
@@ -72,4 +72,4 @@ pip install -r requirements.txt  # Install Python deps
 
 
 ---
-*This file serves as an index. All detailed information is in the `/context/` directory files.*
+*This file serves as an index. All detailed information is in the `/docs/` directory files.*
