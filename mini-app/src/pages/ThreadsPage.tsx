@@ -98,7 +98,7 @@ const ThreadsPage: Component = () => {
         <div class="terminal-title-bar">
           <span>┌─[</span>
           <span style={{ 'font-weight': 700 }}>JAMZY::THREAD_BROWSER</span>
-          <span>]─────────────[</span>
+          <span>]────────────────────[</span>
           <span style={{ color: 'var(--neon-magenta)' }}>
             FILTER: {sortBy().toUpperCase()}
           </span>
@@ -117,7 +117,7 @@ const ThreadsPage: Component = () => {
           <span class="border-v">│</span>
         </div>
 
-        {/* Bottom border */}
+        {/* Filter Bar */}
         <div style={{ color: 'var(--terminal-muted)' }}>
           <span>└────────────────────────────────────────────┘</span>
         </div>
