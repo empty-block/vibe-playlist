@@ -1,50 +1,120 @@
-import { serve } from 'bun'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { readFileSync } from 'fs'
 import { LibraryAPI } from './api/library'
 import { AggregationsAPI } from './api/aggregations'
+import threadsApp from './api/threads'
+import musicApp from './api/music'
 
+const app = new Hono()
+
+// Middleware
+app.use('/*', cors({
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type']
+}))
+
+// Legacy API handlers (existing functionality)
 const libraryAPI = new LibraryAPI()
 const aggregationsAPI = new AggregationsAPI()
 
-serve({
-  port: 4201,
-  fetch(request) {
-    const url = new URL(request.url)
-    const pathname = url.pathname
-    
-    try {
-      // API routes
-      if (pathname === '/api/library') {
-        return libraryAPI.handleRequest(request)
-      } else if (pathname === '/api/library/aggregations') {
-        return aggregationsAPI.handleRequest(request)
-      }
-      
-      // Serve different file types
-      if (pathname === '/' || pathname === '/index.html') {
-        const html = readFileSync('./vibes-themes.html', 'utf8')
-        return new Response(html, {
-          headers: { 'Content-Type': 'text/html' }
-        })
-      } else if (pathname === '/app.js') {
-        const js = readFileSync('./app.js', 'utf8')
-        return new Response(js, {
-          headers: { 'Content-Type': 'application/javascript' }
-        })
-      } else if (pathname === '/tailwind-config.js') {
-        const js = readFileSync('./tailwind-config.js', 'utf8')
-        return new Response(js, {
-          headers: { 'Content-Type': 'application/javascript' }
-        })
-      } else {
-        return new Response('Not Found', { status: 404 })
-      }
-    } catch (error) {
-      return new Response('Server Error', { status: 500 })
-    }
+// Health check endpoint
+app.get('/api/health', (c) => {
+  return c.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    service: 'jamzy-backend-api'
+  })
+})
+
+// Mount mini-app thread routes
+app.route('/api/threads', threadsApp)
+
+// Mount mini-app music routes
+app.route('/api/music', musicApp)
+
+// Legacy library routes (existing web app)
+app.all('/api/library/aggregations', async (c) => {
+  return await aggregationsAPI.handleRequest(c.req.raw)
+})
+
+app.all('/api/library', async (c) => {
+  return await libraryAPI.handleRequest(c.req.raw)
+})
+
+// Legacy static file serving (for existing HTML demo)
+app.get('/', (c) => {
+  try {
+    const html = readFileSync('./vibes-themes.html', 'utf8')
+    return c.html(html)
+  } catch (error) {
+    return c.text('Static file not found', 404)
   }
 })
 
-console.log('🎵 VIBES - Retro Music Playlist App')
-console.log('🚀 Running on http://localhost:4201')
-console.log('✨ Pure vanilla JS + HTML - no build step needed!')
+app.get('/app.js', (c) => {
+  try {
+    const js = readFileSync('./app.js', 'utf8')
+    return c.text(js, 200, {
+      'Content-Type': 'application/javascript'
+    })
+  } catch (error) {
+    return c.text('Static file not found', 404)
+  }
+})
+
+app.get('/tailwind-config.js', (c) => {
+  try {
+    const js = readFileSync('./tailwind-config.js', 'utf8')
+    return c.text(js, 200, {
+      'Content-Type': 'application/javascript'
+    })
+  } catch (error) {
+    return c.text('Static file not found', 404)
+  }
+})
+
+// Global error handler
+app.onError((err, c) => {
+  console.error('Server error:', err)
+  return c.json({
+    error: {
+      code: 'INTERNAL_ERROR',
+      message: 'An unexpected error occurred',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
+    }
+  }, 500)
+})
+
+// 404 handler
+app.notFound((c) => {
+  return c.json({
+    error: {
+      code: 'NOT_FOUND',
+      message: 'Endpoint not found'
+    }
+  }, 404)
+})
+
+const port = parseInt(process.env.PORT || '4201')
+
+console.log('🎵 JAMZY Backend API')
+console.log(`🚀 Running on http://localhost:${port}`)
+console.log('')
+console.log('📍 API Endpoints:')
+console.log('  GET  /api/health')
+console.log('  POST /api/threads')
+console.log('  GET  /api/threads')
+console.log('  GET  /api/threads/:castHash')
+console.log('  POST /api/threads/:castHash/reply')
+console.log('  GET  /api/music/trending')
+console.log('  GET  /api/music/:musicId/casts')
+console.log('  GET  /api/library (legacy)')
+console.log('  GET  /api/library/aggregations (legacy)')
+console.log('')
+
+export default {
+  port,
+  fetch: app.fetch
+}
