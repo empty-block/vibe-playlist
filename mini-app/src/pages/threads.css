@@ -1,4 +1,5 @@
 /* Threads Page - Terminal UI (Level 2) */
+@import '../styles/layout.css';
 
 /* Terminal color variables */
 :root {
@@ -388,13 +389,8 @@
 
 /* Tablet - constrained width */
 @media (min-width: 768px) {
-  .threads-terminal-header {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
   .thread-feed {
-    max-width: 900px;
+    max-width: var(--page-content-max-width);
     margin: 0 auto;
     padding: var(--space-6);
   }

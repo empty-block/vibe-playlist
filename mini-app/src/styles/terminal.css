@@ -1,4 +1,5 @@
 /* Terminal Cyberpunk Aesthetic - Activity Page Styles */
+@import './layout.css';
 
 :root {
   /* Terminal colors */
@@ -107,11 +108,16 @@
 .terminal-title-bar {
   color: var(--neon-cyan);
   text-shadow: 0 0 2px var(--neon-cyan);
+  width: 100%;
 }
 
 .terminal-prompt-line {
   margin-top: 4px;
   color: var(--terminal-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
 }
 
 .terminal-user {
@@ -224,6 +230,16 @@
   box-shadow: 0 0 4px rgba(0, 255, 65, 0.1);
 }
 
+.terminal-activity-block--track {
+  border-color: var(--neon-magenta);
+  box-shadow: 0 0 4px rgba(255, 0, 255, 0.1);
+}
+
+.terminal-activity-block--thread {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 4px rgba(0, 255, 255, 0.1);
+}
+
 /* Data stream animation */
 @keyframes stream-in {
   0% {
@@ -266,6 +282,18 @@
   color: var(--activity-like);
   text-shadow: 0 0 2px var(--activity-like);
   background: rgba(0, 255, 65, 0.03);
+}
+
+.terminal-activity-block--track .terminal-block-header {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 2px var(--neon-magenta);
+  background: rgba(255, 0, 255, 0.03);
+}
+
+.terminal-activity-block--thread .terminal-block-header {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 2px var(--neon-cyan);
+  background: rgba(0, 255, 255, 0.03);
 }
 
 .packet-type {
@@ -461,6 +489,7 @@
   font-style: italic;
   opacity: 0.9;
   flex: 1;
+  font-size: 13px;
 }
 
 /* Actions */
@@ -738,14 +767,9 @@
 
 /* Tablet and desktop - constrained width for readability */
 @media (min-width: 768px) {
-  .terminal-header {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
   .activity-page > div:nth-child(2) {
     /* Target the scrollable feed div */
-    max-width: 640px;
+    max-width: var(--page-content-max-width);
     margin: 0 auto;
   }
 }

@@ -1,7 +1,7 @@
 import { Component, Show } from 'solid-js';
 import ExpandableText from '../../ExpandableText';
 import { currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
-import './threadCard.css';
+import '../../../../styles/terminal.css';
 
 interface ThreadCardProps {
   threadId: string;
@@ -37,13 +37,6 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
     e.stopPropagation();
     if (props.onUsernameClick) {
       props.onUsernameClick(e);
-    }
-  };
-
-  const handleArtistClick = (e: Event) => {
-    e.stopPropagation();
-    if (props.onArtistClick) {
-      props.onArtistClick(e);
     }
   };
 
@@ -86,97 +79,130 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
     return `${Math.floor(diffDays / 30)}m`;
   };
 
+  const getShortId = () => {
+    return props.threadId.slice(-4).toUpperCase();
+  };
+
   return (
     <article
-      class="terminal-thread-card"
+      class={`terminal-activity-block terminal-activity-block--thread ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''}`}
       onClick={handleCardClick}
       role="article"
       aria-label={`Thread by ${props.creatorUsername}: ${props.threadText}`}
     >
       {/* Top border */}
-      <div class="thread-card-header">
-        <span>╭─ Thread </span>
-        <span class="thread-id">#{props.threadId.slice(-4)}</span>
-        <span> ─────────────────────────────────────────────────────────╮</span>
+      <div class="terminal-block-header">
+        <span>╭─────────────────────────────────────────────────────────────┬──[0x{getShortId()}]─╮</span>
       </div>
 
-      {/* User info line with avatar */}
-      <div class="thread-user-line">
+      {/* Metadata line (matching Activity cards exactly) */}
+      <div class="terminal-block-meta">
         <span class="border-v">│</span>
+        <span class="meta-arrow">&gt;&gt;</span>
+        <span
+          class="meta-username"
+          onClick={handleUsernameClick}
+          role="button"
+          tabindex="0"
+          style={{ cursor: 'pointer' }}
+        >
+          @{props.creatorUsername}
+        </span>
+        <span style={{ color: 'var(--terminal-text)' }}> started a thread</span>
+        <span class="info-separator"> • </span>
+        <span class="info-value">{formatTimeAgo(props.timestamp)}</span>
+        <span style={{ 'margin-left': 'auto' }}></span>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Divider */}
+      <div class="terminal-block-divider">
+        <span>├─────────────────────────────────────────────────────────────┤</span>
+      </div>
+
+      {/* Content - thread text with avatar */}
+      <div class="terminal-block-content">
+        <span class="border-v">│</span>
+        {/* Avatar in content row */}
         <Show
           when={props.creatorAvatar}
           fallback={
-            <div class="thread-avatar-fallback" aria-hidden="true">
-              <span>@</span>
-            </div>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              'border-radius': '50%',
+              background: 'var(--terminal-muted)',
+              color: 'var(--terminal-dim)',
+              display: 'flex',
+              'align-items': 'center',
+              'justify-content': 'center',
+              'font-size': '24px',
+              'flex-shrink': 0,
+              'margin-right': '12px'
+            }}>@</div>
           }
         >
           <img
             src={props.creatorAvatar}
-            class="thread-avatar"
+            style={{
+              width: '56px',
+              height: '56px',
+              'border-radius': '50%',
+              'object-fit': 'cover',
+              'flex-shrink': 0,
+              'margin-right': '12px'
+            }}
             alt={`${props.creatorUsername}'s avatar`}
-            role="img"
             loading="lazy"
           />
         </Show>
-        <span
-          class="thread-username"
-          onClick={handleUsernameClick}
-          role="button"
-          tabindex="0"
-        >
-          @{props.creatorUsername}
-        </span>
-        <span class="thread-separator">·</span>
-        <span class="thread-timestamp-inline">
-          {formatTimeAgo(props.timestamp)}
-        </span>
-        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
-      </div>
-
-      {/* Divider between user and content */}
-      <div class="thread-card-divider">
-        <span>├────────────────────────────────────────────────────────────────────────┤</span>
-      </div>
-
-      {/* Content - thread text */}
-      <div class="thread-card-content">
-        <span class="border-v">│</span>
-        <span class="thread-text">
+        <div style={{ flex: 1, 'min-width': 0 }}>
           <ExpandableText
             text={props.threadText}
-            maxLength={80}
-            className="thread-text-content"
+            maxLength={120}
+            className="comment-text"
+            style={{
+              'line-height': '1.6'
+            }}
           />
-        </span>
-        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+        </div>
+        <span class="border-v">│</span>
       </div>
 
       {/* Track preview if present */}
       <Show when={props.starterTrack}>
         {(track) => (
           <>
-            <div class="thread-card-divider">
-              <span>├────────────────────────────────────────────────────────────────────────┤</span>
+            {/* Divider */}
+            <div class="terminal-block-divider">
+              <span>├─────────────────────────────────────────────────────────────┤</span>
             </div>
-            <div
-              class={`thread-track-preview ${isTrackPlaying() ? 'thread-track-preview--playing' : ''}`}
-              onClick={handleTrackClick}
-              role="button"
-              tabindex="0"
-              aria-label={`Play ${track().title} by ${track().artist}`}
-            >
+
+            <div class="terminal-block-content">
               <span class="border-v">│</span>
-              <img
-                src={track().albumArt}
-                class="thread-track-thumbnail"
-                alt={`Album art for ${track().title}`}
-                loading="lazy"
-              />
-              <div class="thread-track-info">
-                <div class="thread-track-title">"{track().title}"</div>
-                <div class="thread-track-artist">
-                  {track().artist}
+              <div class="terminal-track-row" onClick={handleTrackClick} style={{ cursor: 'pointer' }}>
+                {/* Track thumbnail */}
+                <div class="terminal-thumbnail">
+                  <div class="thumbnail-border-top">┌─┐</div>
+                  <img
+                    src={track().albumArt}
+                    alt=""
+                    class="thumbnail-image"
+                    loading="lazy"
+                  />
+                  <div class="thumbnail-border-bottom">└─┘</div>
+                </div>
+
+                {/* Track info */}
+                <div class="terminal-track-info">
+                  <div class="track-title-line">
+                    <span class="track-title">"{track().title}"</span>
+                    <span class="track-source">[SRC: {track().source.toUpperCase()}]</span>
+                  </div>
+                  <div class="track-artist-line">
+                    <span class="track-label">by</span>
+                    <span class="track-artist">{track().artist}</span>
+                  </div>
                 </div>
               </div>
               <span class="border-v">│</span>
@@ -185,21 +211,43 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
         )}
       </Show>
 
-      {/* Footer - stats only, no timestamp */}
-      <div class="thread-card-divider">
-        <span>├────────────────────────────────────────────────────────────────────────┤</span>
-      </div>
-      <div class="thread-card-footer">
+      {/* Stats actions */}
+      <div class="terminal-block-actions">
         <span class="border-v">│</span>
-        <span class="thread-stat">💬 {props.replyCount}</span>
-        <span>•</span>
-        <span class="thread-stat">❤ {props.likeCount}</span>
-        <span class="border-v" style={{ 'margin-left': 'auto' }}>│</span>
+        <div class="terminal-social-row">
+          <button class="terminal-action-btn">
+            <span class="action-bracket">[</span>
+            <span class="action-icon">💬</span>
+            <span class="action-count"> {props.replyCount}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <button class="terminal-action-btn">
+            <span class="action-bracket">[</span>
+            <span class="action-icon">❤</span>
+            <span class="action-count"> {props.likeCount}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <Show when={isTrackPlaying()}>
+            <button
+              class="terminal-play-btn"
+              onClick={handleTrackClick}
+              aria-label="Pause"
+            >
+              <span class="action-bracket">[</span>
+              <span class="play-icon">⏸</span>
+              <span class="play-text">PAUSE</span>
+              <span class="action-bracket">]</span>
+            </button>
+          </Show>
+        </div>
+        <span class="border-v">│</span>
       </div>
 
       {/* Bottom border */}
-      <div class="thread-card-header">
-        <span>╰─────────────────────────────────────────────────────────────────────╯</span>
+      <div class="terminal-block-footer">
+        <span>╰──────────────────────────────────────────────────────────────╯</span>
       </div>
     </article>
   );

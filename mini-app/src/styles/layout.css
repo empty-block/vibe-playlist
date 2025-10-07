@@ -1,0 +1,24 @@
+/* Shared Layout Widths - Consistent across all pages */
+
+:root {
+  /* Desktop/Tablet max-widths */
+  --page-header-max-width: 800px;
+  --page-content-max-width: 750px;
+}
+
+/* Shared responsive layout for headers and content */
+@media (min-width: 768px) {
+  /* Page headers - wider than content */
+  .page-header-width {
+    max-width: var(--page-header-max-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Page content/cards - constrained for readability */
+  .page-content-width {
+    max-width: var(--page-content-max-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

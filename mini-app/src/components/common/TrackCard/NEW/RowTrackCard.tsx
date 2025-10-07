@@ -1,6 +1,6 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track, currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
-import './rowCard.css';
+import { Track, currentTrack, isPlaying } from '../../../../stores/playerStore';
+import '../../../../styles/terminal.css';
 
 interface RowTrackCardProps {
   track: Track;
@@ -14,19 +14,13 @@ interface RowTrackCardProps {
 const RowTrackCard: Component<RowTrackCardProps> = (props) => {
   const [imageLoaded, setImageLoaded] = createSignal(false);
   const [imageError, setImageError] = createSignal(false);
-  const [commentExpanded, setCommentExpanded] = createSignal(false);
 
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
-  const handleCardClick = () => {
-    if (isTrackPlaying()) {
-      // If this track is playing, pause it
-      setIsPlaying(false);
-    } else {
-      // Otherwise, play this track
-      props.onPlay(props.track);
-    }
+  const handlePlayClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    props.onPlay(props.track);
   };
 
   const handleLikeClick = (e: MouseEvent) => {
@@ -39,25 +33,8 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
     props.onReply(props.track);
   };
 
-  const handleExpandClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    setCommentExpanded(!commentExpanded());
-  };
-
-  const truncateText = (text: string, maxLength: number): string => {
-    if (text.length <= maxLength) return text;
-    const cutPoint = text.lastIndexOf(' ', maxLength);
-    return text.substring(0, cutPoint > 0 ? cutPoint : maxLength);
-  };
-
-  const getPlatformIcon = (source: string) => {
-    switch (source) {
-      case 'youtube': return '📺';
-      case 'spotify': return '🟢';
-      case 'soundcloud': return '🧡';
-      case 'bandcamp': return '🔵';
-      default: return '🎵';
-    }
+  const getShortId = () => {
+    return props.track.id.slice(-4).toUpperCase();
   };
 
   const formatTimeAgo = (timestamp: string) => {
@@ -74,110 +51,144 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
         .replace(' month ago', 'm')
         .replace(' ago', '');
     }
-    const date = new Date(timestamp);
-    if (isNaN(date.getTime())) return timestamp;
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffHours < 1) return 'now';
-    if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays < 7) return `${diffDays}d`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w`;
-    return `${Math.floor(diffDays / 30)}m`;
+    return timestamp;
   };
 
   return (
     <div
-      class={`row-card ${isTrackPlaying() ? 'row-card--playing' : ''} ${props.className || ''}`}
-      onClick={handleCardClick}
+      class={`terminal-activity-block terminal-activity-block--track ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''} ${props.className || ''}`}
     >
-      {/* Main Row - REDESIGNED */}
-      <div class="row-card__main">
-        {/* Thumbnail */}
-        <div class="row-card__thumbnail">
-          <Show when={!imageError()} fallback={
-            <div class="row-card__error">
-              <span>🎵</span>
-            </div>
-          }>
-            <img
-              src={props.track.thumbnail}
-              alt={`${props.track.title} album art`}
-              class="row-card__image"
-              loading="lazy"
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
-          </Show>
-        </div>
-
-        {/* Info Column */}
-        <div class="row-card__info">
-          <div class="row-card__title-artist">
-            {props.track.title}
-            <span class="row-card__separator"> - </span>
-            <span class="row-card__artist">{props.track.artist}</span>
-          </div>
-          <div class="row-card__context">
-            <span class="row-card__shared-by-label">shared by</span>
-            <span class="row-card__username">{props.track.addedBy}</span>
-            <span class="row-card__separator-dot">•</span>
-            <span class="row-card__timestamp">{formatTimeAgo(props.track.timestamp)}</span>
-          </div>
-
-          {/* Social Row - Third row within info column */}
-          <div class="row-card__social-row">
-            <button
-              class="row-card__social-btn"
-              onClick={handleReplyClick}
-              aria-label={`${props.track.replies} replies`}
-            >
-              <span class="row-card__social-icon">💬</span>
-              <span class="row-card__social-count">{props.track.replies} replies</span>
-            </button>
-            <button
-              class="row-card__social-btn"
-              onClick={handleLikeClick}
-              aria-label={`${props.track.likes} likes`}
-            >
-              <span class="row-card__social-icon">❤️</span>
-              <span class="row-card__social-count">{props.track.likes} likes</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Platform Badge */}
-        <div class="row-card__platform">{getPlatformIcon(props.track.source)}</div>
+      {/* Top border */}
+      <div class="terminal-block-header">
+        <span>╭─────────────────────────────────────────────────────────────┬──[0x{getShortId()}]─╮</span>
       </div>
 
-      {/* Comment Row - Only if comment exists */}
-      <Show when={props.showComment !== false && props.track.comment}>
-        <div class="row-card__comment-row">
-          {/* Comment text - expandable */}
-          <div
-            class="row-card__comment-text"
-            onClick={props.track.comment.length > 60 ? handleExpandClick : undefined}
-          >
-            <div class={commentExpanded() ? "row-card__comment row-card__comment--expanded" : "row-card__comment"}>
-              {commentExpanded() ? props.track.comment : truncateText(props.track.comment, 60)}
-            </div>
-          </div>
-
-          {/* Expand arrow - separate column on far right */}
-          <Show when={props.track.comment && props.track.comment.length > 60}>
-            <div class="row-card__expand-column">
-              <button
-                class="row-card__expand-btn"
-                onClick={handleExpandClick}
-                aria-label={commentExpanded() ? "Collapse comment" : "Expand comment"}
-              >
-                {commentExpanded() ? '▲' : '▼'}
-              </button>
-            </div>
+      {/* Metadata line */}
+      <Show when={props.track.addedBy}>
+        <div class="terminal-block-meta">
+          <span class="border-v">│</span>
+          <span class="meta-arrow">&gt;&gt;</span>
+          <span class="meta-username">@{props.track.addedBy}</span>
+          <span style={{ color: 'var(--terminal-text)' }}> shared a track</span>
+          <Show when={props.track.timestamp}>
+            <span class="info-separator"> • </span>
+            <span class="info-value">{formatTimeAgo(props.track.timestamp)}</span>
           </Show>
+          <span style={{ 'margin-left': 'auto' }}></span>
+          <span class="border-v">│</span>
+        </div>
+
+        {/* Divider */}
+        <div class="terminal-block-divider">
+          <span>├─────────────────────────────────────────────────────────────┤</span>
         </div>
       </Show>
+
+      {/* Content area */}
+      <div class="terminal-block-content">
+        <span class="border-v">│</span>
+        <div class="terminal-track-row">
+          {/* Track thumbnail */}
+          <div class="terminal-thumbnail">
+            <div class="thumbnail-border-top">┌─┐</div>
+            <Show when={!imageError()} fallback={
+              <div style={{
+                width: '56px',
+                height: '56px',
+                background: 'var(--terminal-muted)',
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+                color: 'var(--terminal-dim)',
+                'font-size': '24px'
+              }}>♪</div>
+            }>
+              <img
+                src={props.track.thumbnail}
+                alt=""
+                class="thumbnail-image"
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+                style={{
+                  opacity: imageLoaded() ? 1 : 0,
+                  transition: 'opacity 200ms'
+                }}
+              />
+            </Show>
+            <div class="thumbnail-border-bottom">└─┘</div>
+          </div>
+
+          {/* Track info */}
+          <div class="terminal-track-info">
+            <div class="track-title-line">
+              <span class="track-title">"{props.track.title}"</span>
+              <span class="track-source">[SRC: {props.track.source.toUpperCase()}]</span>
+            </div>
+            <div class="track-artist-line">
+              <span class="track-label">by</span>
+              <span class="track-artist">{props.track.artist}</span>
+            </div>
+          </div>
+        </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Comment section */}
+      <Show when={props.showComment !== false && props.track.comment}>
+        <div class="terminal-block-comment">
+          <span class="border-v">│</span>
+          <span class="comment-arrow">&gt;&gt;</span>
+          <span class="comment-label">COMMENT:</span>
+          <span class="comment-text">"{props.track.comment}"</span>
+          <span class="border-v">│</span>
+        </div>
+      </Show>
+
+      {/* Actions */}
+      <div class="terminal-block-actions">
+        <span class="border-v">│</span>
+        <div class="terminal-social-row">
+          <button
+            class="terminal-action-btn"
+            onClick={handleLikeClick}
+            aria-label={`${props.track.likes} likes`}
+          >
+            <span class="action-bracket">[</span>
+            <span class="action-icon">❤</span>
+            <span class="action-count"> {props.track.likes}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <button
+            class="terminal-action-btn"
+            onClick={handleReplyClick}
+            aria-label={`${props.track.replies} replies`}
+          >
+            <span class="action-bracket">[</span>
+            <span class="action-icon">💬</span>
+            <span class="action-count"> {props.track.replies}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <button
+            class="terminal-play-btn"
+            onClick={handlePlayClick}
+            aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
+          >
+            <span class="action-bracket">[</span>
+            <span class="play-icon">{isTrackPlaying() ? '⏸' : '▶'}</span>
+            <span class="play-text">{isTrackPlaying() ? 'PAUSE' : 'PLAY'}</span>
+            <span class="action-bracket">]</span>
+          </button>
+        </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Bottom border */}
+      <div class="terminal-block-footer">
+        <span>╰──────────────────────────────────────────────────────────────╯</span>
+      </div>
     </div>
   );
 };

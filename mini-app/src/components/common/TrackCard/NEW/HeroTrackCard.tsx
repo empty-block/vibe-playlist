@@ -1,7 +1,6 @@
 import { Component, createSignal, Show } from 'solid-js';
-import { Track, currentTrack, isPlaying, setIsPlaying } from '../../../../stores/playerStore';
-import ExpandableText from '../../../ui/ExpandableText';
-import './heroCard.css';
+import { Track, currentTrack, isPlaying } from '../../../../stores/playerStore';
+import '../../../../styles/terminal.css';
 
 interface HeroTrackCardProps {
   track: Track;
@@ -20,14 +19,9 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
-  const handleCardClick = () => {
-    if (isTrackPlaying()) {
-      // If this track is playing, pause it
-      setIsPlaying(false);
-    } else {
-      // Otherwise, play this track
-      props.onPlay(props.track);
-    }
+  const handlePlayClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    props.onPlay(props.track);
   };
 
   const handleLikeClick = (e: MouseEvent) => {
@@ -40,14 +34,8 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
     props.onReply(props.track);
   };
 
-  const getPlatformIcon = (source: string) => {
-    switch (source) {
-      case 'youtube': return '📺';
-      case 'spotify': return '🟢';
-      case 'soundcloud': return '🧡';
-      case 'bandcamp': return '🔵';
-      default: return '🎵';
-    }
+  const getShortId = () => {
+    return props.track.id.slice(-4).toUpperCase();
   };
 
   const formatTimeAgo = (timestamp: string) => {
@@ -64,96 +52,143 @@ const HeroTrackCard: Component<HeroTrackCardProps> = (props) => {
         .replace(' month ago', 'm')
         .replace(' ago', '');
     }
-    const date = new Date(timestamp);
-    if (isNaN(date.getTime())) return timestamp;
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-    if (diffHours < 1) return 'now';
-    if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays < 7) return `${diffDays}d`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)}w`;
-    return `${Math.floor(diffDays / 30)}m`;
+    return timestamp;
   };
 
   return (
     <div
-      class={`hero-card ${isTrackPlaying() ? 'hero-card--playing' : ''} ${props.className || ''}`}
-      onClick={handleCardClick}
+      class={`terminal-activity-block terminal-activity-block--track ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''} ${props.className || ''}`}
     >
-      {/* Album Art Section */}
-      <div class="hero-card__image-container">
-        {/* Loading skeleton */}
-        <Show when={!imageLoaded() && !imageError()}>
-          <div class="hero-card__skeleton" />
-        </Show>
-
-        {/* Album Image */}
-        <Show when={!imageError()} fallback={
-          <div class="hero-card__error">
-            <span class="hero-card__error-icon">🎵</span>
-          </div>
-        }>
-          <img
-            src={props.track.thumbnail}
-            alt={`${props.track.title} album art`}
-            class="hero-card__image"
-            loading="lazy"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        </Show>
-
-        {/* Platform Badge */}
-        <div class="hero-card__platform-badge">
-          {getPlatformIcon(props.track.source)}
-        </div>
-
-        {/* Bottom Gradient Overlay */}
-        <div class="hero-card__overlay" />
-
-        {/* Text Overlay - REDESIGNED */}
-        <div class="hero-card__text-overlay">
-          {/* Combined Title-Artist */}
-          <div class="hero-card__title-artist">
-            {props.track.title}
-            <span class="hero-card__title-artist-separator"> - </span>
-            <span class="hero-card__artist-name">{props.track.artist}</span>
-          </div>
-
-          {/* Inline Context */}
-          <Show when={props.showSocialContext !== false}>
-            <div class="hero-card__context">
-              <span class="hero-card__shared-by-label">shared by</span>
-              <span class="hero-card__username">{props.track.addedBy}</span>
-              <span class="hero-card__context-separator">•</span>
-              <span class="hero-card__timestamp">{formatTimeAgo(props.track.timestamp)}</span>
-            </div>
-          </Show>
-        </div>
+      {/* Top border */}
+      <div class="terminal-block-header">
+        <span>╭─────────────────────────────────────────────────────────────┬──[0x{getShortId()}]─╮</span>
       </div>
 
-      {/* Social + Comment Bar */}
-      <div class="hero-card__actions">
-        <div class="hero-card__social-stats">
+      {/* Metadata line (social context) */}
+      <Show when={props.showSocialContext !== false && props.track.addedBy}>
+        <div class="terminal-block-meta">
+          <span class="border-v">│</span>
+          <span class="meta-arrow">&gt;&gt;</span>
+          <span class="meta-username">@{props.track.addedBy}</span>
+          <span style={{ color: 'var(--terminal-text)' }}> shared a track</span>
+          <Show when={props.track.timestamp}>
+            <span class="info-separator"> • </span>
+            <span class="info-value">{formatTimeAgo(props.track.timestamp)}</span>
+          </Show>
+          <span style={{ 'margin-left': 'auto' }}></span>
+          <span class="border-v">│</span>
+        </div>
+
+        {/* Divider */}
+        <div class="terminal-block-divider">
+          <span>├─────────────────────────────────────────────────────────────┤</span>
+        </div>
+      </Show>
+
+      {/* Content area with track thumbnail and info */}
+      <div class="terminal-block-content">
+        <span class="border-v">│</span>
+        <div class="terminal-track-row">
+          {/* Track thumbnail */}
+          <div class="terminal-thumbnail">
+            <div class="thumbnail-border-top">┌─┐</div>
+            <Show when={!imageError()} fallback={
+              <div style={{
+                width: '56px',
+                height: '56px',
+                background: 'var(--terminal-muted)',
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+                color: 'var(--terminal-dim)',
+                'font-size': '24px'
+              }}>♪</div>
+            }>
+              <img
+                src={props.track.thumbnail}
+                alt=""
+                class="thumbnail-image"
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+                style={{
+                  opacity: imageLoaded() ? 1 : 0,
+                  transition: 'opacity 200ms'
+                }}
+              />
+            </Show>
+            <div class="thumbnail-border-bottom">└─┘</div>
+          </div>
+
+          {/* Track info */}
+          <div class="terminal-track-info">
+            <div class="track-title-line">
+              <span class="track-title">"{props.track.title}"</span>
+              <span class="track-source">[SRC: {props.track.source.toUpperCase()}]</span>
+            </div>
+            <div class="track-artist-line">
+              <span class="track-label">by</span>
+              <span class="track-artist">{props.track.artist}</span>
+            </div>
+          </div>
+        </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Comment section */}
+      <Show when={props.showComment !== false && props.track.comment}>
+        <div class="terminal-block-comment">
+          <span class="border-v">│</span>
+          <span class="comment-arrow">&gt;&gt;</span>
+          <span class="comment-label">COMMENT:</span>
+          <span class="comment-text">"{props.track.comment}"</span>
+          <span class="border-v">│</span>
+        </div>
+      </Show>
+
+      {/* Actions */}
+      <div class="terminal-block-actions">
+        <span class="border-v">│</span>
+        <div class="terminal-social-row">
           <button
-            class="hero-card__stat"
-            onClick={handleReplyClick}
-            aria-label={`${props.track.replies} replies`}
-          >
-            <span>💬</span>
-            <span>{props.track.replies}</span>
-          </button>
-          <button
-            class="hero-card__stat"
+            class="terminal-action-btn"
             onClick={handleLikeClick}
             aria-label={`${props.track.likes} likes`}
           >
-            <span>❤️</span>
-            <span>{props.track.likes}</span>
+            <span class="action-bracket">[</span>
+            <span class="action-icon">❤</span>
+            <span class="action-count"> {props.track.likes}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <button
+            class="terminal-action-btn"
+            onClick={handleReplyClick}
+            aria-label={`${props.track.replies} replies`}
+          >
+            <span class="action-bracket">[</span>
+            <span class="action-icon">💬</span>
+            <span class="action-count"> {props.track.replies}</span>
+            <span class="action-bracket">]</span>
+          </button>
+
+          <button
+            class="terminal-play-btn"
+            onClick={handlePlayClick}
+            aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
+          >
+            <span class="action-bracket">[</span>
+            <span class="play-icon">{isTrackPlaying() ? '⏸' : '▶'}</span>
+            <span class="play-text">{isTrackPlaying() ? 'PAUSE' : 'PLAY'}</span>
+            <span class="action-bracket">]</span>
           </button>
         </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Bottom border */}
+      <div class="terminal-block-footer">
+        <span>╰──────────────────────────────────────────────────────────────╯</span>
       </div>
     </div>
   );
