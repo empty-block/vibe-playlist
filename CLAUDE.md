@@ -24,9 +24,10 @@ All detailed documentation is in the `/context/` directory:
 
 **Frontend Development:**
 ```bash
-bun run dev       # Start dev server (localhost:3001)
-bun run build     # Production build
-bun run typecheck # TypeScript validation
+bun run dev           # Start web app dev server (localhost:3001)
+bun run dev:miniapp   # Start mini-app dev server (localhost:3002)
+bun run build         # Production build
+bun run typecheck     # TypeScript validation
 ```
 
 **Python Data Processing:**
@@ -39,27 +40,31 @@ pip install -r requirements.txt  # Install Python deps
 ## 📁 Ultra-Clean Project Structure
 
 ```
-/frontend/        # All frontend code + build artifacts
+/web-app/         # Main web application (SolidJS)
   /src/           # Source code (components, stores, utils)
   /node_modules/  # Dependencies
   /dist/          # Build output
+/mini-app/        # Farcaster mini-app (SolidJS)
+  /src/           # Mini-app components and logic
+  /dist/          # Mini-app build output
 /backend/         # All backend APIs (TypeScript)
   /api/           # Main REST API endpoints
-  /analytics/     # Analytics service  
+  /analytics/     # Analytics service
   /server.ts      # Main server file
 /data/            # Python data processing
   /pipelines/     # Data import and processing flows
   /lib/           # Python utilities
 /database/        # Database migrations and functions
 /shared/          # Types shared between frontend/backend
-/docs/            # All documentation and guides
+/context/         # All documentation and guides
 ```
 
 ## 🎯 Common Tasks Quick Reference
-- **Add new component**: `/frontend/src/components/[feature]/`
-- **Modify animations**: `/frontend/src/utils/animations.ts`
-- **Update state management**: `/frontend/src/stores/`
-- **Style changes**: Follow docs/DESIGN-GUIDELINES.md retro aesthetic
+- **Add web app component**: `/web-app/src/components/[feature]/`
+- **Add mini-app component**: `/mini-app/src/components/[feature]/`
+- **Modify animations**: `/web-app/src/utils/animations.ts` or `/mini-app/src/utils/animations.ts`
+- **Update state management**: `/web-app/src/stores/` or `/mini-app/src/stores/`
+- **Style changes**: Follow context/DESIGN-GUIDELINES.md retro aesthetic
 - **Add data pipeline**: `/data/pipelines/`
 - **Update database schema**: `/database/migrations/`
 - **Python utilities**: `/data/lib/`
@@ -67,4 +72,4 @@ pip install -r requirements.txt  # Install Python deps
 
 
 ---
-*This file serves as an index. All detailed information is in the `/docs/` directory files.*
+*This file serves as an index. All detailed information is in the `/context/` directory files.*
