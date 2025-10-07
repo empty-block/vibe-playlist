@@ -1,6 +1,6 @@
 import { Component, createSignal, Show } from 'solid-js';
 import { Track, currentTrack, isPlaying } from '../../../../stores/playerStore';
-import './compactCard.css';
+import '../../../../styles/terminal.css';
 
 interface CompactTrackCardProps {
   track: Track;
@@ -11,83 +11,100 @@ interface CompactTrackCardProps {
 const CompactTrackCard: Component<CompactTrackCardProps> = (props) => {
   const [imageLoaded, setImageLoaded] = createSignal(false);
   const [imageError, setImageError] = createSignal(false);
-  const [isHovered, setIsHovered] = createSignal(false);
 
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
-
-  const handleCardClick = () => {
-    props.onPlay(props.track);
-  };
 
   const handlePlayClick = (e: MouseEvent) => {
     e.stopPropagation();
     props.onPlay(props.track);
   };
 
-  const getPlatformIcon = (source: string) => {
-    switch (source) {
-      case 'youtube': return '📺';
-      case 'spotify': return '🟢';
-      case 'soundcloud': return '🧡';
-      case 'bandcamp': return '🔵';
-      default: return '🎵';
-    }
+  const getShortId = () => {
+    return props.track.id.slice(-4).toUpperCase();
   };
 
   return (
     <div
-      class={`compact-card ${isTrackPlaying() ? 'compact-card--playing' : ''} ${props.className || ''}`}
-      onClick={handleCardClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      class={`terminal-activity-block terminal-activity-block--track ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''} ${props.className || ''}`}
+      onClick={() => props.onPlay(props.track)}
     >
-      {/* Album Art Section */}
-      <div class="compact-card__image-container">
-        {/* Loading skeleton */}
-        <Show when={!imageLoaded() && !imageError()}>
-          <div class="compact-card__skeleton" />
-        </Show>
-
-        {/* Album Image */}
-        <Show when={!imageError()} fallback={
-          <div class="compact-card__error">
-            <span class="compact-card__error-icon">🎵</span>
-          </div>
-        }>
-          <img
-            src={props.track.thumbnail}
-            alt={`${props.track.title} album art`}
-            class="compact-card__image"
-            loading="lazy"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        </Show>
-
-        {/* Platform Badge */}
-        <div class="compact-card__platform-badge">
-          {getPlatformIcon(props.track.source)}
-        </div>
-
-        {/* Play Button Overlay (only on hover) */}
-        <Show when={isHovered() || isTrackPlaying()}>
-          <div class="compact-card__play-overlay">
-            <button
-              class="compact-card__play-button"
-              onClick={handlePlayClick}
-              aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
-            >
-              <span>{isTrackPlaying() ? '⏸' : '▶'}</span>
-            </button>
-          </div>
-        </Show>
+      {/* Top border */}
+      <div class="terminal-block-header">
+        <span>╭─────────────────────────────────────────────────────────────┬──[0x{getShortId()}]─╮</span>
       </div>
 
-      {/* Text Section */}
-      <div class="compact-card__text">
-        <div class="compact-card__title">{props.track.title}</div>
-        <div class="compact-card__artist">{props.track.artist}</div>
+      {/* Content area with track thumbnail and info */}
+      <div class="terminal-block-content">
+        <span class="border-v">│</span>
+        <div class="terminal-track-row">
+          {/* Track thumbnail */}
+          <div class="terminal-thumbnail">
+            <div class="thumbnail-border-top">┌─┐</div>
+            <Show when={!imageError()} fallback={
+              <div style={{
+                width: '56px',
+                height: '56px',
+                background: 'var(--terminal-muted)',
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+                color: 'var(--terminal-dim)',
+                'font-size': '24px'
+              }}>♪</div>
+            }>
+              <img
+                src={props.track.thumbnail}
+                alt=""
+                class="thumbnail-image"
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+                style={{
+                  opacity: imageLoaded() ? 1 : 0,
+                  transition: 'opacity 200ms'
+                }}
+              />
+            </Show>
+            <div class="thumbnail-border-bottom">└─┘</div>
+          </div>
+
+          {/* Track info */}
+          <div class="terminal-track-info">
+            <div class="track-title-line">
+              <span class="track-title">"{props.track.title}"</span>
+              <span class="track-source">[SRC: {props.track.source.toUpperCase()}]</span>
+            </div>
+            <div class="track-artist-line">
+              <span class="track-label">by</span>
+              <span class="track-artist">{props.track.artist}</span>
+            </div>
+          </div>
+        </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Actions */}
+      <div class="terminal-block-actions">
+        <span class="border-v">│</span>
+        <div class="terminal-social-row">
+          <button
+            class="terminal-play-btn"
+            onClick={handlePlayClick}
+            aria-label={isTrackPlaying() ? 'Pause' : 'Play'}
+          >
+            <span class="action-bracket">[</span>
+            <span class="play-icon">{isTrackPlaying() ? '⏸' : '▶'}</span>
+            <span class="play-text">{isTrackPlaying() ? 'PAUSE' : 'PLAY'}</span>
+            <span class="action-bracket">]</span>
+          </button>
+        </div>
+        <span class="border-v">│</span>
+      </div>
+
+      {/* Bottom border */}
+      <div class="terminal-block-footer">
+        <span>╰──────────────────────────────────────────────────────────────╯</span>
       </div>
     </div>
   );
