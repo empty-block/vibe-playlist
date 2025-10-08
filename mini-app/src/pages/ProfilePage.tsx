@@ -1,6 +1,7 @@
 import { Component, createSignal, createMemo, For, Show } from 'solid-js';
 import { RowTrackCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { mockThreads } from '../data/mockThreads';
@@ -96,33 +97,14 @@ const ProfilePage: Component = () => {
   return (
     <div class="profile-page">
       {/* Terminal Header */}
-      <header class="profile-terminal-header">
-        {/* Title bar */}
-        <div class="terminal-title-bar">
-          <span>┌─[</span>
-          <span style={{ 'font-weight': 700 }}>JAMZY::USER_PROFILE</span>
-          <span>]───────────[</span>
-          <span class="profile-username-display">@{user.username}</span>
-          <span>]─┐</span>
-        </div>
-
-        {/* Command prompt */}
-        <div class="terminal-prompt-line">
-          <span class="border-v">│</span>
-          <span class="terminal-user">user@jamzy</span>
-          <span class="terminal-colon">:</span>
-          <span class="terminal-path">~/users/{user.username}</span>
-          <span class="terminal-dollar">$</span>
-          <span class="terminal-command">ls -la</span>
-          <span style={{ 'margin-left': 'auto' }}></span>
-          <span class="border-v">│</span>
-        </div>
-
-        {/* Bottom border */}
-        <div style={{ color: 'var(--terminal-muted)' }}>
-          <span>└────────────────────────────────────────────┘</span>
-        </div>
-      </header>
+      <TerminalHeader
+        title="JAMZY::USER_PROFILE"
+        path={`~/users/${user.username}`}
+        command="ls -la"
+        statusInfo={`@${user.username}`}
+        borderColor="green"
+        class="profile-terminal-header"
+      />
 
       {/* Identity Card */}
       <div class="profile-identity-card">

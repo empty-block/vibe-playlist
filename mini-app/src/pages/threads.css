@@ -61,59 +61,7 @@
   z-index: 1;
 }
 
-/* ===== TERMINAL HEADER ===== */
-
-.threads-terminal-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--terminal-bg);
-  border-bottom: 1px solid var(--neon-magenta);
-  font-family: var(--font-terminal);
-  font-size: 12px;
-  padding: 8px 12px;
-  box-shadow: 0 2px 8px rgba(224, 16, 224, 0.1);
-}
-
-.terminal-title-bar {
-  color: var(--neon-magenta);
-  text-shadow: 0 0 2px var(--neon-magenta);
-  line-height: 1.6;
-  width: 100%;
-}
-
-.terminal-prompt-line {
-  margin-top: 4px;
-  color: var(--terminal-text);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  width: 100%;
-}
-
-.terminal-user {
-  color: var(--neon-cyan);
-  font-weight: 600;
-}
-
-.terminal-colon,
-.terminal-dollar {
-  color: var(--terminal-text);
-}
-
-.terminal-path {
-  color: var(--neon-cyan);
-}
-
-.terminal-command {
-  color: var(--terminal-white);
-  margin-left: 4px;
-}
-
-.border-v {
-  color: var(--terminal-muted);
-  user-select: none;
-}
+/* ===== TERMINAL HEADER - Page Specific ===== */
 
 /* Hide title visually but keep for screen readers */
 .threads-title {

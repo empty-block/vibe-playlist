@@ -11,57 +11,7 @@
 
 /* No scan lines on profile - keep it clean */
 
-/* ===== TERMINAL HEADER ===== */
-
-.profile-terminal-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--terminal-bg);
-  border-bottom: 1px solid var(--neon-green);
-  font-family: var(--font-terminal);
-  font-size: 12px;
-  padding: 8px 12px;
-}
-
-.terminal-title-bar {
-  color: var(--neon-yellow);
-  line-height: 1.6;
-  width: 100%;
-}
-
-.terminal-prompt-line {
-  margin-top: 4px;
-  color: var(--terminal-text);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  width: 100%;
-}
-
-.terminal-user {
-  color: var(--neon-cyan);
-  font-weight: 600;
-}
-
-.terminal-colon,
-.terminal-dollar {
-  color: var(--terminal-text);
-}
-
-.terminal-path {
-  color: var(--neon-cyan);
-}
-
-.terminal-command {
-  color: var(--terminal-white);
-  margin-left: 4px;
-}
-
-.border-v {
-  color: var(--terminal-muted);
-  user-select: none;
-}
+/* ===== TERMINAL HEADER - Page Specific ===== */
 
 .profile-username-display {
   color: var(--neon-yellow);

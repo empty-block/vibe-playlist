@@ -29,19 +29,7 @@
   z-index: 1;
 }
 
-/* ===== TERMINAL HEADER ===== */
-
-.thread-view-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--terminal-bg);
-  border-bottom: 1px solid var(--neon-cyan);
-  font-family: var(--font-terminal);
-  font-size: 12px;
-  padding: 8px 12px;
-  box-shadow: 0 2px 8px rgba(4, 202, 244, 0.1);
-}
+/* ===== TERMINAL HEADER - Page Specific ===== */
 
 .thread-view-back-btn {
   background: transparent;

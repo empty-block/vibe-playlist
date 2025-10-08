@@ -2,6 +2,7 @@ import { Component, createSignal, For, createMemo, Show, createResource } from '
 import { useParams, A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
@@ -68,38 +69,21 @@ const ThreadViewPage: Component = () => {
   return (
     <div class="thread-view-page">
       {/* Terminal Header */}
-      <header class="thread-view-header">
-        {/* Title bar */}
-        <div class="terminal-title-bar">
-          <span>┌─[</span>
-          <span style={{ 'font-weight': 700 }}>JAMZY::THREAD_VIEW</span>
-          <span>]───────────[</span>
-          <span style={{ color: 'var(--neon-yellow)' }}>ID: #{params.id.slice(-4)}</span>
-          <span>]─┐</span>
-        </div>
-
-        {/* Command prompt */}
-        <div class="terminal-prompt-line">
-          <span class="border-v">│</span>
+      <TerminalHeader
+        title="JAMZY::THREAD_VIEW"
+        path={`~/threads/${params.id.slice(-4)}`}
+        command="cat thread"
+        statusInfo={`ID: #${params.id.slice(-4)}`}
+        borderColor="cyan"
+        class="thread-view-header"
+        additionalContent={
           <A href="/" class="thread-view-back-btn">
             <span>[</span>
             <span>← BACK</span>
             <span>]</span>
           </A>
-          <span class="terminal-user">user@jamzy</span>
-          <span class="terminal-colon">:</span>
-          <span class="terminal-path">~/threads/{params.id.slice(-4)}</span>
-          <span class="terminal-dollar">$</span>
-          <span class="terminal-command">cat thread</span>
-          <span style={{ 'margin-left': 'auto' }}></span>
-          <span class="border-v">│</span>
-        </div>
-
-        {/* Bottom border */}
-        <div style={{ color: 'var(--terminal-muted)' }}>
-          <span>└────────────────────────────────────────────┘</span>
-        </div>
-      </header>
+        }
+      />
 
       {/* Scrollable Thread Content */}
       <div class="thread-view-content">
