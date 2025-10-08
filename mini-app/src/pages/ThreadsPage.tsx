@@ -3,6 +3,7 @@ import { A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
 import { Thread } from '../data/mockThreads';
 import { sortThreads, SortType } from '../utils/threadSorting';
@@ -104,49 +105,28 @@ const ThreadsPage: Component = () => {
   return (
     <div class="threads-page">
       {/* Terminal Header */}
-      <header class="threads-terminal-header" role="banner">
-        {/* Title bar */}
-        <div class="terminal-title-bar">
-          <span>┌─[</span>
-          <span style={{ 'font-weight': 700 }}>JAMZY::THREAD_BROWSER</span>
-          <span>]────────────────────[</span>
-          <span style={{ color: 'var(--neon-magenta)' }}>
-            FILTER: {sortBy().toUpperCase()}
-          </span>
-          <span>]─┐</span>
-        </div>
-
-        {/* Command prompt */}
-        <div class="terminal-prompt-line">
-          <span class="border-v">│</span>
-          <span class="terminal-user">user@jamzy</span>
-          <span class="terminal-colon">:</span>
-          <span class="terminal-path">~/threads</span>
-          <span class="terminal-dollar">$</span>
-          <span class="terminal-command">list --sort={sortBy()}</span>
-          <span style={{ 'margin-left': 'auto' }}></span>
-          <span class="border-v">│</span>
-        </div>
-
-        {/* Filter Bar */}
-        <div style={{ color: 'var(--terminal-muted)' }}>
-          <span>└────────────────────────────────────────────┘</span>
-        </div>
-
-        {/* Filter Bar */}
-        <ThreadFilterBar
-          filters={[
-            { value: 'hot', label: 'Hot' },
-            { value: 'latest', label: 'Latest' },
-            { value: 'top', label: 'Top' }
-          ]}
-          activeFilter={sortBy()}
-          onFilterChange={handleFilterChange}
-        />
-
+      <TerminalHeader
+        title="JAMZY::THREAD_BROWSER"
+        path="~/threads"
+        command={`list --sort=${sortBy()}`}
+        statusInfo={`FILTER: ${sortBy().toUpperCase()}`}
+        borderColor="magenta"
+        class="threads-terminal-header"
+      >
         {/* Hidden title for screen readers */}
         <h1 class="threads-title">Threads</h1>
-      </header>
+      </TerminalHeader>
+
+      {/* Filter Bar - Above Feed */}
+      <ThreadFilterBar
+        filters={[
+          { value: 'hot', label: 'Hot' },
+          { value: 'latest', label: 'Latest' },
+          { value: 'top', label: 'Top' }
+        ]}
+        activeFilter={sortBy()}
+        onFilterChange={handleFilterChange}
+      />
 
       {/* Scrollable Feed */}
       <main

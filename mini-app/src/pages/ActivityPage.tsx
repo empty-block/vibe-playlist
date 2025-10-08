@@ -1,5 +1,6 @@
 import { Component, createSignal, For } from 'solid-js';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ActivityItem from '../components/activity/ActivityItem';
 import { mockActivityFeed, ActivityEvent } from '../data/mockActivity';
 import '../styles/terminal.css';
@@ -16,34 +17,15 @@ const ActivityPage: Component = () => {
       color: 'var(--terminal-text)'
     }}>
       {/* Terminal Header */}
-      <div class="terminal-header">
-        {/* Top border with title */}
-        <div class="terminal-title-bar">
-          <span>┌─[</span>
-          <span style={{ 'font-weight': 700 }}>JAMZY::NETWORK_MONITOR</span>
-          <span>]─────────────────────────────[</span>
-          <span style={{ color: 'var(--neon-yellow)' }}>v2.5.7</span>
-          <span>]─┐</span>
-        </div>
-
-        {/* Command prompt */}
-        <div class="terminal-prompt-line">
-          <span class="border-v">│</span>
-          <span class="terminal-user">user@jamzy</span>
-          <span class="terminal-colon">:</span>
-          <span class="terminal-path">~/activity</span>
-          <span class="terminal-dollar">$</span>
-          <span class="terminal-command">stream --live --filter=all</span>
-          <span class="terminal-cursor">█</span>
-          <span style={{ 'margin-left': 'auto' }}></span>
-          <span class="border-v">│</span>
-        </div>
-
-        {/* Bottom border */}
-        <div style={{ color: 'var(--terminal-muted)' }}>
-          <span>└────────────────────────────────────────────────────────────────┘</span>
-        </div>
-      </div>
+      <TerminalHeader
+        title="JAMZY::NETWORK_MONITOR"
+        path="~/activity"
+        command="stream --live --filter=all"
+        statusInfo="v2.5.7"
+        borderColor="cyan"
+        class="terminal-header"
+        additionalContent={<span class="terminal-cursor">█</span>}
+      />
 
       {/* Scrollable Feed */}
       <div style={{

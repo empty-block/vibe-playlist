@@ -4,6 +4,8 @@
   align-items: center;
   gap: var(--space-2); /* 8px between buttons */
   width: 100%;
+  margin-top: var(--space-4); /* 16px space above filter bar */
+  padding: 0 var(--space-4); /* Horizontal padding */
 }
 
 .filter-btn {
