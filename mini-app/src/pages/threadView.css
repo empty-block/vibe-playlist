@@ -1,4 +1,5 @@
 /* Thread View Page - Terminal Deep Dive (Level 4) */
+@import '../styles/layout.css';
 
 .thread-view-page {
   display: flex;
@@ -167,12 +168,12 @@
 /* Tablet - constrained width */
 @media (min-width: 768px) {
   .thread-view-header {
-    max-width: 800px;
+    max-width: var(--page-header-max-width);
     margin: 0 auto;
   }
 
   .thread-view-content {
-    max-width: 640px;
+    max-width: var(--page-content-max-width);
     margin: 0 auto;
     padding: var(--space-6);
   }

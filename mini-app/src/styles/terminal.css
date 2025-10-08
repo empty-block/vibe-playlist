@@ -767,10 +767,10 @@
 
 /* Tablet and desktop - constrained width for readability */
 @media (min-width: 768px) {
-  .activity-page > div:nth-child(2) {
-    /* Target the scrollable feed div */
+  .activity-feed {
     max-width: var(--page-content-max-width);
     margin: 0 auto;
+    padding: var(--space-6);
   }
 }
 

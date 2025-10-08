@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cd web-app && bun --bun vite",
     "dev:web": "cd web-app && bun --bun vite",
-    "dev:miniapp": "cd mini-app && bun --bun vite",
+    "dev:miniapp": "cd mini-app && bun --bun vite & bun run dev:server",
     "dev:server": "bun run --watch backend/server.ts",
     "dev:full": "bun run dev:web & bun run dev:server",
     "build": "cd web-app && vite build",

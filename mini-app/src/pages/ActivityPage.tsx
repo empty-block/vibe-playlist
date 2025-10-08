@@ -46,7 +46,7 @@ const ActivityPage: Component = () => {
       </div>
 
       {/* Scrollable Feed */}
-      <div style={{
+      <div class="activity-feed" style={{
         flex: 1,
         'overflow-y': 'auto',
         padding: 'var(--space-4)',

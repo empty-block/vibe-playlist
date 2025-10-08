@@ -4,6 +4,11 @@
   /* Desktop/Tablet max-widths */
   --page-header-max-width: 800px;
   --page-content-max-width: 750px;
+
+  /* Spacing scale */
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
 }
 
 /* Shared responsive layout for headers and content */
