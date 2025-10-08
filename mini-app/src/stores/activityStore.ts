@@ -76,6 +76,14 @@ function transformActivity(apiActivity: ApiActivity): ActivityEvent | null {
 
   // For LIKED and RECASTED, also show as track_share for now (MVP)
   if (apiActivity.type === 'LIKED' || apiActivity.type === 'RECASTED') {
+    // For these activities, show the cast AUTHOR as the user (not the actor who liked/recasted)
+    const castAuthor: ActivityUser = {
+      fid: parseInt(apiActivity.cast.author.fid),
+      username: apiActivity.cast.author.username,
+      displayName: apiActivity.cast.author.displayName,
+      avatar: apiActivity.cast.author.pfpUrl || '/api/placeholder/40/40'
+    };
+
     let track: Track;
 
     if (apiActivity.cast.music && apiActivity.cast.music.length > 0) {
@@ -122,7 +130,7 @@ function transformActivity(apiActivity: ApiActivity): ActivityEvent | null {
       id: `${apiActivity.type}-${apiActivity.cast.castHash}`,
       type: 'track_share',
       timestamp: formatRelativeTime(apiActivity.timestamp),
-      user, // The user who liked/recasted
+      user: castAuthor, // Use cast author, not the actor
       track,
       threadId: apiActivity.cast.castHash
     };
