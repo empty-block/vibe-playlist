@@ -237,15 +237,19 @@ app.get('/:castHash', async (c) => {
       statsMap.set(s.cast_id, current)
     })
 
-    // Count replies for each reply (nested replies)
+    // Count replies for all replies in a single query (nested replies)
+    const { data: nestedRepliesData } = await supabase
+      .from('cast_nodes')
+      .select('parent_cast_hash')
+      .in('parent_cast_hash', replyCastIds)
+      .not('parent_cast_hash', 'is', null)
+
+    // Build reply counts map
     const replyCounts = new Map<string, number>()
-    for (const reply of replies || []) {
-      const { count } = await supabase
-        .from('cast_nodes')
-        .select('*', { count: 'exact', head: true })
-        .eq('parent_cast_hash', reply.node_id)
-      replyCounts.set(reply.node_id, count || 0)
-    }
+    nestedRepliesData?.forEach(nested => {
+      const count = replyCounts.get(nested.parent_cast_hash!) || 0
+      replyCounts.set(nested.parent_cast_hash!, count + 1)
+    })
 
     const formattedReplies = (replies || []).map(reply => {
       const replyAuthor = authorMap.get(reply.author_fid)
@@ -408,15 +412,19 @@ app.get('/', async (c) => {
       statsMap.set(s.cast_id, current)
     })
 
-    // Count replies for each thread
+    // Count replies for all threads in a single query
+    const { data: repliesData } = await supabase
+      .from('cast_nodes')
+      .select('parent_cast_hash')
+      .in('parent_cast_hash', castIds)
+      .not('parent_cast_hash', 'is', null)
+
+    // Build reply counts map
     const replyCounts = new Map<string, number>()
-    for (const thread of threadsToReturn) {
-      const { count } = await supabase
-        .from('cast_nodes')
-        .select('*', { count: 'exact', head: true })
-        .eq('parent_cast_hash', thread.node_id)
-      replyCounts.set(thread.node_id, count || 0)
-    }
+    repliesData?.forEach(reply => {
+      const count = replyCounts.get(reply.parent_cast_hash!) || 0
+      replyCounts.set(reply.parent_cast_hash!, count + 1)
+    })
 
     const formattedThreads = threadsToReturn.map(thread => {
       const author = authorMap.get(thread.author_fid)
