@@ -5,6 +5,9 @@ import { LibraryAPI } from './api/library'
 import { AggregationsAPI } from './api/aggregations'
 import threadsApp from './api/threads'
 import musicApp from './api/music'
+import interactionsApp from './api/interactions'
+import usersApp from './api/users'
+import activityApp from './api/activity'
 
 const app = new Hono()
 
@@ -31,8 +34,17 @@ app.get('/api/health', (c) => {
 // Mount mini-app thread routes
 app.route('/api/threads', threadsApp)
 
+// Mount interaction routes (nested under /api/threads)
+app.route('/api/threads', interactionsApp)
+
 // Mount mini-app music routes
 app.route('/api/music', musicApp)
+
+// Mount user routes
+app.route('/api/users', usersApp)
+
+// Mount activity routes
+app.route('/api/activity', activityApp)
 
 // Legacy library routes (existing web app)
 app.all('/api/library/aggregations', async (c) => {
@@ -103,15 +115,20 @@ console.log('🎵 JAMZY Backend API')
 console.log(`🚀 Running on http://localhost:${port}`)
 console.log('')
 console.log('📍 API Endpoints:')
-console.log('  GET  /api/health')
-console.log('  POST /api/threads')
-console.log('  GET  /api/threads')
-console.log('  GET  /api/threads/:castHash')
-console.log('  POST /api/threads/:castHash/reply')
-console.log('  GET  /api/music/trending')
-console.log('  GET  /api/music/:musicId/casts')
-console.log('  GET  /api/library (legacy)')
-console.log('  GET  /api/library/aggregations (legacy)')
+console.log('  GET    /api/health')
+console.log('  POST   /api/threads')
+console.log('  GET    /api/threads')
+console.log('  GET    /api/threads/:castHash')
+console.log('  POST   /api/threads/:castHash/reply')
+console.log('  POST   /api/threads/:castHash/like')
+console.log('  DELETE /api/threads/:castHash/like')
+console.log('  GET    /api/users/:fid/threads')
+console.log('  GET    /api/users/:fid/activity')
+console.log('  GET    /api/activity')
+console.log('  GET    /api/music/trending')
+console.log('  GET    /api/music/:musicId/casts')
+console.log('  GET    /api/library (legacy)')
+console.log('  GET    /api/library/aggregations (legacy)')
 console.log('')
 
 export default {

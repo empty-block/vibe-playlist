@@ -1,20 +1,15 @@
 import { Hono } from 'hono'
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import {
+  getSupabaseClient,
+  encodeCursor,
+  decodeCursor,
+  fetchStats,
+  fetchAuthors,
+  formatAuthor,
+  formatMusic
+} from '../lib/api-utils'
 
 const app = new Hono()
-
-// Initialize Supabase client
-function getSupabaseClient(): SupabaseClient {
-  const supabaseUrl = process.env.SUPABASE_ENV === 'local'
-    ? process.env.SUPABASE_LOCAL_URL!
-    : process.env.SUPABASE_URL!
-
-  const supabaseKey = process.env.SUPABASE_ENV === 'local'
-    ? process.env.SUPABASE_LOCAL_KEY!
-    : process.env.SUPABASE_KEY!
-
-  return createClient(supabaseUrl, supabaseKey)
-}
 
 /**
  * GET /api/music/trending
@@ -48,7 +43,7 @@ app.get('/trending', async (c) => {
     // Get music share counts within timeframe
     const { data: musicShares, error: sharesError } = await supabase
       .from('cast_music_edges')
-      .select('music_platform_name, music_platform_id, created_at')
+      .select('music_platform, music_platform_id, created_at')
       .gte('created_at', dateThreshold.toISOString())
 
     if (sharesError) {
@@ -64,7 +59,7 @@ app.get('/trending', async (c) => {
     // Count shares per track
     const shareCounts = new Map<string, number>()
     musicShares?.forEach(share => {
-      const key = `${share.music_platform_name}-${share.music_platform_id}`
+      const key = `${share.music_platform}-${share.music_platform_id}`
       shareCounts.set(key, (shareCounts.get(key) || 0) + 1)
     })
 
@@ -110,7 +105,7 @@ app.get('/trending', async (c) => {
             )
           )
         `)
-        .eq('music_platform_name', platform)
+        .eq('music_platform', platform)
         .eq('music_platform_id', platformId)
         .gte('created_at', dateThreshold.toISOString())
         .order('created_at', { ascending: false })
@@ -210,18 +205,16 @@ app.get('/:musicId/casts', async (c) => {
           created_at
         )
       `)
-      .eq('music_platform_name', platform)
+      .eq('music_platform', platform)
       .eq('music_platform_id', platformId)
       .order('created_at', { ascending: false })
       .limit(limit + 1)
 
     // Apply cursor if provided
     if (cursor) {
-      try {
-        const cursorData = JSON.parse(atob(cursor))
+      const cursorData = decodeCursor(cursor)
+      if (cursorData) {
         query = query.lt('created_at', cursorData.created_at)
-      } catch (e) {
-        console.warn('Invalid cursor:', cursor)
       }
     }
 
@@ -252,7 +245,7 @@ app.get('/:musicId/casts', async (c) => {
     // Fetch stats for all casts
     const castIds = edgesToReturn.map((e: any) => e.cast_nodes.node_id)
     const { data: stats } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .select('cast_id, edge_type')
       .in('cast_id', castIds)
 
@@ -301,10 +294,10 @@ app.get('/:musicId/casts', async (c) => {
     let nextCursor: string | undefined
     if (hasMore && edgesToReturn.length > 0) {
       const lastEdge = edgesToReturn[edgesToReturn.length - 1]
-      nextCursor = btoa(JSON.stringify({
+      nextCursor = encodeCursor({
         created_at: lastEdge.created_at,
         id: lastEdge.cast_id
-      }))
+      })
     }
 
     return c.json({

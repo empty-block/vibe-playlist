@@ -1,22 +1,18 @@
 import { Hono } from 'hono'
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { generateMockCastHash } from '../lib/test-data'
 import { extractAndStoreMusicMetadata } from '../lib/music-extraction'
+import {
+  getSupabaseClient,
+  encodeCursor,
+  decodeCursor,
+  fetchStats,
+  fetchAuthors,
+  fetchReplyCounts,
+  formatAuthor,
+  formatMusic
+} from '../lib/api-utils'
 
 const app = new Hono()
-
-// Initialize Supabase client
-function getSupabaseClient(): SupabaseClient {
-  const supabaseUrl = process.env.SUPABASE_ENV === 'local'
-    ? process.env.SUPABASE_LOCAL_URL!
-    : process.env.SUPABASE_URL!
-
-  const supabaseKey = process.env.SUPABASE_ENV === 'local'
-    ? process.env.SUPABASE_LOCAL_KEY!
-    : process.env.SUPABASE_KEY!
-
-  return createClient(supabaseUrl, supabaseKey)
-}
 
 /**
  * POST /api/threads
@@ -65,9 +61,9 @@ app.post('/', async (c) => {
 
     // Create AUTHORED edge
     const { error: edgeError } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .insert({
-        source_user_id: userId,
+        source_id: userId,
         cast_id: castHash,
         edge_type: 'AUTHORED',
         created_at: timestamp
@@ -171,7 +167,7 @@ app.get('/:castHash', async (c) => {
 
     // Fetch thread stats
     const { data: stats } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .select('edge_type')
       .eq('cast_id', castHash)
 
@@ -225,7 +221,7 @@ app.get('/:castHash', async (c) => {
 
     // Fetch stats for all replies
     const { data: replyStats } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .select('cast_id, edge_type')
       .in('cast_id', replyCastIds)
 
@@ -342,11 +338,9 @@ app.get('/', async (c) => {
 
     // Apply cursor if provided
     if (cursor) {
-      try {
-        const cursorData = JSON.parse(atob(cursor))
+      const cursorData = decodeCursor(cursor)
+      if (cursorData) {
         query = query.lt('created_at', cursorData.created_at)
-      } catch (e) {
-        console.warn('Invalid cursor:', cursor)
       }
     }
 
@@ -400,7 +394,7 @@ app.get('/', async (c) => {
 
     // Fetch stats for all threads
     const { data: stats } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .select('cast_id, edge_type')
       .in('cast_id', castIds)
 
@@ -461,10 +455,10 @@ app.get('/', async (c) => {
     let nextCursor: string | undefined
     if (hasMore && threadsToReturn.length > 0) {
       const lastThread = threadsToReturn[threadsToReturn.length - 1]
-      nextCursor = btoa(JSON.stringify({
+      nextCursor = encodeCursor({
         created_at: lastThread.created_at,
         id: lastThread.node_id
-      }))
+      })
     }
 
     return c.json({
@@ -548,9 +542,9 @@ app.post('/:castHash/reply', async (c) => {
 
     // Create AUTHORED edge for the reply
     const { error: authoredEdgeError } = await supabase
-      .from('cast_edges')
+      .from('interaction_edges')
       .insert({
-        source_user_id: userId,
+        source_id: userId,
         cast_id: replyCastHash,
         edge_type: 'AUTHORED',
         created_at: timestamp
