@@ -37,6 +37,7 @@ export function decodeCursor(cursor: string): { created_at: string; id: string }
 }
 
 /**
+ * @deprecated Use PostgreSQL functions instead (get_threads_feed, get_thread_with_replies, etc.)
  * Fetch stats (likes, recasts) for multiple casts
  * Returns a Map of castId -> { likes: number, recasts: number }
  */
@@ -66,6 +67,7 @@ export async function fetchStats(
 }
 
 /**
+ * @deprecated Use PostgreSQL functions instead (get_threads_feed, get_thread_with_replies, etc.)
  * Fetch authors/users for multiple FIDs
  * Returns a Map of fid -> user object
  */
@@ -88,6 +90,7 @@ export async function fetchAuthors(
 }
 
 /**
+ * @deprecated Use PostgreSQL functions instead (get_threads_feed, get_thread_with_replies, etc.)
  * Fetch reply counts for multiple casts
  * Returns a Map of castId -> reply count
  */
@@ -115,6 +118,7 @@ export async function fetchReplyCounts(
 }
 
 /**
+ * @deprecated Use PostgreSQL functions instead (get_threads_feed, get_thread_with_replies, etc.)
  * Format author object for API responses
  */
 export function formatAuthor(author: any, fid: string) {
@@ -127,6 +131,7 @@ export function formatAuthor(author: any, fid: string) {
 }
 
 /**
+ * @deprecated Use PostgreSQL functions instead (get_threads_feed, get_thread_with_replies, etc.)
  * Format music data for API responses
  */
 export function formatMusic(musicLibraryData: any) {

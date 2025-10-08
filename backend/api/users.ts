@@ -2,12 +2,7 @@ import { Hono } from 'hono'
 import {
   getSupabaseClient,
   encodeCursor,
-  decodeCursor,
-  fetchStats,
-  fetchAuthors,
-  fetchReplyCounts,
-  formatAuthor,
-  formatMusic
+  decodeCursor
 } from '../lib/api-utils'
 import { addRateLimitHeaders } from '../lib/rate-limit'
 
@@ -25,23 +20,25 @@ app.get('/:fid/threads', async (c) => {
 
     const supabase = getSupabaseClient()
 
-    let query = supabase
-      .from('cast_nodes')
-      .select('*')
-      .eq('author_fid', fid)
-      .is('parent_cast_hash', null) // Only top-level threads
-      .order('created_at', { ascending: false })
-      .limit(limit + 1)
-
-    // Apply cursor if provided
+    // Parse cursor for timestamp
+    let cursorTimestamp = null
+    let cursorId = null
     if (cursor) {
       const cursorData = decodeCursor(cursor)
       if (cursorData) {
-        query = query.lt('created_at', cursorData.created_at)
+        cursorTimestamp = cursorData.created_at
+        cursorId = cursorData.id
       }
     }
 
-    const { data: threads, error: threadsError } = await query
+    // Use postgres function to get user threads with all data in one call
+    const { data: threads, error: threadsError } = await supabase
+      .rpc('get_user_threads', {
+        user_fid: fid,
+        limit_count: limit + 1,
+        cursor_timestamp: cursorTimestamp,
+        cursor_id: cursorId
+      })
 
     if (threadsError) {
       console.error('Error fetching user threads:', threadsError)
@@ -56,64 +53,31 @@ app.get('/:fid/threads', async (c) => {
     const hasMore = threads.length > limit
     const threadsToReturn = threads.slice(0, limit)
 
-    // Fetch author info (just the single user in this case)
-    const authorMap = await fetchAuthors(supabase, [fid])
-
-    // Fetch music for all threads
-    const castIds = threadsToReturn.map(t => t.node_id)
-    const { data: music } = await supabase
-      .from('cast_music_edges')
-      .select(`
-        cast_id,
-        music_library!inner (
-          platform,
-          platform_id,
-          artist,
-          title,
-          url,
-          thumbnail_url
-        )
-      `)
-      .in('cast_id', castIds)
-
-    const musicMap = new Map<string, any[]>()
-    music?.forEach(m => {
-      const castMusic = musicMap.get(m.cast_id) || []
-      castMusic.push(m.music_library)
-      musicMap.set(m.cast_id, castMusic)
-    })
-
-    // Fetch stats for all threads
-    const statsMap = await fetchStats(supabase, castIds)
-
-    // Fetch reply counts
-    const replyCountsMap = await fetchReplyCounts(supabase, castIds)
-
-    const formattedThreads = threadsToReturn.map(thread => {
-      const author = authorMap.get(thread.author_fid)
-      const threadMusic = musicMap.get(thread.node_id) || []
-      const threadStats = statsMap.get(thread.node_id) || { likes: 0, recasts: 0 }
-
-      return {
-        castHash: thread.node_id,
-        text: thread.cast_text,
-        author: formatAuthor(author, thread.author_fid),
-        timestamp: thread.created_at,
-        music: threadMusic.map(m => formatMusic(m)),
-        stats: {
-          replies: replyCountsMap.get(thread.node_id) || 0,
-          likes: threadStats.likes,
-          recasts: threadStats.recasts
-        }
+    // Format threads
+    const formattedThreads = threadsToReturn.map((thread: any) => ({
+      castHash: thread.cast_hash,
+      text: thread.cast_text,
+      author: {
+        fid: thread.author_fid,
+        username: thread.author_username,
+        displayName: thread.author_display_name,
+        pfpUrl: thread.author_avatar_url
+      },
+      timestamp: thread.created_at,
+      music: thread.music || [],
+      stats: {
+        replies: parseInt(thread.replies_count),
+        likes: parseInt(thread.likes_count),
+        recasts: parseInt(thread.recasts_count)
       }
-    })
+    }))
 
     let nextCursor: string | undefined
     if (hasMore && threadsToReturn.length > 0) {
       const lastThread = threadsToReturn[threadsToReturn.length - 1]
       nextCursor = encodeCursor({
-        created_at: lastThread.created_at,
-        id: lastThread.node_id
+        created_at: lastThread.timestamp,
+        id: lastThread.castHash
       })
     }
 

@@ -50,10 +50,10 @@ BEGIN
       cme.cast_id,
       jsonb_agg(
         jsonb_build_object(
-          'id', ml.platform || '-' || ml.platform_id,
+          'id', ml.platform_name || '-' || ml.platform_id,
           'title', ml.title,
           'artist', ml.artist,
-          'platform', ml.platform,
+          'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
           'thumbnail', ml.thumbnail_url
@@ -61,7 +61,7 @@ BEGIN
       ) as music_data
     FROM cast_music_edges cme
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
-      AND cme.music_platform = ml.platform
+      AND cme.music_platform_name = ml.platform_name
     WHERE cme.cast_id IN (SELECT node_id FROM threads)
     GROUP BY cme.cast_id
   ),
@@ -154,10 +154,10 @@ BEGIN
       cme.cast_id,
       jsonb_agg(
         jsonb_build_object(
-          'id', ml.platform || '-' || ml.platform_id,
+          'id', ml.platform_name || '-' || ml.platform_id,
           'title', ml.title,
           'artist', ml.artist,
-          'platform', ml.platform,
+          'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
           'thumbnail', ml.thumbnail_url
@@ -165,7 +165,7 @@ BEGIN
       ) as music_data
     FROM cast_music_edges cme
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
-      AND cme.music_platform = ml.platform
+      AND cme.music_platform_name = ml.platform_name
     WHERE cme.cast_id IN (SELECT node_id FROM all_casts)
     GROUP BY cme.cast_id
   ),
@@ -261,10 +261,10 @@ BEGIN
       cme.cast_id,
       jsonb_agg(
         jsonb_build_object(
-          'id', ml.platform || '-' || ml.platform_id,
+          'id', ml.platform_name || '-' || ml.platform_id,
           'title', ml.title,
           'artist', ml.artist,
-          'platform', ml.platform,
+          'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
           'thumbnail', ml.thumbnail_url
@@ -272,7 +272,7 @@ BEGIN
       ) as music_data
     FROM cast_music_edges cme
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
-      AND cme.music_platform = ml.platform
+      AND cme.music_platform_name = ml.platform_name
     WHERE cme.cast_id IN (SELECT node_id FROM user_threads)
     GROUP BY cme.cast_id
   ),
@@ -377,10 +377,10 @@ BEGIN
       cme.cast_id,
       jsonb_agg(
         jsonb_build_object(
-          'id', ml.platform || '-' || ml.platform_id,
+          'id', ml.platform_name || '-' || ml.platform_id,
           'title', ml.title,
           'artist', ml.artist,
-          'platform', ml.platform,
+          'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
           'thumbnail', ml.thumbnail_url
@@ -388,7 +388,7 @@ BEGIN
       ) as music_data
     FROM cast_music_edges cme
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
-      AND cme.music_platform = ml.platform
+      AND cme.music_platform_name = ml.platform_name
     WHERE cme.cast_id IN (SELECT node_id FROM activity_casts)
     GROUP BY cme.cast_id
   ),

@@ -4,12 +4,7 @@ import { extractAndStoreMusicMetadata } from '../lib/music-extraction'
 import {
   getSupabaseClient,
   encodeCursor,
-  decodeCursor,
-  fetchStats,
-  fetchAuthors,
-  fetchReplyCounts,
-  formatAuthor,
-  formatMusic
+  decodeCursor
 } from '../lib/api-utils'
 
 const app = new Hono()
@@ -125,14 +120,21 @@ app.get('/:castHash', async (c) => {
     const castHash = c.req.param('castHash')
     const supabase = getSupabaseClient()
 
-    // Fetch the thread
-    const { data: thread, error: threadError } = await supabase
-      .from('cast_nodes')
-      .select('*')
-      .eq('node_id', castHash)
-      .single()
+    // Use postgres function to get thread with all replies in one call
+    const { data, error } = await supabase
+      .rpc('get_thread_with_replies', { thread_cast_hash: castHash })
 
-    if (threadError || !thread) {
+    if (error) {
+      console.error('Error fetching thread with replies:', error)
+      return c.json({
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Failed to fetch thread'
+        }
+      }, 500)
+    }
+
+    if (!data || data.length === 0) {
       return c.json({
         error: {
           code: 'NOT_FOUND',
@@ -141,170 +143,59 @@ app.get('/:castHash', async (c) => {
       }, 404)
     }
 
-    // Fetch thread author
-    const { data: author } = await supabase
-      .from('user_nodes')
-      .select('node_id, fname, display_name, avatar_url')
-      .eq('node_id', thread.author_fid)
-      .single()
+    // Separate thread from replies
+    const threadData = data.find((item: any) => item.item_type === 'thread')
+    const repliesData = data.filter((item: any) => item.item_type === 'reply')
 
-    // Fetch thread music
-    const { data: threadMusic } = await supabase
-      .from('cast_music_edges')
-      .select(`
-        music_platform,
-        music_platform_id,
-        music_library!inner (
-          platform,
-          platform_id,
-          artist,
-          title,
-          url,
-          thumbnail_url
-        )
-      `)
-      .eq('cast_id', castHash)
-
-    // Fetch thread stats
-    const { data: stats } = await supabase
-      .from('interaction_edges')
-      .select('edge_type')
-      .eq('cast_id', castHash)
-
-    const likes = stats?.filter(s => s.edge_type === 'LIKED').length || 0
-    const recasts = stats?.filter(s => s.edge_type === 'RECASTED').length || 0
-
-    // Fetch replies
-    const { data: replies, error: repliesError } = await supabase
-      .from('cast_nodes')
-      .select('*')
-      .eq('parent_cast_hash', castHash)
-      .order('created_at', { ascending: true })
-
-    if (repliesError) {
-      console.error('Error fetching replies:', repliesError)
+    if (!threadData) {
+      return c.json({
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Thread not found'
+        }
+      }, 404)
     }
 
-    // Fetch reply authors
-    const replyAuthorFids = Array.from(new Set(replies?.map(r => r.author_fid) || []))
-    const { data: replyAuthors } = await supabase
-      .from('user_nodes')
-      .select('node_id, fname, display_name, avatar_url')
-      .in('node_id', replyAuthorFids)
-
-    const authorMap = new Map(replyAuthors?.map(a => [a.node_id, a]) || [])
-
-    // Fetch music for all replies
-    const replyCastIds = replies?.map(r => r.node_id) || []
-    const { data: replyMusic } = await supabase
-      .from('cast_music_edges')
-      .select(`
-        cast_id,
-        music_library!inner (
-          platform,
-          platform_id,
-          artist,
-          title,
-          url,
-          thumbnail_url
-        )
-      `)
-      .in('cast_id', replyCastIds)
-
-    // Group music by cast_id
-    const musicMap = new Map<string, any[]>()
-    replyMusic?.forEach(m => {
-      const castMusic = musicMap.get(m.cast_id) || []
-      castMusic.push(m.music_library)
-      musicMap.set(m.cast_id, castMusic)
-    })
-
-    // Fetch stats for all replies
-    const { data: replyStats } = await supabase
-      .from('interaction_edges')
-      .select('cast_id, edge_type')
-      .in('cast_id', replyCastIds)
-
-    const statsMap = new Map<string, { likes: number; recasts: number }>()
-    replyStats?.forEach(s => {
-      const current = statsMap.get(s.cast_id) || { likes: 0, recasts: 0 }
-      if (s.edge_type === 'LIKED') current.likes++
-      if (s.edge_type === 'RECASTED') current.recasts++
-      statsMap.set(s.cast_id, current)
-    })
-
-    // Count replies for all replies in a single query (nested replies)
-    const { data: nestedRepliesData } = await supabase
-      .from('cast_nodes')
-      .select('parent_cast_hash')
-      .in('parent_cast_hash', replyCastIds)
-      .not('parent_cast_hash', 'is', null)
-
-    // Build reply counts map
-    const replyCounts = new Map<string, number>()
-    nestedRepliesData?.forEach(nested => {
-      const count = replyCounts.get(nested.parent_cast_hash!) || 0
-      replyCounts.set(nested.parent_cast_hash!, count + 1)
-    })
-
-    const formattedReplies = (replies || []).map(reply => {
-      const replyAuthor = authorMap.get(reply.author_fid)
-      const replyMusicData = musicMap.get(reply.node_id) || []
-      const replyStatsData = statsMap.get(reply.node_id) || { likes: 0, recasts: 0 }
-
-      return {
-        castHash: reply.node_id,
-        text: reply.cast_text,
-        author: {
-          fid: reply.author_fid,
-          username: replyAuthor?.fname || 'unknown',
-          displayName: replyAuthor?.display_name || 'Unknown User',
-          pfpUrl: replyAuthor?.avatar_url
-        },
-        timestamp: reply.created_at,
-        music: replyMusicData.map(m => ({
-          id: `${m.platform}-${m.platform_id}`,
-          title: m.title,
-          artist: m.artist,
-          platform: m.platform,
-          platformId: m.platform_id,
-          url: m.url,
-          thumbnail: m.thumbnail_url
-        })),
-        stats: {
-          replies: replyCounts.get(reply.node_id) || 0,
-          likes: replyStatsData.likes,
-          recasts: replyStatsData.recasts
-        }
+    // Format thread
+    const thread = {
+      castHash: threadData.cast_hash,
+      text: threadData.cast_text,
+      author: {
+        fid: threadData.author_fid,
+        username: threadData.author_username,
+        displayName: threadData.author_display_name,
+        pfpUrl: threadData.author_avatar_url
+      },
+      timestamp: threadData.created_at,
+      music: threadData.music || [],
+      stats: {
+        replies: repliesData.length,
+        likes: parseInt(threadData.likes_count),
+        recasts: parseInt(threadData.recasts_count)
       }
-    })
+    }
+
+    // Format replies
+    const formattedReplies = repliesData.map((reply: any) => ({
+      castHash: reply.cast_hash,
+      text: reply.cast_text,
+      author: {
+        fid: reply.author_fid,
+        username: reply.author_username,
+        displayName: reply.author_display_name,
+        pfpUrl: reply.author_avatar_url
+      },
+      timestamp: reply.created_at,
+      music: reply.music || [],
+      stats: {
+        replies: parseInt(reply.replies_count),
+        likes: parseInt(reply.likes_count),
+        recasts: parseInt(reply.recasts_count)
+      }
+    }))
 
     return c.json({
-      cast: {
-        castHash: thread.node_id,
-        text: thread.cast_text,
-        author: {
-          fid: thread.author_fid,
-          username: author?.fname || 'unknown',
-          displayName: author?.display_name || 'Unknown User',
-          pfpUrl: author?.avatar_url
-        },
-        timestamp: thread.created_at,
-        music: (threadMusic || []).map((m: any) => ({
-          id: `${m.music_library.platform}-${m.music_library.platform_id}`,
-          title: m.music_library.title,
-          artist: m.music_library.artist,
-          platform: m.music_library.platform,
-          platformId: m.music_library.platform_id,
-          url: m.music_library.url,
-          thumbnail: m.music_library.thumbnail_url
-        })),
-        stats: {
-          replies: formattedReplies.length,
-          likes,
-          recasts
-        }
-      },
+      cast: thread,
       replies: formattedReplies
     })
   } catch (error) {
@@ -329,22 +220,24 @@ app.get('/', async (c) => {
 
     const supabase = getSupabaseClient()
 
-    let query = supabase
-      .from('cast_nodes')
-      .select('*')
-      .is('parent_cast_hash', null)
-      .order('created_at', { ascending: false })
-      .limit(limit + 1)
-
-    // Apply cursor if provided
+    // Parse cursor for timestamp
+    let cursorTimestamp = null
+    let cursorId = null
     if (cursor) {
       const cursorData = decodeCursor(cursor)
       if (cursorData) {
-        query = query.lt('created_at', cursorData.created_at)
+        cursorTimestamp = cursorData.created_at
+        cursorId = cursorData.id
       }
     }
 
-    const { data: threads, error: threadsError } = await query
+    // Use postgres function to get threads feed with all data in one call
+    const { data: threads, error: threadsError } = await supabase
+      .rpc('get_threads_feed', {
+        limit_count: limit + 1,
+        cursor_timestamp: cursorTimestamp,
+        cursor_id: cursorId
+      })
 
     if (threadsError) {
       console.error('Error fetching threads:', threadsError)
@@ -359,105 +252,31 @@ app.get('/', async (c) => {
     const hasMore = threads.length > limit
     const threadsToReturn = threads.slice(0, limit)
 
-    // Fetch authors
-    const authorFids = Array.from(new Set(threadsToReturn.map(t => t.author_fid)))
-    const { data: authors } = await supabase
-      .from('user_nodes')
-      .select('node_id, fname, display_name, avatar_url')
-      .in('node_id', authorFids)
-
-    const authorMap = new Map(authors?.map(a => [a.node_id, a]) || [])
-
-    // Fetch music for all threads
-    const castIds = threadsToReturn.map(t => t.node_id)
-    const { data: music } = await supabase
-      .from('cast_music_edges')
-      .select(`
-        cast_id,
-        music_library!inner (
-          platform,
-          platform_id,
-          artist,
-          title,
-          url,
-          thumbnail_url
-        )
-      `)
-      .in('cast_id', castIds)
-
-    const musicMap = new Map<string, any[]>()
-    music?.forEach(m => {
-      const castMusic = musicMap.get(m.cast_id) || []
-      castMusic.push(m.music_library)
-      musicMap.set(m.cast_id, castMusic)
-    })
-
-    // Fetch stats for all threads
-    const { data: stats } = await supabase
-      .from('interaction_edges')
-      .select('cast_id, edge_type')
-      .in('cast_id', castIds)
-
-    const statsMap = new Map<string, { likes: number; recasts: number }>()
-    stats?.forEach(s => {
-      const current = statsMap.get(s.cast_id) || { likes: 0, recasts: 0 }
-      if (s.edge_type === 'LIKED') current.likes++
-      if (s.edge_type === 'RECASTED') current.recasts++
-      statsMap.set(s.cast_id, current)
-    })
-
-    // Count replies for all threads in a single query
-    const { data: repliesData } = await supabase
-      .from('cast_nodes')
-      .select('parent_cast_hash')
-      .in('parent_cast_hash', castIds)
-      .not('parent_cast_hash', 'is', null)
-
-    // Build reply counts map
-    const replyCounts = new Map<string, number>()
-    repliesData?.forEach(reply => {
-      const count = replyCounts.get(reply.parent_cast_hash!) || 0
-      replyCounts.set(reply.parent_cast_hash!, count + 1)
-    })
-
-    const formattedThreads = threadsToReturn.map(thread => {
-      const author = authorMap.get(thread.author_fid)
-      const threadMusic = musicMap.get(thread.node_id) || []
-      const threadStats = statsMap.get(thread.node_id) || { likes: 0, recasts: 0 }
-
-      return {
-        castHash: thread.node_id,
-        text: thread.cast_text,
-        author: {
-          fid: thread.author_fid,
-          username: author?.fname || 'unknown',
-          displayName: author?.display_name || 'Unknown User',
-          pfpUrl: author?.avatar_url
-        },
-        timestamp: thread.created_at,
-        music: threadMusic.map(m => ({
-          id: `${m.platform}-${m.platform_id}`,
-          title: m.title,
-          artist: m.artist,
-          platform: m.platform,
-          platformId: m.platform_id,
-          url: m.url,
-          thumbnail: m.thumbnail_url
-        })),
-        stats: {
-          replies: replyCounts.get(thread.node_id) || 0,
-          likes: threadStats.likes,
-          recasts: threadStats.recasts
-        }
+    // Format threads
+    const formattedThreads = threadsToReturn.map((thread: any) => ({
+      castHash: thread.cast_hash,
+      text: thread.cast_text,
+      author: {
+        fid: thread.author_fid,
+        username: thread.author_username,
+        displayName: thread.author_display_name,
+        pfpUrl: thread.author_avatar_url
+      },
+      timestamp: thread.created_at,
+      music: thread.music || [],
+      stats: {
+        replies: parseInt(thread.replies_count),
+        likes: parseInt(thread.likes_count),
+        recasts: parseInt(thread.recasts_count)
       }
-    })
+    }))
 
     let nextCursor: string | undefined
     if (hasMore && threadsToReturn.length > 0) {
       const lastThread = threadsToReturn[threadsToReturn.length - 1]
       nextCursor = encodeCursor({
-        created_at: lastThread.created_at,
-        id: lastThread.node_id
+        created_at: lastThread.timestamp,
+        id: lastThread.castHash
       })
     }
 
