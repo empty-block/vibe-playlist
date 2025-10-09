@@ -1,0 +1,57 @@
+/* Base styles for all channel row cells */
+.channel-cell {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  padding: 10px 4px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+/* Terminal prompt prefix */
+.channel-prefix {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+/* Channel name */
+.channel-name {
+  color: var(--neon-cyan);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 4px rgba(0, 255, 255, 0.3);
+  transition: color 0.15s ease, text-shadow 0.15s ease, font-weight 0.15s ease;
+}
+
+.channel-name:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Message count */
+.channel-count {
+  color: var(--neon-green);
+  text-align: right;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  opacity: 0.9;
+  transition: color 0.15s ease, text-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+/* Topic/description */
+.channel-topic {
+  color: var(--muted-text);
+  font-style: italic;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.7;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+

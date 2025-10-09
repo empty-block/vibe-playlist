@@ -1,8 +1,8 @@
 import { Component } from 'solid-js';
 
 // Navigation section types
-export type SectionColor = 'blue' | 'cyan' | 'green' | 'pink';
-export type SectionId = 'home' | 'library' | 'activity' | 'stats' | 'profile';
+export type SectionColor = 'blue' | 'cyan' | 'green' | 'pink' | 'magenta';
+export type SectionId = 'channels' | 'activity' | 'profile' | 'library' | 'stats';
 
 // SVG Icon Components
 export interface IconProps {
@@ -201,34 +201,61 @@ export const ActivityIcon: Component<IconProps> = (props) => (
 export const TerminalIcon: Component<IconProps> = (props) => (
   <svg class={`terminal-icon ${props.class || ''}`} width="18" height="18" viewBox="0 0 18 18" fill="none">
     {/* Terminal window frame */}
-    <rect 
-      x="2" 
-      y="3" 
-      width="14" 
-      height="11" 
-      rx="1" 
-      stroke="currentColor" 
-      stroke-width="1.5" 
+    <rect
+      x="2"
+      y="3"
+      width="14"
+      height="11"
+      rx="1"
+      stroke="currentColor"
+      stroke-width="1.5"
       fill="none"
     />
-    
+
     {/* Terminal header bar */}
     <line x1="2" y1="6" x2="16" y2="6" stroke="currentColor" stroke-width="1"/>
-    
+
     {/* Command prompt cursor */}
     <rect x="4" y="8" width="6" height="1" fill="currentColor"/>
     <rect x="10.5" y="7.5" width="1" height="2" fill="currentColor" class="cursor-blink">
       <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
     </rect>
-    
+
     {/* Additional command lines */}
     <rect x="4" y="10" width="4" height="0.8" fill="currentColor" opacity="0.6"/>
     <rect x="4" y="11.5" width="7" height="0.8" fill="currentColor" opacity="0.4"/>
-    
+
     {/* Window controls dots */}
     <circle cx="4" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
     <circle cx="6" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
     <circle cx="8" cy="4.5" r="0.5" fill="currentColor" opacity="0.7"/>
+  </svg>
+);
+
+// Channels Icon - Grid of chat rooms (inspired by Napster chat list)
+export const ChannelsIcon: Component<IconProps> = (props) => (
+  <svg class={`channels-icon ${props.class || ''}`} width="28" height="28" viewBox="0 0 28 28" fill="none">
+    {/* Grid of chat/channel boxes */}
+    {/* Top left box */}
+    <rect x="4" y="4" width="8" height="8" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+    <line x1="6" y1="7" x2="10" y2="7" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+    <line x1="6" y1="9" x2="9" y2="9" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+
+    {/* Top right box */}
+    <rect x="16" y="4" width="8" height="8" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+    <line x1="18" y1="7" x2="22" y2="7" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+    <line x1="18" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+
+    {/* Bottom left box */}
+    <rect x="4" y="16" width="8" height="8" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+    <line x1="6" y1="19" x2="10" y2="19" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+    <line x1="6" y1="21" x2="9" y2="21" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+
+    {/* Bottom right box - filled to show active */}
+    <rect x="16" y="16" width="8" height="8" rx="1" fill="currentColor" opacity="0.3"/>
+    <rect x="16" y="16" width="8" height="8" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+    <line x1="18" y1="19" x2="22" y2="19" stroke="currentColor" stroke-width="1.5"/>
+    <line x1="18" y1="21" x2="21" y2="21" stroke="currentColor" stroke-width="1.5"/>
   </svg>
 );
 
@@ -245,11 +272,11 @@ export interface SidebarSection {
 // Shared navigation configuration - single source of truth
 export const navigationSections: readonly SidebarSection[] = [
   {
-    id: 'home',
-    href: '/',
-    label: 'Home',
-    icon: HomeIcon,
-    color: 'blue',
+    id: 'channels',
+    href: '/channels',
+    label: 'Channels',
+    icon: ChannelsIcon,
+    color: 'magenta',
     isPrimary: true
   },
   {
@@ -293,5 +320,11 @@ export const sectionColorVars = {
     hover: 'rgba(249, 6, 214, 0.1)',
     active: 'rgba(249, 6, 214, 0.15)',
     glow: 'rgba(249, 6, 214, 0.3)'
+  },
+  magenta: {
+    primary: '#e010e0',
+    hover: 'rgba(224, 16, 224, 0.1)',
+    active: 'rgba(224, 16, 224, 0.15)',
+    glow: 'rgba(224, 16, 224, 0.3)'
   }
 } as const;

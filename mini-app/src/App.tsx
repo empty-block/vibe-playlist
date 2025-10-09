@@ -4,6 +4,7 @@ import ThreadsPage from './pages/ThreadsPage';
 import ThreadViewPage from './pages/ThreadViewPage';
 import ActivityPage from './pages/ActivityPage';
 import ProfilePage from './pages/ProfilePage';
+import ChannelsPage from './pages/ChannelsPage';
 import MediaPlayer from './components/player/MediaPlayer';
 import { currentTrack } from './stores/playerStore';
 
@@ -24,7 +25,8 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 const App: Component = () => {
   return (
     <Router root={RootLayout}>
-      <Route path="/" component={ThreadsPage} />
+      <Route path="/" component={ChannelsPage} />
+      <Route path="/channels" component={ChannelsPage} />
       <Route path="/activity" component={ActivityPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
       <Route path="/profile" component={ProfilePage} />
