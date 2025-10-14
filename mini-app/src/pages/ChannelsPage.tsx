@@ -163,10 +163,19 @@ const ChannelsPage: Component = () => {
     }
   });
 
-  // Handle channel click - navigate to thread view
+  // Handle channel click - navigate to channel view
   const handleChannelClick = (channelId: string, threadId: string) => {
     console.log(`Navigating to channel: ${channelId}, thread: ${threadId}`);
-    navigate(`/thread/${threadId}`);
+
+    // Find the channel data to pass to ChannelViewPage
+    const channel = mockChannels.find(c => c.id === channelId);
+
+    navigate(`/channel/${threadId}`, {
+      state: {
+        channelName: channel?.name || channelId,
+        channelDescription: channel?.topic || 'Channel description'
+      }
+    });
   };
 
   // Handle sort change with fade animation

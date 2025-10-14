@@ -2,6 +2,7 @@ import { Router, Route } from '@solidjs/router';
 import { Component, Show, JSX } from 'solid-js';
 import ThreadsPage from './pages/ThreadsPage';
 import ThreadViewPage from './pages/ThreadViewPage';
+import ChannelViewPage from './pages/ChannelViewPage';
 import ActivityPage from './pages/ActivityPage';
 import ProfilePage from './pages/ProfilePage';
 import ChannelsPage from './pages/ChannelsPage';
@@ -27,6 +28,7 @@ const App: Component = () => {
     <Router root={RootLayout}>
       <Route path="/" component={ChannelsPage} />
       <Route path="/channels" component={ChannelsPage} />
+      <Route path="/channel/:id" component={ChannelViewPage} />
       <Route path="/activity" component={ActivityPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
       <Route path="/profile" component={ProfilePage} />
