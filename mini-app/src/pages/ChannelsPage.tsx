@@ -1,10 +1,11 @@
-import { Component, onMount, createSignal, createMemo } from 'solid-js';
+import { Component, onMount, createSignal, createMemo, createResource, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import ChannelList from '../components/channels/ChannelList';
 import { ChannelRowProps } from '../components/channels/ChannelRow';
 import ChannelSortBar, { ChannelSortOption } from '../components/channels/ChannelSortBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
+import { fetchChannels } from '../services/api';
 import anime from 'animejs';
 import './channelsPage.css';
 
@@ -142,9 +143,26 @@ const ChannelsPage: Component = () => {
   const navigate = useNavigate();
   const [currentSort, setCurrentSort] = createSignal<ChannelSortOption>('hot');
 
+  // Fetch channels from API
+  const [channelsData] = createResource(fetchChannels);
+
+  // Transform API data to component format
+  const apiChannels = createMemo(() => {
+    const data = channelsData();
+    if (!data || !data.channels) return [];
+
+    return data.channels.map(ch => ({
+      id: ch.id,
+      name: ch.name.toLowerCase().replace(/\s+/g, '_'),
+      topic: ch.description || '',
+      messageCount: ch.stats?.threadCount || 0,
+      colorHex: ch.colorHex
+    }));
+  });
+
   // Sort channels based on current sort option
   const sortedChannels = createMemo(() => {
-    const channels = [...mockChannels];
+    const channels = [...apiChannels()];
 
     switch (currentSort()) {
       case 'hot':
@@ -152,8 +170,8 @@ const ChannelsPage: Component = () => {
         return channels.sort((a, b) => b.messageCount - a.messageCount);
 
       case 'active':
-        // For now, reverse order (in real app, would sort by last activity timestamp)
-        return channels.reverse();
+        // Sort by message count for now (could use lastActivity if available)
+        return channels.sort((a, b) => b.messageCount - a.messageCount);
 
       case 'a-z':
         return channels.sort((a, b) => a.name.localeCompare(b.name));
@@ -163,19 +181,10 @@ const ChannelsPage: Component = () => {
     }
   });
 
-  // Handle channel click - navigate to channel view
-  const handleChannelClick = (channelId: string, threadId: string) => {
-    console.log(`Navigating to channel: ${channelId}, thread: ${threadId}`);
-
-    // Find the channel data to pass to ChannelViewPage
-    const channel = mockChannels.find(c => c.id === channelId);
-
-    navigate(`/channel/${threadId}`, {
-      state: {
-        channelName: channel?.name || channelId,
-        channelDescription: channel?.topic || 'Channel description'
-      }
-    });
+  // Handle channel click - navigate to channel view with channel ID
+  const handleChannelClick = (channelId: string) => {
+    console.log(`Navigating to channel: ${channelId}`);
+    navigate(`/channels/${channelId}`);
   };
 
   // Handle sort change with fade animation
@@ -224,7 +233,7 @@ const ChannelsPage: Component = () => {
         title="JAMZY::CHANNEL_BROWSER"
         path="~/channels"
         command="list --all"
-        statusInfo={`CHANNELS: ${mockChannels.length}`}
+        statusInfo={`CHANNELS: ${sortedChannels().length}`}
         borderColor="magenta"
         class="channels-terminal-header"
       >
@@ -233,17 +242,27 @@ const ChannelsPage: Component = () => {
 
       {/* Main content */}
       <main class="channels-main" role="main">
-        {/* Sort bar */}
-        <ChannelSortBar
-          currentSort={currentSort()}
-          onSortChange={handleSortChange}
-        />
+        <Show when={channelsData.loading}>
+          <div class="loading-state">Loading channels...</div>
+        </Show>
 
-        {/* Channel list */}
-        <ChannelList
-          channels={sortedChannels()}
-          onChannelClick={handleChannelClick}
-        />
+        <Show when={channelsData.error}>
+          <div class="error-state">Failed to load channels. Please try again.</div>
+        </Show>
+
+        <Show when={!channelsData.loading && !channelsData.error}>
+          {/* Sort bar */}
+          <ChannelSortBar
+            currentSort={currentSort()}
+            onSortChange={handleSortChange}
+          />
+
+          {/* Channel list */}
+          <ChannelList
+            channels={sortedChannels()}
+            onChannelClick={handleChannelClick}
+          />
+        </Show>
       </main>
 
       {/* Bottom Navigation */}

@@ -28,7 +28,7 @@ const App: Component = () => {
     <Router root={RootLayout}>
       <Route path="/" component={ChannelsPage} />
       <Route path="/channels" component={ChannelsPage} />
-      <Route path="/channel/:id" component={ChannelViewPage} />
+      <Route path="/channels/:id" component={ChannelViewPage} />
       <Route path="/activity" component={ActivityPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
       <Route path="/profile" component={ProfilePage} />

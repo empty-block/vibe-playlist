@@ -8,6 +8,7 @@ import musicApp from './api/music'
 import interactionsApp from './api/interactions'
 import usersApp from './api/users'
 import activityApp from './api/activity'
+import channelsApp from './api/channels'
 
 const app = new Hono()
 
@@ -36,6 +37,9 @@ app.route('/api/threads', threadsApp)
 
 // Mount interaction routes (nested under /api/threads)
 app.route('/api/threads', interactionsApp)
+
+// Mount channels routes
+app.route('/api/channels', channelsApp)
 
 // Mount mini-app music routes
 app.route('/api/music', musicApp)
@@ -122,6 +126,9 @@ console.log('  GET    /api/threads/:castHash')
 console.log('  POST   /api/threads/:castHash/reply')
 console.log('  POST   /api/threads/:castHash/like')
 console.log('  DELETE /api/threads/:castHash/like')
+console.log('  GET    /api/channels')
+console.log('  GET    /api/channels/:channelId')
+console.log('  GET    /api/channels/:channelId/feed')
 console.log('  GET    /api/users/:fid/threads')
 console.log('  GET    /api/users/:fid/activity')
 console.log('  GET    /api/activity')

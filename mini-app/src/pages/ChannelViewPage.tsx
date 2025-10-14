@@ -4,11 +4,9 @@ import ChannelCard from '../components/channels/ChannelCard';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
-import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
-import { fetchThread } from '../services/api';
-import { transformApiThreadDetail } from '../types/api';
+import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import './channelView.css';
 
 // Placeholder functions for track actions
@@ -19,49 +17,26 @@ const playTrack = (track: Track) => {
 
 const ChannelViewPage: Component = () => {
   const params = useParams();
-  const location = useLocation();
+  const channelId = () => params.id;
 
-  // Get channel metadata from route state (passed from ChannelsPage)
-  const channelName = () => (location.state as any)?.channelName || 'unknown_channel';
-  const channelDescription = () => (location.state as any)?.channelDescription || 'Channel description';
-
-  // Fetch thread data from API (using the threadId as the channel's backing thread)
-  const [threadData] = createResource(() => params.id, fetchThread);
-
-  // Transform API response to Thread format
-  const thread = createMemo(() => {
-    const data = threadData();
-    if (!data) return null;
-    return transformApiThreadDetail(data);
-  });
+  // Fetch channel details and feed from API
+  const [channelData] = createResource(channelId, fetchChannelDetails);
+  const [feedData] = createResource(channelId, (id) => fetchChannelFeed(id, { limit: 50 }));
 
   // Modal state
-  const [showAddReplyModal, setShowAddReplyModal] = createSignal(false);
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
 
-  // Like state (would come from API in production)
-  const [isLiked, setIsLiked] = createSignal(false);
-
-  // Like handler
-  const handleLike = async () => {
-    setIsLiked(!isLiked());
-    // TODO: Call API to persist like
-    console.log('Like toggled:', isLiked());
+  // Add track handler
+  const handleAddTrack = () => {
+    setShowAddTrackModal(true);
   };
 
-  // Reply handler
-  const handleAddReply = () => {
-    setShowAddReplyModal(true);
-  };
-
-  // Reply submission
-  const handleReplySubmit = async (data: { songUrl: string; comment: string }) => {
-    // TODO: Call API to create reply
-    console.log('Reply submitted:', data);
-
-    // Close modal
-    setShowAddReplyModal(false);
-
-    // TODO: Refresh thread to show new reply
+  // Track submission
+  const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    // TODO: Call API to create thread in channel
+    console.log('Track submitted to channel:', data);
+    setShowAddTrackModal(false);
+    // TODO: Refresh channel feed
   };
 
   return (
@@ -69,13 +44,13 @@ const ChannelViewPage: Component = () => {
       {/* Terminal Header */}
       <TerminalHeader
         title="JAMZY::CHANNEL_VIEW"
-        path={`~/channels/${channelName()}`}
+        path={`~/channels/${channelId()}`}
         command="cat channel"
-        statusInfo={`ID: #${params.id.slice(-4)}`}
+        statusInfo={channelData()?.stats?.threadCount ? `THREADS: ${channelData()!.stats.threadCount}` : ''}
         borderColor="magenta"
         class="channel-view-header"
         additionalContent={
-          <A href="/" class="channel-view-back-btn">
+          <A href="/channels" class="channel-view-back-btn">
             <span>[</span>
             <span>← BACK</span>
             <span>]</span>
@@ -85,77 +60,93 @@ const ChannelViewPage: Component = () => {
 
       {/* Scrollable Channel Content */}
       <div class="channel-view-content">
-        <Show when={threadData.loading}>
+        <Show when={channelData.loading || feedData.loading}>
           <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-magenta)' }}>
             <div>Loading channel...</div>
           </div>
         </Show>
 
-        <Show when={threadData.error}>
+        <Show when={channelData.error || feedData.error}>
           <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--neon-red)' }}>
             <div>Error loading channel</div>
-            <div style={{ 'font-size': '0.875rem', 'margin-top': '0.5rem', color: 'var(--terminal-muted)' }}>
-              {threadData.error.message}
-            </div>
           </div>
         </Show>
 
-        <Show when={!threadData.loading && !threadData.error && thread()}>
-          {/* Channel Card - Succinct header */}
+        <Show when={!channelData.loading && !feedData.loading && channelData() && feedData()}>
+          {/* Channel Header */}
           <div class="channel-header-wrapper">
             <ChannelCard
-              channelId={params.id}
-              channelName={channelName()}
-              channelDescription={channelDescription()}
+              channelId={channelData()!.id}
+              channelName={channelData()!.name}
+              channelDescription={channelData()!.description || 'Channel description'}
+              stats={channelData()!.stats}
+              colorHex={channelData()!.colorHex}
             />
           </div>
 
-          {/* Action Bar - Right after channel card */}
-          <ThreadActionsBar
-            threadId={thread()!.id}
-            isLiked={isLiked()}
-            likeCount={thread()!.likeCount}
-            onLike={handleLike}
-            onAddReply={handleAddReply}
-          />
+          {/* Add Track Button */}
+          <div class="channel-actions" style={{ padding: '1rem', 'text-align': 'center' }}>
+            <button
+              onClick={handleAddTrack}
+              class="add-track-button"
+              style={{
+                padding: '0.75rem 1.5rem',
+                background: 'transparent',
+                border: '1px solid var(--neon-magenta)',
+                color: 'var(--neon-magenta)',
+                cursor: 'pointer',
+                'font-family': 'var(--font-mono)',
+                transition: 'all 0.2s'
+              }}
+            >
+              [+ ADD TRACK]
+            </button>
+          </div>
 
-          {/* Replies Section */}
-          <Show when={thread()!.replies.length > 0}>
+          {/* Threads Feed */}
+          <Show when={feedData()!.threads && feedData()!.threads.length > 0}>
             <div class="replies-section-header">
               <span>├─</span>
               <span style={{ color: 'var(--neon-magenta)' }}>TRACKS</span>
               <span> [</span>
-              <span class="reply-count">{thread()!.replies.length}</span>
+              <span class="reply-count">{feedData()!.threads.length}</span>
               <span>]</span>
               <span style={{ 'margin-left': 'auto' }}>─┤</span>
             </div>
 
             <div class="replies-list">
-              <For each={thread()!.replies}>
-                {(reply, index) => (
+              <For each={feedData()!.threads}>
+                {(thread) => (
                   <div class="channel-reply-wrapper">
                     <ThreadCard
-                      threadId={reply.castHash}
-                      threadText={reply.text}
-                      creatorUsername={reply.author.username}
-                      creatorAvatar={reply.author.pfpUrl}
-                      timestamp={reply.timestamp}
-                      replyCount={0}
-                      likeCount={reply.likes}
-                      starterTrack={{
-                        id: reply.track.id,
-                        title: reply.track.title,
-                        artist: reply.track.artist,
-                        albumArt: reply.track.thumbnail,
-                        source: reply.track.source,
-                        url: reply.track.url,
-                        sourceId: reply.track.sourceId
-                      }}
+                      threadId={thread.castHash}
+                      threadText={thread.text}
+                      creatorUsername={thread.author.username}
+                      creatorAvatar={thread.author.pfpUrl}
+                      timestamp={thread.timestamp}
+                      replyCount={thread.stats.replies}
+                      likeCount={thread.stats.likes}
+                      starterTrack={thread.music && thread.music[0] ? {
+                        id: thread.music[0].id,
+                        title: thread.music[0].title,
+                        artist: thread.music[0].artist,
+                        albumArt: thread.music[0].thumbnail,
+                        source: thread.music[0].platform,
+                        url: thread.music[0].url,
+                        sourceId: thread.music[0].platformId
+                      } : undefined}
                       onTrackPlay={playTrack}
                     />
                   </div>
                 )}
               </For>
+            </div>
+          </Show>
+
+          <Show when={!feedData()!.threads || feedData()!.threads.length === 0}>
+            <div style={{ padding: '2rem', 'text-align': 'center', color: 'var(--terminal-muted)' }}>
+              <p>No tracks in this channel yet.</p>
+              <p>Be the first to add one!</p>
             </div>
           </Show>
         </Show>
@@ -164,11 +155,11 @@ const ChannelViewPage: Component = () => {
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
 
-      {/* Add Reply Modal (reuse AddTrackModal) */}
+      {/* Add Track Modal */}
       <AddTrackModal
-        isOpen={showAddReplyModal()}
-        onClose={() => setShowAddReplyModal(false)}
-        onSubmit={handleReplySubmit}
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleTrackSubmit}
         title="Add Track to Channel"
       />
     </div>

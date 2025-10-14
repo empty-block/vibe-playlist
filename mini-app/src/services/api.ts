@@ -98,4 +98,39 @@ export async function replyToThread(
   });
 }
 
+/**
+ * Fetch all channels
+ */
+export async function fetchChannels(): Promise<{ channels: any[] }> {
+  return apiFetch('/api/channels');
+}
+
+/**
+ * Fetch channel details
+ */
+export async function fetchChannelDetails(channelId: string): Promise<any> {
+  return apiFetch(`/api/channels/${channelId}`);
+}
+
+/**
+ * Fetch channel feed (threads for a channel)
+ */
+export async function fetchChannelFeed(
+  channelId: string,
+  params?: {
+    limit?: number;
+    cursor?: string;
+  }
+): Promise<ApiThreadsResponse> {
+  const queryParams = new URLSearchParams();
+
+  if (params?.limit) queryParams.set('limit', params.limit.toString());
+  if (params?.cursor) queryParams.set('cursor', params.cursor);
+
+  const query = queryParams.toString();
+  const endpoint = `/api/channels/${channelId}/feed${query ? `?${query}` : ''}`;
+
+  return apiFetch<ApiThreadsResponse>(endpoint);
+}
+
 export { ApiError };
