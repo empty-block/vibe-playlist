@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@anthropic-ai/claude-code": "^2.0.0",
+    "@neynar/nodejs-sdk": "^3.34.0",
     "@solidjs/router": "^0.15.3",
     "@supabase/supabase-js": "^2.57.4",
     "animejs": "3.2.1",

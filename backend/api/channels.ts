@@ -4,6 +4,7 @@ import {
   encodeCursor,
   decodeCursor
 } from '../lib/api-utils'
+import { getSyncEngine } from '../lib/sync-engine'
 
 const app = new Hono()
 
@@ -125,8 +126,24 @@ app.get('/:channelId/feed', async (c) => {
     const channelId = c.req.param('channelId')
     const limit = Math.min(parseInt(c.req.query('limit') || '50'), 100)
     const cursor = c.req.query('cursor')
+    const forceSync = c.req.query('forceSync') === 'true'
+    const skipSync = c.req.query('skipSync') === 'true'  // For testing/debugging
 
     const supabase = getSupabaseClient()
+
+    // Trigger background sync from Neynar (non-blocking)
+    // This ensures fresh data for frontend users
+    // Use ?skipSync=true to disable (for testing/debugging)
+    if (!skipSync) {
+      const syncEngine = getSyncEngine()
+      syncEngine.syncChannel(channelId, {
+        limit: 50,
+        forceFullSync: forceSync
+      }).catch(err => {
+        console.error(`[Channels API] Background sync failed for ${channelId}:`, err)
+        // Don't block the response - sync will be retried on next request
+      })
+    }
 
     // Parse cursor
     let cursorTimestamp = null
