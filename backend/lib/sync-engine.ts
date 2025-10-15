@@ -1,5 +1,7 @@
 import { getNeynarService } from './neynar'
 import { getSupabaseClient } from './api-utils'
+import { processMusicUrl, linkMusicToCast } from './music-metadata-extractor'
+import { isMusicUrl } from './url-parser'
 
 /**
  * Sync Engine - Orchestrates syncing Farcaster casts from Neynar to database
@@ -152,6 +154,64 @@ export class SyncEngine {
 
     if (error) {
       throw new Error(`Database upsert failed: ${error.message}`)
+    }
+
+    // Process music embeds (TASK-639)
+    await this.processMusicEmbeds(cast.hash, cast.embeds || [])
+  }
+
+  /**
+   * Process music embeds from a cast
+   * Extracts music URLs, fetches OpenGraph metadata, and links to cast
+   */
+  private async processMusicEmbeds(castHash: string, embeds: any[]): Promise<void> {
+    if (!embeds || embeds.length === 0) {
+      return
+    }
+
+    let musicEmbedsProcessed = 0
+
+    for (let i = 0; i < embeds.length; i++) {
+      const embed = embeds[i]
+      const embedUrl = embed.url
+
+      if (!embedUrl) {
+        continue
+      }
+
+      // Check if this is a music URL
+      if (!isMusicUrl(embedUrl)) {
+        continue
+      }
+
+      try {
+        // Process music URL: parse, fetch OpenGraph, upsert to music_library
+        const result = await processMusicUrl(embedUrl)
+
+        if (result.success) {
+          // Link music track to this cast
+          await linkMusicToCast(
+            castHash,
+            result.platform_name,
+            result.platform_id,
+            i // embed index
+          )
+
+          musicEmbedsProcessed++
+          console.log(
+            `[Sync] Processed music embed ${i + 1}/${embeds.length}: ${result.platform_name}/${result.platform_id}`
+          )
+        } else {
+          console.warn(`[Sync] Failed to process music URL: ${result.error}`)
+        }
+      } catch (error) {
+        console.error(`[Sync] Error processing music embed ${embedUrl}:`, error)
+        // Non-fatal - continue processing other embeds
+      }
+    }
+
+    if (musicEmbedsProcessed > 0) {
+      console.log(`[Sync] ✓ Processed ${musicEmbedsProcessed} music embeds for cast ${castHash}`)
     }
   }
 
