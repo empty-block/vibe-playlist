@@ -156,13 +156,17 @@ app.get('/:channelId/feed', async (c) => {
       }
     }
 
+    // Parse musicOnly filter
+    const musicOnly = c.req.query('musicOnly') === 'true'
+
     // Fetch channel feed using postgres function
     const { data: threads, error: threadsError } = await supabase
       .rpc('get_channel_feed', {
         p_channel_id: channelId,
         limit_count: limit + 1,  // Fetch one extra to check hasMore
         cursor_timestamp: cursorTimestamp,
-        cursor_id: cursorId
+        cursor_id: cursorId,
+        music_only: musicOnly
       })
 
     if (threadsError) {

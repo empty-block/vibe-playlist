@@ -38,6 +38,7 @@
     "@supabase/supabase-js": "^2.57.4",
     "animejs": "3.2.1",
     "hono": "^4.9.10",
+    "open-graph-scraper": "^6.10.0",
     "solid-js": "^1.9.7"
   }
 }
