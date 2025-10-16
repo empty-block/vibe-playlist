@@ -245,13 +245,17 @@ export class SyncEngine {
     // Process music embeds (TASK-639)
     await this.processMusicEmbeds(cast.hash, cast.embeds || [])
 
-    // Sync reactions (TASK-649 Phase 1)
-    // Non-fatal - if reaction sync fails, we still want to continue
-    try {
-      await this.syncCastReactions(cast.hash, cast.author.fid)
-    } catch (error) {
-      console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
-      // Continue processing - reaction sync failure is non-fatal
+    // Sync reactions (TASK-649 Phase 1 & 3)
+    // Skip if cast has no reactions (optimization)
+    const hasReactions = (cast.reactions?.likes_count || 0) > 0 || (cast.reactions?.recasts_count || 0) > 0
+    if (hasReactions) {
+      // Non-fatal - if reaction sync fails, we still want to continue
+      try {
+        await this.syncCastReactions(cast.hash, cast.author.fid)
+      } catch (error) {
+        console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
+        // Continue processing - reaction sync failure is non-fatal
+      }
     }
   }
 
@@ -506,9 +510,15 @@ export class SyncEngine {
    *
    * @param castHash - The cast to fetch replies for
    * @param channelId - Channel the cast belongs to
+   * @param replyCount - Optional reply count from cast metadata (optimization)
    */
-  async syncReplies(castHash: string, channelId: string): Promise<number> {
+  async syncReplies(castHash: string, channelId: string, replyCount?: number): Promise<number> {
     try {
+      // Optimization (TASK-649 Phase 3): Skip if we know there are no replies
+      if (replyCount === 0) {
+        return 0
+      }
+
       console.log(`[Sync] Syncing replies for cast: ${castHash}`)
 
       // fetchCastWithReplies returns the cast object with direct_replies nested inside
