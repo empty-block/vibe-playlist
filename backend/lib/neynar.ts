@@ -1,4 +1,4 @@
-import { NeynarAPIClient } from '@neynar/nodejs-sdk'
+import { NeynarAPIClient, Configuration } from '@neynar/nodejs-sdk'
 
 /**
  * Neynar Service - Wrapper around Neynar SDK
@@ -20,7 +20,11 @@ export class NeynarService {
       )
     }
 
-    this.client = new NeynarAPIClient(apiKey)
+    const config = new Configuration({
+      apiKey
+    })
+
+    this.client = new NeynarAPIClient(config)
   }
 
   /**
