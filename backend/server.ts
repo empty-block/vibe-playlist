@@ -5,6 +5,7 @@ import { LibraryAPI } from './api/library'
 import { AggregationsAPI } from './api/aggregations'
 import threadsApp from './api/threads'
 import musicApp from './api/music'
+import musicAiApp from './api/music-ai'
 import interactionsApp from './api/interactions'
 import usersApp from './api/users'
 import activityApp from './api/activity'
@@ -47,6 +48,9 @@ app.route('/api/sync', syncApp)
 
 // Mount mini-app music routes
 app.route('/api/music', musicApp)
+
+// Mount music AI processing routes
+app.route('/api/music-ai', musicAiApp)
 
 // Mount user routes
 app.route('/api/users', usersApp)
@@ -141,6 +145,10 @@ console.log('  GET    /api/users/:fid/activity')
 console.log('  GET    /api/activity')
 console.log('  GET    /api/music/trending')
 console.log('  GET    /api/music/:musicId/casts')
+console.log('  POST   /api/music-ai/process')
+console.log('  GET    /api/music-ai/status')
+console.log('  GET    /api/music-ai/failed')
+console.log('  GET    /api/music-ai/health')
 console.log('  GET    /api/library (legacy)')
 console.log('  GET    /api/library/aggregations (legacy)')
 console.log('')
