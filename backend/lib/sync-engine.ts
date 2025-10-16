@@ -12,6 +12,7 @@ import { isMusicUrl } from './url-parser'
 export class SyncEngine {
   private neynar = getNeynarService()
   private supabase = getSupabaseClient()
+  private processedParentCasts = new Set<string>() // Cache for parent casts processed in this sync session
 
   /**
    * Sync a channel's casts from Neynar
@@ -154,6 +155,91 @@ export class SyncEngine {
 
     if (error) {
       throw new Error(`Database upsert failed: ${error.message}`)
+    }
+
+    // Create REPLIED edge if this is a reply (TASK-649 Phase 2)
+    if (cast.parent_hash) {
+      try {
+        const userId = cast.author.fid.toString()
+        const parentHash = cast.parent_hash
+
+        // 1. Check if parent cast exists (check cache first, then database)
+        let parentExists = this.processedParentCasts.has(parentHash)
+
+        if (!parentExists) {
+          // Check database
+          const { data, error: checkError } = await this.supabase
+            .from('cast_nodes')
+            .select('cast_hash')
+            .eq('cast_hash', parentHash)
+            .maybeSingle()
+
+          parentExists = !!data && !checkError
+        }
+
+        // 2. If parent doesn't exist, fetch and insert it
+        if (!parentExists) {
+          try {
+            const parentCasts = await this.neynar.fetchBulkCasts([parentHash])
+            if (parentCasts.length > 0) {
+              const parentCast = parentCasts[0]
+              // Recursively process the parent cast (this will insert it)
+              // Use the channel from the parent cast if available, otherwise use current channel
+              const parentChannel = parentCast.channel?.id || channelId
+              await this.processCast(parentCast, parentChannel)
+              // Mark as processed in cache
+              this.processedParentCasts.add(parentHash)
+            } else {
+              console.warn(`[Sync] Could not fetch parent cast ${parentHash} from Neynar`)
+              // Skip creating REPLIED edge if we can't get the parent
+              return
+            }
+          } catch (error) {
+            console.warn(`[Sync] Failed to fetch parent cast ${parentHash}:`, error)
+            // Skip creating REPLIED edge if we can't get the parent
+            return
+          }
+        }
+
+        // 3. Upsert reply author to user_nodes (might already exist from AUTHORED edge)
+        const { error: userError } = await this.supabase
+          .from('user_nodes')
+          .upsert({
+            node_id: userId,
+            fname: cast.author.username,
+            display_name: cast.author.display_name,
+            avatar_url: cast.author.pfp_url
+          }, {
+            onConflict: 'node_id'
+          })
+
+        if (userError) {
+          console.warn(`[Sync] Failed to upsert reply author ${userId}:`, userError.message)
+        } else {
+          // 4. Insert REPLIED edge
+          // source_id: user who replied
+          // cast_id: the reply cast itself (this cast)
+          // target_id: the parent cast being replied to
+          const { error: edgeError } = await this.supabase
+            .from('interaction_edges')
+            .insert({
+              source_id: userId,
+              cast_id: cast.hash,
+              target_id: cast.parent_hash,
+              edge_type: 'REPLIED',
+              created_at: cast.timestamp
+            })
+            .select()
+
+          if (edgeError && !edgeError.message.includes('duplicate key')) {
+            // Only warn on non-duplicate errors
+            console.warn(`[Sync] Failed to insert REPLIED edge:`, edgeError.message)
+          }
+        }
+      } catch (error) {
+        console.warn(`[Sync] Failed to create REPLIED edge for cast ${cast.hash}:`, error)
+        // Non-fatal - continue processing
+      }
     }
 
     // Process music embeds (TASK-639)
@@ -425,8 +511,11 @@ export class SyncEngine {
     try {
       console.log(`[Sync] Syncing replies for cast: ${castHash}`)
 
-      const conversation = await this.neynar.fetchCastWithReplies(castHash, { replyDepth: 2 })
-      const replies = conversation.direct_replies || []
+      // fetchCastWithReplies returns the cast object with direct_replies nested inside
+      const cast = await this.neynar.fetchCastWithReplies(castHash, { replyDepth: 2 })
+      const replies = cast.direct_replies || []
+
+      console.log(`[Sync] Found ${replies.length} direct replies`)
 
       let repliesProcessed = 0
 

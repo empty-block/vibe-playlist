@@ -130,13 +130,14 @@ export class NeynarService {
     await this.throttle()
 
     return this.retryWithBackoff(async () => {
-      const conversation = await this.client.lookupCastConversation({
+      const response = await this.client.lookupCastConversation({
         identifier: castHash,
         type: 'hash',
         replyDepth: Math.min(options?.replyDepth || 2, 5) // Max 5 per API docs
       })
 
-      return conversation.conversation
+      // Return the cast object which contains direct_replies
+      return response.conversation.cast
     })
   }
 
@@ -150,7 +151,10 @@ export class NeynarService {
     await this.throttle()
 
     return this.retryWithBackoff(async () => {
-      const response = await this.client.fetchBulkCasts(castHashes)
+      // SDK expects an object with casts as comma-separated string
+      const response = await this.client.fetchBulkCasts({
+        casts: castHashes.join(',')
+      })
       return response.result?.casts || []
     })
   }
