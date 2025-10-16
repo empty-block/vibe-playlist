@@ -130,7 +130,8 @@ export class NeynarService {
     await this.throttle()
 
     return this.retryWithBackoff(async () => {
-      const conversation = await this.client.lookupCastConversation(castHash, {
+      const conversation = await this.client.lookupCastConversation({
+        identifier: castHash,
         type: 'hash',
         replyDepth: Math.min(options?.replyDepth || 2, 5) // Max 5 per API docs
       })
