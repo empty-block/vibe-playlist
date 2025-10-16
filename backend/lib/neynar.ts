@@ -168,6 +168,47 @@ export class NeynarService {
       return response.users?.[0]
     })
   }
+
+  /**
+   * Fetch reactions (likes and recasts) for a specific cast
+   *
+   * @param castHash - The cast hash identifier
+   * @param options - Optional parameters for reaction types, limit, and viewer
+   * @returns Reactions data with likes and recasts
+   */
+  async fetchCastReactions(
+    castHash: string,
+    options?: {
+      types?: ('likes' | 'recasts')[]
+      limit?: number
+      viewerFid?: number
+    }
+  ): Promise<{
+    likes: any[]
+    recasts: any[]
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const types = options?.types || ['likes', 'recasts']
+      const limit = Math.min(options?.limit || 100, 100) // Max 100 per API docs
+
+      const response = await this.client.fetchCastReactions({
+        hash: castHash,
+        types: types as any,
+        limit,
+        viewerFid: options?.viewerFid
+      })
+
+      // The API returns reactions as a flat array with reaction_type field
+      // Filter them by type
+      const reactions = response.reactions || []
+      const likes = reactions.filter((r: any) => r.reaction_type === 'like')
+      const recasts = reactions.filter((r: any) => r.reaction_type === 'recast')
+
+      return { likes, recasts }
+    })
+  }
 }
 
 // Singleton instance

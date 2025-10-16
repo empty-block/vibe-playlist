@@ -158,6 +158,15 @@ export class SyncEngine {
 
     // Process music embeds (TASK-639)
     await this.processMusicEmbeds(cast.hash, cast.embeds || [])
+
+    // Sync reactions (TASK-649 Phase 1)
+    // Non-fatal - if reaction sync fails, we still want to continue
+    try {
+      await this.syncCastReactions(cast.hash, cast.author.fid)
+    } catch (error) {
+      console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
+      // Continue processing - reaction sync failure is non-fatal
+    }
   }
 
   /**
@@ -216,6 +225,132 @@ export class SyncEngine {
   }
 
   private hasLoggedCast = false
+
+  /**
+   * Sync reactions (likes and recasts) for a specific cast
+   *
+   * @param castHash - The cast to fetch reactions for
+   * @param viewerFid - FID of the viewer context (usually cast author)
+   * @returns Number of reactions synced
+   */
+  async syncCastReactions(castHash: string, viewerFid: number): Promise<number> {
+    console.log(`[Sync] Fetching reactions for cast: ${castHash} (viewer: ${viewerFid})`)
+    try {
+      // Fetch reactions from Neynar with viewer context
+      const { likes, recasts } = await this.neynar.fetchCastReactions(castHash, {
+        types: ['likes', 'recasts'],
+        limit: 100,
+        viewerFid
+      })
+
+      console.log(`[Sync] Got ${likes.length} likes and ${recasts.length} recasts for ${castHash}`)
+      let totalReactionsSynced = 0
+
+      // Process likes
+      for (const like of likes) {
+        try {
+          const userId = like.user.fid.toString()
+
+          // 1. Upsert reactor user
+          const { error: userError } = await this.supabase
+            .from('user_nodes')
+            .upsert({
+              node_id: userId,
+              fname: like.user.username,
+              display_name: like.user.display_name,
+              avatar_url: like.user.pfp_url
+            }, {
+              onConflict: 'node_id'
+            })
+
+          if (userError) {
+            console.warn(`[Sync] Failed to upsert user ${userId}:`, userError.message)
+            continue
+          }
+
+          // 2. Insert LIKED edge
+          const { error: edgeError } = await this.supabase
+            .from('interaction_edges')
+            .insert({
+              source_id: userId,
+              cast_id: castHash,
+              edge_type: 'LIKED',
+              created_at: like.reaction_timestamp || new Date().toISOString()
+            })
+            .select()
+
+          if (edgeError) {
+            // Ignore duplicate key errors (already synced)
+            if (!edgeError.message.includes('duplicate key')) {
+              console.warn(`[Sync] Failed to insert LIKED edge:`, edgeError.message)
+            }
+          } else {
+            totalReactionsSynced++
+          }
+        } catch (error) {
+          console.error(`[Sync] Error processing like reaction:`, error)
+        }
+      }
+
+      // Process recasts
+      for (const recast of recasts) {
+        try {
+          const userId = recast.user.fid.toString()
+
+          // 1. Upsert recaster user
+          const { error: userError } = await this.supabase
+            .from('user_nodes')
+            .upsert({
+              node_id: userId,
+              fname: recast.user.username,
+              display_name: recast.user.display_name,
+              avatar_url: recast.user.pfp_url
+            }, {
+              onConflict: 'node_id'
+            })
+
+          if (userError) {
+            console.warn(`[Sync] Failed to upsert user ${userId}:`, userError.message)
+            continue
+          }
+
+          // 2. Insert RECASTED edge
+          const { error: edgeError } = await this.supabase
+            .from('interaction_edges')
+            .insert({
+              source_id: userId,
+              cast_id: castHash,
+              edge_type: 'RECASTED',
+              created_at: recast.reaction_timestamp || new Date().toISOString()
+            })
+            .select()
+
+          if (edgeError) {
+            // Ignore duplicate key errors (already synced)
+            if (!edgeError.message.includes('duplicate key')) {
+              console.warn(`[Sync] Failed to insert RECASTED edge:`, edgeError.message)
+            }
+          } else {
+            totalReactionsSynced++
+          }
+        } catch (error) {
+          console.error(`[Sync] Error processing recast reaction:`, error)
+        }
+      }
+
+      if (totalReactionsSynced > 0) {
+        console.log(
+          `[Sync] ✓ Synced ${totalReactionsSynced} reactions for cast ${castHash} ` +
+          `(${likes.length} likes, ${recasts.length} recasts)`
+        )
+      }
+
+      return totalReactionsSynced
+    } catch (error) {
+      console.error(`[Sync] Failed to sync reactions for ${castHash}:`, error)
+      return 0
+    }
+  }
 
   /**
    * Extract cast hash from Warpcast URL
