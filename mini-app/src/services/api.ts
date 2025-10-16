@@ -120,12 +120,15 @@ export async function fetchChannelFeed(
   params?: {
     limit?: number;
     cursor?: string;
+    musicOnly?: boolean;
   }
 ): Promise<ApiThreadsResponse> {
   const queryParams = new URLSearchParams();
 
   if (params?.limit) queryParams.set('limit', params.limit.toString());
   if (params?.cursor) queryParams.set('cursor', params.cursor);
+  // Default to showing only posts with music
+  queryParams.set('musicOnly', String(params?.musicOnly ?? true));
 
   const query = queryParams.toString();
   const endpoint = `/api/channels/${channelId}/feed${query ? `?${query}` : ''}`;

@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION get_channel_feed(
   p_channel_id TEXT,
   limit_count INTEGER DEFAULT 50,
   cursor_timestamp TIMESTAMP DEFAULT NULL,
-  cursor_id TEXT DEFAULT NULL
+  cursor_id TEXT DEFAULT NULL,
+  music_only BOOLEAN DEFAULT FALSE
 )
 RETURNS TABLE(
   cast_hash TEXT,
@@ -47,6 +48,10 @@ BEGIN
     WHERE cn.channel = p_channel_id
       AND cn.parent_cast_hash IS NULL  -- Only root threads
       AND (cursor_timestamp IS NULL OR cn.created_at < cursor_timestamp)
+      AND (NOT music_only OR EXISTS (
+        SELECT 1 FROM cast_music_edges
+        WHERE cast_id = cn.node_id
+      ))
     ORDER BY cn.created_at DESC
     LIMIT limit_count
   ),
@@ -56,13 +61,17 @@ BEGIN
       jsonb_agg(
         jsonb_build_object(
           'id', ml.platform_name || '-' || ml.platform_id,
-          'title', ml.title,
-          'artist', ml.artist,
+          -- Prefer AI-normalized title, fallback to OpenGraph title
+          'title', COALESCE(ml.title, ml.og_title, 'Unknown Track'),
+          -- Prefer AI-normalized artist, fallback to OpenGraph artist
+          'artist', COALESCE(ml.artist, ml.og_artist, 'Unknown Artist'),
           'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
-          'thumbnail', ml.thumbnail_url
+          -- Use OpenGraph image for thumbnail
+          'thumbnail', ml.og_image_url
         )
+        ORDER BY cme.embed_index NULLS LAST
       ) as music_data
     FROM cast_music_edges cme
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
