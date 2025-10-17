@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Feed - Napster Transfer Window Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            padding: 20px;
+            color: #000;
+        }
+
+        .window {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 3px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .title-text {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .title-icon {
+            width: 16px;
+            height: 16px;
+            background: #00A651;
+            border: 1px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-button {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .window-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        .menu-bar {
+            background: #c0c0c0;
+            border-bottom: 1px solid #808080;
+            padding: 2px 5px;
+            font-size: 11px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-item {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        .toolbar {
+            background: #c0c0c0;
+            padding: 5px;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .toolbar-button {
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .toolbar-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            height: 20px;
+            background: #808080;
+            margin: 0 3px;
+        }
+
+        .content-area {
+            background: #ffffff;
+            margin: 2px;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            height: 500px;
+            overflow-y: scroll;
+            scrollbar-color: #c0c0c0 #ffffff;
+            scrollbar-width: thin;
+        }
+
+        /* Classic Windows scrollbar */
+        .content-area::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: #c0c0c0;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: #808080;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+        }
+
+        .content-area::-webkit-scrollbar-button {
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            height: 16px;
+        }
+
+        .transfer-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .transfer-table thead {
+            position: sticky;
+            top: 0;
+            background: #c0c0c0;
+            z-index: 10;
+        }
+
+        .transfer-table th {
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'MS Sans Serif', sans-serif;
+        }
+
+        .transfer-table th:hover {
+            background: #dfdfdf;
+        }
+
+        .sort-indicator {
+            font-size: 8px;
+            margin-left: 3px;
+        }
+
+        .transfer-table tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background 0.1s;
+        }
+
+        .transfer-table tbody tr:hover {
+            background: #ffffcc;
+        }
+
+        .transfer-table tbody tr.active {
+            background: #e6ffe6;
+        }
+
+        .transfer-table td {
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 1px solid #000;
+            border-radius: 2px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .username {
+            color: #0000ff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .track-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .track-thumb {
+            width: 32px;
+            height: 32px;
+            background: #000;
+            border: 1px solid #808080;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00A651;
+            font-size: 16px;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-cell {
+            font-weight: bold;
+        }
+
+        .status-active {
+            color: #00A651;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-ready {
+            color: #0000ff;
+        }
+
+        .status-queued {
+            color: #808080;
+        }
+
+        .progress-bar {
+            width: 60px;
+            height: 8px;
+            background: #ffffff;
+            border: 1px solid #000;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #00A651;
+            animation: progress 2s infinite;
+        }
+
+        @keyframes progress {
+            0%, 100% { width: 30%; }
+            50% { width: 70%; }
+        }
+
+        .time-cell {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+        }
+
+        .action-button {
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            font-family: 'MS Sans Serif', sans-serif;
+        }
+
+        .action-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        .action-button.liked {
+            background: #ffcccc;
+        }
+
+        .play-button {
+            background: #00A651;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 1px solid #ffffff;
+            padding: 3px 5px;
+            font-size: 11px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-section {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 1px 3px;
+            border: 1px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        .napster-logo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #000;
+            color: #00A651;
+            padding: 8px 12px;
+            border: 2px solid #00A651;
+            font-weight: bold;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .napster-logo:hover {
+            background: #00A651;
+            color: #000;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-text">
+                <div class="title-icon">♪</div>
+                <span>Jamzy - Activity Feed [Napster Style]</span>
+            </div>
+            <div class="window-controls">
+                <div class="window-button">_</div>
+                <div class="window-button">□</div>
+                <div class="window-button">×</div>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-item">File</div>
+            <div class="menu-item">Edit</div>
+            <div class="menu-item">View</div>
+            <div class="menu-item">Transfer</div>
+            <div class="menu-item">Help</div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-button">
+                <span>↻</span> Refresh
+            </div>
+            <div class="toolbar-button">
+                <span>⏸</span> Pause All
+            </div>
+            <div class="toolbar-button">
+                <span>▶</span> Resume All
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-button">
+                <span>🔍</span> Search
+            </div>
+            <div class="toolbar-button">
+                <span>⚙</span> Settings
+            </div>
+        </div>
+
+        <!-- Content Area with Transfer Table -->
+        <div class="content-area">
+            <table class="transfer-table">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">User <span class="sort-indicator">▼</span></th>
+                        <th onclick="sortTable(1)">Track <span class="sort-indicator"></span></th>
+                        <th onclick="sortTable(2)">Status <span class="sort-indicator"></span></th>
+                        <th onclick="sortTable(3)">Time <span class="sort-indicator"></span></th>
+                        <th onclick="sortTable(4)">Actions <span class="sort-indicator"></span></th>
+                    </tr>
+                </thead>
+                <tbody id="transferTableBody">
+                    <!-- Rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-section">
+                <span>Active: <strong id="activeCount">1</strong></span>
+            </div>
+            <div class="status-section">
+                <span>Total Shares: <strong id="totalCount">12</strong></span>
+            </div>
+            <div class="status-section">
+                <span class="blink">🟢</span> Connected
+            </div>
+        </div>
+    </div>
+
+    <!-- Napster-style branding -->
+    <div class="napster-logo">JAMZY</div>
+
+    <script>
+        // Sample data for the activity feed
+        const activityData = [
+            {
+                user: 'musiclover',
+                avatar: 'ML',
+                track: 'Blinding Lights',
+                artist: 'The Weeknd',
+                status: 'active',
+                time: '2h ago',
+                likes: 23,
+                comments: 5,
+                liked: false
+            },
+            {
+                user: 'djkool',
+                avatar: 'DK',
+                track: 'Levitating',
+                artist: 'Dua Lipa',
+                status: 'ready',
+                time: '3h ago',
+                likes: 45,
+                comments: 12,
+                liked: true
+            },
+            {
+                user: 'popfan99',
+                avatar: 'PF',
+                track: 'good 4 u',
+                artist: 'Olivia Rodrigo',
+                status: 'ready',
+                time: '5h ago',
+                likes: 67,
+                comments: 8,
+                liked: false
+            },
+            {
+                user: 'indiekid',
+                avatar: 'IK',
+                track: 'Heat Waves',
+                artist: 'Glass Animals',
+                status: 'ready',
+                time: '1d ago',
+                likes: 89,
+                comments: 15,
+                liked: false
+            },
+            {
+                user: 'retrowave',
+                avatar: 'RW',
+                track: 'Enjoy The Silence',
+                artist: 'Depeche Mode',
+                status: 'ready',
+                time: '1d ago',
+                likes: 156,
+                comments: 23,
+                liked: true
+            },
+            {
+                user: 'synthfan',
+                avatar: 'SF',
+                track: 'Take On Me',
+                artist: 'a-ha',
+                status: 'queued',
+                time: '2d ago',
+                likes: 134,
+                comments: 19,
+                liked: false
+            },
+            {
+                user: 'discolover',
+                avatar: 'DL',
+                track: "Stayin' Alive",
+                artist: 'Bee Gees',
+                status: 'ready',
+                time: '2d ago',
+                likes: 201,
+                comments: 34,
+                liked: true
+            },
+            {
+                user: 'rocknroll',
+                avatar: 'RR',
+                track: 'Bohemian Rhapsody',
+                artist: 'Queen',
+                status: 'ready',
+                time: '3d ago',
+                likes: 445,
+                comments: 67,
+                liked: false
+            },
+            {
+                user: 'jazzcat',
+                avatar: 'JC',
+                track: 'Take Five',
+                artist: 'Dave Brubeck',
+                status: 'ready',
+                time: '3d ago',
+                likes: 78,
+                comments: 12,
+                liked: false
+            },
+            {
+                user: 'hiphophead',
+                avatar: 'HH',
+                track: 'Juicy',
+                artist: 'The Notorious B.I.G.',
+                status: 'queued',
+                time: '4d ago',
+                likes: 234,
+                comments: 45,
+                liked: true
+            },
+            {
+                user: 'alternativerock',
+                avatar: 'AR',
+                track: 'Smells Like Teen Spirit',
+                artist: 'Nirvana',
+                status: 'ready',
+                time: '4d ago',
+                likes: 567,
+                comments: 89,
+                liked: false
+            },
+            {
+                user: 'electronica',
+                avatar: 'EL',
+                track: 'Around The World',
+                artist: 'Daft Punk',
+                status: 'ready',
+                time: '5d ago',
+                likes: 189,
+                comments: 28,
+                liked: false
+            }
+        ];
+
+        // Render the table
+        function renderTable() {
+            const tbody = document.getElementById('transferTableBody');
+            tbody.innerHTML = '';
+
+            activityData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                if (item.status === 'active') {
+                    row.classList.add('active');
+                }
+
+                row.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">${item.avatar}</div>
+                            <span class="username" onclick="alert('View @${item.user}\\'s profile')">@${item.user}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="track-cell">
+                            <div class="track-thumb">♪</div>
+                            <div class="track-info">
+                                <div class="track-title">${item.track}</div>
+                                <div class="track-artist">${item.artist}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="status-cell ${item.status === 'active' ? 'status-active' : item.status === 'ready' ? 'status-ready' : 'status-queued'}">
+                            ${item.status === 'active' ?
+                                '<div class="progress-bar"><div class="progress-fill"></div></div> Playing' :
+                                item.status === 'ready' ? 'Complete' : 'Queued'}
+                        </div>
+                    </td>
+                    <td class="time-cell">${item.time}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="action-button ${item.liked ? 'liked' : ''}" onclick="toggleLike(${index})">
+                                ❤ ${item.likes}
+                            </button>
+                            <button class="action-button" onclick="alert('${item.comments} comments')">
+                                💬 ${item.comments}
+                            </button>
+                            <button class="action-button play-button" onclick="playTrack('${item.track}', '${item.artist}')">
+                                ▶
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            updateStatusBar();
+        }
+
+        // Update status bar counts
+        function updateStatusBar() {
+            const activeCount = activityData.filter(item => item.status === 'active').length;
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('totalCount').textContent = activityData.length;
+        }
+
+        // Toggle like
+        function toggleLike(index) {
+            activityData[index].liked = !activityData[index].liked;
+            activityData[index].likes += activityData[index].liked ? 1 : -1;
+            renderTable();
+        }
+
+        // Play track
+        function playTrack(track, artist) {
+            alert(`Now playing:\n${track} - ${artist}\n\nIn a real app, this would start playback.`);
+        }
+
+        // Sort table by column
+        let sortColumn = -1;
+        let sortAscending = true;
+
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) {
+                sortAscending = !sortAscending;
+            } else {
+                sortColumn = columnIndex;
+                sortAscending = true;
+            }
+
+            const headers = document.querySelectorAll('.transfer-table th');
+            headers.forEach((header, index) => {
+                const indicator = header.querySelector('.sort-indicator');
+                if (index === columnIndex) {
+                    indicator.textContent = sortAscending ? '▼' : '▲';
+                } else {
+                    indicator.textContent = '';
+                }
+            });
+
+            activityData.sort((a, b) => {
+                let valA, valB;
+
+                switch (columnIndex) {
+                    case 0: // User
+                        valA = a.user;
+                        valB = b.user;
+                        break;
+                    case 1: // Track
+                        valA = a.track;
+                        valB = b.track;
+                        break;
+                    case 2: // Status
+                        const statusOrder = { active: 0, ready: 1, queued: 2 };
+                        valA = statusOrder[a.status];
+                        valB = statusOrder[b.status];
+                        break;
+                    case 3: // Time
+                        valA = a.time;
+                        valB = b.time;
+                        break;
+                    case 4: // Actions (sort by likes)
+                        valA = a.likes;
+                        valB = b.likes;
+                        break;
+                }
+
+                if (valA < valB) return sortAscending ? -1 : 1;
+                if (valA > valB) return sortAscending ? 1 : -1;
+                return 0;
+            });
+
+            renderTable();
+        }
+
+        // Initialize
+        renderTable();
+
+        // Simulate live updates
+        setInterval(() => {
+            // Randomly update an active transfer
+            const activeItems = activityData.filter(item => item.status === 'active');
+            if (activeItems.length === 0 && Math.random() > 0.7) {
+                // Sometimes activate a queued item
+                const queuedItems = activityData.filter(item => item.status === 'queued');
+                if (queuedItems.length > 0) {
+                    queuedItems[0].status = 'active';
+                    renderTable();
+                }
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

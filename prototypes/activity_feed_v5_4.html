@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Feed v5.4 - Color Coded Sources</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #008080;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .window {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+    }
+
+    .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-text {
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .control-btn {
+      width: 16px;
+      height: 14px;
+      border: 1px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      background: #c0c0c0;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .content {
+      padding: 15px;
+      background: #c0c0c0;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    /* Custom scrollbar */
+    .content::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    .content::-webkit-scrollbar-track {
+      background: #ffffff;
+      border-left: 1px solid #808080;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+    }
+
+    .feed-item {
+      background: #ffffff;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    /* Source color indicators - subtle left border */
+    .feed-item.source-spotify {
+      border-left: 3px solid #1DB954;
+    }
+
+    .feed-item.source-youtube {
+      border-left: 3px solid #FF0000;
+    }
+
+    .item-header {
+      padding: 10px 12px 8px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .thumbnail {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border: 1px solid #808080;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: relative;
+    }
+
+    /* Additional subtle indicator - colored dot on thumbnail */
+    .thumbnail::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.3);
+    }
+
+    .source-spotify .thumbnail::after {
+      background: #1DB954;
+      box-shadow: 0 0 4px rgba(29, 185, 84, 0.6);
+    }
+
+    .source-youtube .thumbnail::after {
+      background: #FF0000;
+      box-shadow: 0 0 4px rgba(255, 0, 0, 0.6);
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .username {
+      font-weight: bold;
+      color: #000080;
+      font-size: 14px;
+    }
+
+    .timestamp {
+      color: #808080;
+      font-size: 12px;
+    }
+
+    .track-info {
+      font-size: 13px;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .track-title {
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .track-artist {
+      color: #404040;
+    }
+
+    .comment-box {
+      background: #ffffe0;
+      border: 1px solid #e0e060;
+      padding: 8px 10px;
+      margin: 8px 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .item-actions {
+      padding: 8px 12px 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Cyberpunk Play Button */
+    .play-btn {
+      background: transparent;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 1px;
+      box-shadow: 0 0 5px rgba(0, 255, 0, 0.3),
+                  inset 0 0 5px rgba(0, 255, 0, 0.1);
+      transition: all 0.2s ease;
+      position: relative;
+      font-family: 'Courier New', monospace;
+    }
+
+    .play-btn:hover {
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.6),
+                  inset 0 0 8px rgba(0, 255, 0, 0.2);
+      background: rgba(0, 255, 0, 0.05);
+      text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+    }
+
+    .play-btn:active {
+      background: rgba(0, 255, 0, 0.15);
+      box-shadow: 0 0 8px rgba(0, 255, 0, 0.4),
+                  inset 0 0 10px rgba(0, 255, 0, 0.3);
+      transform: translateY(1px);
+    }
+
+    .stat-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .stat {
+      color: #606060;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stat-number {
+      font-weight: bold;
+      color: #000000;
+    }
+
+    /* Separator between stats */
+    .stat:not(:last-child)::after {
+      content: '•';
+      margin-left: 12px;
+      color: #a0a0a0;
+    }
+
+    .legend {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid #808080;
+      font-size: 11px;
+      color: #404040;
+    }
+
+    .legend-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #000000;
+    }
+
+    .legend-items {
+      display: flex;
+      gap: 15px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.3);
+    }
+
+    .legend-indicator.spotify {
+      background: #1DB954;
+      box-shadow: 0 0 3px rgba(29, 185, 84, 0.5);
+    }
+
+    .legend-indicator.youtube {
+      background: #FF0000;
+      box-shadow: 0 0 3px rgba(255, 0, 0, 0.5);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      .item-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .stat-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .stat::after {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="window">
+      <div class="title-bar">
+        <div class="title-text">Activity Feed v5.4 - Color Coded</div>
+        <div class="window-controls">
+          <div class="control-btn">_</div>
+          <div class="control-btn">□</div>
+          <div class="control-btn">×</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Feed Item 1 - Spotify -->
+        <div class="feed-item source-spotify">
+          <div class="item-header">
+            <div class="thumbnail">🎵</div>
+            <div class="item-content">
+              <div class="user-info">
+                <span class="username">@musiclover</span>
+                <span class="timestamp">2h ago</span>
+              </div>
+              <div class="track-info">
+                <span class="track-title">"Blinding Lights"</span>
+                <span class="track-artist"> by The Weeknd</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-box">
+            This song never gets old! 🔥
+          </div>
+
+          <div class="item-actions">
+            <button class="play-btn">▶ PLAY</button>
+            <div class="stat-group">
+              <span class="stat"><span class="stat-number">23</span> likes</span>
+              <span class="stat"><span class="stat-number">5</span> replies</span>
+              <span class="stat"><span class="stat-number">12</span> recasts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed Item 2 - YouTube -->
+        <div class="feed-item source-youtube">
+          <div class="item-header">
+            <div class="thumbnail">🎵</div>
+            <div class="item-content">
+              <div class="user-info">
+                <span class="username">@djkool</span>
+                <span class="timestamp">3h ago</span>
+              </div>
+              <div class="track-info">
+                <span class="track-title">"Levitating"</span>
+                <span class="track-artist"> by Dua Lipa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <button class="play-btn">▶ PLAY</button>
+            <div class="stat-group">
+              <span class="stat"><span class="stat-number">45</span> likes</span>
+              <span class="stat"><span class="stat-number">12</span> replies</span>
+              <span class="stat"><span class="stat-number">8</span> recasts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed Item 3 - Spotify -->
+        <div class="feed-item source-spotify">
+          <div class="item-header">
+            <div class="thumbnail">🎵</div>
+            <div class="item-content">
+              <div class="user-info">
+                <span class="username">@popfan99</span>
+                <span class="timestamp">5h ago</span>
+              </div>
+              <div class="track-info">
+                <span class="track-title">"good 4 u"</span>
+                <span class="track-artist"> by Olivia Rodrigo</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comment-box">
+            Absolute banger
+          </div>
+
+          <div class="item-actions">
+            <button class="play-btn">▶ PLAY</button>
+            <div class="stat-group">
+              <span class="stat"><span class="stat-number">67</span> likes</span>
+              <span class="stat"><span class="stat-number">8</span> replies</span>
+              <span class="stat"><span class="stat-number">15</span> recasts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feed Item 4 - YouTube -->
+        <div class="feed-item source-youtube">
+          <div class="item-header">
+            <div class="thumbnail">🎵</div>
+            <div class="item-content">
+              <div class="user-info">
+                <span class="username">@indiekid</span>
+                <span class="timestamp">1d ago</span>
+              </div>
+              <div class="track-info">
+                <span class="track-title">"Heat Waves"</span>
+                <span class="track-artist"> by Glass Animals</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <button class="play-btn">▶ PLAY</button>
+            <div class="stat-group">
+              <span class="stat"><span class="stat-number">89</span> likes</span>
+              <span class="stat"><span class="stat-number">15</span> replies</span>
+              <span class="stat"><span class="stat-number">23</span> recasts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-title">Source Indicators:</div>
+          <div class="legend-items">
+            <div class="legend-item">
+              <div class="legend-indicator spotify"></div>
+              <span>Spotify Track</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-indicator youtube"></div>
+              <span>YouTube Track</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add click handlers for play buttons
+    document.querySelectorAll('.play-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const feedItem = e.target.closest('.feed-item');
+        const source = feedItem.classList.contains('source-spotify') ? 'Spotify' : 'YouTube';
+        const username = feedItem.querySelector('.username').textContent;
+        const track = feedItem.querySelector('.track-title').textContent;
+        console.log(`Playing ${track} from ${source} (shared by ${username})`);
+      });
+    });
+
+    // Add subtle animation on hover
+    document.querySelectorAll('.feed-item').forEach(item => {
+      item.addEventListener('mouseenter', function() {
+        this.style.transition = 'all 0.2s ease';
+        this.style.transform = 'translateX(2px)';
+      });
+
+      item.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateX(0)';
+      });
+    });
+  </script>
+</body>
+</html>
