@@ -70,26 +70,60 @@ export async function fetchOpenGraph(
       // Try to extract artist from various fields
       let og_artist: string | null = null
 
-      // Check for music-specific OG tags
+      // Check for music-specific OG tags (works for some platforms)
       if (result.musicSong?.length > 0) {
         og_artist = result.musicMusician?.[0]?.name || null
       }
 
-      // Fallback: parse from title (e.g., "Song Name - Artist Name")
+      // Spotify-specific: Check for artist in description
+      if (!og_artist && result.ogDescription) {
+        console.log(`[OpenGraph] Spotify description found: "${result.ogDescription}"`)
+        // Spotify format: "Artist1, Artist2 · Track Name · Song · 2025"
+        // Artist names come BEFORE the first "·"
+        const parts = result.ogDescription.split('·').map(p => p.trim())
+        console.log(`[OpenGraph] Split into ${parts.length} parts:`, parts)
+        if (parts.length >= 2) {
+          // First part should be artist(s)
+          const potentialArtist = parts[0]
+
+          // Verify this looks like an artist (not a sentence or long text)
+          // Artists are usually short, comma-separated names
+          if (potentialArtist && potentialArtist.length < 100 && !potentialArtist.includes('Listen to')) {
+            og_artist = potentialArtist
+            console.log(`[OpenGraph] Extracted Spotify artist: "${og_artist}"`)
+          }
+        }
+      } else if (!og_artist) {
+        console.log(`[OpenGraph] No ogDescription found for artist extraction`)
+      }
+
+      // Try parsing from title (e.g., "Song Name - Artist Name" or "Artist Name - Song Name")
       if (!og_artist && og_title) {
         const match = og_title.match(/(.+?)\s*[-–—]\s*(.+)/)
         if (match) {
+          // For Spotify, the format is usually "Track - Artist" or just the track name
           og_artist = match[2].trim()
         }
       }
 
-      // Fallback: check description or site name
+      // Check musicMusician field (array or string) - but skip if it's a URL
+      if (!og_artist && result.musicMusician) {
+        let musicianValue = null
+        if (Array.isArray(result.musicMusician)) {
+          musicianValue = result.musicMusician[0]?.name || result.musicMusician[0] || null
+        } else if (typeof result.musicMusician === 'string') {
+          musicianValue = result.musicMusician
+        }
+
+        // Only use musicMusician if it's not a URL
+        if (musicianValue && !musicianValue.startsWith('http')) {
+          og_artist = musicianValue
+        }
+      }
+
+      // Last resort: check twitter creator or site name
       if (!og_artist) {
-        og_artist =
-          result.musicMusician ||
-          result.ogSiteName ||
-          result.twitterCreator ||
-          null
+        og_artist = result.twitterCreator || null
       }
 
       return {
