@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Channels (Win95 Variation 3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #008080;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            max-width: 760px;
+            width: 100%;
+        }
+
+        .title-bar {
+            background: #000080;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 11px;
+            padding-left: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border: 1px outset #FFFFFF;
+            font-size: 8px;
+            margin-left: 2px;
+            cursor: pointer;
+        }
+
+        .window-content {
+            padding: 2px;
+        }
+
+        .toolbar {
+            background: #C0C0C8;
+            padding: 4px;
+            border-bottom: 1px solid #FFFFFF;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-button {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-button:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .channels-panel {
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            margin: 2px;
+            height: 440px;
+            overflow-y: auto;
+        }
+
+        .channel-row {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            border-bottom: 1px solid #D4D0C8;
+            cursor: pointer;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .channel-row:nth-child(odd) {
+            background: #FFFFFF;
+        }
+
+        .channel-row:nth-child(even) {
+            background: #F8F8F8;
+        }
+
+        .channel-row:hover {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .channel-icon-box {
+            width: 24px;
+            height: 24px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .channel-row:hover .channel-icon-box {
+            background: #0000A0;
+        }
+
+        .channel-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .channel-title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 120px;
+        }
+
+        .channel-users {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            width: 60px;
+            text-align: right;
+        }
+
+        .channel-desc {
+            font-size: 11px;
+            opacity: 0.85;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .channel-row:hover .channel-desc {
+            opacity: 1;
+        }
+
+        .status-bar {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            padding: 2px 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-panel {
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            padding: 1px 4px;
+            background: #FFFFFF;
+        }
+
+        @media (max-width: 640px) {
+            .channel-desc {
+                display: none;
+            }
+
+            .channel-main {
+                gap: 8px;
+            }
+
+            .toolbar {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="win95-window">
+        <div class="title-bar">
+            <div class="title-bar-text">JAMZY CHANNELS</div>
+            <div class="title-bar-controls">
+                <button>_</button>
+                <button>□</button>
+                <button>X</button>
+            </div>
+        </div>
+
+        <div class="window-content">
+            <div class="toolbar">
+                <button class="toolbar-button">
+                    <span>📂</span> Open
+                </button>
+                <button class="toolbar-button">
+                    <span>🔄</span> Refresh
+                </button>
+                <button class="toolbar-button">
+                    <span>⭐</span> Favorite
+                </button>
+                <button class="toolbar-button">
+                    <span>🔍</span> Search
+                </button>
+            </div>
+
+            <div class="channels-panel">
+                <!-- Hip Hop -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♪</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Hip Hop</div>
+                        <div class="channel-users">247</div>
+                        <div class="channel-desc">Latest hip hop, rap, and urban beats from around the world</div>
+                    </div>
+                </div>
+
+                <!-- Electronic -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♫</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Electronic</div>
+                        <div class="channel-users">189</div>
+                        <div class="channel-desc">EDM, techno, house, and electronic music</div>
+                    </div>
+                </div>
+
+                <!-- Rock -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♪</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Rock</div>
+                        <div class="channel-users">312</div>
+                        <div class="channel-desc">Classic and modern rock anthems that never get old</div>
+                    </div>
+                </div>
+
+                <!-- Jazz -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♫</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Jazz</div>
+                        <div class="channel-users">156</div>
+                        <div class="channel-desc">Smooth jazz, bebop, and contemporary jazz selections</div>
+                    </div>
+                </div>
+
+                <!-- Indie -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♪</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Indie</div>
+                        <div class="channel-users">203</div>
+                        <div class="channel-desc">Independent and alternative music from emerging artists</div>
+                    </div>
+                </div>
+
+                <!-- R&B/Soul -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♫</div>
+                    <div class="channel-main">
+                        <div class="channel-title">R&B / Soul</div>
+                        <div class="channel-users">178</div>
+                        <div class="channel-desc">Rhythm and blues, soul classics and new releases</div>
+                    </div>
+                </div>
+
+                <!-- Pop -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♪</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Pop</div>
+                        <div class="channel-users">534</div>
+                        <div class="channel-desc">Top 40 hits and popular music from today's charts</div>
+                    </div>
+                </div>
+
+                <!-- Classical -->
+                <div class="channel-row">
+                    <div class="channel-icon-box">♫</div>
+                    <div class="channel-main">
+                        <div class="channel-title">Classical</div>
+                        <div class="channel-users">92</div>
+                        <div class="channel-desc">Classical compositions from baroque to contemporary</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-panel">8 channels available</div>
+                <div class="status-panel">1911 users online</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
