@@ -2,7 +2,7 @@
 
 /* Base Layout */
 .channel-view-page {
-  background: #008080 !important;
+  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%) !important;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   color: #000;
   line-height: 1.4;

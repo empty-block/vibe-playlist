@@ -1,5 +1,25 @@
+.activity-page {
+  min-height: 100vh !important;
+  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%) !important;
+  padding-bottom: 80px !important;
+  display: flex;
+  flex-direction: column;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  color: #000;
+  line-height: 1.4;
+}
+
+.activity-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Windows 95 Window Container */
-.win95-window {
+.activity-page .win95-window {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -15,7 +35,7 @@
 }
 
 /* Title Bar */
-.win95-title-bar {
+.activity-page .win95-title-bar {
   background: linear-gradient(to right, #000080, #1084D0);
   padding: 3px 4px;
   display: flex;
@@ -28,25 +48,23 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.win95-title-text {
+.activity-page .win95-title-left {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.win95-title-icon {
+.activity-page .win95-title-icon {
   width: 16px;
   height: 16px;
-  background: #FFFFFF;
-  border: 1px solid #000080;
 }
 
-.win95-window-controls {
+.activity-page .win95-window-controls {
   display: flex;
   gap: 2px;
 }
 
-.win95-control-btn {
+.activity-page .win95-control-btn {
   width: 18px;
   height: 16px;
   background: #C0C0C8;
@@ -65,7 +83,7 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.win95-control-btn:active {
+.activity-page .win95-control-btn:active {
   border-top: 1px solid #000000;
   border-left: 1px solid #000000;
   border-right: 1px solid #FFFFFF;
@@ -75,7 +93,7 @@
 }
 
 /* Content Area */
-.win95-content {
+.activity-page .win95-content {
   flex: 1;
   background: #FFFFFF;
   margin: 3px;
@@ -88,78 +106,98 @@
   overflow: hidden;
 }
 
-/* Channels Container - Scrollable */
-.win95-channels-container {
+/* Activity Feed - Scrollable */
+.activity-page .win95-activity-feed {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
 }
 
-/* Empty State */
-.win95-empty-state {
-  padding: 40px 20px;
-  text-align: center;
-  color: #808080;
-  font-size: 11px;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-}
-
-/* Search Section - Bottom */
-.win95-search-section {
-  padding: 8px;
+/* Status Bar */
+.activity-page .win95-status-bar {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
-}
-
-.win95-search-container {
+  padding: 3px 4px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.win95-search-label {
+  gap: 16px;
   font-size: 11px;
-  font-weight: bold;
-  color: #000000;
-  white-space: nowrap;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.win95-search-input-wrapper {
-  flex: 1;
-  position: relative;
-}
-
-.win95-search-input {
-  width: 100%;
-  padding: 3px 4px;
+.activity-page .win95-status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #FFFFFF;
   border-bottom: 1px solid #FFFFFF;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-  font-size: 11px;
-  background: #FFFFFF;
-  outline: none;
 }
 
-.win95-search-input:focus {
-  outline: 1px dotted #000000;
-  outline-offset: -2px;
+.activity-page .win95-status-indicator {
+  color: #00ff00;
+  font-size: 10px;
+}
+
+/* Action Button */
+.activity-page .win95-action-button {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.activity-page .win95-action-button:active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.activity-page .win95-retry-btn {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.activity-page .win95-retry-btn:active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
 }
 
 /* Scrollbar Styling */
-.win95-channels-container::-webkit-scrollbar {
+.activity-page .win95-activity-feed::-webkit-scrollbar {
   width: 16px;
 }
 
-.win95-channels-container::-webkit-scrollbar-track {
+.activity-page .win95-activity-feed::-webkit-scrollbar-track {
   background: #FFFFFF;
   border-left: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-thumb {
+.activity-page .win95-activity-feed::-webkit-scrollbar-thumb {
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
   border-left: 1px solid #FFFFFF;
@@ -167,11 +205,11 @@
   border-bottom: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-thumb:hover {
+.activity-page .win95-activity-feed::-webkit-scrollbar-thumb:hover {
   background: #A8A8A8;
 }
 
-.win95-channels-container::-webkit-scrollbar-button {
+.activity-page .win95-activity-feed::-webkit-scrollbar-button {
   height: 16px;
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
@@ -180,31 +218,31 @@
   border-bottom: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-button:vertical:decrement {
+.activity-page .win95-activity-feed::-webkit-scrollbar-button:vertical:decrement {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 6l-4 4h8z" fill="%23000000"/></svg>') center no-repeat;
 }
 
-.win95-channels-container::-webkit-scrollbar-button:vertical:increment {
+.activity-page .win95-activity-feed::-webkit-scrollbar-button:vertical:increment {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 10l4-4H4z" fill="%23000000"/></svg>') center no-repeat;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .win95-window {
+  .activity-page .win95-window {
     max-width: 100%;
     height: calc(100vh - 85px) !important;
     margin: 0 8px;
   }
 
-  .win95-title-bar {
+  .activity-page .win95-title-bar {
     font-size: 12px;
   }
 
-  .win95-channels-container {
-    padding: 4px;
+  .activity-container {
+    padding: 10px;
   }
 
-  .win95-search-section {
-    padding: 6px;
+  .activity-page .win95-activity-feed {
+    padding: 4px;
   }
 }

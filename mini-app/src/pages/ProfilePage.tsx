@@ -1,17 +1,15 @@
 import { Component, createSignal, createMemo, For, Show } from 'solid-js';
-import { RowTrackCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
-import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import { currentUser } from '../stores/authStore';
-import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
 import { mockThreads } from '../data/mockThreads';
-import './profilePage.css';
+import './profilePageWin95.css';
 
 type FilterType = 'threads' | 'replies' | 'all';
 
 const ProfilePage: Component = () => {
   const user = currentUser();
-  const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
+  const [currentFilter, setCurrentFilter] = createSignal<FilterType>('threads');
 
   // Extract user's threads and replies
   const userThreads = createMemo(() =>
@@ -75,12 +73,19 @@ const ProfilePage: Component = () => {
     setIsPlaying(true);
   };
 
-  const likeTrack = (track: Track) => {
-    console.log('Like track:', track.title);
-  };
+  // Time ago formatter
+  const formatTimeAgo = (timestamp: string): string => {
+    const now = new Date();
+    const then = new Date(timestamp);
+    const diffMs = now.getTime() - then.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
 
-  const replyToTrack = (track: Track) => {
-    console.log('Reply to track:', track.title);
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
   };
 
   const getEmptyMessage = (filter: FilterType) => {
@@ -94,77 +99,145 @@ const ProfilePage: Component = () => {
     }
   };
 
+  const getFilterLabel = (filter: FilterType) => {
+    switch (filter) {
+      case 'threads':
+        return `📤 Threads (${userThreads().length})`;
+      case 'replies':
+        return `💬 Replies (${userReplies().length})`;
+      case 'all':
+        return `📋 All (${userThreads().length + userReplies().length})`;
+    }
+  };
+
   return (
     <div class="profile-page">
-      {/* Terminal Header */}
-      <TerminalHeader
-        title="JAMZY::USER_PROFILE"
-        path={`~/users/${user.username}`}
-        command="ls -la"
-        statusInfo={`@${user.username}`}
-        borderColor="green"
-        class="profile-terminal-header"
-      />
-
-      {/* Identity Card */}
-      <div class="profile-identity-card">
-        <img
-          class="profile-avatar"
-          src={user.avatar}
-          alt={`${user.displayName} profile picture`}
-        />
-        <div class="profile-info">
-          <h1 class="profile-display-name">{user.displayName}</h1>
-          <p class="profile-username-label">@{user.username}</p>
-        </div>
-      </div>
-
-      {/* Filter Tabs */}
-      <div class="profile-filter-tabs">
-        <button
-          class={`filter-tab ${currentFilter() === 'threads' ? 'filter-tab--active' : ''}`}
-          onClick={() => setCurrentFilter('threads')}
-        >
-          Threads
-        </button>
-        <button
-          class={`filter-tab ${currentFilter() === 'replies' ? 'filter-tab--active' : ''}`}
-          onClick={() => setCurrentFilter('replies')}
-        >
-          Replies
-        </button>
-        <button
-          class={`filter-tab ${currentFilter() === 'all' ? 'filter-tab--active' : ''}`}
-          onClick={() => setCurrentFilter('all')}
-        >
-          All
-        </button>
-      </div>
-
-      {/* Content */}
-      <div class="profile-track-list">
-        <Show when={filteredContent().length === 0}>
-          <div class="profile-empty-state">
-            <span class="empty-icon">🎵</span>
-            <p class="empty-message">{getEmptyMessage(currentFilter())}</p>
-          </div>
-        </Show>
-
-        <Show when={filteredContent().length > 0}>
-          <For each={filteredContent()}>
-            {(item) => (
-              <div class="profile-row-card-wrapper">
-                <RowTrackCard
-                  track={item.track}
-                  onPlay={playTrack}
-                  onLike={likeTrack}
-                  onReply={replyToTrack}
-                  showComment={true}
-                />
+      <div class="profile-container">
+        {/* Napster Buddy List Style Header */}
+        <div class="profile-header">
+          <Show when={user.avatar} fallback={
+            <div class="profile-avatar-fallback">
+              {user.displayName.charAt(0).toUpperCase()}
+            </div>
+          }>
+            <img
+              src={user.avatar}
+              alt={user.displayName}
+              class="profile-avatar"
+            />
+          </Show>
+          <div class="profile-info">
+            <div class="profile-username">@{user.username}</div>
+            <Show when={user.bio}>
+              <div class="profile-bio">{user.bio}</div>
+            </Show>
+            <div class="profile-stats-inline">
+              <div class="stat-inline">
+                <span class="number">{userThreads().length}</span> threads
               </div>
-            )}
-          </For>
-        </Show>
+              <div class="stat-inline">
+                <span class="number">{userReplies().length}</span> replies
+              </div>
+              <div class="stat-inline">
+                <span class="number">{userThreads().length + userReplies().length}</span> total
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feed Filter Buttons */}
+        <div class="feed-filter">
+          <button
+            class={`filter-button ${currentFilter() === 'threads' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('threads')}
+          >
+            {getFilterLabel('threads')}
+          </button>
+          <button
+            class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('replies')}
+          >
+            {getFilterLabel('replies')}
+          </button>
+          <button
+            class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('all')}
+          >
+            {getFilterLabel('all')}
+          </button>
+        </div>
+
+        {/* Track Feed */}
+        <div class="track-feed">
+          <div class="feed-header">
+            📤 Showing: <span class="feed-type">
+              {currentFilter() === 'threads' ? 'Threads' : currentFilter() === 'replies' ? 'Replies' : 'All Tracks'}
+            </span> (<span class="feed-count">{filteredContent().length}</span>)
+          </div>
+
+          <Show when={filteredContent().length === 0}>
+            <div class="profile-empty-state">
+              <span class="empty-icon">🎵</span>
+              <p class="empty-message">{getEmptyMessage(currentFilter())}</p>
+            </div>
+          </Show>
+
+          <Show when={filteredContent().length > 0}>
+            <For each={filteredContent()}>
+              {(item) => {
+                const track = item.track;
+                const isTrackPlaying = () => currentTrack()?.id === track.id && isPlaying();
+
+                return (
+                  <div class="win95-activity-card">
+                    <div class="win95-activity-header">
+                      <span class="win95-username">@{user.username}</span>
+                      <span class="win95-timestamp">{formatTimeAgo(item.timestamp)}</span>
+                    </div>
+
+                    <div class="win95-track-content">
+                      <div class="win95-thumbnail">
+                        <Show when={track.thumbnail} fallback={<span>🎵</span>}>
+                          <img src={track.thumbnail} alt={track.title} />
+                        </Show>
+                      </div>
+                      <div class="win95-track-info">
+                        <div class="win95-track-title">{track.title}</div>
+                        <div class="win95-track-artist">{track.artist}</div>
+                        <div class="win95-track-meta">via {track.source}</div>
+                      </div>
+                      <button
+                        class="win95-play-button"
+                        onClick={() => playTrack(track)}
+                      >
+                        {isTrackPlaying() ? '⏸' : '▶'}
+                      </button>
+                    </div>
+
+                    <Show when={track.comment && track.comment.trim()}>
+                      <div class="win95-comment-box">{track.comment}</div>
+                    </Show>
+
+                    <div class="win95-stats-row">
+                      <div class="win95-stat-box">
+                        <span>♥</span>
+                        <span class="count">{track.likes || 0}</span>
+                      </div>
+                      <div class="win95-stat-box">
+                        <span>💬</span>
+                        <span class="count">{track.replies || 0}</span>
+                      </div>
+                      <div class="win95-stat-box">
+                        <span>🔄</span>
+                        <span class="count">{track.recasts || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }}
+            </For>
+          </Show>
+        </div>
       </div>
 
       {/* Bottom Navigation */}
