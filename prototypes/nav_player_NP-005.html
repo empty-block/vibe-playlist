@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Windows 95 Navigation & Player - NP-005</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px 0;
+        }
+
+        /* Container for the bottom elements */
+        .mobile-container {
+            max-width: 428px;
+            width: 100%;
+            margin: 0 auto;
+            background: #008080;
+        }
+
+        /* Windows 95 Taskbar Gray */
+        :root {
+            --win95-gray: #C0C0C0;
+            --win95-dark-gray: #808080;
+            --win95-light-gray: #DFDFDF;
+            --win95-white: #FFFFFF;
+            --win95-black: #000000;
+            --win95-blue: #000080;
+            --win95-cyan: #00FFFF;
+        }
+
+        /* Player Bar - Windows 95 Status Bar Style */
+        .player-bar {
+            background: var(--win95-gray);
+            border-top: 2px solid var(--win95-white);
+            border-left: 2px solid var(--win95-white);
+            border-right: 2px solid var(--win95-black);
+            border-bottom: 2px solid var(--win95-black);
+            padding: 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        /* Top row: Video preview and track info */
+        .player-top-row {
+            display: flex;
+            gap: 4px;
+            align-items: flex-start;
+        }
+
+        /* YouTube video preview panel */
+        .video-preview-panel {
+            flex-shrink: 0;
+            width: 100px;
+            height: 56px;
+            background: var(--win95-black);
+            border-top: 1px solid var(--win95-dark-gray);
+            border-left: 1px solid var(--win95-dark-gray);
+            border-right: 1px solid var(--win95-light-gray);
+            border-bottom: 1px solid var(--win95-light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 10px;
+        }
+
+        .yt-badge-small {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #FF0000;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            padding: 1px 3px;
+            border: 1px solid var(--win95-black);
+        }
+
+        /* Track info panel */
+        .track-info-panel {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Sunken panel for text */
+        .info-sunken {
+            background: var(--win95-white);
+            border-top: 1px solid var(--win95-dark-gray);
+            border-left: 1px solid var(--win95-dark-gray);
+            border-right: 1px solid var(--win95-light-gray);
+            border-bottom: 1px solid var(--win95-light-gray);
+            padding: 3px 4px;
+            overflow: hidden;
+        }
+
+        .track-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--win95-black);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .track-subtitle {
+            font-size: 9px;
+            color: var(--win95-dark-gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            margin-top: 1px;
+        }
+
+        .track-source {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-top: 2px;
+        }
+
+        .source-badge {
+            background: #FF00FF;
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            padding: 1px 4px;
+            border: 1px solid var(--win95-black);
+        }
+
+        .shared-by {
+            font-size: 8px;
+            color: var(--win95-dark-gray);
+        }
+
+        /* Bottom row: Playback controls */
+        .player-controls-row {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 0;
+        }
+
+        /* Taskbar-style button */
+        .control-button {
+            width: 64px;
+            height: 28px;
+            background: var(--win95-gray);
+            border-top: 2px solid var(--win95-white);
+            border-left: 2px solid var(--win95-white);
+            border-right: 2px solid var(--win95-black);
+            border-bottom: 2px solid var(--win95-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--win95-black);
+            transition: all 0.05s;
+        }
+
+        .control-button:active {
+            border-top: 2px solid var(--win95-black);
+            border-left: 2px solid var(--win95-black);
+            border-right: 2px solid var(--win95-white);
+            border-bottom: 2px solid var(--win95-white);
+            padding-left: 2px;
+            padding-top: 2px;
+        }
+
+        .control-button.play {
+            background: var(--win95-cyan);
+            width: 80px;
+        }
+
+        /* Pixel separator */
+        .pixel-separator {
+            width: 1px;
+            height: 20px;
+            background: var(--win95-dark-gray);
+            box-shadow: 1px 0 0 var(--win95-white);
+        }
+
+        /* Navigation Bar - Windows 95 Taskbar Style */
+        .nav-bar {
+            background: var(--win95-gray);
+            border-top: 2px solid var(--win95-white);
+            border-left: 2px solid var(--win95-white);
+            border-right: 2px solid var(--win95-black);
+            border-bottom: 2px solid var(--win95-black);
+            padding: 2px;
+            display: flex;
+            gap: 2px;
+            margin-top: 4px;
+        }
+
+        /* Taskbar button - Start button style */
+        .nav-button {
+            flex: 1;
+            height: 32px;
+            background: var(--win95-gray);
+            border-top: 2px solid var(--win95-white);
+            border-left: 2px solid var(--win95-white);
+            border-right: 2px solid var(--win95-black);
+            border-bottom: 2px solid var(--win95-black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            transition: all 0.05s;
+            padding: 4px;
+        }
+
+        .nav-button:active,
+        .nav-button.active {
+            border-top: 2px solid var(--win95-black);
+            border-left: 2px solid var(--win95-black);
+            border-right: 2px solid var(--win95-white);
+            border-bottom: 2px solid var(--win95-white);
+            padding-left: 6px;
+            padding-top: 6px;
+        }
+
+        .nav-button.active {
+            background: var(--win95-dark-gray);
+        }
+
+        /* Nav icon - pixel art style */
+        .nav-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            font-weight: bold;
+            color: var(--win95-black);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-button.active .nav-label {
+            color: var(--win95-white);
+        }
+
+        /* Pixel art icons */
+        .icon-channels {
+            width: 16px;
+            height: 16px;
+            background:
+                linear-gradient(to right,
+                    transparent 0%, transparent 31.25%,
+                    var(--win95-black) 31.25%, var(--win95-black) 68.75%,
+                    transparent 68.75%),
+                linear-gradient(to bottom,
+                    transparent 0%, transparent 25%,
+                    var(--win95-black) 25%, var(--win95-black) 75%,
+                    transparent 75%);
+            position: relative;
+        }
+
+        .icon-channels::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--win95-cyan);
+            top: 6px;
+            left: 6px;
+            box-shadow:
+                0 0 0 2px var(--win95-black),
+                -2px -2px 0 0 var(--win95-black),
+                2px -2px 0 0 var(--win95-black),
+                -2px 2px 0 0 var(--win95-black),
+                2px 2px 0 0 var(--win95-black);
+        }
+
+        .icon-activity {
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+
+        .icon-activity::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background: var(--win95-black);
+            top: 3px;
+            left: 2px;
+        }
+
+        .icon-activity::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid var(--win95-blue);
+            bottom: 2px;
+            left: 2px;
+            filter: drop-shadow(0 0 1px var(--win95-black));
+        }
+
+        .icon-profile {
+            width: 16px;
+            height: 16px;
+            position: relative;
+        }
+
+        .icon-profile::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--win95-blue);
+            border: 2px solid var(--win95-black);
+            border-radius: 50%;
+            top: 0;
+            left: 2px;
+        }
+
+        .icon-profile::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            background: var(--win95-blue);
+            border: 2px solid var(--win95-black);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* Demo header */
+        .demo-header {
+            background: var(--win95-gray);
+            border: 2px solid;
+            border-color: var(--win95-white) var(--win95-black) var(--win95-black) var(--win95-white);
+            margin: 20px auto;
+            max-width: 428px;
+            padding: 8px;
+        }
+
+        .demo-title {
+            background: var(--win95-blue);
+            color: var(--win95-white);
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .demo-text {
+            font-size: 11px;
+            color: var(--win95-black);
+            line-height: 1.4;
+            padding: 4px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 380px) {
+            .track-title {
+                font-size: 10px;
+            }
+            .track-subtitle {
+                font-size: 8px;
+            }
+            .control-button {
+                width: 56px;
+                height: 26px;
+                font-size: 10px;
+            }
+            .control-button.play {
+                width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Info Window -->
+    <div class="demo-header">
+        <div class="demo-title">NP-005: Windows 95 Taskbar Design</div>
+        <div class="demo-text">
+            <strong>Design Direction V5:</strong> Windows 95 taskbar-inspired mobile navigation and player bar.
+            <br><br>
+            <strong>Features:</strong>
+            <br>• Navigation styled as Win95 taskbar buttons
+            <br>• Player bar as status bar with sunken panels
+            <br>• YouTube preview window with TOS compliance
+            <br>• Taskbar-style playback controls
+            <br>• Authentic MS Sans Serif typography
+            <br>• Classic Win95 gray (#C0C0C0) and borders
+        </div>
+    </div>
+
+    <!-- Mobile Container -->
+    <div class="mobile-container">
+        <!-- Music Player Bar -->
+        <div class="player-bar">
+            <!-- Top Row: Video + Track Info -->
+            <div class="player-top-row">
+                <!-- YouTube Video Preview Panel -->
+                <div class="video-preview-panel">
+                    <div class="video-placeholder">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                    <div class="yt-badge-small">YT</div>
+                </div>
+
+                <!-- Track Info Panel -->
+                <div class="track-info-panel">
+                    <div class="info-sunken">
+                        <div class="track-title">Tame Impala - My Old Ways</div>
+                        <div class="track-subtitle">Official Video</div>
+                        <div class="track-source">
+                            <span class="source-badge">YOUTUBE</span>
+                            <span class="shared-by">shared by @vibes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row: Playback Controls -->
+            <div class="player-controls-row">
+                <button class="control-button">
+                    <span>◀◀</span>
+                </button>
+                <div class="pixel-separator"></div>
+                <button class="control-button play">
+                    <span>▶ PLAY</span>
+                </button>
+                <div class="pixel-separator"></div>
+                <button class="control-button">
+                    <span>▶▶</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Bar - Taskbar Style -->
+        <div class="nav-bar">
+            <button class="nav-button active">
+                <div class="nav-icon">
+                    <div class="icon-channels"></div>
+                </div>
+                <div class="nav-label">Channels</div>
+            </button>
+
+            <button class="nav-button">
+                <div class="nav-icon">
+                    <div class="icon-activity"></div>
+                </div>
+                <div class="nav-label">Activity</div>
+            </button>
+
+            <button class="nav-button">
+                <div class="nav-icon">
+                    <div class="icon-profile"></div>
+                </div>
+                <div class="nav-label">Profile</div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity to navigation buttons
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Playback button interactivity
+        const playButton = document.querySelector('.control-button.play');
+        let isPlaying = false;
+
+        playButton.addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            this.innerHTML = isPlaying ? '<span>⏸ PAUSE</span>' : '<span>▶ PLAY</span>';
+        });
+    </script>
+</body>
+</html>

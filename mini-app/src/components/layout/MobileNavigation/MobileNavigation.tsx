@@ -3,7 +3,7 @@ import { For } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
 import { setCurrentSection, currentSection } from '../../../stores/navigationStore';
 import { navigationSections } from '../Sidebar/NavigationData';
-import './mobileNavigation.css';
+import './mobileNavigationWin95.css';
 
 interface MobileNavigationProps {
   class?: string;
@@ -21,35 +21,44 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
     }
   };
 
+  // Map section IDs to Win95 icon gradients
+  const getIconClass = (sectionId: string) => {
+    switch (sectionId) {
+      case 'channels':
+        return 'win95-nav-icon-channels';
+      case 'activity':
+        return 'win95-nav-icon-activity';
+      case 'profile':
+        return 'win95-nav-icon-profile';
+      default:
+        return 'win95-nav-icon-channels';
+    }
+  };
+
   return (
-    <nav 
-      class={`mobile-nav ${props.class || ''}`}
+    <nav
+      class={`win95-nav-bar ${props.class || ''}`}
       role="navigation"
       aria-label="Main navigation"
     >
-      <div class="mobile-nav-container">
-        <For each={navigationSections}>
-          {(section) => (
-            <A
-              href={section.href}
-              class="mobile-nav-item"
-              classList={{
-                [`mobile-nav-item-${section.color}`]: true,
-                'mobile-nav-item-active': currentSection() === section.id
-              }}
-              role="menuitem"
-              aria-label={`Navigate to ${section.label} page`}
-              aria-current={currentSection() === section.id ? 'page' : undefined}
-              onClick={() => handleSectionClick(section.id)}
-            >
-              <div class="mobile-nav-icon">
-                <section.icon class="mobile-nav-icon-svg" />
-              </div>
-              <span class="mobile-nav-label">{section.label}</span>
-            </A>
-          )}
-        </For>
-      </div>
+      <For each={navigationSections}>
+        {(section) => (
+          <A
+            href={section.href}
+            class="win95-nav-button"
+            classList={{
+              'win95-nav-button-active': currentSection() === section.id
+            }}
+            role="menuitem"
+            aria-label={`Navigate to ${section.label} page`}
+            aria-current={currentSection() === section.id ? 'page' : undefined}
+            onClick={() => handleSectionClick(section.id)}
+          >
+            <div class={`win95-nav-icon ${getIconClass(section.id)}`}></div>
+            <span class="win95-nav-label">{section.label}</span>
+          </A>
+        )}
+      </For>
     </nav>
   );
 };

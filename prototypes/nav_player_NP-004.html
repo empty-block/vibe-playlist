@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy - Win95 CD Player (NP-004)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "MS Sans Serif", "Microsoft Sans Serif", sans-serif;
+            background: #008080;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 375px;
+            max-width: 100%;
+            height: 667px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .app-content {
+            flex: 1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C0C0C8;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* CD Player Container */
+        .player-container {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 0;
+        }
+
+        /* Video Section */
+        .video-section {
+            background: #000000;
+            padding: 8px;
+            border: 2px inset #808080;
+            margin: 8px 8px 0 8px;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ff00;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+
+        .yt-logo {
+            width: 60px;
+            height: 42px;
+            background: #FF0000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* LCD Display */
+        .lcd-display {
+            background: #1a3a1a;
+            margin: 8px;
+            padding: 12px;
+            border: 3px inset #404040;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .lcd-content {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            text-shadow: 0 0 8px rgba(0, 255, 0, 0.7);
+            letter-spacing: 0.5px;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-subtitle {
+            margin-bottom: 8px;
+            opacity: 0.8;
+            font-size: 10px;
+        }
+
+        .track-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #00aa00;
+        }
+
+        .source-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+        }
+
+        .led-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff0066;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff0066, inset 0 1px 2px rgba(255, 255, 255, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .shared-by {
+            font-size: 9px;
+            opacity: 0.7;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: #C0C0C8;
+            padding: 12px 8px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-button {
+            width: 56px;
+            height: 56px;
+            background: #C0C0C8;
+            border-top: 3px solid #FFFFFF;
+            border-left: 3px solid #FFFFFF;
+            border-right: 3px solid #000000;
+            border-bottom: 3px solid #000000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            user-select: none;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .control-button:active {
+            border-top: 3px solid #000000;
+            border-left: 3px solid #000000;
+            border-right: 3px solid #FFFFFF;
+            border-bottom: 3px solid #FFFFFF;
+            transform: translateY(1px);
+        }
+
+        .control-button.primary {
+            background: #00AAAA;
+            border-top: 3px solid #00DDDD;
+            border-left: 3px solid #00DDDD;
+        }
+
+        .control-button.primary:active {
+            border-top: 3px solid #006666;
+            border-left: 3px solid #006666;
+        }
+
+        /* Control Icons */
+        .icon-prev::before {
+            content: "⏮";
+            color: #000080;
+        }
+
+        .icon-play::before {
+            content: "▶";
+            color: #FFFFFF;
+            font-size: 28px;
+        }
+
+        .icon-pause::before {
+            content: "⏸";
+            color: #FFFFFF;
+            font-size: 26px;
+        }
+
+        .icon-next::before {
+            content: "⏭";
+            color: #000080;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            display: flex;
+            padding: 6px 4px 8px 4px;
+            gap: 4px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button {
+            flex: 1;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 10px 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            user-select: none;
+            transition: all 0.1s;
+        }
+
+        .nav-button:active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .nav-button.active {
+            background: #000080;
+            color: #FFFFFF;
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #C0C0C8;
+            border-bottom: 2px solid #C0C0C8;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 375px) {
+            .phone-frame {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .control-button {
+                width: 52px;
+                height: 52px;
+                font-size: 22px;
+            }
+
+            .track-title {
+                font-size: 11px;
+            }
+
+            .lcd-content {
+                font-size: 10px;
+            }
+        }
+
+        @media (min-width: 428px) {
+            .phone-frame {
+                width: 428px;
+            }
+        }
+
+        /* Header bar for context */
+        .header-bar {
+            background: #000080;
+            color: #FFFFFF;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #C0C0C8;
+        }
+
+        .header-icon {
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+            border: 1px solid #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- Header -->
+        <div class="header-bar">
+            <div class="header-icon"></div>
+            JAMZY - CD PLAYER
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="app-content">
+            <div style="max-width: 300px;">
+                <h2 style="font-size: 18px; margin-bottom: 8px;">📻 Channels Feed</h2>
+                <p style="font-size: 12px; opacity: 0.8; line-height: 1.6;">
+                    Discovery content would appear here.<br>
+                    Music posts, artist updates, friend activity.
+                </p>
+            </div>
+        </div>
+
+        <!-- CD Player Section -->
+        <div class="player-container">
+            <!-- Video Display -->
+            <div class="video-section">
+                <div class="video-placeholder">
+                    <div class="yt-logo">▶</div>
+                </div>
+            </div>
+
+            <!-- LCD Display -->
+            <div class="lcd-display">
+                <div class="lcd-content">
+                    <div class="track-title">TAME IMPALA - MY OLD WAYS</div>
+                    <div class="track-subtitle">My Old Ways (Official Video)</div>
+                    <div class="track-meta">
+                        <div class="source-indicator">
+                            <div class="led-dot"></div>
+                            <span>YOUTUBE</span>
+                        </div>
+                        <div class="shared-by">shared by @musiclover</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="control-panel">
+                <button class="control-button">
+                    <span class="icon-prev"></span>
+                </button>
+                <button class="control-button primary">
+                    <span class="icon-play"></span>
+                </button>
+                <button class="control-button">
+                    <span class="icon-next"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-button active">
+                <div class="nav-icon">📻</div>
+                <div>Channels</div>
+            </button>
+            <button class="nav-button">
+                <div class="nav-icon">⚡</div>
+                <div>Activity</div>
+            </button>
+            <button class="nav-button">
+                <div class="nav-icon">👤</div>
+                <div>Profile</div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity demo
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                navButtons.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+            });
+        });
+
+        // Play/Pause toggle
+        const playButton = document.querySelector('.control-button.primary');
+        let isPlaying = false;
+        playButton.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playButton.querySelector('span').className = isPlaying ? 'icon-pause' : 'icon-play';
+        });
+
+        // Add click sound effect (optional - commented out)
+        // const controlButtons = document.querySelectorAll('.control-button, .nav-button');
+        // controlButtons.forEach(button => {
+        //     button.addEventListener('click', () => {
+        //         const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBT2U2fLTgjMGLIHA8tmuWRcKRZfe8KVUEA0fW7Hp7axeGAo/lN3y0n4uBSh+z/Dchz4OGFyy6eijUxAKQZ7h8L5mHgU3kdvy04IzBiyBwPLZrlkXCkWX3vClVBANH1ux6e2sXhgKP5Td8tJ+LgUofs/w3Ic+DhcZ');
+        //         audio.play().catch(() => {});
+        //     });
+        // });
+    </script>
+</body>
+</html>
