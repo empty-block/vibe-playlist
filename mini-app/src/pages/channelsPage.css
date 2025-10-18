@@ -1,6 +1,6 @@
 .channels-page {
   min-height: 100vh !important;
-  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%) !important;
+  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%) !important;
   padding-bottom: 80px !important; /* Space for mobile navigation */
   display: flex;
   flex-direction: column;

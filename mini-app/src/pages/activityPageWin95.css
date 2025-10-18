@@ -1,6 +1,6 @@
 .activity-page {
   min-height: 100vh !important;
-  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%) !important;
+  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%) !important;
   padding-bottom: 80px !important;
   display: flex;
   flex-direction: column;
@@ -95,7 +95,7 @@
 /* Content Area */
 .activity-page .win95-content {
   flex: 1;
-  background: #FFFFFF;
+  background: transparent;
   margin: 3px;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;

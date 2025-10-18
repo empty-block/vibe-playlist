@@ -2,7 +2,7 @@
 
 /* Base Layout */
 .channel-view-page {
-  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%) !important;
+  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%) !important;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   color: #000;
   line-height: 1.4;
@@ -78,7 +78,7 @@
 /* Content Area */
 .win95-content {
   flex: 1 !important;
-  background: #c0c0c0;
+  background: transparent;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
