@@ -181,10 +181,10 @@ const Player: Component<PlayerProps> = (props) => {
             </div>
           </div>
 
-          {/* Animated Visualizer - only show when playing */}
-          <Show when={isPlaying()}>
+          {/* Animated Visualizer - only show when playing and player is ready */}
+          <Show when={isPlaying() && props.playerReady()}>
             <div class="win95-visualizer">
-              <For each={Array(8).fill(0)}>
+              <For each={Array(16).fill(0)}>
                 {() => <div class="win95-visualizer-bar"></div>}
               </For>
             </div>
