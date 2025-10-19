@@ -139,12 +139,45 @@ const Player: Component<PlayerProps> = (props) => {
             {props.mediaComponent}
           </div>
 
-          {/* Track Info Panel - Green LCD style */}
+          {/* Track Info Panel - Green LCD style with integrated controls */}
           <div class="win95-track-info-panel">
-            <div class="win95-track-title">{currentTrack()?.title}</div>
-            <div class="win95-track-subtitle">{currentTrack()?.artist}</div>
-            <div class="win95-track-meta">
-              <span class="win95-shared-by">shared by @{currentTrack()?.addedBy}</span>
+            <div class="win95-track-metadata">
+              <div class="win95-track-title">{currentTrack()?.title}</div>
+              <div class="win95-track-subtitle">{currentTrack()?.artist}</div>
+              <div class="win95-track-meta">
+                <span class="win95-shared-by">shared by @{currentTrack()?.addedBy}</span>
+              </div>
+            </div>
+
+            {/* Playback Controls - integrated into track info panel */}
+            <div class="win95-track-controls">
+              <button
+                ref={playButtonRef!}
+                onClick={props.onTogglePlay}
+                class="win95-control-btn win95-control-btn-play"
+                disabled={!props.playerReady()}
+                title={isPlaying() ? 'Pause' : 'Play'}
+              >
+                {isPlaying() ? '⏸' : '▶'}
+              </button>
+              <button
+                ref={prevButtonRef!}
+                onClick={handleSkipPrevious}
+                class="win95-control-btn"
+                disabled={!props.playerReady()}
+                title="Previous track"
+              >
+                ⏮
+              </button>
+              <button
+                ref={nextButtonRef!}
+                onClick={handleSkipNext}
+                class="win95-control-btn"
+                disabled={!props.playerReady()}
+                title="Next track"
+              >
+                ⏭
+              </button>
             </div>
           </div>
 
@@ -156,37 +189,6 @@ const Player: Component<PlayerProps> = (props) => {
               </For>
             </div>
           </Show>
-
-          {/* Playback Controls */}
-          <div class="win95-controls">
-            <button
-              ref={prevButtonRef!}
-              onClick={handleSkipPrevious}
-              class="win95-control-btn"
-              disabled={!props.playerReady()}
-              title="Previous track"
-            >
-              ⏮
-            </button>
-            <button
-              ref={playButtonRef!}
-              onClick={props.onTogglePlay}
-              class="win95-control-btn win95-control-btn-play"
-              disabled={!props.playerReady()}
-              title={isPlaying() ? 'Pause' : 'Play'}
-            >
-              {isPlaying() ? '⏸' : '▶'}
-            </button>
-            <button
-              ref={nextButtonRef!}
-              onClick={handleSkipNext}
-              class="win95-control-btn"
-              disabled={!props.playerReady()}
-              title="Next track"
-            >
-              ⏭
-            </button>
-          </div>
         </div>
       </div>
     </Show>

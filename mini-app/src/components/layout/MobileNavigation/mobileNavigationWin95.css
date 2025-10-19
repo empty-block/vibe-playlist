@@ -47,20 +47,10 @@
 .win95-nav-icon {
   width: 24px;
   height: 24px;
-  border: 1px solid #000;
   flex-shrink: 0;
-}
-
-.win95-nav-icon-channels {
-  background: linear-gradient(135deg, #FF00FF 0%, #FF00FF 50%, #00FFFF 50%, #00FFFF 100%);
-}
-
-.win95-nav-icon-activity {
-  background: linear-gradient(135deg, #FFFF00 0%, #FFFF00 50%, #00FF00 50%, #00FF00 100%);
-}
-
-.win95-nav-icon-profile {
-  background: linear-gradient(135deg, #00FFFF 0%, #00FFFF 50%, #0000FF 50%, #0000FF 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .win95-nav-label {

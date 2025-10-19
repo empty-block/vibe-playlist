@@ -21,17 +21,40 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
     }
   };
 
-  // Map section IDs to Win95 icon gradients
-  const getIconClass = (sectionId: string) => {
+  // Render SVG icons based on section
+  const getIcon = (sectionId: string) => {
     switch (sectionId) {
       case 'channels':
-        return 'win95-nav-icon-channels';
+        return (
+          <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+            <path d="M2 6 L2 21 L22 21 L22 6 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/>
+            <path d="M2 6 L2 3 L9 3 L10 6 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/>
+            <path d="M3 20 L21 20 L21 7 L20 7 L20 19 L3 19 Z" fill="#D4A817"/>
+            <ellipse cx="15" cy="17" rx="2" ry="1.5" fill="#000"/>
+            <rect x="17" y="11" width="1.5" height="6" fill="#000"/>
+            <path d="M18.5 11 L18.5 12 L21 11.5 L21 10 Z" fill="#000"/>
+          </svg>
+        );
       case 'activity':
-        return 'win95-nav-icon-activity';
+        return (
+          <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+            <path d="M13 3 L9 12 L12 12 L10 21 L16 10 L13 10 Z"
+                  fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+            <path d="M12.5 12 L11 21 L10 21 L12 12 Z" fill="#FFB000"/>
+          </svg>
+        );
       case 'profile':
-        return 'win95-nav-icon-profile';
+        return (
+          <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+            <circle cx="12" cy="8" r="4.5" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/>
+            <circle cx="10.5" cy="6.5" r="1.5" fill="#C8E0F8" opacity="0.6"/>
+            <path d="M5 21 Q5 15 12 15 Q19 15 19 21 L16 21 Q16 17 12 17 Q8 17 8 21 Z"
+                  fill="#7FA8D8" stroke="#000" stroke-width="0.5"/>
+            <path d="M8 17 Q10 16 12 16 L12 17 Q10 17 9 17.5 Z" fill="#98B8E8" opacity="0.5"/>
+          </svg>
+        );
       default:
-        return 'win95-nav-icon-channels';
+        return null;
     }
   };
 
@@ -54,7 +77,9 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
             aria-current={currentSection() === section.id ? 'page' : undefined}
             onClick={() => handleSectionClick(section.id)}
           >
-            <div class={`win95-nav-icon ${getIconClass(section.id)}`}></div>
+            <div class="win95-nav-icon">
+              {getIcon(section.id)}
+            </div>
             <span class="win95-nav-label">{section.label}</span>
           </A>
         )}
