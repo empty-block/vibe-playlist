@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Feed - Compact List View (Windows 95 Style)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            padding: 20px;
+            color: #000;
+        }
+
+        .window {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar-icon {
+            width: 16px;
+            height: 16px;
+            background: #c0c0c0;
+            border: 1px solid #fff;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .title-bar-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background: #c0c0c0;
+            padding: 2px 4px;
+            border-bottom: 1px solid #808080;
+            font-size: 11px;
+        }
+
+        .menu-item {
+            display: inline-block;
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: #ffffff;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #c0c0c0;
+            padding: 4px;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            gap: 2px;
+        }
+
+        .toolbar-button {
+            padding: 3px 8px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+            transform: translate(1px, 1px);
+        }
+
+        .toolbar-separator {
+            width: 1px;
+            background: #808080;
+            margin: 0 4px;
+        }
+
+        /* List View Container */
+        .list-container {
+            background: #ffffff;
+            margin: 2px;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Column Headers */
+        .list-header {
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 80px 120px;
+            background: #c0c0c0;
+            border-bottom: 1px solid #808080;
+            font-size: 11px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .column-header {
+            padding: 4px 6px;
+            border-right: 1px solid #808080;
+            border-left: 1px solid #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+        }
+
+        .column-header:hover {
+            background: #d4d4d4;
+        }
+
+        .column-header:last-child {
+            border-right: none;
+        }
+
+        .sort-arrow {
+            font-size: 8px;
+            color: #666;
+        }
+
+        /* Activity Rows */
+        .activity-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 80px 120px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            font-size: 11px;
+            min-height: 36px;
+            align-items: center;
+        }
+
+        .activity-row:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .activity-row:hover {
+            background: #e0e0e0;
+        }
+
+        .activity-row.selected {
+            background: #000080;
+            color: #ffffff;
+        }
+
+        .activity-row.expanded {
+            min-height: auto;
+        }
+
+        /* Row Cells */
+        .row-cell {
+            padding: 4px 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .row-cell.thumbnail {
+            justify-content: center;
+            padding: 2px;
+        }
+
+        .expand-indicator {
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #000;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .activity-row.expanded .expand-indicator {
+            border-top: none;
+            border-bottom: 6px solid #000;
+        }
+
+        .activity-row.selected .expand-indicator {
+            border-top-color: #fff;
+            border-bottom-color: #fff;
+        }
+
+        .thumbnail-img {
+            width: 32px;
+            height: 32px;
+            background: #ddd;
+            border: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #666;
+            flex-shrink: 0;
+        }
+
+        .track-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-artist {
+            font-size: 10px;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .activity-row.selected .track-artist {
+            color: #ccc;
+        }
+
+        .platform-badge {
+            font-size: 9px;
+            padding: 1px 4px;
+            background: #000080;
+            color: #ffffff;
+            border: 1px solid #000;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .platform-badge.youtube {
+            background: #ff0000;
+        }
+
+        .user-name {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+
+        .timestamp {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .activity-row.selected .timestamp {
+            color: #ccc;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 8px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .stat-icon {
+            font-size: 10px;
+        }
+
+        /* Expanded Details */
+        .expanded-details {
+            grid-column: 1 / -1;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.03);
+            border-top: 1px solid #d0d0d0;
+            border-bottom: 1px solid #d0d0d0;
+            display: none;
+            font-size: 11px;
+        }
+
+        .activity-row.expanded .expanded-details {
+            display: block;
+        }
+
+        .activity-row.selected .expanded-details {
+            background: rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+        }
+
+        .details-section {
+            margin-bottom: 8px;
+        }
+
+        .details-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #666;
+        }
+
+        .activity-row.selected .details-label {
+            color: #ccc;
+        }
+
+        .comment-text {
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #c0c0c0;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .activity-row.selected .comment-text {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #888;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .action-btn {
+            padding: 2px 8px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .action-btn:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+            transform: translate(1px, 1px);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 1px solid #ffffff;
+            padding: 2px 4px;
+            font-size: 11px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-section {
+            padding: 2px 4px;
+            border: 1px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            flex-shrink: 0;
+        }
+
+        .status-section.fill {
+            flex-grow: 1;
+        }
+
+        /* Scrollbar Styling (Windows 95 style) */
+        .list-container::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: #c0c0c0;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: #808080;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+        }
+
+        .list-container::-webkit-scrollbar-button {
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            height: 16px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .list-header,
+            .activity-row {
+                grid-template-columns: 36px 1fr 80px 100px;
+            }
+
+            .row-cell.timestamp {
+                display: none;
+            }
+
+            .column-header.timestamp {
+                display: none;
+            }
+        }
+
+        /* Loading/Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <div class="title-bar-icon"></div>
+                Activity Feed - List View
+            </div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" title="Minimize">_</button>
+                <button class="title-bar-button" title="Maximize">□</button>
+                <button class="title-bar-button" title="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <span class="menu-item">File</span>
+            <span class="menu-item">View</span>
+            <span class="menu-item">Tools</span>
+            <span class="menu-item">Help</span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-button" title="Refresh">
+                ↻ Refresh
+            </button>
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-button" title="Filter">
+                ⚙ Filter
+            </button>
+            <button class="toolbar-button" title="Sort">
+                ⇅ Sort
+            </button>
+            <div class="toolbar-separator"></div>
+            <button class="toolbar-button" title="Grid View">
+                ▦ Grid
+            </button>
+            <button class="toolbar-button" style="border-color: #000000 #ffffff #ffffff #000000;" title="List View (Active)">
+                ☰ List
+            </button>
+        </div>
+
+        <!-- List View Container -->
+        <div class="list-container">
+            <!-- Column Headers -->
+            <div class="list-header">
+                <div class="column-header" style="padding-left: 10px;">
+                    <span class="sort-arrow">▼</span>
+                </div>
+                <div class="column-header">
+                    Track
+                    <span class="sort-arrow">▼</span>
+                </div>
+                <div class="column-header">
+                    User
+                </div>
+                <div class="column-header timestamp">
+                    Time
+                    <span class="sort-arrow">▼</span>
+                </div>
+                <div class="column-header">
+                    Activity
+                </div>
+            </div>
+
+            <!-- Activity 1 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">Blinding Lights</div>
+                        <div class="track-artist">The Weeknd</div>
+                    </div>
+                    <span class="platform-badge">SPOT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@musiclover</span>
+                </div>
+                <div class="row-cell timestamp">2h ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>23</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>5</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>12</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"This track is absolutely incredible! Perfect for late night drives. 🌃"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 2 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">Levitating</div>
+                        <div class="track-artist">Dua Lipa</div>
+                    </div>
+                    <span class="platform-badge youtube">YT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@djkool</span>
+                </div>
+                <div class="row-cell timestamp">3h ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>45</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>12</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>8</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"Can't stop dancing to this one! Perfect summer vibes ☀️💃"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 3 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">good 4 u</div>
+                        <div class="track-artist">Olivia Rodrigo</div>
+                    </div>
+                    <span class="platform-badge">SPOT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@popfan99</span>
+                </div>
+                <div class="row-cell timestamp">5h ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>67</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>8</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>15</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"The raw emotion in this song is everything. Olivia is a generational talent! 🎤✨"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 4 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">Heat Waves</div>
+                        <div class="track-artist">Glass Animals</div>
+                    </div>
+                    <span class="platform-badge youtube">YT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@indiekid</span>
+                </div>
+                <div class="row-cell timestamp">1d ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>89</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>15</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>23</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"This song got me through some tough times. The production is chef's kiss 👨‍🍳💋"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 5 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">Save Your Tears</div>
+                        <div class="track-artist">The Weeknd</div>
+                    </div>
+                    <span class="platform-badge">SPOT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@vibes24</span>
+                </div>
+                <div class="row-cell timestamp">1d ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>34</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>3</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>7</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"The synth-wave vibes are unmatched. Classic Weeknd energy! 🎹🌊"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 6 -->
+            <div class="activity-row" onclick="toggleExpand(this)">
+                <div class="row-cell thumbnail">
+                    <span class="expand-indicator"></span>
+                    <div class="thumbnail-img">♪</div>
+                </div>
+                <div class="row-cell">
+                    <div class="track-info">
+                        <div class="track-title">Peaches</div>
+                        <div class="track-artist">Justin Bieber ft. Daniel Caesar, Giveon</div>
+                    </div>
+                    <span class="platform-badge">SPOT</span>
+                </div>
+                <div class="row-cell">
+                    <span class="user-name">@rnbhead</span>
+                </div>
+                <div class="row-cell timestamp">2d ago</div>
+                <div class="row-cell">
+                    <div class="activity-stats">
+                        <span class="stat-item">
+                            <span class="stat-icon">❤</span>
+                            <span>52</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">💬</span>
+                            <span>9</span>
+                        </span>
+                        <span class="stat-item">
+                            <span class="stat-icon">↻</span>
+                            <span>11</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="expanded-details">
+                    <div class="details-section">
+                        <div class="details-label">Comment:</div>
+                        <div class="comment-text">"Smooth summer vibes! This collab is pure perfection 🍑🎶"</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">❤ Like</button>
+                        <button class="action-btn">💬 Reply</button>
+                        <button class="action-btn">↻ Reshare</button>
+                        <button class="action-btn">▶ Play</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-section">6 activities</div>
+            <div class="status-section fill">List View</div>
+            <div class="status-section">Last updated: 2:34 PM</div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle row expansion
+        function toggleExpand(row) {
+            // Close all other expanded rows
+            const allRows = document.querySelectorAll('.activity-row');
+            allRows.forEach(r => {
+                if (r !== row) {
+                    r.classList.remove('expanded', 'selected');
+                }
+            });
+
+            // Toggle current row
+            row.classList.toggle('expanded');
+            row.classList.toggle('selected');
+        }
+
+        // Simulate real-time updates
+        function updateTimestamps() {
+            const timestamps = document.querySelectorAll('.timestamp');
+            // In a real app, this would calculate actual time differences
+            console.log('Timestamps would be updated here');
+        }
+
+        // Run every minute
+        setInterval(updateTimestamps, 60000);
+
+        // Column header sorting (visual only for prototype)
+        document.querySelectorAll('.column-header').forEach(header => {
+            header.addEventListener('click', function() {
+                // Remove sort arrows from other headers
+                document.querySelectorAll('.column-header .sort-arrow').forEach(arrow => {
+                    arrow.textContent = '';
+                });
+
+                // Toggle sort direction on clicked header
+                const arrow = this.querySelector('.sort-arrow');
+                if (arrow) {
+                    arrow.textContent = arrow.textContent === '▼' ? '▲' : '▼';
+                }
+
+                console.log('Sort by:', this.textContent.trim());
+            });
+        });
+
+        // Toolbar button interactions
+        document.querySelectorAll('.toolbar-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Toolbar action:', this.textContent.trim());
+
+                // Visual feedback
+                this.style.borderColor = '#000000 #ffffff #ffffff #000000';
+                setTimeout(() => {
+                    this.style.borderColor = '';
+                }, 100);
+            });
+        });
+
+        // Menu interactions
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Menu clicked:', this.textContent);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const rows = Array.from(document.querySelectorAll('.activity-row'));
+            const currentSelected = document.querySelector('.activity-row.selected');
+            let currentIndex = rows.indexOf(currentSelected);
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (currentIndex < rows.length - 1) {
+                    rows[currentIndex + 1].click();
+                    rows[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (currentIndex > 0) {
+                    rows[currentIndex - 1].click();
+                    rows[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (currentSelected) {
+                    currentSelected.click();
+                }
+            }
+        });
+
+        // Add hover effects for action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Action:', this.textContent.trim());
+            });
+        });
+
+        // Double-click to play
+        document.querySelectorAll('.activity-row').forEach(row => {
+            row.addEventListener('dblclick', function(e) {
+                e.stopPropagation();
+                const trackTitle = this.querySelector('.track-title').textContent;
+                const trackArtist = this.querySelector('.track-artist').textContent;
+                alert(`Now playing: ${trackTitle} by ${trackArtist}`);
+            });
+        });
+    </script>
+</body>
+</html>

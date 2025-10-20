@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototype Gallery - Windows 95 Redesign</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .prototype-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .prototype-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+
+        .card-header {
+            background: #000080;
+            color: white;
+            padding: 20px;
+            border-bottom: 3px solid #C0C0C8;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .card-header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .card-preview {
+            height: 500px;
+            background: #008080;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .card-footer {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: #000080;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #0000A0;
+        }
+
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .badge.recommended {
+            background: #10b981;
+        }
+
+        .badge.selected {
+            background: #f59e0b;
+        }
+
+        .badge.refined {
+            background: #8b5cf6;
+        }
+
+        .badge.hybrid {
+            background: #f97316;
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card-preview {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🖥️ Windows 95 Redesign - Prototype Gallery</h1>
+        <p>Browse and compare all design variations</p>
+    </div>
+
+    <!-- Channels List Section -->
+    <div class="section">
+        <h2 class="section-title">📁 Channels List</h2>
+        <div class="gallery">
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>V2.5 - Zen Master's Choice ⭐</h2>
+                    <p class="subtitle">Perfect balance - 40x40 images, alternating backgrounds</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channels_v2_5.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge selected">SELECTED ✓</span>
+                    <a href="./channels_v2_5.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Feed Section -->
+    <div class="section">
+        <h2 class="section-title">📰 Activity Feed / Track Card</h2>
+        <div class="gallery">
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>AF-001 - Universal Track Card ⭐</h2>
+                    <p class="subtitle">Selected design - used in Activity Feed, Channel Detail, User Profile</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./activity_feed_AF-001.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge selected">Selected ✓</span>
+                    <a href="./activity_feed_AF-001.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Channel Detail Section -->
+    <div class="section">
+        <h2 class="section-title">📁 Channel Detail - All Variations</h2>
+        <div class="gallery">
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>CD-001 - Horizontal Layout</h2>
+                    <p class="subtitle">80x80 image, horizontal channel info, integrated action bar</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channel_detail_CD-001.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge">Variation</span>
+                    <a href="./channel_detail_CD-001.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>CD-002 - Compact Info-Dense</h2>
+                    <p class="subtitle">80x80 image, inline actions, compact efficient layout</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channel_detail_CD-002.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge">Variation</span>
+                    <a href="./channel_detail_CD-002.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>CD-003 - Property Sheet with Tabs</h2>
+                    <p class="subtitle">Tabbed interface, toolbar-style actions, sunken stat panels</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channel_detail_CD-003.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge">Variation</span>
+                    <a href="./channel_detail_CD-003.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>CD-004 - Minimal Streamlined</h2>
+                    <p class="subtitle">80x80 image, clean integrated action bar, mobile-first</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channel_detail_CD-004.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge">Variation</span>
+                    <a href="./channel_detail_CD-004.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>CD-005 - Bold Napster Library</h2>
+                    <p class="subtitle">100x100 image, gradient header, channel as destination</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./channel_detail_CD-005.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge">Variation</span>
+                    <a href="./channel_detail_CD-005.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Previous Activity Feed Iterations -->
+    <div class="section">
+        <h2 class="section-title">📰 Previous Activity Feed Candidates</h2>
+        <div class="gallery">
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>V5.5b - Bottom Button Bar</h2>
+                    <p class="subtitle">v5.5 refined design + v2 bottom button bar layout with green glow play button</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./activity_feed_v5_5b.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge hybrid">Hybrid</span>
+                    <a href="./activity_feed_v5_5b.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>V5.5 - Zen's Refined Choice</h2>
+                    <p class="subtitle">"via spotify" subtle text, 48px glowing play button jewel</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./activity_feed_v5_5.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge recommended">Original v5.5</span>
+                    <a href="./activity_feed_v5_5.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>V5.1b - Play Button Right</h2>
+                    <p class="subtitle">v5.1 subtle badges + green glow play button on the right side</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./activity_feed_v5_1b.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge hybrid">Hybrid</span>
+                    <a href="./activity_feed_v5_1b.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+
+            <div class="prototype-card">
+                <div class="card-header">
+                    <h2>V5.1 - Subtle Badges + Glow Button</h2>
+                    <p class="subtitle">9px source badges, green border play button with neon glow</p>
+                </div>
+                <div class="card-preview">
+                    <iframe src="./activity_feed_v5_1.html"></iframe>
+                </div>
+                <div class="card-footer">
+                    <span class="badge refined">Original v5.1</span>
+                    <a href="./activity_feed_v5_1.html" target="_blank" class="btn">Open Full View</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

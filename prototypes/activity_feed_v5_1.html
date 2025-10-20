@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Feed v5.1 - Subtle Refinement</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Windows 95 Color Palette */
+      --win95-gray: #c0c0c0;
+      --win95-dark-gray: #808080;
+      --win95-light-gray: #dfdfdf;
+      --win95-white: #ffffff;
+      --win95-black: #000000;
+      --win95-blue: #000080;
+      --win95-blue-title: #000080;
+
+      /* Accent Colors */
+      --win95-green: #00ff41;
+      --win95-yellow: #ffff00;
+
+      /* Terminal Colors */
+      --terminal-bg: #000000;
+      --terminal-text: #00ff41;
+      --terminal-dim: #808080;
+      --terminal-bright: #00ff41;
+
+      /* Shadows */
+      --shadow-light: #ffffff;
+      --shadow-dark: #808080;
+      --shadow-darker: #000000;
+    }
+
+    body {
+      font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+      background: #008080;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .window {
+      background: var(--win95-gray);
+      border: 2px solid;
+      border-color: var(--shadow-light) var(--shadow-darker) var(--shadow-darker) var(--shadow-light);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+      font-weight: bold;
+      font-size: 11px;
+      user-select: none;
+    }
+
+    .title-bar-text {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .title-icon {
+      width: 16px;
+      height: 16px;
+      background: #ffff00;
+      border: 1px solid #000;
+    }
+
+    .title-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .title-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--win95-gray);
+      border: 1px solid;
+      border-color: var(--shadow-light) var(--shadow-darker) var(--shadow-darker) var(--shadow-light);
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .title-btn:active {
+      border-color: var(--shadow-darker) var(--shadow-light) var(--shadow-light) var(--shadow-darker);
+    }
+
+    .window-body {
+      padding: 16px;
+      background: var(--win95-gray);
+    }
+
+    .feed-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-card {
+      background: var(--win95-gray);
+      border: 2px solid;
+      border-color: var(--shadow-light) var(--shadow-darker) var(--shadow-darker) var(--shadow-light);
+      padding: 12px;
+      box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    }
+
+    .activity-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .thumbnail {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 2px solid;
+      border-color: var(--shadow-darker) var(--shadow-light) var(--shadow-light) var(--shadow-darker);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thumbnail::after {
+      content: '♪';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .activity-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .activity-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .username {
+      color: var(--win95-blue);
+      font-weight: bold;
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .username:hover {
+      text-decoration: underline;
+    }
+
+    .timestamp {
+      color: var(--win95-dark-gray);
+      font-size: 10px;
+    }
+
+    .track-info {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .track-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--win95-black);
+    }
+
+    .track-artist {
+      font-size: 11px;
+      color: var(--win95-dark-gray);
+    }
+
+    /* Subtle Source Badge - Much more minimal */
+    .source-badge {
+      font-size: 9px;
+      color: var(--terminal-dim);
+      letter-spacing: 0.5px;
+      font-weight: normal;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* Comment Box - Keep yellow styling from v5 */
+    .comment-box {
+      background: #ffffcc;
+      border: 2px solid;
+      border-color: var(--shadow-light) var(--shadow-darker) var(--shadow-darker) var(--shadow-light);
+      padding: 8px;
+      font-size: 11px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .comment-text {
+      color: var(--win95-black);
+    }
+
+    /* Actions Bar */
+    .activity-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--shadow-dark);
+    }
+
+    /* Elegant Play Button - Cyberpunk inspired with subtle glow */
+    .play-btn {
+      background: transparent;
+      border: 1px solid var(--win95-green);
+      color: var(--win95-green);
+      padding: 4px 12px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: bold;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+      text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
+      position: relative;
+    }
+
+    .play-btn::before {
+      content: '▶';
+      margin-right: 4px;
+      font-size: 9px;
+    }
+
+    .play-btn:hover {
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.6),
+                  inset 0 0 5px rgba(0, 255, 65, 0.1);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.8);
+      border-color: var(--terminal-bright);
+    }
+
+    .play-btn:active {
+      box-shadow: 0 0 5px rgba(0, 255, 65, 0.4),
+                  inset 0 0 8px rgba(0, 255, 65, 0.2);
+      transform: translateY(1px);
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--win95-dark-gray);
+    }
+
+    .stat-icon {
+      font-size: 11px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 640px) {
+      body {
+        padding: 10px;
+      }
+
+      .window {
+        margin: 0;
+      }
+
+      .window-body {
+        padding: 12px;
+      }
+
+      .activity-card {
+        padding: 10px;
+      }
+
+      .thumbnail {
+        width: 44px;
+        height: 44px;
+      }
+
+      .track-title {
+        font-size: 11px;
+      }
+
+      .activity-actions {
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* Alternate thumbnail gradients for visual variety */
+    .activity-card:nth-child(2) .thumbnail {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .activity-card:nth-child(3) .thumbnail {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .activity-card:nth-child(4) .thumbnail {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    /* Scroll container for mobile */
+    @media (max-width: 640px) {
+      .feed-container {
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="window">
+    <div class="title-bar">
+      <div class="title-bar-text">
+        <div class="title-icon"></div>
+        Activity Feed v5.1
+      </div>
+      <div class="title-controls">
+        <button class="title-btn">_</button>
+        <button class="title-btn">□</button>
+        <button class="title-btn">×</button>
+      </div>
+    </div>
+
+    <div class="window-body">
+      <div class="feed-container">
+
+        <!-- Activity 1: With comment -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <div class="thumbnail"></div>
+            <div class="activity-content">
+              <div class="activity-meta">
+                <div class="user-info">
+                  <a href="#" class="username">@musiclover</a>
+                  <span class="timestamp">• 2h ago</span>
+                </div>
+                <div class="track-info">
+                  <span class="track-title">Blinding Lights</span>
+                  <span class="track-artist">by The Weeknd</span>
+                  <span class="source-badge">[src: spotify]</span>
+                </div>
+              </div>
+
+              <div class="comment-box">
+                <div class="comment-text">This song never gets old! 🔥</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-actions">
+            <button class="play-btn">Play</button>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>23</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>5</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>12</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 2: No comment -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <div class="thumbnail"></div>
+            <div class="activity-content">
+              <div class="activity-meta">
+                <div class="user-info">
+                  <a href="#" class="username">@djkool</a>
+                  <span class="timestamp">• 3h ago</span>
+                </div>
+                <div class="track-info">
+                  <span class="track-title">Levitating</span>
+                  <span class="track-artist">by Dua Lipa</span>
+                  <span class="source-badge">[src: youtube]</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-actions">
+            <button class="play-btn">Play</button>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>45</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>12</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 3: With comment -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <div class="thumbnail"></div>
+            <div class="activity-content">
+              <div class="activity-meta">
+                <div class="user-info">
+                  <a href="#" class="username">@popfan99</a>
+                  <span class="timestamp">• 5h ago</span>
+                </div>
+                <div class="track-info">
+                  <span class="track-title">good 4 u</span>
+                  <span class="track-artist">by Olivia Rodrigo</span>
+                  <span class="source-badge">[src: spotify]</span>
+                </div>
+              </div>
+
+              <div class="comment-box">
+                <div class="comment-text">Absolute banger</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-actions">
+            <button class="play-btn">Play</button>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>67</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>8</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>15</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity 4: No comment -->
+        <div class="activity-card">
+          <div class="activity-header">
+            <div class="thumbnail"></div>
+            <div class="activity-content">
+              <div class="activity-meta">
+                <div class="user-info">
+                  <a href="#" class="username">@indiekid</a>
+                  <span class="timestamp">• 1d ago</span>
+                </div>
+                <div class="track-info">
+                  <span class="track-title">Heat Waves</span>
+                  <span class="track-artist">by Glass Animals</span>
+                  <span class="source-badge">[src: youtube]</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="activity-actions">
+            <button class="play-btn">Play</button>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>89</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>15</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>23</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

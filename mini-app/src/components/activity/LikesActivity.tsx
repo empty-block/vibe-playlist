@@ -1,133 +1,109 @@
-import { Component } from 'solid-js';
-import { A } from '@solidjs/router';
+import { Component, Show } from 'solid-js';
 import { AggregatedLikesActivity as AggregatedLikesActivityType } from '../../data/mockActivity';
-import { setCurrentTrack, setIsPlaying } from '../../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
 
 interface LikesActivityProps {
   activity: AggregatedLikesActivityType;
 }
 
+// Format time ago helper
+const formatTimeAgo = (timestamp: string) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffHours < 1) return 'now';
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  return `${Math.floor(diffDays / 30)}m ago`;
+};
+
 const LikesActivity: Component<LikesActivityProps> = (props) => {
-  const playTrack = (track: any) => {
-    setCurrentTrack(track);
-    setIsPlaying(true);
+  const firstUser = props.activity.users?.[0] || { username: 'users', pfp: undefined };
+  const actionText = props.activity.likeCount > 1
+    ? `and ${props.activity.likeCount - 1} others liked track`
+    : 'liked track';
+
+  const handleTrackPlay = () => {
+    const track = {
+      id: props.activity.track.id,
+      title: props.activity.track.title,
+      artist: props.activity.track.artist,
+      thumbnail: props.activity.track.thumbnail,
+      source: props.activity.track.source,
+      url: props.activity.track.url,
+      sourceId: props.activity.track.sourceId
+    };
+
+    const isCurrentTrack = currentTrack()?.id === track.id;
+    const isTrackPlaying = isCurrentTrack && isPlaying();
+
+    if (isTrackPlaying) {
+      setIsPlaying(false);
+    } else {
+      setCurrentTrack(track);
+      setIsPlaying(true);
+    }
   };
 
-  const packetId = props.activity.id.substring(props.activity.id.length - 4);
-
-  // Calculate engagement bar
-  const totalBars = 20;
-  const filledBars = Math.min(totalBars, Math.floor((props.activity.likeCount / 20) * totalBars));
-  const emptyBars = totalBars - filledBars;
+  const isCurrentTrack = () => currentTrack()?.id === props.activity.track.id;
+  const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   return (
-    <div class="terminal-activity-block terminal-activity-block--like">
-      {/* Top border */}
-      <div class="terminal-block-header">
-        <span>╭─────────────────────────────────────────────────────────────┬──[0x{packetId}]─╮</span>
-      </div>
-
-      {/* Metadata line */}
-      <div class="terminal-block-meta">
-        <span class="border-v">│</span>
-        <span class="meta-arrow">&gt;&gt;</span>
-        <span style={{ color: 'var(--neon-green)', 'font-weight': 600 }}>{props.activity.likeCount} likes</span>
-        <span style={{ color: 'var(--terminal-text)' }}> on "{props.activity.track.title}"</span>
-        <span class="info-separator"> • </span>
-        <span class="info-value">{props.activity.timestamp}</span>
-        <span style={{ 'margin-left': 'auto' }}></span>
-        <span class="border-v">│</span>
-      </div>
-
-      {/* Divider */}
-      <div class="terminal-block-divider">
-        <span>├─────────────────────────────────────────────────────────────┤</span>
+    <div class="win95-activity-card">
+      {/* Navy header bar */}
+      <div class="win95-activity-header">
+        <div class="win95-user-info">
+          <Show when={firstUser.pfp} fallback={
+            <div class="win95-user-avatar-fallback">{firstUser.username.charAt(0).toUpperCase()}</div>
+          }>
+            <img src={firstUser.pfp} alt={firstUser.username} class="win95-user-avatar" />
+          </Show>
+          <span class="win95-username">
+            {firstUser.username}
+            <span style={{ 'font-weight': 'normal', 'margin-left': '4px' }}>• {actionText}</span>
+          </span>
+        </div>
+        <span class="win95-timestamp">{formatTimeAgo(props.activity.timestamp)}</span>
       </div>
 
       {/* Track content */}
-      <div class="terminal-block-content">
-        <span class="border-v">│</span>
-        <div class="terminal-track-row">
-          {/* Track thumbnail */}
-          <div class="terminal-thumbnail">
-            <div class="thumbnail-border-top">┌─┐</div>
-            <img src={props.activity.track.thumbnail} alt="" class="thumbnail-image" />
-            <div class="thumbnail-border-bottom">└─┘</div>
-          </div>
-
-          {/* Track info */}
-          <div class="terminal-track-info">
-            <div class="track-title-line">
-              <span class="track-title">"{props.activity.track.title}"</span>
-              <span class="track-source">[SRC: {props.activity.track.source.toUpperCase()}]</span>
-            </div>
-            <div class="track-artist-line">
-              <span class="track-label">by</span>
-              <span class="track-artist">{props.activity.track.artist}</span>
-            </div>
-          </div>
+      <div class="win95-track-content">
+        <div class="win95-thumbnail">
+          <Show when={props.activity.track.thumbnail} fallback={<span>🎵</span>}>
+            <img src={props.activity.track.thumbnail} alt={props.activity.track.title} />
+          </Show>
         </div>
-        <span class="border-v">│</span>
+        <div class="win95-track-info">
+          <div class="win95-track-title">{props.activity.track.title}</div>
+          <div class="win95-track-artist">{props.activity.track.artist}</div>
+          <div class="win95-track-meta">via {props.activity.track.source}</div>
+        </div>
+        <button
+          class="win95-play-button"
+          onClick={handleTrackPlay}
+        >
+          {isTrackPlaying() ? '⏸' : '▶'}
+        </button>
       </div>
 
-      {/* Engagement graph */}
-      <div class="terminal-engagement-graph">
-        <span class="border-v">│</span>
-        <div style={{ flex: 1 }}>
-          <div>
-            <span class="meta-arrow">&gt;&gt;</span>
-            <span class="engagement-label">ENGAGEMENT_GRAPH:</span>
-          </div>
-          <div style={{ 'margin-top': '4px', 'margin-left': '24px' }}>
-            <span class="engagement-bar">
-              <span class="engagement-bar-filled">{'█'.repeat(filledBars)}</span>
-              <span class="engagement-bar-empty">{'░'.repeat(emptyBars)}</span>
-            </span>
-            <span class="engagement-stats"> {props.activity.likeCount} likes</span>
-          </div>
+      {/* Stats row */}
+      <div class="win95-stats-row">
+        <div class="win95-stat-box">
+          <span>♥</span>
+          <span class="count">{props.activity.likeCount || 0}</span>
         </div>
-        <span class="border-v">│</span>
-      </div>
-
-      {/* Social actions */}
-      <div class="terminal-block-actions">
-        <span class="border-v">│</span>
-        <div class="terminal-social-row">
-          <button class="terminal-action-btn">
-            <span class="action-bracket">[</span>
-            <span class="action-icon">❤</span>
-            <span class="action-count"> {props.activity.likeCount}</span>
-            <span class="action-bracket">]</span>
-          </button>
-
-          <button class="terminal-action-btn">
-            <span class="action-bracket">[</span>
-            <span class="action-icon">💬</span>
-            <span class="action-count"> {props.activity.track.replies || 0}</span>
-            <span class="action-bracket">]</span>
-          </button>
-
-          <A href={`/thread/${props.activity.threadId}`} style={{ 'text-decoration': 'none', 'margin-left': 'auto' }}>
-            <button class="terminal-action-btn">
-              <span class="action-bracket">[</span>
-              <span style={{ 'font-size': '11px' }}>VIEW THREAD</span>
-              <span class="action-bracket">]</span>
-            </button>
-          </A>
-
-          <button class="terminal-play-btn" onClick={() => playTrack(props.activity.track)}>
-            <span class="action-bracket">[</span>
-            <span class="play-icon">▶</span>
-            <span class="play-text">PLAY</span>
-            <span class="action-bracket">]</span>
-          </button>
+        <div class="win95-stat-box">
+          <span>💬</span>
+          <span class="count">{props.activity.track.replies || 0}</span>
         </div>
-        <span class="border-v">│</span>
-      </div>
-
-      {/* Bottom border */}
-      <div class="terminal-block-footer">
-        <span>╰──────────────────────────────────────────────────────────────╯</span>
+        <div class="win95-stat-box">
+          <span>🔄</span>
+          <span class="count">{props.activity.track.recasts || 0}</span>
+        </div>
       </div>
     </div>
   );

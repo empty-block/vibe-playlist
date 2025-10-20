@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Trending (Two Column)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            color: #000;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #04CAF4, #E010E0, #00F92A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: #C0C0C8;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Two Column Layout */
+        .windows-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .windows-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Windows 95 Window */
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .win95-title-bar {
+            background: linear-gradient(90deg, #000080, #1084D0);
+            padding: 3px 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .win95-title-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .win95-title-icon {
+            font-size: 16px;
+        }
+
+        .win95-close-btn {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .win95-close-btn:active {
+            border-top: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+        }
+
+        .win95-content {
+            padding: 8px;
+            background: #C0C0C8;
+            height: 520px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scrollable List */
+        .scrollable-list {
+            flex: 1;
+            overflow-y: scroll;
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            padding: 8px;
+        }
+
+        /* Windows 95 Scrollbar */
+        .scrollable-list::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-track {
+            background: #C0C0C8;
+            border-left: 1px solid #808080;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .scrollable-list::-webkit-scrollbar-button {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            height: 16px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-button:vertical:decrement {
+            background: #C0C0C8 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M8 6 L4 10 L12 10 Z" fill="%23000"/></svg>') center no-repeat;
+        }
+
+        .scrollable-list::-webkit-scrollbar-button:vertical:increment {
+            background: #C0C0C8 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M8 10 L4 6 L12 6 Z" fill="%23000"/></svg>') center no-repeat;
+        }
+
+        /* Track Item */
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #F0F0F0;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .track-item:hover {
+            background: #E0E0E0;
+        }
+
+        .track-rank {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000080;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .track-rank.top-3 {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .track-thumbnail {
+            width: 50px;
+            height: 50px;
+            background: #808080;
+            border: 2px solid #000;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            font-size: 12px;
+            color: #555;
+            margin-top: 2px;
+        }
+
+        .track-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .track-shares {
+            font-size: 13px;
+            font-weight: bold;
+            color: #E010E0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .fire-icon {
+            font-size: 16px;
+        }
+
+        /* Contributor Item */
+        .contributor-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #F0F0F0;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .contributor-item:hover {
+            background: #E0E0E0;
+        }
+
+        .contributor-rank {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000080;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .contributor-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #04CAF4, #E010E0);
+            border: 2px solid #000;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #FFF;
+            font-weight: bold;
+        }
+
+        .contributor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contributor-username {
+            font-weight: bold;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .contributor-fid {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .contributor-count {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00F92A;
+            text-align: right;
+        }
+
+        .contributor-label {
+            font-size: 10px;
+            color: #666;
+            text-align: right;
+        }
+
+        /* Time Filter Info */
+        .time-filter {
+            background: #DFDFDF;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .time-filter-label {
+            font-weight: bold;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+
+            .win95-content {
+                height: 450px;
+            }
+
+            .track-item, .contributor-item {
+                padding: 8px;
+            }
+
+            .track-thumbnail {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .contributor-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>JAMZY</h1>
+            <p>What's Hot Right Now</p>
+        </div>
+
+        <!-- Two Column Grid -->
+        <div class="windows-grid">
+            <!-- Trending Tracks Window -->
+            <div class="win95-window">
+                <div class="win95-title-bar">
+                    <div class="win95-title-text">
+                        <span class="win95-title-icon">🎵</span>
+                        Trending Tracks
+                    </div>
+                    <div class="win95-close-btn">×</div>
+                </div>
+                <div class="win95-content">
+                    <div class="time-filter">
+                        <span class="time-filter-label">⏱ Last 24 Hours</span>
+                        <span>🔥 Top 10</span>
+                    </div>
+                    <div class="scrollable-list">
+                        <!-- Track 1 -->
+                        <div class="track-item">
+                            <div class="track-rank top-3">1</div>
+                            <div class="track-thumbnail">🎸</div>
+                            <div class="track-info">
+                                <div class="track-title">Midnight Synthwave Dreams</div>
+                                <div class="track-artist">Neon Nights</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span class="fire-icon">🔥</span>
+                                    <span>342</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 2 -->
+                        <div class="track-item">
+                            <div class="track-rank top-3">2</div>
+                            <div class="track-thumbnail">🎹</div>
+                            <div class="track-info">
+                                <div class="track-title">Electric Sunset Boulevard</div>
+                                <div class="track-artist">RetroWave Collective</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span class="fire-icon">🔥</span>
+                                    <span>298</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 3 -->
+                        <div class="track-item">
+                            <div class="track-rank top-3">3</div>
+                            <div class="track-thumbnail">🎤</div>
+                            <div class="track-info">
+                                <div class="track-title">Cyber Love Connection</div>
+                                <div class="track-artist">Digital Hearts</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span class="fire-icon">🔥</span>
+                                    <span>267</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 4 -->
+                        <div class="track-item">
+                            <div class="track-rank">4</div>
+                            <div class="track-thumbnail">🎧</div>
+                            <div class="track-info">
+                                <div class="track-title">Neon Tokyo Nights</div>
+                                <div class="track-artist">Urban Synth</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>234</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 5 -->
+                        <div class="track-item">
+                            <div class="track-rank">5</div>
+                            <div class="track-thumbnail">🎵</div>
+                            <div class="track-info">
+                                <div class="track-title">Vaporwave Paradise</div>
+                                <div class="track-artist">Aesthetic Waves</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>189</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 6 -->
+                        <div class="track-item">
+                            <div class="track-rank">6</div>
+                            <div class="track-thumbnail">🎶</div>
+                            <div class="track-info">
+                                <div class="track-title">Crystal Memories '89</div>
+                                <div class="track-artist">Time Machine</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>167</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 7 -->
+                        <div class="track-item">
+                            <div class="track-rank">7</div>
+                            <div class="track-thumbnail">🎸</div>
+                            <div class="track-info">
+                                <div class="track-title">Digital Rain Dance</div>
+                                <div class="track-artist">Pixel Dreams</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>143</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 8 -->
+                        <div class="track-item">
+                            <div class="track-rank">8</div>
+                            <div class="track-thumbnail">🎹</div>
+                            <div class="track-info">
+                                <div class="track-title">Retro Future Groove</div>
+                                <div class="track-artist">Synth Masters</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>128</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 9 -->
+                        <div class="track-item">
+                            <div class="track-rank">9</div>
+                            <div class="track-thumbnail">🎤</div>
+                            <div class="track-info">
+                                <div class="track-title">Arcade Heartbeat</div>
+                                <div class="track-artist">8-Bit Romance</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>115</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Track 10 -->
+                        <div class="track-item">
+                            <div class="track-rank">10</div>
+                            <div class="track-thumbnail">🎧</div>
+                            <div class="track-info">
+                                <div class="track-title">Cosmic Highway Drive</div>
+                                <div class="track-artist">Space Cruiser</div>
+                            </div>
+                            <div class="track-stats">
+                                <div class="track-shares">
+                                    <span>98</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Contributors Window -->
+            <div class="win95-window">
+                <div class="win95-title-bar">
+                    <div class="win95-title-text">
+                        <span class="win95-title-icon">👥</span>
+                        Top Contributors
+                    </div>
+                    <div class="win95-close-btn">×</div>
+                </div>
+                <div class="win95-content">
+                    <div class="time-filter">
+                        <span class="time-filter-label">⏱ Last 24 Hours</span>
+                        <span>🏆 Top 10</span>
+                    </div>
+                    <div class="scrollable-list">
+                        <!-- Contributor 1 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">1</div>
+                            <div class="contributor-avatar">MV</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@musicvibe</div>
+                                <div class="contributor-fid">FID: 12847</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">47</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 2 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">2</div>
+                            <div class="contributor-avatar">SH</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@synthhunter</div>
+                                <div class="contributor-fid">FID: 8493</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">39</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 3 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">3</div>
+                            <div class="contributor-avatar">RG</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@retroguru</div>
+                                <div class="contributor-fid">FID: 15672</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">34</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 4 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">4</div>
+                            <div class="contributor-avatar">NW</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@neonwave</div>
+                                <div class="contributor-fid">FID: 23451</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">28</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 5 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">5</div>
+                            <div class="contributor-avatar">VD</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@vapordreams</div>
+                                <div class="contributor-fid">FID: 9834</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">25</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 6 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">6</div>
+                            <div class="contributor-avatar">DM</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@digitalmusic</div>
+                                <div class="contributor-fid">FID: 17892</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">22</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 7 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">7</div>
+                            <div class="contributor-avatar">EC</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@electrocity</div>
+                                <div class="contributor-fid">FID: 31245</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">19</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 8 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">8</div>
+                            <div class="contributor-avatar">PM</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@pixelmelody</div>
+                                <div class="contributor-fid">FID: 6789</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">17</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 9 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">9</div>
+                            <div class="contributor-avatar">CS</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@cybersounds</div>
+                                <div class="contributor-fid">FID: 42156</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">15</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+
+                        <!-- Contributor 10 -->
+                        <div class="contributor-item">
+                            <div class="contributor-rank">10</div>
+                            <div class="contributor-avatar">AR</div>
+                            <div class="contributor-info">
+                                <div class="contributor-username">@arcaderave</div>
+                                <div class="contributor-fid">FID: 28934</div>
+                            </div>
+                            <div>
+                                <div class="contributor-count">13</div>
+                                <div class="contributor-label">tracks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

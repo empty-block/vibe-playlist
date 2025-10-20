@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile UP-005</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            color: #000;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* Windows 95 Window Chrome */
+        .window {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 3px 5px;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .control-btn {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .control-btn:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background: #c0c0c0;
+            padding: 4px;
+            border-bottom: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .menu-item {
+            cursor: pointer;
+            padding: 2px 8px;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        /* Tabbed Interface */
+        .tabs {
+            display: flex;
+            background: #c0c0c0;
+            border-bottom: 2px solid #808080;
+            padding: 0 8px;
+        }
+
+        .tab {
+            padding: 8px 20px;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            background: #c0c0c0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 2px;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab.active {
+            background: #dfdfdf;
+            border-bottom-color: #dfdfdf;
+            top: 0;
+            padding-top: 10px;
+        }
+
+        .tab:hover:not(.active) {
+            background: #d8d8d8;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            background: #dfdfdf;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Profile Tab Content */
+        .profile-card {
+            background: #d4d0c8;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 24px;
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border: 3px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            box-shadow: inset 0 0 30px rgba(255,255,255,0.2);
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000080;
+            margin-bottom: 8px;
+        }
+
+        .profile-bio {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: #ffffff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #ffffff;
+            padding: 12px 8px;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #000080;
+            font-family: 'Courier New', monospace;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .profile-button {
+            padding: 10px 24px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-button:hover {
+            background: #dfdfdf;
+        }
+
+        .profile-button:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        .profile-button.primary {
+            background: #000080;
+            color: #ffffff;
+        }
+
+        .profile-button.primary:hover {
+            background: #0000a0;
+        }
+
+        /* Activity Tab - Track Feed */
+        .track-feed {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .feed-header {
+            background: #c0c0c0;
+            padding: 8px 12px;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #000080;
+        }
+
+        /* Activity Card - AF-001 Design */
+        .activity-card {
+            background: #ffffff;
+            border: 3px solid #000000;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+        }
+
+        .activity-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-header {
+            background: #000080;
+            color: white;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #000000;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .track-content {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            align-items: center;
+            background: #d4d0c8;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+            background: #000000;
+            border: 2px solid #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-artist {
+            font-size: 13px;
+            color: #000;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-meta {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+            background: #00ff00;
+            border: 2px solid #000000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000000;
+            transition: all 0.2s ease;
+        }
+
+        .play-button:hover {
+            background: #00dd00;
+            transform: scale(1.05);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .comment-box {
+            background: #ffffff;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-style: italic;
+            line-height: 1.5;
+            border-top: 1px solid #999;
+            border-bottom: 1px solid #999;
+        }
+
+        .stats-row {
+            padding: 8px 12px;
+            display: flex;
+            gap: 12px;
+            background: #d4d0c8;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            padding: 4px 8px;
+            background: #ffffff;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            cursor: pointer;
+            transition: background 0.1s ease;
+        }
+
+        .stat-item:hover {
+            background: #f8f8f8;
+        }
+
+        .stat-item .count {
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .tab {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .tab.active {
+                padding-top: 8px;
+            }
+
+            .profile-card {
+                padding: 16px;
+            }
+
+            .avatar-large {
+                width: 100px;
+                height: 100px;
+                font-size: 48px;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .profile-button {
+                width: 100%;
+            }
+
+            .activity-card {
+                margin-bottom: 16px;
+            }
+
+            .activity-header {
+                padding: 8px 10px;
+            }
+
+            .track-content {
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .thumbnail {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .play-button {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .track-title {
+                font-size: 14px;
+            }
+
+            .track-artist {
+                font-size: 12px;
+            }
+
+            .comment-box {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .stats-row {
+                padding: 6px 10px;
+                gap: 8px;
+            }
+
+            .stat-item {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .track-content {
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .thumbnail {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .play-button {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .stats-row {
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-left">
+                    <span>👤</span>
+                    <span>@musiclover - User Profile</span>
+                </div>
+                <div class="window-controls">
+                    <button class="control-btn">_</button>
+                    <button class="control-btn">□</button>
+                    <button class="control-btn">×</button>
+                </div>
+            </div>
+
+            <div class="menu-bar">
+                <div class="menu-item">File</div>
+                <div class="menu-item">Edit</div>
+                <div class="menu-item">View</div>
+                <div class="menu-item">Help</div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="profile">Profile</div>
+                <div class="tab" data-tab="activity">Activity</div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-content active" id="profile-tab">
+                <div class="profile-card">
+                    <div class="avatar-large">🎧</div>
+                    <div class="profile-name">@musiclover</div>
+                    <div class="profile-bio">
+                        Sharing the best indie, electronic, and underground tracks. Music is life! 🎵
+                        <br>Been curating playlists since the Napster days.
+                    </div>
+                    <div class="profile-stats">
+                        <div class="stat-box">
+                            <span class="stat-number">247</span>
+                            <span class="stat-label">Tracks</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">3.4K</span>
+                            <span class="stat-label">Likes</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">1.2K</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">834</span>
+                            <span class="stat-label">Following</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="profile-button primary">Follow</button>
+                        <button class="profile-button">Send Message</button>
+                        <button class="profile-button">View Playlists</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div class="tab-content" id="activity-tab">
+                <div class="track-feed">
+                    <div class="feed-header">📻 Shared Tracks (247)</div>
+
+                    <!-- Track 1: With comment -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <span class="username">@musiclover</span>
+                            <span class="timestamp">2h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🎵</div>
+                            <div class="track-info">
+                                <div class="track-title">Blinding Lights</div>
+                                <div class="track-artist">The Weeknd</div>
+                                <div class="track-meta">via spotify</div>
+                            </div>
+                            <button class="play-button">▶</button>
+                        </div>
+
+                        <div class="comment-box">
+                            This song never gets old! 🔥
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <span>♥</span>
+                                <span class="count">23</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>💬</span>
+                                <span class="count">5</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>🔄</span>
+                                <span class="count">12</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 2: No comment -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <span class="username">@musiclover</span>
+                            <span class="timestamp">5h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🎵</div>
+                            <div class="track-info">
+                                <div class="track-title">Levitating</div>
+                                <div class="track-artist">Dua Lipa</div>
+                                <div class="track-meta">via spotify</div>
+                            </div>
+                            <button class="play-button">▶</button>
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <span>♥</span>
+                                <span class="count">45</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>💬</span>
+                                <span class="count">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>🔄</span>
+                                <span class="count">8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 3: With comment -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <span class="username">@musiclover</span>
+                            <span class="timestamp">1d ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🎵</div>
+                            <div class="track-info">
+                                <div class="track-title">good 4 u</div>
+                                <div class="track-artist">Olivia Rodrigo</div>
+                                <div class="track-meta">via spotify</div>
+                            </div>
+                            <button class="play-button">▶</button>
+                        </div>
+
+                        <div class="comment-box">
+                            Absolute banger
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <span>♥</span>
+                                <span class="count">67</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>💬</span>
+                                <span class="count">8</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>🔄</span>
+                                <span class="count">15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Update tab buttons
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+
+        // Menu interactions
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Menu:', this.textContent);
+            });
+        });
+
+        // Window controls
+        document.querySelectorAll('.control-btn').forEach((btn, index) => {
+            btn.addEventListener('click', function() {
+                const actions = ['minimize', 'maximize', 'close'];
+                console.log('Window control:', actions[index]);
+            });
+        });
+
+        // Profile button interactions
+        document.querySelectorAll('.profile-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                console.log('Action:', this.textContent.trim());
+            });
+        });
+
+        // Stat item interactions
+        document.querySelectorAll('.stat-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const emoji = this.querySelector('span:first-child').textContent;
+                const count = this.querySelector('.count').textContent;
+                let action = '';
+                if (emoji === '♥') action = 'likes';
+                else if (emoji === '💬') action = 'replies';
+                else if (emoji === '🔄') action = 'recasts';
+                console.log(`View ${count} ${action}`);
+            });
+        });
+
+        // Play button interactions
+        document.querySelectorAll('.play-button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.activity-card');
+                const title = card.querySelector('.track-title').textContent;
+                const artist = card.querySelector('.track-artist').textContent;
+                console.log('Playing:', title, 'by', artist);
+
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

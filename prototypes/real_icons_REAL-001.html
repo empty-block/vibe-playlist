@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REAL-001: Early 2000s Toolbar Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ece9d8; /* Windows XP default gray */
+            font-family: "Tahoma", "MS Sans Serif", sans-serif;
+            padding: 20px;
+            color: #000;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #000;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: #c0c0c0;
+            padding: 5px;
+            border: 1px solid #000;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .icon-item {
+            text-align: center;
+            padding: 15px;
+            border: 1px solid #c0c0c0;
+            background: #f0f0f0;
+        }
+
+        .icon-item h3 {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .icon-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 10px;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .size-label {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Toolbar simulation */
+        .toolbar-demo {
+            background: #c0c0c0;
+            border: 2px solid #000;
+            padding: 5px;
+            display: inline-flex;
+            gap: 2px;
+        }
+
+        .toolbar-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 6px;
+            background: #c0c0c0;
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .toolbar-button:hover {
+            border: 1px solid #000;
+            background: #e0e0e0;
+        }
+
+        .toolbar-button:active {
+            background: #a0a0a0;
+        }
+
+        /* Navigation bar demo */
+        .nav-demo {
+            background: linear-gradient(180deg, #3169C6 0%, #2553A8 100%);
+            padding: 10px;
+            display: flex;
+            gap: 5px;
+            border: 1px solid #000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid transparent;
+            cursor: pointer;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 5px;
+            font-family: "Courier New", monospace;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>REAL-001: Early 2000s Toolbar Icons (Actual Functional Design)</h1>
+
+        <div class="section">
+            <h2>Individual Icons - 16x16px (Standard Toolbar Size)</h2>
+            <div class="icon-grid">
+                <div class="icon-item">
+                    <h3>CHANNELS</h3>
+                    <div class="icon-display">
+                        <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                            <!-- Folder body -->
+                            <path d="M1 4 L1 14 L15 14 L15 4 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/>
+                            <!-- Folder tab -->
+                            <path d="M1 4 L1 2 L6 2 L7 4 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/>
+                            <!-- Folder shadow -->
+                            <path d="M2 13 L14 13 L14 5 L13 5 L13 12 L2 12 Z" fill="#D4A817"/>
+                            <!-- Music note -->
+                            <ellipse cx="10" cy="11" rx="1.5" ry="1" fill="#000"/>
+                            <rect x="11" y="7" width="1" height="4" fill="#000"/>
+                            <path d="M12 7 L12 8 L14 7.5 L14 6.5 Z" fill="#000"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">Folder + Music Note</div>
+                </div>
+
+                <div class="icon-item">
+                    <h3>ACTIVITY</h3>
+                    <div class="icon-display">
+                        <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                            <!-- Background -->
+                            <rect x="1" y="1" width="14" height="14" fill="#E8E8E8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Lightning bolt - classic angular zigzag -->
+                            <path d="M9 2 L6 8 L8 8 L7 14 L11 7 L9 7 Z"
+                                  fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+                            <!-- Lightning bolt shadow/depth -->
+                            <path d="M8.5 8 L7.5 14 L7 14 L8 8 Z" fill="#FFB000"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">Lightning Bolt</div>
+                </div>
+
+                <div class="icon-item">
+                    <h3>PROFILE</h3>
+                    <div class="icon-display">
+                        <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                            <!-- Head -->
+                            <circle cx="8" cy="5" r="3" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Head highlight -->
+                            <circle cx="7" cy="4" r="1" fill="#C8E0F8" opacity="0.6"/>
+                            <!-- Body/shoulders -->
+                            <path d="M4 14 Q4 10 8 10 Q12 10 12 14 L10 14 Q10 11 8 11 Q6 11 6 14 Z"
+                                  fill="#7FA8D8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Body highlight -->
+                            <path d="M6 11 Q7 10.5 8 10.5 L8 11 Q7 11 6.5 11.5 Z" fill="#98B8E8" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">Simple Person</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>24x24px Versions (Larger Toolbar)</h2>
+            <div class="icon-grid">
+                <div class="icon-item">
+                    <h3>CHANNELS</h3>
+                    <div class="icon-display">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                            <!-- Folder body -->
+                            <path d="M2 6 L2 21 L22 21 L22 6 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/>
+                            <!-- Folder tab -->
+                            <path d="M2 6 L2 3 L9 3 L10 6 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/>
+                            <!-- Folder shadow -->
+                            <path d="M3 20 L21 20 L21 7 L20 7 L20 19 L3 19 Z" fill="#D4A817"/>
+                            <!-- Music note -->
+                            <ellipse cx="15" cy="17" rx="2" ry="1.5" fill="#000"/>
+                            <rect x="17" y="11" width="1.5" height="6" fill="#000"/>
+                            <path d="M18.5 11 L18.5 12 L21 11.5 L21 10 Z" fill="#000"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">24x24</div>
+                </div>
+
+                <div class="icon-item">
+                    <h3>ACTIVITY</h3>
+                    <div class="icon-display">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                            <!-- Background -->
+                            <rect x="2" y="2" width="20" height="20" fill="#E8E8E8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Lightning bolt - classic angular zigzag -->
+                            <path d="M13 3 L9 12 L12 12 L10 21 L16 10 L13 10 Z"
+                                  fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+                            <!-- Lightning bolt shadow/depth -->
+                            <path d="M12.5 12 L11 21 L10 21 L12 12 Z" fill="#FFB000"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">24x24</div>
+                </div>
+
+                <div class="icon-item">
+                    <h3>PROFILE</h3>
+                    <div class="icon-display">
+                        <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                            <!-- Head -->
+                            <circle cx="12" cy="8" r="4.5" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Head highlight -->
+                            <circle cx="10.5" cy="6.5" r="1.5" fill="#C8E0F8" opacity="0.6"/>
+                            <!-- Body/shoulders -->
+                            <path d="M5 21 Q5 15 12 15 Q19 15 19 21 L16 21 Q16 17 12 17 Q8 17 8 21 Z"
+                                  fill="#7FA8D8" stroke="#000" stroke-width="0.5"/>
+                            <!-- Body highlight -->
+                            <path d="M8 17 Q10 16 12 16 L12 17 Q10 17 9 17.5 Z" fill="#98B8E8" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="size-label">24x24</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Windows-Style Toolbar Demo</h2>
+            <div class="toolbar-demo">
+                <div class="toolbar-button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                        <path d="M1 4 L1 14 L15 14 L15 4 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/>
+                        <path d="M1 4 L1 2 L6 2 L7 4 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/>
+                        <path d="M2 13 L14 13 L14 5 L13 5 L13 12 L2 12 Z" fill="#D4A817"/>
+                        <ellipse cx="10" cy="11" rx="1.5" ry="1" fill="#000"/>
+                        <rect x="11" y="7" width="1" height="4" fill="#000"/>
+                        <path d="M12 7 L12 8 L14 7.5 L14 6.5 Z" fill="#000"/>
+                    </svg>
+                    Channels
+                </div>
+                <div class="toolbar-button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                        <rect x="1" y="1" width="14" height="14" fill="#E8E8E8" stroke="#000" stroke-width="0.5"/>
+                        <path d="M9 2 L6 8 L8 8 L7 14 L11 7 L9 7 Z"
+                              fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+                        <path d="M8.5 8 L7.5 14 L7 14 L8 8 Z" fill="#FFB000"/>
+                    </svg>
+                    Activity
+                </div>
+                <div class="toolbar-button">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                        <circle cx="8" cy="5" r="3" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/>
+                        <circle cx="7" cy="4" r="1" fill="#C8E0F8" opacity="0.6"/>
+                        <path d="M4 14 Q4 10 8 10 Q12 10 12 14 L10 14 Q10 11 8 11 Q6 11 6 14 Z"
+                              fill="#7FA8D8" stroke="#000" stroke-width="0.5"/>
+                        <path d="M6 11 Q7 10.5 8 10.5 L8 11 Q7 11 6.5 11.5 Z" fill="#98B8E8" opacity="0.5"/>
+                    </svg>
+                    Profile
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Winamp-Style Navigation Demo</h2>
+            <div class="nav-demo">
+                <div class="nav-item active">
+                    <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                        <path d="M2 6 L2 21 L22 21 L22 6 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/>
+                        <path d="M2 6 L2 3 L9 3 L10 6 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/>
+                        <path d="M3 20 L21 20 L21 7 L20 7 L20 19 L3 19 Z" fill="#D4A817"/>
+                        <ellipse cx="15" cy="17" rx="2" ry="1.5" fill="#000"/>
+                        <rect x="17" y="11" width="1.5" height="6" fill="#000"/>
+                        <path d="M18.5 11 L18.5 12 L21 11.5 L21 10 Z" fill="#000"/>
+                    </svg>
+                    CHANNELS
+                </div>
+                <div class="nav-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                        <rect x="2" y="2" width="20" height="20" fill="#E8E8E8" stroke="#000" stroke-width="0.5"/>
+                        <path d="M13 3 L9 12 L12 12 L10 21 L16 10 L13 10 Z"
+                              fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+                        <path d="M12.5 12 L11 21 L10 21 L12 12 Z" fill="#FFB000"/>
+                    </svg>
+                    ACTIVITY
+                </div>
+                <div class="nav-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
+                        <circle cx="12" cy="8" r="4.5" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/>
+                        <circle cx="10.5" cy="6.5" r="1.5" fill="#C8E0F8" opacity="0.6"/>
+                        <path d="M5 21 Q5 15 12 15 Q19 15 19 21 L16 21 Q16 17 12 17 Q8 17 8 21 Z"
+                              fill="#7FA8D8" stroke="#000" stroke-width="0.5"/>
+                        <path d="M8 17 Q10 16 12 16 L12 17 Q10 17 9 17.5 Z" fill="#98B8E8" opacity="0.5"/>
+                    </svg>
+                    PROFILE
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Design Notes</h2>
+            <ul style="font-size: 11px; line-height: 1.6; padding-left: 20px;">
+                <li><strong>CHANNELS:</strong> Classic Windows folder icon (yellow/orange) with simple music note. Like WinAmp playlist folder.</li>
+                <li><strong>ACTIVITY:</strong> Classic lightning bolt icon - simple angular zigzag shape. Yellow/gold like Windows power/warning icons. Represents speed, energy, and activity.</li>
+                <li><strong>PROFILE:</strong> Generic user icon - circle head + shoulders. Light blue like Windows XP default user icon.</li>
+                <li>Limited color palette: ~3-4 colors per icon (folder: 3 yellows, activity: 2 golds, profile: 3 blues)</li>
+                <li>Black outlines (0.5px stroke) for clarity at small sizes</li>
+                <li>Simple geometric shapes - no fancy paths or gradients</li>
+                <li>Designed to work at 16x16px (standard toolbar) and 24x24px (larger UI)</li>
+                <li>Style: Windows XP/2000 era - functional, not fancy</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>SVG Export Code</h2>
+            <p style="font-size: 11px; margin-bottom: 10px;">Copy these for use in your app:</p>
+
+            <div style="margin-bottom: 15px;">
+                <strong style="font-size: 12px;">CHANNELS (16x16):</strong>
+                <pre style="background: #f5f5f5; padding: 10px; font-size: 10px; overflow-x: auto; border: 1px solid #ccc;"><code>&lt;svg width="16" height="16" viewBox="0 0 16 16"&gt;
+  &lt;path d="M1 4 L1 14 L15 14 L15 4 Z" fill="#F9D849" stroke="#000" stroke-width="0.5"/&gt;
+  &lt;path d="M1 4 L1 2 L6 2 L7 4 Z" fill="#FBE671" stroke="#000" stroke-width="0.5"/&gt;
+  &lt;path d="M2 13 L14 13 L14 5 L13 5 L13 12 L2 12 Z" fill="#D4A817"/&gt;
+  &lt;ellipse cx="10" cy="11" rx="1.5" ry="1" fill="#000"/&gt;
+  &lt;rect x="11" y="7" width="1" height="4" fill="#000"/&gt;
+  &lt;path d="M12 7 L12 8 L14 7.5 L14 6.5 Z" fill="#000"/&gt;
+&lt;/svg&gt;</code></pre>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <strong style="font-size: 12px;">ACTIVITY (16x16):</strong>
+                <pre style="background: #f5f5f5; padding: 10px; font-size: 10px; overflow-x: auto; border: 1px solid #ccc;"><code>&lt;svg width="16" height="16" viewBox="0 0 16 16"&gt;
+  &lt;rect x="1" y="1" width="14" height="14" fill="#E8E8E8" stroke="#000" stroke-width="0.5"/&gt;
+  &lt;path d="M9 2 L6 8 L8 8 L7 14 L11 7 L9 7 Z"
+        fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/&gt;
+  &lt;path d="M8.5 8 L7.5 14 L7 14 L8 8 Z" fill="#FFB000"/&gt;
+&lt;/svg&gt;</code></pre>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <strong style="font-size: 12px;">PROFILE (16x16):</strong>
+                <pre style="background: #f5f5f5; padding: 10px; font-size: 10px; overflow-x: auto; border: 1px solid #ccc;"><code>&lt;svg width="16" height="16" viewBox="0 0 16 16"&gt;
+  &lt;circle cx="8" cy="5" r="3" fill="#A8C8E8" stroke="#000" stroke-width="0.5"/&gt;
+  &lt;circle cx="7" cy="4" r="1" fill="#C8E0F8" opacity="0.6"/&gt;
+  &lt;path d="M4 14 Q4 10 8 10 Q12 10 12 14 L10 14 Q10 11 8 11 Q6 11 6 14 Z"
+        fill="#7FA8D8" stroke="#000" stroke-width="0.5"/&gt;
+  &lt;path d="M6 11 Q7 10.5 8 10.5 L8 11 Q7 11 6.5 11.5 Z" fill="#98B8E8" opacity="0.5"/&gt;
+&lt;/svg&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="section" style="background: #fffacd; padding: 15px; border: 2px solid #ffa500;">
+            <h2 style="background: transparent; border: none; padding: 0; margin-bottom: 10px;">⚠️ DESIGN PHILOSOPHY</h2>
+            <p style="font-size: 11px; line-height: 1.6;">
+                These icons are intentionally <strong>boring and functional</strong>. They look like they were designed by a Windows developer in 2001 who had 10 minutes before lunch.
+                No artistic flair. No clever metaphors. Just simple, recognizable shapes that clearly communicate their function.
+                <br><br>
+                <strong>This is feature, not a bug.</strong> Real software from this era prioritized clarity and functionality over aesthetics.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add click handlers for toolbar buttons
+        document.querySelectorAll('.toolbar-button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                console.log('Clicked:', this.textContent.trim());
+            });
+        });
+
+        // Add click handlers for nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Navigated to:', this.textContent.trim());
+            });
+        });
+    </script>
+</body>
+</html>

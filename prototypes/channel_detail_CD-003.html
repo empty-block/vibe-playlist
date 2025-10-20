@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel Detail CD-003</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            color: #000;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .window {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 3px 5px;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-icon {
+            font-size: 14px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .control-btn {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border: 1px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .control-btn:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        .content {
+            padding: 8px;
+            background: #c0c0c0;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar styling */
+        .content::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: #c0c0c0;
+            border-left: 1px solid #808080;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #dfdfdf;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+        }
+
+        .content::-webkit-scrollbar-button {
+            height: 16px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+        }
+
+        /* Channel Header - Property Sheet Style */
+        .channel-header {
+            background: #ffffff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            margin-bottom: 10px;
+        }
+
+        /* Tab-style header bar */
+        .channel-tabs {
+            background: #c0c0c0;
+            display: flex;
+            gap: 2px;
+            padding: 2px 2px 0 2px;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 transparent #ffffff;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            border-bottom-color: #ffffff;
+            position: relative;
+            z-index: 1;
+            margin-bottom: -2px;
+            padding-bottom: 6px;
+        }
+
+        /* Channel info content */
+        .channel-info {
+            padding: 12px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
+        .channel-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            flex-shrink: 0;
+        }
+
+        .channel-details {
+            min-width: 0;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #000080;
+        }
+
+        .channel-description {
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        /* Stat Panels - Mini sunken panels */
+        .stats-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .stat-panel {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            padding: 4px 8px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .stat-icon {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .stat-label {
+            color: #808080;
+            margin-right: 2px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #000080;
+        }
+
+        /* Toolbar-style Action Bar */
+        .toolbar {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .toolbar-separator {
+            width: 2px;
+            height: 24px;
+            background: #808080;
+            border-right: 1px solid #ffffff;
+            margin: 0 4px;
+        }
+
+        .toolbar-btn {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 6px 10px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.1s ease;
+            min-width: 60px;
+        }
+
+        .toolbar-btn .icon {
+            font-size: 18px;
+            display: block;
+        }
+
+        .toolbar-btn .label {
+            display: block;
+            text-align: center;
+        }
+
+        .toolbar-btn:hover {
+            background: #dfdfdf;
+        }
+
+        .toolbar-btn:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+            padding: 7px 9px 5px 11px;
+        }
+
+        /* Classic Windows 95 Combo Box */
+        .combo-box-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+
+        .combo-box-label {
+            color: #000;
+        }
+
+        .combo-box {
+            display: flex;
+            align-items: stretch;
+            background: #ffffff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            min-width: 100px;
+        }
+
+        .combo-box select {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            padding: 3px 4px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .combo-box-arrow {
+            background: #c0c0c0;
+            border-left: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            width: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            cursor: pointer;
+        }
+
+        .combo-box-arrow:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+        }
+
+        /* Track Cards Section */
+        .tracks-section {
+            background: #c0c0c0;
+        }
+
+        .section-header {
+            padding: 4px 8px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-icon {
+            font-size: 14px;
+        }
+
+        /* Activity Card (from AF-001) */
+        .activity-card {
+            background: #ffffff;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            margin-bottom: 8px;
+            padding: 10px;
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+            transition: border-color 0.15s ease;
+        }
+
+        .activity-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-card:hover {
+            border-color: #000080 #ffffff #ffffff #000080;
+        }
+
+        /* Header: User + Time */
+        .activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #c0c0c0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+
+        .avatar {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff1493, #00bfff);
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+
+        .username {
+            color: #000080;
+            font-size: 13px;
+        }
+
+        .timestamp {
+            color: #808080;
+            font-size: 11px;
+        }
+
+        /* Main Track Display */
+        .track-content {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .thumbnail {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: color 0.1s ease;
+        }
+
+        .track-title:hover {
+            color: #000080;
+            text-decoration: underline;
+        }
+
+        .track-artist {
+            font-size: 12px;
+            color: #000;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            font-family: 'Courier New', monospace;
+            color: #808080;
+        }
+
+        .source-hint {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .source-hint::before {
+            content: "via ";
+            font-style: italic;
+            color: #a0a0a0;
+        }
+
+        /* Play button */
+        .play-button {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            background: transparent;
+            border: 3px solid #00ff00;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #00ff00;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.2);
+        }
+
+        .play-button::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border: 1px solid transparent;
+            border-radius: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            border-color: #00ff00;
+            box-shadow:
+                inset 0 0 12px rgba(0, 255, 0, 0.4),
+                0 0 16px rgba(0, 255, 0, 0.4),
+                0 0 24px rgba(0, 255, 0, 0.2);
+            transform: scale(1.05);
+        }
+
+        .play-button:hover::before {
+            border-color: #00ff00;
+            opacity: 0.3;
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+            box-shadow:
+                inset 0 0 16px rgba(0, 255, 0, 0.6),
+                0 0 8px rgba(0, 255, 0, 0.3);
+        }
+
+        .play-button .icon {
+            filter: drop-shadow(0 0 2px rgba(0, 255, 0, 0.5));
+        }
+
+        /* User Comment */
+        .comment-box {
+            background: #f0f4f8;
+            border: 1px solid #d0dce8;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-style: italic;
+            line-height: 1.5;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        /* Action Bar */
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #ffffff #000000 #000000 #ffffff;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.1s ease;
+        }
+
+        .action-btn:hover {
+            background: #dfdfdf;
+        }
+
+        .action-btn:active {
+            border-color: #000000 #ffffff #ffffff #000000;
+            padding: 5px 7px 3px 9px;
+        }
+
+        .action-btn .icon {
+            font-size: 13px;
+        }
+
+        .action-btn .count {
+            font-weight: bold;
+            color: #000080;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            padding: 4px 8px;
+            background: #c0c0c0;
+            border-top: 2px solid;
+            border-color: #ffffff #c0c0c0 #c0c0c0 #c0c0c0;
+            font-size: 11px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-indicator {
+            width: 16px;
+            height: 16px;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            background: #c0c0c0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .content {
+                max-height: calc(100vh - 80px);
+            }
+
+            .channel-info {
+                grid-template-columns: auto 1fr;
+                gap: 10px;
+            }
+
+            .channel-image {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .channel-name {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .channel-description {
+                font-size: 11px;
+                margin-bottom: 8px;
+            }
+
+            .stats-row {
+                gap: 6px;
+            }
+
+            .stat-panel {
+                padding: 3px 6px;
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .toolbar {
+                padding: 4px;
+                gap: 4px;
+            }
+
+            .toolbar-btn {
+                min-width: 50px;
+                padding: 4px 8px;
+                gap: 2px;
+            }
+
+            .toolbar-btn .icon {
+                font-size: 16px;
+            }
+
+            .toolbar-btn .label {
+                font-size: 9px;
+            }
+
+            .toolbar-separator {
+                height: 20px;
+                margin: 0 2px;
+            }
+
+            .combo-box-wrapper {
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .combo-box {
+                min-width: 90px;
+            }
+
+            .combo-box select {
+                font-size: 10px;
+                padding: 2px 3px;
+            }
+
+            .section-header {
+                padding: 3px 6px;
+                font-size: 10px;
+                margin-bottom: 6px;
+            }
+
+            .activity-card {
+                padding: 8px;
+            }
+
+            .track-content {
+                gap: 10px;
+            }
+
+            .thumbnail {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+
+            .play-button {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+                border-width: 2px;
+            }
+
+            .track-title {
+                font-size: 13px;
+            }
+
+            .track-artist {
+                font-size: 11px;
+            }
+
+            .track-meta {
+                font-size: 9px;
+            }
+
+            .comment-box {
+                padding: 6px 8px;
+                font-size: 11px;
+                margin-bottom: 6px;
+            }
+
+            .actions {
+                gap: 4px;
+            }
+
+            .action-btn {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .status-bar {
+                gap: 12px;
+                font-size: 10px;
+            }
+        }
+
+        /* Ultra-mobile (very small phones) */
+        @media (max-width: 360px) {
+            .channel-info {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .channel-image {
+                margin: 0 auto;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-group {
+                justify-content: space-around;
+                width: 100%;
+            }
+
+            .toolbar-separator {
+                display: none;
+            }
+
+            .combo-box-wrapper {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .combo-box {
+                flex: 1;
+                max-width: 200px;
+            }
+
+            .track-content {
+                gap: 8px;
+            }
+
+            .thumbnail {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .play-button {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes playGlow {
+            0% {
+                box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.2);
+            }
+            50% {
+                box-shadow:
+                    inset 0 0 12px rgba(0, 255, 0, 0.3),
+                    0 0 12px rgba(0, 255, 0, 0.2);
+            }
+            100% {
+                box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.2);
+            }
+        }
+
+        .play-button {
+            animation: playGlow 2s ease-in-out infinite;
+        }
+
+        .play-button:hover {
+            animation: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="window">
+            <div class="title-bar">
+                <div class="title-content">
+                    <span class="title-icon">📁</span>
+                    <span>Indie Vibes</span>
+                </div>
+                <div class="window-controls">
+                    <div class="control-btn">_</div>
+                    <div class="control-btn">□</div>
+                    <div class="control-btn">×</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Channel Header - Property Sheet Style -->
+                <div class="channel-header">
+                    <div class="channel-tabs">
+                        <div class="tab active">General</div>
+                        <div class="tab">Members</div>
+                        <div class="tab">Activity</div>
+                    </div>
+
+                    <div class="channel-info">
+                        <div class="channel-image">🎸</div>
+
+                        <div class="channel-details">
+                            <div class="channel-name">Indie Vibes</div>
+                            <div class="channel-description">
+                                Discover the best indie and alternative tracks from around the world.
+                                From bedroom pop to indie rock, we've got all your indie music needs covered.
+                            </div>
+
+                            <div class="stats-row">
+                                <div class="stat-panel">
+                                    <span class="stat-icon">👥</span>
+                                    <span class="stat-label">Members:</span>
+                                    <span class="stat-value">1,247</span>
+                                </div>
+                                <div class="stat-panel">
+                                    <span class="stat-icon">🎵</span>
+                                    <span class="stat-label">Tracks:</span>
+                                    <span class="stat-value">532</span>
+                                </div>
+                                <div class="stat-panel">
+                                    <span class="stat-icon">⭐</span>
+                                    <span class="stat-label">Rating:</span>
+                                    <span class="stat-value">4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toolbar-style Action Bar -->
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button class="toolbar-btn">
+                            <span class="icon">▶</span>
+                            <span class="label">Play All</span>
+                        </button>
+                        <button class="toolbar-btn">
+                            <span class="icon">➕</span>
+                            <span class="label">Add Track</span>
+                        </button>
+
+                        <div class="toolbar-separator"></div>
+
+                        <div class="combo-box-wrapper">
+                            <span class="combo-box-label">Sort:</span>
+                            <div class="combo-box">
+                                <select id="sortSelect">
+                                    <option value="recent">Recent</option>
+                                    <option value="popular">Popular</option>
+                                    <option value="az">A-Z</option>
+                                </select>
+                                <div class="combo-box-arrow">▼</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Header -->
+                <div class="section-header">
+                    <span class="section-icon">💿</span>
+                    <span>Recent Tracks</span>
+                </div>
+
+                <!-- Track Cards Feed (from AF-001) -->
+                <div class="tracks-section">
+                    <!-- Track 1 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="user-info">
+                                <div class="avatar">IK</div>
+                                <span class="username">@indiekid</span>
+                            </div>
+                            <span class="timestamp">2h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🎵</div>
+                            <div class="track-info">
+                                <div class="track-title">Heat Waves</div>
+                                <div class="track-artist">Glass Animals</div>
+                                <div class="track-meta">
+                                    <span class="source-hint">spotify</span>
+                                    <span>•</span>
+                                    <span>3:59</span>
+                                </div>
+                            </div>
+                            <button class="play-button">
+                                <span class="icon">▶</span>
+                            </button>
+                        </div>
+
+                        <div class="comment-box">
+                            This song brings back so many memories 🌊
+                        </div>
+
+                        <div class="actions">
+                            <button class="action-btn">
+                                <span class="icon">♥</span>
+                                <span class="count">89</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">💬</span>
+                                <span class="count">15</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">🔄</span>
+                                <span class="count">23</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Track 2 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="user-info">
+                                <div class="avatar">ML</div>
+                                <span class="username">@musiclover</span>
+                            </div>
+                            <span class="timestamp">4h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🌟</div>
+                            <div class="track-info">
+                                <div class="track-title">Electric Feel</div>
+                                <div class="track-artist">MGMT</div>
+                                <div class="track-meta">
+                                    <span class="source-hint">youtube</span>
+                                    <span>•</span>
+                                    <span>3:49</span>
+                                </div>
+                            </div>
+                            <button class="play-button">
+                                <span class="icon">▶</span>
+                            </button>
+                        </div>
+
+                        <div class="actions">
+                            <button class="action-btn">
+                                <span class="icon">♥</span>
+                                <span class="count">67</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">💬</span>
+                                <span class="count">12</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">🔄</span>
+                                <span class="count">18</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Track 3 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="user-info">
+                                <div class="avatar">AF</div>
+                                <span class="username">@altfan</span>
+                            </div>
+                            <span class="timestamp">6h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">✨</div>
+                            <div class="track-info">
+                                <div class="track-title">Do I Wanna Know?</div>
+                                <div class="track-artist">Arctic Monkeys</div>
+                                <div class="track-meta">
+                                    <span class="source-hint">spotify</span>
+                                    <span>•</span>
+                                    <span>4:32</span>
+                                </div>
+                            </div>
+                            <button class="play-button">
+                                <span class="icon">▶</span>
+                            </button>
+                        </div>
+
+                        <div class="comment-box">
+                            Classic indie rock perfection
+                        </div>
+
+                        <div class="actions">
+                            <button class="action-btn">
+                                <span class="icon">♥</span>
+                                <span class="count">124</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">💬</span>
+                                <span class="count">28</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">🔄</span>
+                                <span class="count">45</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Track 4 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="user-info">
+                                <div class="avatar">SC</div>
+                                <span class="username">@synthchild</span>
+                            </div>
+                            <span class="timestamp">8h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">💜</div>
+                            <div class="track-info">
+                                <div class="track-title">Pumped Up Kicks</div>
+                                <div class="track-artist">Foster The People</div>
+                                <div class="track-meta">
+                                    <span class="source-hint">youtube</span>
+                                    <span>•</span>
+                                    <span>3:58</span>
+                                </div>
+                            </div>
+                            <button class="play-button">
+                                <span class="icon">▶</span>
+                            </button>
+                        </div>
+
+                        <div class="actions">
+                            <button class="action-btn">
+                                <span class="icon">♥</span>
+                                <span class="count">92</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">💬</span>
+                                <span class="count">19</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">🔄</span>
+                                <span class="count">31</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Track 5 -->
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <div class="user-info">
+                                <div class="avatar">RH</div>
+                                <span class="username">@rockhead</span>
+                            </div>
+                            <span class="timestamp">12h ago</span>
+                        </div>
+
+                        <div class="track-content">
+                            <div class="thumbnail">🎸</div>
+                            <div class="track-info">
+                                <div class="track-title">Take Me Out</div>
+                                <div class="track-artist">Franz Ferdinand</div>
+                                <div class="track-meta">
+                                    <span class="source-hint">spotify</span>
+                                    <span>•</span>
+                                    <span>3:57</span>
+                                </div>
+                            </div>
+                            <button class="play-button">
+                                <span class="icon">▶</span>
+                            </button>
+                        </div>
+
+                        <div class="comment-box">
+                            That guitar riff is LEGENDARY
+                        </div>
+
+                        <div class="actions">
+                            <button class="action-btn">
+                                <span class="icon">♥</span>
+                                <span class="count">156</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">💬</span>
+                                <span class="count">34</span>
+                            </button>
+                            <button class="action-btn">
+                                <span class="icon">🔄</span>
+                                <span class="count">52</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-item">
+                    <div class="status-indicator">●</div>
+                    <span>Online</span>
+                </div>
+                <div class="status-item">
+                    <span>5 tracks shown</span>
+                </div>
+                <div class="status-item">
+                    <span>Updated just now</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Window control buttons
+        document.querySelectorAll('.control-btn').forEach((btn, index) => {
+            btn.addEventListener('click', function() {
+                const actions = ['minimize', 'maximize', 'close'];
+                console.log('Window control:', actions[index]);
+            });
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                console.log('Tab switched to:', this.textContent.trim());
+            });
+        });
+
+        // Toolbar buttons
+        document.querySelectorAll('.toolbar-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const label = this.querySelector('.label').textContent;
+                console.log('Toolbar action:', label);
+
+                // Visual feedback
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+
+        // Sort dropdown
+        const sortSelect = document.getElementById('sortSelect');
+        sortSelect.addEventListener('change', function() {
+            console.log('Sort changed to:', this.value);
+            const sectionHeader = document.querySelector('.section-header span:last-child');
+
+            switch(this.value) {
+                case 'recent':
+                    sectionHeader.textContent = 'Recent Tracks';
+                    break;
+                case 'popular':
+                    sectionHeader.textContent = 'Popular Tracks';
+                    break;
+                case 'az':
+                    sectionHeader.textContent = 'Tracks A-Z';
+                    break;
+            }
+        });
+
+        // Combo box arrow click
+        document.querySelector('.combo-box-arrow').addEventListener('click', function() {
+            sortSelect.click();
+        });
+
+        // Action buttons
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.querySelector('.icon').textContent;
+                const count = this.querySelector('.count').textContent;
+                console.log('Action:', action, 'Count:', count);
+            });
+        });
+
+        // Play buttons
+        document.querySelectorAll('.play-button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const card = this.closest('.activity-card');
+                const title = card.querySelector('.track-title').textContent;
+                const artist = card.querySelector('.track-artist').textContent;
+                console.log('Playing:', title, 'by', artist);
+
+                // Visual feedback
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Track title click
+        document.querySelectorAll('.track-title').forEach(title => {
+            title.addEventListener('click', function() {
+                console.log('Track details:', this.textContent.trim());
+            });
+        });
+
+        // Status bar real-time updates
+        function updateStatus() {
+            const statusText = document.querySelector('.status-bar .status-item:last-child span');
+            let seconds = 0;
+
+            setInterval(() => {
+                seconds++;
+                if (seconds < 60) {
+                    statusText.textContent = seconds === 1 ? 'Updated 1 second ago' : `Updated ${seconds} seconds ago`;
+                } else {
+                    const minutes = Math.floor(seconds / 60);
+                    statusText.textContent = minutes === 1 ? 'Updated 1 minute ago' : `Updated ${minutes} minutes ago`;
+                }
+            }, 1000);
+        }
+
+        updateStatus();
+    </script>
+</body>
+</html>

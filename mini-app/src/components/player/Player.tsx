@@ -1,9 +1,9 @@
-import { Component, Show, JSX, createSignal, onMount } from 'solid-js';
+import { Component, Show, JSX, createSignal, onMount, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { 
-  currentTrack, 
-  isPlaying, 
-  playingPlaylistId, 
+import {
+  currentTrack,
+  isPlaying,
+  playingPlaylistId,
   setCurrentPlaylistId,
   shuffleMode,
   setShuffleMode,
@@ -14,7 +14,7 @@ import {
   isSeekable
 } from '../../stores/playerStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
-import styles from './player.module.css';
+import './playerWin95.css';
 
 interface PlayerProps {
   mediaComponent: JSX.Element;
@@ -119,101 +119,77 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class={styles.playerContainer}>
-        {/* Track Info Section - Left */}
-        <div class={styles.trackInfo}>
-          <h3 class={styles.trackTitle}>
-            <div ref={statusIndicatorRef!} class={`${styles.statusIndicator} ${!isPlaying() ? styles.paused : ''}`}></div>
-            {currentTrack()?.title}
-          </h3>
-          <div class={styles.artistName} onClick={handleArtistClick}>
-            {currentTrack()?.artist}
+      <div class="win95-player-bar">
+        {/* Win95 Title Bar */}
+        <div class="win95-player-titlebar">
+          <div class="win95-player-titlebar-text">
+            <div class="win95-player-titlebar-icon"></div>
+            <span>Now Playing</span>
           </div>
-          <div class={styles.socialContext}>
-            <span class={styles.sharedByLabel}>shared by</span>
-            <span class={styles.username}>{currentTrack()?.addedBy}</span>
-            <span>•</span>
-            <span class={styles.platformBadge}>{currentTrack()?.source?.toUpperCase()}</span>
+          <div class="win95-player-titlebar-buttons">
+            <div class="win95-titlebar-button">_</div>
+            <div class="win95-titlebar-button">□</div>
+            <div class="win95-titlebar-button">×</div>
           </div>
         </div>
 
-        {/* Controls Section - Center */}
-        <div class={styles.controls}>
-          <button
-            ref={shuffleButtonRef!}
-            onClick={handleShuffleToggle}
-            class={`${styles.controlButton} ${styles.shuffleButton} ${shuffleMode() ? styles.active : ''}`}
-            disabled={!props.playerReady()}
-            title={`Shuffle ${shuffleMode() ? 'ON' : 'OFF'}`}
-          >
-            <i class="fas fa-random"></i>
-          </button>
+        <div class="win95-player-content">
+          {/* YouTube Video Container - hide when paused but keep mounted */}
+          <div class="win95-video-container" classList={{ 'win95-video-hidden': !isPlaying() }}>
+            {props.mediaComponent}
+          </div>
 
-          <button
-            ref={prevButtonRef!}
-            onClick={handleSkipPrevious}
-            class={styles.controlButton}
-            disabled={!props.playerReady()}
-            title="Previous track"
-          >
-            <i class="fas fa-step-backward"></i>
-          </button>
+          {/* Track Info Panel - Green LCD style with integrated controls */}
+          <div class="win95-track-info-panel">
+            <div class="win95-track-metadata">
+              <div class="win95-track-title">{currentTrack()?.title}</div>
+              <div class="win95-track-subtitle">{currentTrack()?.artist}</div>
+              <div class="win95-track-meta">
+                <span class="win95-shared-by">shared by @{currentTrack()?.addedBy}</span>
+              </div>
+            </div>
 
-          <button
-            ref={playButtonRef!}
-            onClick={props.onTogglePlay}
-            class={`${styles.controlButton} ${styles.playButton}`}
-            disabled={!props.playerReady()}
-            title={isPlaying() ? 'Pause' : 'Play'}
-          >
-            <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`} style={{
-              'margin-left': isPlaying() ? '0' : '4px'
-            }}></i>
-          </button>
-
-          <button
-            ref={nextButtonRef!}
-            onClick={handleSkipNext}
-            class={styles.controlButton}
-            disabled={!props.playerReady()}
-            title="Next track"
-          >
-            <i class="fas fa-step-forward"></i>
-          </button>
-
-          <button
-            ref={chatButtonRef!}
-            onClick={handleChatToggle}
-            class={`${styles.controlButton} ${styles.chatButton}`}
-            disabled={!props.playerReady()}
-            title="Open chat"
-          >
-            <i class="fas fa-comments"></i>
-          </button>
-        </div>
-
-        {/* Media Section - Right (hide when paused) */}
-        <div class={`${styles.mediaSection} ${!isPlaying() ? styles.mediaSectionHidden : ''}`}>
-          {props.mediaComponent}
-        </div>
-
-        {/* Progress Bar - Full Width Bottom */}
-        <Show when={currentTrack()?.source !== 'youtube' && props.currentTime}>
-          <div 
-            class={styles.progressContainer}
-            onClick={handleProgressClick}
-            title="Click to seek"
-          >
-            <div 
-              class={styles.progressBar}
-              style={{
-                width: `${((props.currentTime?.() || 0) / (props.duration?.() || 1)) * 100}%`
-              }}
-            >
-              <div class={styles.progressHandle}></div>
+            {/* Playback Controls - integrated into track info panel */}
+            <div class="win95-track-controls">
+              <button
+                ref={playButtonRef!}
+                onClick={props.onTogglePlay}
+                class="win95-control-btn win95-control-btn-play"
+                disabled={!props.playerReady()}
+                title={isPlaying() ? 'Pause' : 'Play'}
+              >
+                {isPlaying() ? '⏸' : '▶'}
+              </button>
+              <button
+                ref={prevButtonRef!}
+                onClick={handleSkipPrevious}
+                class="win95-control-btn"
+                disabled={!props.playerReady()}
+                title="Previous track"
+              >
+                ⏮
+              </button>
+              <button
+                ref={nextButtonRef!}
+                onClick={handleSkipNext}
+                class="win95-control-btn"
+                disabled={!props.playerReady()}
+                title="Next track"
+              >
+                ⏭
+              </button>
             </div>
           </div>
-        </Show>
+
+          {/* Animated Visualizer - only show when playing and player is ready */}
+          <Show when={isPlaying() && props.playerReady()}>
+            <div class="win95-visualizer">
+              <For each={Array(16).fill(0)}>
+                {() => <div class="win95-visualizer-bar"></div>}
+              </For>
+            </div>
+          </Show>
+        </div>
       </div>
     </Show>
   );

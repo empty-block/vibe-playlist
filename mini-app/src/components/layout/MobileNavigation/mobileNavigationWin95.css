@@ -1,0 +1,89 @@
+/* Windows 95 Taskbar-Style Navigation Bar */
+.win95-nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 4px;
+  margin: 0;
+  display: flex;
+  gap: 2px;
+  z-index: 1000;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.win95-nav-button {
+  flex: 1;
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: none;
+}
+
+.win95-nav-button:active,
+.win95-nav-button-active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+  transform: translateY(1px);
+}
+
+.win95-nav-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win95-nav-label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Safe area for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .win95-nav-bar {
+    padding: 3px;
+    gap: 1px;
+  }
+
+  .win95-nav-button {
+    padding: 6px 2px;
+    gap: 3px;
+  }
+
+  .win95-nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .win95-nav-label {
+    font-size: 9px;
+  }
+}

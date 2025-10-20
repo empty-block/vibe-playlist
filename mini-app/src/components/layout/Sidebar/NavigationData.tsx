@@ -175,25 +175,33 @@ export const ProfileIcon: Component<IconProps> = (props) => (
   </svg>
 );
 
-// Activity Icon (Network Pulse) - Shows activity/network stream
+// Trending Icon (Flame) - Shows trending/hot content
 export const ActivityIcon: Component<IconProps> = (props) => (
-  <svg class={`activity-icon ${props.class || ''}`} width="28" height="28" viewBox="0 0 28 28" fill="none">
-    {/* Network nodes */}
-    <circle cx="14" cy="6" r="2" fill="currentColor"/>
-    <circle cx="8" cy="14" r="2" fill="currentColor"/>
-    <circle cx="20" cy="14" r="2" fill="currentColor"/>
-    <circle cx="14" cy="22" r="2" fill="currentColor"/>
+  <svg class={`trending-icon ${props.class || ''}`} width="28" height="28" viewBox="0 0 28 28" fill="none">
+    {/* Main flame body */}
+    <path
+      d="M14 4C14 4 10 8 10 12C10 14 11 16 13 16.5C13 14 15 12 15 12C15 12 16 14 16 16C18 16 20 14 20 12C20 8 14 4 14 4Z"
+      fill="currentColor"
+      opacity="0.9"
+    />
 
-    {/* Connecting lines */}
-    <line x1="14" y1="8" x2="14" y2="20" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
-    <line x1="12" y1="7" x2="9" y2="12" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
-    <line x1="16" y1="7" x2="19" y2="12" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+    {/* Inner flame */}
+    <path
+      d="M14 8C14 8 12 10 12 12C12 13.5 13 14.5 14 14.5C14 13 15 11.5 15 11.5C15 11.5 15.5 12.5 15.5 13.5C16.5 13.5 17.5 12.5 17.5 11C17.5 9 14 8 14 8Z"
+      fill="currentColor"
+      opacity="0.6"
+    />
 
-    {/* Pulse rings */}
-    <circle cx="14" cy="6" r="4" stroke="currentColor" stroke-width="1" fill="none" opacity="0.3">
-      <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
-    </circle>
+    {/* Flame tip */}
+    <ellipse cx="14" cy="6" rx="1.5" ry="2" fill="currentColor" opacity="0.8">
+      <animate attributeName="ry" values="2;2.5;2" dur="1.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;1;0.8" dur="1.5s" repeatCount="indefinite"/>
+    </ellipse>
+
+    {/* Base glow */}
+    <ellipse cx="14" cy="17" rx="6" ry="2" fill="currentColor" opacity="0.2">
+      <animate attributeName="opacity" values="0.2;0.3;0.2" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
   </svg>
 );
 
@@ -280,9 +288,9 @@ export const navigationSections: readonly SidebarSection[] = [
     isPrimary: true
   },
   {
-    id: 'activity',
-    href: '/activity',
-    label: 'Activity',
+    id: 'trending',
+    href: '/trending',
+    label: 'Trending',
     icon: ActivityIcon,
     color: 'cyan'
   },

@@ -1,9 +1,8 @@
 import { Component, onMount, For, Show } from 'solid-js';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
-import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ActivityItem from '../components/activity/ActivityItem';
 import { activityFeed, isLoading, error, hasMore, loadActivity, loadMore } from '../stores/activityStore';
-import '../styles/terminal.css';
+import './activityPageWin95.css';
 
 const ActivityPage: Component = () => {
   // Load activity on mount
@@ -12,109 +11,99 @@ const ActivityPage: Component = () => {
   });
 
   return (
-    <div class="activity-page" style={{
-      display: 'flex',
-      'flex-direction': 'column',
-      height: '100vh',
-      background: 'var(--terminal-bg)',
-      color: 'var(--terminal-text)'
-    }}>
-      {/* Terminal Header */}
-      <TerminalHeader
-        title="JAMZY::NETWORK_MONITOR"
-        path="~/activity"
-        command="stream --live --filter=all"
-        statusInfo="v2.5.7"
-        borderColor="cyan"
-        class="terminal-header"
-        additionalContent={<span class="terminal-cursor">█</span>}
-      />
-
-      {/* Scrollable Feed */}
-      <div class="activity-feed" style={{
-        flex: 1,
-        'overflow-y': 'auto',
-        padding: 'var(--space-4)',
-        'padding-bottom': '120px',
-        position: 'relative',
-        'z-index': 1
-      }}>
-        {/* Loading State */}
-        <Show when={isLoading() && activityFeed().length === 0}>
-          <div style={{
-            padding: 'var(--space-8)',
-            'text-align': 'center',
-            color: 'var(--terminal-cyan)'
-          }}>
-            Loading activity feed...
+    <div class="activity-page">
+      <div class="activity-container">
+        <div class="win95-window">
+          {/* Title Bar */}
+          <div class="win95-title-bar">
+            <div class="win95-title-left">
+              <span class="win95-title-icon">📡</span>
+              <span>Network Activity - Jamzy Monitor</span>
+            </div>
+            <div class="win95-window-controls">
+              <button class="win95-control-btn">_</button>
+              <button class="win95-control-btn">□</button>
+              <button class="win95-control-btn">×</button>
+            </div>
           </div>
-        </Show>
 
-        {/* Error State */}
-        <Show when={error()}>
-          <div style={{
-            padding: 'var(--space-8)',
-            'text-align': 'center',
-            color: 'var(--terminal-red)'
-          }}>
-            Error: {error()}
-            <br />
-            <button
-              onClick={() => loadActivity(true)}
-              style={{
-                'margin-top': 'var(--space-4)',
-                padding: 'var(--space-2) var(--space-4)',
-                background: 'var(--terminal-cyan)',
-                color: 'var(--terminal-bg)',
-                border: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              Retry
-            </button>
+          {/* Content Area */}
+          <div class="win95-content">
+            {/* Loading State */}
+            <Show when={isLoading() && activityFeed().length === 0}>
+              <div style={{ padding: '2rem', 'text-align': 'center', color: '#000080' }}>
+                <div>Loading activity feed...</div>
+              </div>
+            </Show>
+
+            {/* Error State */}
+            <Show when={error()}>
+              <div style={{ padding: '2rem', 'text-align': 'center', color: '#ff0000' }}>
+                <div>Error: {error()}</div>
+                <button
+                  onClick={() => loadActivity(true)}
+                  class="win95-retry-btn"
+                  style={{
+                    'margin-top': '1rem',
+                    padding: '6px 12px'
+                  }}
+                >
+                  Retry
+                </button>
+              </div>
+            </Show>
+
+            {/* Activity Feed */}
+            <div class="win95-activity-feed">
+              <For each={activityFeed()}>
+                {(activity) => <ActivityItem activity={activity} />}
+              </For>
+
+              {/* Load More Button */}
+              <Show when={hasMore() && !isLoading() && activityFeed().length > 0}>
+                <div style={{
+                  padding: '1rem',
+                  'text-align': 'center'
+                }}>
+                  <button
+                    onClick={loadMore}
+                    class="win95-action-button"
+                    style={{
+                      padding: '6px 12px'
+                    }}
+                  >
+                    <span>Load More</span>
+                  </button>
+                </div>
+              </Show>
+
+              {/* Loading More State */}
+              <Show when={isLoading() && activityFeed().length > 0}>
+                <div style={{
+                  padding: '1rem',
+                  'text-align': 'center',
+                  color: '#000080'
+                }}>
+                  Loading more...
+                </div>
+              </Show>
+            </div>
           </div>
-        </Show>
 
-        {/* Activity Feed */}
-        <For each={activityFeed()}>
-          {(activity) => <ActivityItem activity={activity} />}
-        </For>
-
-        {/* Load More Button */}
-        <Show when={hasMore() && !isLoading() && activityFeed().length > 0}>
-          <div style={{
-            padding: 'var(--space-4)',
-            'text-align': 'center'
-          }}>
-            <button
-              onClick={loadMore}
-              style={{
-                padding: 'var(--space-2) var(--space-4)',
-                background: 'var(--terminal-cyan)',
-                color: 'var(--terminal-bg)',
-                border: 'none',
-                cursor: 'pointer',
-                'font-family': 'monospace'
-              }}
-            >
-              LOAD_MORE
-            </button>
+          {/* Status Bar */}
+          <div class="win95-status-bar">
+            <div class="win95-status-item">
+              <div class="win95-status-indicator">●</div>
+              <span>Online</span>
+            </div>
+            <div class="win95-status-item">
+              <span>{activityFeed().length} activities loaded</span>
+            </div>
           </div>
-        </Show>
-
-        {/* Loading More State */}
-        <Show when={isLoading() && activityFeed().length > 0}>
-          <div style={{
-            padding: 'var(--space-4)',
-            'text-align': 'center',
-            color: 'var(--terminal-cyan)'
-          }}>
-            Loading more...
-          </div>
-        </Show>
+        </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
     </div>
   );

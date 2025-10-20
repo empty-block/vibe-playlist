@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy Activity Feed - Windows 95 Table Style (v2)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Arial, sans-serif;
+            background: #008080; /* Teal background like Win95 */
+            color: #000000;
+            padding: 8px;
+            min-height: 100vh;
+        }
+
+        /* Main Window Container */
+        .window {
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .title-bar-text {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background: #c0c0c0;
+            border-top: 1px solid #ffffff;
+            border-left: 1px solid #ffffff;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .title-bar-button:active {
+            border-top: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #ffffff;
+            border-bottom: 1px solid #ffffff;
+            padding-top: 2px;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background: #c0c0c0;
+            padding: 2px 4px;
+            border-bottom: 2px solid #808080;
+            font-size: 11px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .menu-item {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: white;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #c0c0c0;
+            padding: 4px;
+            border-bottom: 2px solid #808080;
+            display: flex;
+            gap: 2px;
+        }
+
+        .toolbar-button {
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .toolbar-button:active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding-top: 6px;
+            padding-left: 10px;
+        }
+
+        /* Column Headers */
+        .column-headers {
+            background: #c0c0c0;
+            display: flex;
+            padding: 4px;
+            border-bottom: 2px solid #808080;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .col-header {
+            flex: 1;
+            padding: 2px 4px;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        .col-header:last-child {
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        /* Content Area */
+        .content {
+            background: #ffffff;
+            padding: 8px;
+            height: 500px;
+            overflow-y: scroll;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #dfdfdf;
+            border-bottom: 2px solid #dfdfdf;
+        }
+
+        /* Activity Card - INSET style */
+        .activity-card {
+            background: #ffffff;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #dfdfdf;
+            border-bottom: 2px solid #dfdfdf;
+            margin-bottom: 12px;
+            font-size: 11px;
+        }
+
+        /* Card Header */
+        .card-header {
+            background: #c0c0c0;
+            padding: 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #808080;
+            font-size: 11px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+        }
+
+        .username {
+            color: #000080;
+        }
+
+        .timestamp {
+            color: #808080;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+        }
+
+        /* Track Content - Table-like structure */
+        .track-content {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .track-row {
+            display: table-row;
+        }
+
+        .track-cell {
+            display: table-cell;
+            padding: 6px;
+            border-bottom: 1px solid #dfdfdf;
+            vertical-align: middle;
+        }
+
+        .track-cell.thumbnail {
+            width: 72px;
+            padding: 6px;
+        }
+
+        .track-cell.info {
+            padding-left: 8px;
+        }
+
+        /* Thumbnail */
+        .track-thumbnail {
+            width: 60px;
+            height: 60px;
+            background: #000000;
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #808080;
+            font-size: 24px;
+        }
+
+        /* Track Info */
+        .track-title {
+            font-weight: bold;
+            margin-bottom: 2px;
+            color: #000000;
+            font-size: 12px;
+        }
+
+        .track-artist {
+            color: #000000;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .source-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            font-size: 9px;
+            font-weight: bold;
+            border-top: 1px solid #ffffff;
+            border-left: 1px solid #ffffff;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+        }
+
+        .source-spotify {
+            background: #1db954;
+            color: white;
+        }
+
+        .source-youtube {
+            background: #ff0000;
+            color: white;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            padding: 6px 8px;
+            background: #fffff0;
+            border-top: 1px solid #dfdfdf;
+            border-bottom: 1px solid #dfdfdf;
+            font-size: 11px;
+            font-style: italic;
+        }
+
+        /* Actions Row - Table style */
+        .actions-row {
+            padding: 4px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #dfdfdf;
+            border-top: 1px solid #ffffff;
+        }
+
+        .stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            padding: 2px 4px;
+            background: #ffffff;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        .play-button {
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 3px 12px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .play-button:active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding-top: 5px;
+            padding-left: 14px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            padding: 2px 4px;
+            display: flex;
+            gap: 2px;
+            font-size: 10px;
+        }
+
+        .status-section {
+            padding: 2px 6px;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }
+
+        .status-section:first-child {
+            flex: 1;
+        }
+
+        /* Scrollbar styling for Win95 look */
+        .content::-webkit-scrollbar {
+            width: 16px;
+            background: #c0c0c0;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: #ffffff;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .content::-webkit-scrollbar-button {
+            height: 16px;
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        /* Icons using Unicode */
+        .icon {
+            display: inline-block;
+        }
+
+        /* Hover effects */
+        .stat-item:hover,
+        .play-button:hover {
+            filter: brightness(1.05);
+        }
+
+        /* Selected state for activity cards */
+        .activity-card.selected {
+            background: #000080;
+            color: white;
+        }
+
+        .activity-card.selected .card-header {
+            background: #000080;
+            color: white;
+        }
+
+        .activity-card.selected .username,
+        .activity-card.selected .track-title,
+        .activity-card.selected .track-artist {
+            color: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 500px) {
+            body {
+                padding: 0;
+            }
+
+            .window {
+                box-shadow: none;
+            }
+
+            .track-cell.thumbnail {
+                width: 60px;
+            }
+
+            .track-thumbnail {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <span class="icon">📁</span>
+                <span>Jamzy - Activity Feed</span>
+            </div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" aria-label="Minimize">_</button>
+                <button class="title-bar-button" aria-label="Maximize">□</button>
+                <button class="title-bar-button" aria-label="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <div class="menu-item">File</div>
+            <div class="menu-item">Edit</div>
+            <div class="menu-item">View</div>
+            <div class="menu-item">Help</div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="toolbar-button">
+                <span>🔄</span>
+                <span>Refresh</span>
+            </button>
+            <button class="toolbar-button">
+                <span>🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="toolbar-button">
+                <span>⭐</span>
+                <span>Following</span>
+            </button>
+        </div>
+
+        <!-- Column Headers -->
+        <div class="column-headers">
+            <div class="col-header">Activity</div>
+            <div class="col-header">Track</div>
+            <div class="col-header">Stats</div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content" id="activityFeed">
+            <!-- Activity Card 1 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="user-info">
+                        <span class="icon">👤</span>
+                        <span class="username">@musiclover</span>
+                        <span>shared a track</span>
+                    </div>
+                    <span class="timestamp">2h ago</span>
+                </div>
+
+                <div class="track-content">
+                    <div class="track-row">
+                        <div class="track-cell thumbnail">
+                            <div class="track-thumbnail">🎵</div>
+                        </div>
+                        <div class="track-cell info">
+                            <div class="track-title">Blinding Lights</div>
+                            <div class="track-artist">The Weeknd</div>
+                            <span class="source-badge source-spotify">SPOTIFY</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "This song never gets old! 🔥"
+                </div>
+
+                <div class="actions-row">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>❤</span>
+                            <span>023</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>005</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>↻</span>
+                            <span>012</span>
+                        </div>
+                    </div>
+                    <button class="play-button">
+                        <span>▶</span>
+                        <span>PLAY</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 2 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="user-info">
+                        <span class="icon">👤</span>
+                        <span class="username">@djkool</span>
+                        <span>shared a track</span>
+                    </div>
+                    <span class="timestamp">3h ago</span>
+                </div>
+
+                <div class="track-content">
+                    <div class="track-row">
+                        <div class="track-cell thumbnail">
+                            <div class="track-thumbnail">🎵</div>
+                        </div>
+                        <div class="track-cell info">
+                            <div class="track-title">Levitating</div>
+                            <div class="track-artist">Dua Lipa</div>
+                            <span class="source-badge source-youtube">YOUTUBE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-row">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>❤</span>
+                            <span>045</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>012</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>↻</span>
+                            <span>008</span>
+                        </div>
+                    </div>
+                    <button class="play-button">
+                        <span>▶</span>
+                        <span>PLAY</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 3 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="user-info">
+                        <span class="icon">👤</span>
+                        <span class="username">@popfan99</span>
+                        <span>shared a track</span>
+                    </div>
+                    <span class="timestamp">5h ago</span>
+                </div>
+
+                <div class="track-content">
+                    <div class="track-row">
+                        <div class="track-cell thumbnail">
+                            <div class="track-thumbnail">🎵</div>
+                        </div>
+                        <div class="track-cell info">
+                            <div class="track-title">good 4 u</div>
+                            <div class="track-artist">Olivia Rodrigo</div>
+                            <span class="source-badge source-spotify">SPOTIFY</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "Absolute banger"
+                </div>
+
+                <div class="actions-row">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>❤</span>
+                            <span>067</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>008</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>↻</span>
+                            <span>015</span>
+                        </div>
+                    </div>
+                    <button class="play-button">
+                        <span>▶</span>
+                        <span>PLAY</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 4 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="user-info">
+                        <span class="icon">👤</span>
+                        <span class="username">@musiclover</span>
+                        <span>shared a track</span>
+                    </div>
+                    <span class="timestamp">6h ago</span>
+                </div>
+
+                <div class="track-content">
+                    <div class="track-row">
+                        <div class="track-cell thumbnail">
+                            <div class="track-thumbnail">🎵</div>
+                        </div>
+                        <div class="track-cell info">
+                            <div class="track-title">Stay</div>
+                            <div class="track-artist">The Kid LAROI & Justin Bieber</div>
+                            <span class="source-badge source-youtube">YOUTUBE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "Can't stop replaying this one"
+                </div>
+
+                <div class="actions-row">
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>❤</span>
+                            <span>089</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>018</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>↻</span>
+                            <span>024</span>
+                        </div>
+                    </div>
+                    <button class="play-button">
+                        <span>▶</span>
+                        <span>PLAY</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-section">4 activities</div>
+            <div class="status-section">135 total interactions</div>
+            <div class="status-section">Last updated: 11:45 AM</div>
+        </div>
+    </div>
+
+    <script>
+        // Add click interactions
+        const cards = document.querySelectorAll('.activity-card');
+        cards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking play button
+                if (e.target.closest('.play-button')) return;
+
+                // Remove selected class from all cards
+                cards.forEach(c => c.classList.remove('selected'));
+                // Add selected class to clicked card
+                card.classList.add('selected');
+            });
+        });
+
+        // Play button functionality
+        const playButtons = document.querySelectorAll('.play-button');
+        playButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = button.closest('.activity-card');
+                const title = card.querySelector('.track-title').textContent;
+                const artist = card.querySelector('.track-artist').textContent;
+
+                // Simple alert - in real app would trigger music player
+                alert(`Now playing: ${title} by ${artist}`);
+            });
+        });
+
+        // Toolbar button functionality
+        const toolbarButtons = document.querySelectorAll('.toolbar-button');
+        toolbarButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const buttonText = button.textContent.trim();
+                if (buttonText.includes('Refresh')) {
+                    alert('Refreshing activity feed...');
+                } else if (buttonText.includes('Home')) {
+                    alert('Navigating to home...');
+                } else if (buttonText.includes('Following')) {
+                    alert('Showing followed users...');
+                }
+            });
+        });
+
+        // Menu item hover effect
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                alert(`${item.textContent} menu clicked`);
+            });
+        });
+
+        // Window controls
+        document.querySelector('.title-bar-controls').addEventListener('click', (e) => {
+            const button = e.target.closest('.title-bar-button');
+            if (button) {
+                const label = button.getAttribute('aria-label');
+                if (label === 'Close') {
+                    if (confirm('Close Jamzy Activity Feed?')) {
+                        alert('Window would close in a real application');
+                    }
+                } else if (label === 'Minimize') {
+                    alert('Window would minimize');
+                } else if (label === 'Maximize') {
+                    alert('Window would maximize');
+                }
+            }
+        });
+
+        // Stats interaction
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach(stat => {
+            stat.style.cursor = 'pointer';
+            stat.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const emoji = stat.querySelector('span:first-child').textContent;
+                const count = stat.querySelector('span:last-child').textContent;
+                let action = '';
+                if (emoji === '❤') action = 'likes';
+                else if (emoji === '💬') action = 'comments';
+                else if (emoji === '↻') action = 'recasts';
+                alert(`View ${count} ${action}`);
+            });
+        });
+    </script>
+</body>
+</html>

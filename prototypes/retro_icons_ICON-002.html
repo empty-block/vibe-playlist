@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON-002: Colorful Application Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .icon-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* SVG Icons */
+        svg {
+            width: 64px;
+            height: 64px;
+            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.15));
+        }
+
+        /* Navigation Bar Preview */
+        .nav-preview {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .nav-item-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        /* Design Notes */
+        .notes {
+            background: #fffbea;
+            border: 2px solid #ffd700;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 30px;
+        }
+
+        .notes h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .notes ul {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .notes li {
+            margin-bottom: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .icon-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .nav-preview {
+                padding: 15px;
+            }
+
+            .nav-item svg {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ICON-002</h1>
+        <p>Colorful Application Icons</p>
+    </div>
+
+    <div class="container">
+        <!-- Individual Icons Large View -->
+        <div class="section">
+            <div class="section-title">Icon Set - 64x64px</div>
+            <div class="icon-grid">
+                <!-- CHANNELS - Boombox -->
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Main body -->
+                            <rect x="8" y="16" width="48" height="32" fill="#d946ef" stroke="#000" stroke-width="2"/>
+                            <!-- Highlight on body -->
+                            <rect x="10" y="18" width="44" height="4" fill="#e879f9" stroke="none"/>
+                            <!-- Shadow on body -->
+                            <rect x="10" y="42" width="44" height="4" fill="#a21caf" stroke="none"/>
+
+                            <!-- Left speaker -->
+                            <circle cx="20" cy="32" r="9" fill="#06b6d4" stroke="#000" stroke-width="2"/>
+                            <circle cx="20" cy="32" r="6" fill="#0891b2" stroke="#000" stroke-width="1.5"/>
+                            <circle cx="20" cy="32" r="3" fill="#164e63" stroke="none"/>
+
+                            <!-- Right speaker -->
+                            <circle cx="44" cy="32" r="9" fill="#06b6d4" stroke="#000" stroke-width="2"/>
+                            <circle cx="44" cy="32" r="6" fill="#0891b2" stroke="#000" stroke-width="1.5"/>
+                            <circle cx="44" cy="32" r="3" fill="#164e63" stroke="none"/>
+
+                            <!-- Antenna left -->
+                            <line x1="14" y1="16" x2="10" y2="8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="10" cy="8" r="2" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+
+                            <!-- Antenna right -->
+                            <line x1="50" y1="16" x2="54" y2="8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="54" cy="8" r="2" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+
+                            <!-- Button panel -->
+                            <rect x="26" y="20" width="12" height="8" fill="#fbbf24" stroke="#000" stroke-width="1.5" rx="1"/>
+                            <!-- Button shadows -->
+                            <rect x="27" y="26" width="10" height="2" fill="#d97706" stroke="none"/>
+
+                            <!-- Handle -->
+                            <path d="M 20 14 Q 32 6 44 14" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+                            <path d="M 20 14 Q 32 8 44 14" fill="none" stroke="#d946ef" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="icon-label">Channels</div>
+                </div>
+
+                <!-- ACTIVITY - Bar Graph -->
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Background plate -->
+                            <rect x="6" y="6" width="52" height="52" fill="#f0f0f0" stroke="#000" stroke-width="2" rx="2"/>
+                            <!-- Highlight -->
+                            <rect x="8" y="8" width="48" height="6" fill="#ffffff" stroke="none"/>
+                            <!-- Shadow -->
+                            <rect x="8" y="50" width="48" height="6" fill="#d0d0d0" stroke="none"/>
+
+                            <!-- Bar 1 - Green (shortest) -->
+                            <rect x="14" y="38" width="10" height="14" fill="#22c55e" stroke="#000" stroke-width="1.5"/>
+                            <rect x="15" y="39" width="8" height="3" fill="#4ade80" stroke="none"/>
+                            <rect x="15" y="48" width="8" height="3" fill="#16a34a" stroke="none"/>
+
+                            <!-- Bar 2 - Cyan (medium) -->
+                            <rect x="27" y="28" width="10" height="24" fill="#06b6d4" stroke="#000" stroke-width="1.5"/>
+                            <rect x="28" y="29" width="8" height="4" fill="#22d3ee" stroke="none"/>
+                            <rect x="28" y="46" width="8" height="5" fill="#0891b2" stroke="none"/>
+
+                            <!-- Bar 3 - Yellow (tallest) -->
+                            <rect x="40" y="18" width="10" height="34" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+                            <rect x="41" y="19" width="8" height="5" fill="#fde047" stroke="none"/>
+                            <rect x="41" y="44" width="8" height="7" fill="#d97706" stroke="none"/>
+
+                            <!-- Arrow pointing up -->
+                            <path d="M 54 20 L 54 14 L 60 14" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M 60 14 L 56 18" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="icon-label">Activity</div>
+                </div>
+
+                <!-- PROFILE - ID Card -->
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Card background -->
+                            <rect x="8" y="14" width="48" height="36" fill="#fbbf24" stroke="#000" stroke-width="2" rx="3"/>
+                            <!-- Card highlight -->
+                            <rect x="10" y="16" width="44" height="5" fill="#fde047" stroke="none"/>
+                            <!-- Card shadow -->
+                            <rect x="10" y="43" width="44" height="5" fill="#d97706" stroke="none"/>
+
+                            <!-- Photo area background -->
+                            <rect x="14" y="20" width="16" height="20" fill="#e879f9" stroke="#000" stroke-width="1.5" rx="1"/>
+
+                            <!-- Smiley face -->
+                            <circle cx="22" cy="28" r="6" fill="#d946ef" stroke="#000" stroke-width="1.5"/>
+                            <!-- Eyes -->
+                            <circle cx="20" cy="26" r="1.5" fill="#000"/>
+                            <circle cx="24" cy="26" r="1.5" fill="#000"/>
+                            <!-- Smile -->
+                            <path d="M 19 30 Q 22 32 25 30" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+
+                            <!-- Hair/highlight -->
+                            <path d="M 18 24 Q 22 22 26 24" fill="none" stroke="#f0abfc" stroke-width="1.5" stroke-linecap="round"/>
+
+                            <!-- Text lines (info) -->
+                            <rect x="34" y="22" width="18" height="3" fill="#d946ef" stroke="none" rx="1"/>
+                            <rect x="34" y="27" width="14" height="3" fill="#d946ef" stroke="none" rx="1"/>
+                            <rect x="34" y="32" width="16" height="3" fill="#d946ef" stroke="none" rx="1"/>
+
+                            <!-- Bottom stripe -->
+                            <rect x="14" y="42" width="36" height="4" fill="#06b6d4" stroke="#000" stroke-width="1.5" rx="1"/>
+                            <rect x="15" y="43" width="34" height="1.5" fill="#22d3ee" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="icon-label">Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Bar Preview -->
+        <div class="section">
+            <div class="section-title">Navigation Bar Preview - 32x32px</div>
+            <div class="nav-preview">
+                <div class="nav-item">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="16" width="48" height="32" fill="#d946ef" stroke="#000" stroke-width="2"/>
+                        <rect x="10" y="18" width="44" height="4" fill="#e879f9" stroke="none"/>
+                        <rect x="10" y="42" width="44" height="4" fill="#a21caf" stroke="none"/>
+                        <circle cx="20" cy="32" r="9" fill="#06b6d4" stroke="#000" stroke-width="2"/>
+                        <circle cx="20" cy="32" r="6" fill="#0891b2" stroke="#000" stroke-width="1.5"/>
+                        <circle cx="20" cy="32" r="3" fill="#164e63" stroke="none"/>
+                        <circle cx="44" cy="32" r="9" fill="#06b6d4" stroke="#000" stroke-width="2"/>
+                        <circle cx="44" cy="32" r="6" fill="#0891b2" stroke="#000" stroke-width="1.5"/>
+                        <circle cx="44" cy="32" r="3" fill="#164e63" stroke="none"/>
+                        <line x1="14" y1="16" x2="10" y2="8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="10" cy="8" r="2" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+                        <line x1="50" y1="16" x2="54" y2="8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="54" cy="8" r="2" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+                        <rect x="26" y="20" width="12" height="8" fill="#fbbf24" stroke="#000" stroke-width="1.5" rx="1"/>
+                        <rect x="27" y="26" width="10" height="2" fill="#d97706" stroke="none"/>
+                        <path d="M 20 14 Q 32 6 44 14" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M 20 14 Q 32 8 44 14" fill="none" stroke="#d946ef" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="nav-item-label">Channels</div>
+                </div>
+
+                <div class="nav-item">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="6" y="6" width="52" height="52" fill="#f0f0f0" stroke="#000" stroke-width="2" rx="2"/>
+                        <rect x="8" y="8" width="48" height="6" fill="#ffffff" stroke="none"/>
+                        <rect x="8" y="50" width="48" height="6" fill="#d0d0d0" stroke="none"/>
+                        <rect x="14" y="38" width="10" height="14" fill="#22c55e" stroke="#000" stroke-width="1.5"/>
+                        <rect x="15" y="39" width="8" height="3" fill="#4ade80" stroke="none"/>
+                        <rect x="15" y="48" width="8" height="3" fill="#16a34a" stroke="none"/>
+                        <rect x="27" y="28" width="10" height="24" fill="#06b6d4" stroke="#000" stroke-width="1.5"/>
+                        <rect x="28" y="29" width="8" height="4" fill="#22d3ee" stroke="none"/>
+                        <rect x="28" y="46" width="8" height="5" fill="#0891b2" stroke="none"/>
+                        <rect x="40" y="18" width="10" height="34" fill="#fbbf24" stroke="#000" stroke-width="1.5"/>
+                        <rect x="41" y="19" width="8" height="5" fill="#fde047" stroke="none"/>
+                        <rect x="41" y="44" width="8" height="7" fill="#d97706" stroke="none"/>
+                        <path d="M 54 20 L 54 14 L 60 14" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M 60 14 L 56 18" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="nav-item-label">Activity</div>
+                </div>
+
+                <div class="nav-item">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="14" width="48" height="36" fill="#fbbf24" stroke="#000" stroke-width="2" rx="3"/>
+                        <rect x="10" y="16" width="44" height="5" fill="#fde047" stroke="none"/>
+                        <rect x="10" y="43" width="44" height="5" fill="#d97706" stroke="none"/>
+                        <rect x="14" y="20" width="16" height="20" fill="#e879f9" stroke="#000" stroke-width="1.5" rx="1"/>
+                        <circle cx="22" cy="28" r="6" fill="#d946ef" stroke="#000" stroke-width="1.5"/>
+                        <circle cx="20" cy="26" r="1.5" fill="#000"/>
+                        <circle cx="24" cy="26" r="1.5" fill="#000"/>
+                        <path d="M 19 30 Q 22 32 25 30" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M 18 24 Q 22 22 26 24" fill="none" stroke="#f0abfc" stroke-width="1.5" stroke-linecap="round"/>
+                        <rect x="34" y="22" width="18" height="3" fill="#d946ef" stroke="none" rx="1"/>
+                        <rect x="34" y="27" width="14" height="3" fill="#d946ef" stroke="none" rx="1"/>
+                        <rect x="34" y="32" width="16" height="3" fill="#d946ef" stroke="none" rx="1"/>
+                        <rect x="14" y="42" width="36" height="4" fill="#06b6d4" stroke="#000" stroke-width="1.5" rx="1"/>
+                        <rect x="15" y="43" width="34" height="1.5" fill="#22d3ee" stroke="none"/>
+                    </svg>
+                    <div class="nav-item-label">Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="notes">
+            <h3>Design Notes - 90s Application Icon Style</h3>
+            <ul>
+                <li><strong>Color Palette:</strong> Vibrant primary colors (magenta #d946ef, cyan #06b6d4, yellow #fbbf24, green #22c55e)</li>
+                <li><strong>Shading Technique:</strong> Simple 3-level shading (highlight, base, shadow) mimicking early 3D rendering</li>
+                <li><strong>Black Outlines:</strong> 1.5-2.5px solid black strokes for clear definition and readability</li>
+                <li><strong>Icon Metaphors:</strong> Literal, recognizable objects (boombox = music/channels, graph = activity, ID card = profile)</li>
+                <li><strong>Playful Details:</strong> Antennas on boombox, smiley face on ID card, upward arrow on graph</li>
+                <li><strong>Multiple Colors:</strong> Each icon uses 4-5 distinct colors for visual richness</li>
+                <li><strong>Scalability:</strong> Designed at 64x64px but scales cleanly to 32x32px for navigation bars</li>
+                <li><strong>Historical Reference:</strong> Inspired by Winamp (boombox aesthetic), Windows 98 system icons (simple geometric shapes), and ICQ/AIM era (friendly, approachable)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy - Windows 95 Navigation & Player Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Arial, sans-serif;
+            background: #008080; /* Teal Windows 95 desktop */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .mobile-frame {
+            max-width: 428px;
+            width: 100%;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        .screen-content {
+            background: #C0C0C8;
+            height: 600px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* Mock content area */
+        .content-area {
+            padding: 16px;
+            color: #000;
+            font-size: 11px;
+        }
+
+        .content-area h3 {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        /* Music Player Bar - Windows Media Player style */
+        .player-bar {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            position: fixed;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 428px;
+            z-index: 100;
+        }
+
+        /* LED Status Indicator Strip */
+        .status-strip {
+            height: 4px;
+            background: linear-gradient(90deg,
+                #FF0000 0%,
+                #FF6600 20%,
+                #FFCC00 40%,
+                #00FF00 60%,
+                #00CCFF 80%,
+                #0066FF 100%
+            );
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* YouTube Video Container */
+        .video-container {
+            background: #000;
+            border: 2px inset #808080;
+            margin: 6px 8px;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-placeholder {
+            color: #FF00FF;
+            font-size: 10px;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .yt-watermark {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FF0000;
+            padding: 2px 6px;
+            font-size: 9px;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+
+        /* Track Info Section - Inset Text Field Style */
+        .track-info {
+            margin: 0 8px 6px 8px;
+            padding: 6px;
+            background: #FFFFFF;
+            border: 2px inset #808080;
+            font-size: 10px;
+        }
+
+        .track-title {
+            font-weight: bold;
+            color: #000080;
+            margin-bottom: 2px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .track-subtitle {
+            color: #000;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .track-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+        }
+
+        .source-badge {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 2px 6px;
+            font-weight: bold;
+            color: #FF00FF;
+            font-size: 8px;
+        }
+
+        .shared-by {
+            color: #808080;
+        }
+
+        /* Playback Controls - Win95 Button Style */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 8px 8px 8px;
+        }
+
+        .control-btn {
+            width: 36px;
+            height: 28px;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: #000;
+            transition: all 0.05s;
+        }
+
+        .control-btn:active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+            padding-top: 2px;
+            padding-left: 2px;
+        }
+
+        .control-btn.primary {
+            width: 44px;
+            background: #000080;
+            color: #00FFFF;
+            font-size: 16px;
+        }
+
+        .control-btn:hover {
+            background: #D4D4DC;
+        }
+
+        .control-btn.primary:hover {
+            background: #0000A0;
+        }
+
+        /* Bottom Navigation - Win95 Toolbar Style */
+        .bottom-nav {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 428px;
+            display: flex;
+            justify-content: space-around;
+            padding: 4px 8px;
+            z-index: 101;
+            height: 48px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            cursor: pointer;
+            margin: 0 2px;
+            transition: all 0.05s;
+            min-width: 0;
+        }
+
+        .nav-btn:active,
+        .nav-btn.active {
+            border-top: 2px solid #000000;
+            border-left: 2px solid #000000;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+            padding-top: 2px;
+        }
+
+        .nav-btn:hover {
+            background: #D4D4DC;
+        }
+
+        .nav-icon {
+            width: 16px;
+            height: 16px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-label {
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000;
+            white-space: nowrap;
+        }
+
+        /* Icon styles using Unicode and CSS */
+        .icon-channels::before {
+            content: "📺";
+        }
+
+        .icon-activity::before {
+            content: "⚡";
+        }
+
+        .icon-profile::before {
+            content: "👤";
+        }
+
+        .icon-prev::before {
+            content: "⏮";
+        }
+
+        .icon-play::before {
+            content: "▶";
+        }
+
+        .icon-pause::before {
+            content: "⏸";
+        }
+
+        .icon-next::before {
+            content: "⏭";
+        }
+
+        /* Desktop info overlay */
+        .desktop-info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            padding: 12px;
+            font-size: 11px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+
+        .desktop-info h3 {
+            background: #000080;
+            color: #FFFFFF;
+            margin: -12px -12px 8px -12px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .desktop-info p {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+            }
+
+            .mobile-frame {
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .player-bar,
+            .bottom-nav {
+                max-width: 100%;
+            }
+
+            .desktop-info {
+                display: none;
+            }
+        }
+
+        /* Additional Win95 styling details */
+        .dotted-line {
+            border-bottom: 1px dotted #808080;
+            margin: 4px 0;
+        }
+
+        /* Scrollbar styling for authenticity */
+        .screen-content::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .screen-content::-webkit-scrollbar-track {
+            background: #C0C0C8;
+        }
+
+        .screen-content::-webkit-scrollbar-thumb {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Desktop Info Panel -->
+    <div class="desktop-info">
+        <h3>📋 Design Mockup Info</h3>
+        <p><strong>Prototype:</strong> NP-002</p>
+        <p><strong>Style:</strong> Windows 95 / Media Player Classic</p>
+        <p><strong>Features:</strong></p>
+        <ul style="margin-left: 16px; line-height: 1.6;">
+            <li>LED status indicator</li>
+            <li>Embedded YouTube player</li>
+            <li>Inset track info fields</li>
+            <li>3D raised buttons</li>
+            <li>Win95 toolbar navigation</li>
+        </ul>
+    </div>
+
+    <!-- Mobile Frame -->
+    <div class="mobile-frame">
+        <!-- Screen Content -->
+        <div class="screen-content">
+            <div class="content-area">
+                <h3>🎵 Jamzy - Windows 95 Edition</h3>
+                <div class="dotted-line"></div>
+                <p style="margin: 12px 0;">This mockup demonstrates the retro Windows 95 aesthetic applied to Jamzy's mobile navigation and music player interface.</p>
+                <p style="margin: 12px 0;"><strong>Key Design Elements:</strong></p>
+                <ul style="margin-left: 16px; line-height: 1.8;">
+                    <li>Classic #C0C0C8 gray background</li>
+                    <li>Inset/outset border treatments</li>
+                    <li>Windows Media Player inspired layout</li>
+                    <li>LED-style status indicator strip</li>
+                    <li>Toolbar-style bottom navigation</li>
+                    <li>MS Sans Serif typography</li>
+                    <li>3D button effects on interaction</li>
+                </ul>
+                <div class="dotted-line"></div>
+                <p style="margin: 12px 0; color: #808080; font-size: 10px;">Scroll down to see the player and navigation bars at the bottom of the viewport.</p>
+
+                <!-- Spacer to demonstrate scrolling -->
+                <div style="height: 200px;"></div>
+            </div>
+        </div>
+
+        <!-- Music Player Bar -->
+        <div class="player-bar">
+            <!-- LED Status Strip -->
+            <div class="status-strip"></div>
+
+            <!-- YouTube Video Container -->
+            <div class="video-container">
+                <div class="video-placeholder">
+                    [YouTube Video Player]<br>
+                    Tame Impala - My Old Ways<br>
+                    <span style="font-size: 8px; color: #808080;">Video must remain visible per YouTube TOS</span>
+                </div>
+                <div class="yt-watermark">YouTube</div>
+            </div>
+
+            <!-- Track Info - Inset Field -->
+            <div class="track-info">
+                <div class="track-title">Tame Impala - My Old Ways (Official Video)</div>
+                <div class="track-subtitle">My Old Ways (Official Video)</div>
+                <div class="track-meta">
+                    <div class="source-badge">YOUTUBE</div>
+                    <span class="shared-by">shared by @musiclover</span>
+                </div>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="controls">
+                <button class="control-btn">
+                    <span class="icon-prev"></span>
+                </button>
+                <button class="control-btn primary">
+                    <span class="icon-play"></span>
+                </button>
+                <button class="control-btn">
+                    <span class="icon-next"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation - Win95 Toolbar -->
+        <div class="bottom-nav">
+            <button class="nav-btn active">
+                <div class="nav-icon icon-channels"></div>
+                <div class="nav-label">Channels</div>
+            </button>
+            <button class="nav-btn">
+                <div class="nav-icon icon-activity"></div>
+                <div class="nav-label">Activity</div>
+            </button>
+            <button class="nav-btn">
+                <div class="nav-icon icon-profile"></div>
+                <div class="nav-label">Profile</div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simple interaction demo
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Toggle play/pause
+        let isPlaying = true;
+        const playBtn = document.querySelector('.control-btn.primary span');
+        document.querySelector('.control-btn.primary').addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            playBtn.className = isPlaying ? 'icon-play' : 'icon-pause';
+        });
+
+        // Console log for development
+        console.log('Jamzy Windows 95 Mockup - NP-002');
+        console.log('Design elements: LED strip, inset fields, 3D buttons, toolbar nav');
+    </script>
+</body>
+</html>
