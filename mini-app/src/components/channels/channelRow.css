@@ -1,5 +1,6 @@
-/* Channel Item - Windows 95 Style */
-.win95-channel-item {
+/* Channel Item - Windows 95 Style - Light Mode */
+.theme-light .win95-channel-item,
+body:not(.theme-dark) .win95-channel-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -12,22 +13,60 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.win95-channel-item.even {
+.theme-light .win95-channel-item.even,
+body:not(.theme-dark) .win95-channel-item.even {
   background: #F0F0F0;
 }
 
-.win95-channel-item:hover {
+.theme-light .win95-channel-item:hover,
+body:not(.theme-dark) .win95-channel-item:hover {
   background: #000080 !important;
   color: #FFFFFF;
   border: 2px dotted #FFFFFF;
 }
 
-.win95-channel-item:active {
+.theme-light .win95-channel-item:active,
+body:not(.theme-dark) .win95-channel-item:active {
   background: #00007F !important;
 }
 
-.win95-channel-item:focus {
+.theme-light .win95-channel-item:focus,
+body:not(.theme-dark) .win95-channel-item:focus {
   outline: 2px dotted #000000;
+  outline-offset: -4px;
+}
+
+/* Channel Item - Dark Mode */
+.theme-dark .win95-channel-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: 2px solid #00ff00;
+  background: #000000;
+  transition: all 0.2s ease;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-dark .win95-channel-item.even {
+  background: #0a0a0a;
+}
+
+.theme-dark .win95-channel-item:hover {
+  background: #1a1a1a !important;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.theme-dark .win95-channel-item:active {
+  background: #0d0d0d !important;
+}
+
+.theme-dark .win95-channel-item:focus {
+  outline: 2px dotted #00ff00;
   outline-offset: -4px;
 }
 
@@ -95,19 +134,35 @@
   gap: 6px;
 }
 
-.win95-channel-name {
+/* Channel Name - Light Mode */
+.theme-light .win95-channel-name,
+body:not(.theme-dark) .win95-channel-name {
   font-weight: bold;
   font-size: 13px;
   line-height: 1.2;
   color: #000000;
 }
 
-.win95-channel-item:hover .win95-channel-name {
+.theme-light .win95-channel-item:hover .win95-channel-name,
+body:not(.theme-dark) .win95-channel-item:hover .win95-channel-name {
   color: #FFFFFF;
 }
 
-/* User Badge - Windows 95 3D Style */
-.win95-user-badge {
+/* Channel Name - Dark Mode */
+.theme-dark .win95-channel-name {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #00ff00;
+}
+
+.theme-dark .win95-channel-item:hover .win95-channel-name {
+  color: #00ff00;
+}
+
+/* User Badge - Windows 95 3D Style - Light Mode */
+.theme-light .win95-user-badge,
+body:not(.theme-dark) .win95-user-badge {
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
   border-left: 1px solid #FFFFFF;
@@ -121,7 +176,8 @@
   line-height: 1.4;
 }
 
-.win95-channel-item:hover .win95-user-badge {
+.theme-light .win95-channel-item:hover .win95-user-badge,
+body:not(.theme-dark) .win95-channel-item:hover .win95-user-badge {
   background: #FFFFFF;
   color: #000080;
   border-top: 1px solid #808080;
@@ -130,8 +186,27 @@
   border-bottom: 1px solid #FFFFFF;
 }
 
-/* Channel Description - Single line with ellipsis */
-.win95-channel-description {
+/* User Badge - Dark Mode */
+.theme-dark .win95-user-badge {
+  background: #001100;
+  border: 1px solid #00ff00;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #00ff00;
+  line-height: 1.4;
+}
+
+.theme-dark .win95-channel-item:hover .win95-user-badge {
+  background: #00ff00;
+  color: #000000;
+  border: 1px solid #00ff00;
+}
+
+/* Channel Description - Single line with ellipsis - Light Mode */
+.theme-light .win95-channel-description,
+body:not(.theme-dark) .win95-channel-description {
   font-size: 11px;
   line-height: 1.3;
   color: #666666;
@@ -140,8 +215,23 @@
   white-space: nowrap;
 }
 
-.win95-channel-item:hover .win95-channel-description {
+.theme-light .win95-channel-item:hover .win95-channel-description,
+body:not(.theme-dark) .win95-channel-item:hover .win95-channel-description {
   color: #FFFFFF;
+}
+
+/* Channel Description - Dark Mode */
+.theme-dark .win95-channel-description {
+  font-size: 11px;
+  line-height: 1.3;
+  color: #00aa00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-dark .win95-channel-item:hover .win95-channel-description {
+  color: #00ff00;
 }
 
 /* Responsive */

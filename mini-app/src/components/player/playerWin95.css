@@ -4,14 +4,19 @@
   bottom: 60px; /* Space for navigation bar */
   left: 4px;
   right: 4px;
-  background: #C0C0C8;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
   padding: 0;
   z-index: 999;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-family: var(--font-main);
+}
+
+/* Dark mode adds glow effect to player */
+.theme-dark .win95-player-bar {
+  box-shadow: 0 0 20px var(--glow-accent);
 }
 
 .win95-player-titlebar {
@@ -23,6 +28,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+/* Dark mode: darker gradient with green accent */
+.theme-dark .win95-player-titlebar {
+  background: linear-gradient(90deg, #001a00, #003300);
+  color: var(--text-lcd);
+  border-bottom: 1px solid var(--border-accent);
+  text-shadow: 0 0 5px var(--glow-accent);
 }
 
 .win95-player-titlebar-text {
@@ -46,24 +59,31 @@
 .win95-titlebar-button {
   width: 14px;
   height: 13px;
-  background: #C0C0C8;
-  border-top: 1px solid #FFFFFF;
-  border-left: 1px solid #FFFFFF;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-raised-light);
+  border-left: 1px solid var(--border-raised-light);
+  border-right: 1px solid var(--border-raised-dark);
+  border-bottom: 1px solid var(--border-raised-dark);
   font-size: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-weight: bold;
+  color: var(--text-primary);
 }
 
 .win95-titlebar-button:active {
-  border-top: 1px solid #000000;
-  border-left: 1px solid #000000;
-  border-right: 1px solid #FFFFFF;
-  border-bottom: 1px solid #FFFFFF;
+  border-top: 1px solid var(--border-sunken-light);
+  border-left: 1px solid var(--border-sunken-light);
+  border-right: 1px solid var(--border-sunken-dark);
+  border-bottom: 1px solid var(--border-sunken-dark);
+}
+
+/* Dark mode effects */
+.theme-dark .win95-titlebar-button:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 8px var(--glow-accent);
 }
 
 .win95-player-content {
@@ -316,11 +336,11 @@
 }
 
 .win95-control-btn {
-  background: #C0C0C8;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
   width: 44px;
   height: 40px;
   display: flex;
@@ -329,16 +349,16 @@
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
-  color: #000080;
+  color: var(--accent-primary);
   user-select: none;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-family: var(--font-main);
 }
 
 .win95-control-btn:active {
-  border-top: 2px solid #000000;
-  border-left: 2px solid #000000;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
   transform: translateY(1px);
 }
 
@@ -349,8 +369,30 @@
 
 .win95-control-btn-play {
   width: 56px;
-  background: #00FFFF;
+  background: var(--accent-secondary);
   color: #000080;
+}
+
+/* Dark mode control button effects */
+.theme-dark .win95-control-btn {
+  background: var(--bg-card);
+  color: var(--text-lcd);
+}
+
+.theme-dark .win95-control-btn:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 10px var(--glow-accent);
+}
+
+.theme-dark .win95-control-btn:active {
+  background: var(--active-bg);
+}
+
+/* Play button stays cyan in dark mode */
+.theme-dark .win95-control-btn-play {
+  background: var(--accent-secondary);
+  color: #000000;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
 /* Mobile responsive */

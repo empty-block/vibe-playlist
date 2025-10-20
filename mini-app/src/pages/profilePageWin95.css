@@ -1,12 +1,22 @@
+/* Page Container - Background inherited from body */
 .profile-page {
-  min-height: 100vh !important;
-  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%) !important;
-  padding-bottom: 80px !important;
+  min-height: 100vh;
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-  color: #000;
   line-height: 1.4;
+}
+
+/* Light Mode Text Color */
+.theme-light .profile-page,
+body:not(.theme-dark) .profile-page {
+  color: #000;
+}
+
+/* Dark Mode Text Color */
+.theme-dark .profile-page {
+  color: #FFFFFF;
 }
 
 .profile-container {
@@ -18,12 +28,25 @@
   flex-direction: column;
 }
 
-/* Napster Buddy List Style Header */
-.profile-header {
+/* Napster Buddy List Style Header - Light Mode */
+.theme-light .profile-header,
+body:not(.theme-dark) .profile-header {
   background: linear-gradient(135deg, #000080 0%, #1084d0 100%);
   border: 2px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Napster Buddy List Style Header - Dark Mode */
+.theme-dark .profile-header {
+  background: #000000;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
   margin-bottom: 20px;
   padding: 16px;
   display: flex;
@@ -99,8 +122,9 @@
   font-weight: bold;
 }
 
-/* Feed Filter Buttons */
-.feed-filter {
+/* Feed Filter Buttons - Light Mode */
+.theme-light .feed-filter,
+body:not(.theme-dark) .feed-filter {
   background: #c0c0c0;
   border: 2px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
@@ -110,7 +134,19 @@
   gap: 4px;
 }
 
-.filter-button {
+/* Feed Filter Buttons - Dark Mode */
+.theme-dark .feed-filter {
+  background: #000000;
+  border: 2px solid #00ff00;
+  padding: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 4px;
+}
+
+/* Filter Button - Light Mode */
+.theme-light .filter-button,
+body:not(.theme-dark) .filter-button {
   flex: 1;
   padding: 8px 16px;
   background: #c0c0c0;
@@ -125,18 +161,49 @@
   color: #000000;
 }
 
-.filter-button:hover {
+.theme-light .filter-button:hover,
+body:not(.theme-dark) .filter-button:hover {
   background: #dfdfdf;
 }
 
-.filter-button.active {
+.theme-light .filter-button.active,
+body:not(.theme-dark) .filter-button.active {
   background: #000080;
   color: #ffffff;
   border-color: #000000 #ffffff #ffffff #000000;
 }
 
-.filter-button:active {
+.theme-light .filter-button:active,
+body:not(.theme-dark) .filter-button:active {
   border-color: #000000 #ffffff #ffffff #000000;
+}
+
+/* Filter Button - Dark Mode */
+.theme-dark .filter-button {
+  flex: 1;
+  padding: 8px 16px;
+  background: #001100;
+  border: 2px solid #00ff00;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: center;
+  color: #00ff00;
+}
+
+.theme-dark .filter-button:hover {
+  background: #003300;
+}
+
+.theme-dark .filter-button.active {
+  background: #00ff00;
+  color: #000000;
+}
+
+.theme-dark .filter-button:active {
+  background: #003300;
 }
 
 /* Track Feed Section */
@@ -144,7 +211,9 @@
   margin-top: 8px;
 }
 
-.feed-header {
+/* Feed Header - Light Mode */
+.theme-light .feed-header,
+body:not(.theme-dark) .feed-header {
   background: #d4d0c8;
   padding: 8px 12px;
   border: 2px solid;
@@ -155,18 +224,47 @@
   color: #000080;
 }
 
-.feed-type,
-.feed-count {
+/* Feed Header - Dark Mode */
+.theme-dark .feed-header {
+  background: #000000;
+  padding: 8px 12px;
+  border: 2px solid #00ff00;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ff00;
+}
+
+.theme-light .feed-type,
+.theme-light .feed-count,
+body:not(.theme-dark) .feed-type,
+body:not(.theme-dark) .feed-count {
   color: #000000;
 }
 
-/* Empty State */
-.profile-empty-state {
+.theme-dark .feed-type,
+.theme-dark .feed-count {
+  color: #00ff00;
+}
+
+/* Empty State - Light Mode */
+.theme-light .profile-empty-state,
+body:not(.theme-dark) .profile-empty-state {
   padding: 40px 20px;
   text-align: center;
   color: #000000;
   background: #ffffff;
   border: 2px solid #000000;
+  margin-bottom: 20px;
+}
+
+/* Empty State - Dark Mode */
+.theme-dark .profile-empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #00ff00;
+  background: #000000;
+  border: 2px solid #00ff00;
   margin-bottom: 20px;
 }
 
@@ -181,19 +279,30 @@
   line-height: 1.5;
 }
 
-/* Activity Card - AF-001 Design (reused from activity feed) */
-.win95-activity-card {
+/* Activity Card - AF-001 Design (reused from activity feed) - Light Mode */
+.theme-light .win95-activity-card,
+body:not(.theme-dark) .win95-activity-card {
   background: #ffffff;
   border: 3px solid #000000;
   margin-bottom: 20px;
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
+/* Activity Card - Dark Mode */
+.theme-dark .win95-activity-card {
+  background: #1a1a1a;
+  border: 3px solid #00ff00;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
 .win95-activity-card:last-child {
   margin-bottom: 0;
 }
 
-.win95-activity-header {
+/* Activity Card Header - Light Mode */
+.theme-light .win95-activity-header,
+body:not(.theme-dark) .win95-activity-header {
   background: #000080;
   color: white;
   padding: 10px 12px;
@@ -201,6 +310,17 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 2px solid #000000;
+}
+
+/* Activity Card Header - Dark Mode */
+.theme-dark .win95-activity-header {
+  background: #000000;
+  color: #00ff00;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #00ff00;
 }
 
 .win95-username {
@@ -214,12 +334,23 @@
   opacity: 0.9;
 }
 
-.win95-track-content {
+/* Track Content - Light Mode */
+.theme-light .win95-track-content,
+body:not(.theme-dark) .win95-track-content {
   display: flex;
   gap: 12px;
   padding: 12px;
   align-items: center;
   background: #d4d0c8;
+}
+
+/* Track Content - Dark Mode */
+.theme-dark .win95-track-content {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  align-items: center;
+  background: #000000;
 }
 
 .win95-thumbnail {
@@ -295,7 +426,9 @@
   transform: scale(0.95);
 }
 
-.win95-comment-box {
+/* Comment Box - Light Mode */
+.theme-light .win95-comment-box,
+body:not(.theme-dark) .win95-comment-box {
   background: #ffffff;
   padding: 10px 12px;
   font-size: 13px;
@@ -306,14 +439,38 @@
   color: #000000;
 }
 
-.win95-stats-row {
+/* Comment Box - Dark Mode */
+.theme-dark .win95-comment-box {
+  background: #001100;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+  border-top: 1px solid #003300;
+  border-bottom: 1px solid #003300;
+  color: #00ff00;
+}
+
+/* Stats Row - Light Mode */
+.theme-light .win95-stats-row,
+body:not(.theme-dark) .win95-stats-row {
   padding: 8px 12px;
   display: flex;
   gap: 12px;
   background: #d4d0c8;
 }
 
-.win95-stat-box {
+/* Stats Row - Dark Mode */
+.theme-dark .win95-stats-row {
+  padding: 8px 12px;
+  display: flex;
+  gap: 12px;
+  background: #000000;
+}
+
+/* Stat Box - Light Mode */
+.theme-light .win95-stat-box,
+body:not(.theme-dark) .win95-stat-box {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -329,8 +486,27 @@
   color: #000000;
 }
 
-.win95-stat-box:hover {
+.theme-light .win95-stat-box:hover,
+body:not(.theme-dark) .win95-stat-box:hover {
   background: #f8f8f8;
+}
+
+/* Stat Box - Dark Mode */
+.theme-dark .win95-stat-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: #001100;
+  border: 1px solid #00ff00;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  color: #00ff00;
+}
+
+.theme-dark .win95-stat-box:hover {
+  background: #003300;
 }
 
 .win95-stat-box .count {

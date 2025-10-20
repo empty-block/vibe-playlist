@@ -1,12 +1,22 @@
+/* Page Container - Background inherited from body */
 .activity-page {
-  min-height: 100vh !important;
-  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%) !important;
-  padding-bottom: 80px !important;
+  min-height: 100vh;
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-  color: #000;
   line-height: 1.4;
+}
+
+/* Light Mode Text Color */
+.theme-light .activity-page,
+body:not(.theme-dark) .activity-page {
+  color: #000;
+}
+
+/* Dark Mode Text Color */
+.theme-dark .activity-page {
+  color: #FFFFFF;
 }
 
 .activity-container {
@@ -18,8 +28,9 @@
   flex-direction: column;
 }
 
-/* Windows 95 Window Container */
-.activity-page .win95-window {
+/* Windows 95 Window Container - Light Mode */
+.theme-light .activity-page .win95-window,
+body:not(.theme-dark) .activity-page .win95-window {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -31,17 +42,46 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px) !important;
+  height: calc(100vh - 100px);
 }
 
-/* Title Bar */
-.activity-page .win95-title-bar {
+/* Windows 95 Window Container - Dark Mode */
+.theme-dark .activity-page .win95-window {
+  background: #000000;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+
+/* Title Bar - Light Mode (keep blue gradient) */
+.theme-light .activity-page .win95-title-bar,
+body:not(.theme-dark) .activity-page .win95-title-bar {
   background: linear-gradient(to right, #000080, #1084D0);
   padding: 3px 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Title Bar - Dark Mode (black with green border bottom) */
+.theme-dark .activity-page .win95-title-bar {
+  background: #000000;
+  border-bottom: 2px solid #00ff00;
+  padding: 3px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #00ff00;
   font-weight: bold;
   font-size: 13px;
   letter-spacing: 0.3px;
@@ -64,7 +104,9 @@
   gap: 2px;
 }
 
-.activity-page .win95-control-btn {
+/* Control Buttons - Light Mode */
+.theme-light .activity-page .win95-control-btn,
+body:not(.theme-dark) .activity-page .win95-control-btn {
   width: 18px;
   height: 16px;
   background: #C0C0C8;
@@ -83,11 +125,35 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.activity-page .win95-control-btn:active {
+.theme-light .activity-page .win95-control-btn:active,
+body:not(.theme-dark) .activity-page .win95-control-btn:active {
   border-top: 1px solid #000000;
   border-left: 1px solid #000000;
   border-right: 1px solid #FFFFFF;
   border-bottom: 1px solid #FFFFFF;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* Control Buttons - Dark Mode */
+.theme-dark .activity-page .win95-control-btn {
+  width: 18px;
+  height: 16px;
+  background: #000000;
+  border: 1px solid #00ff00;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #00ff00;
+  padding-bottom: 2px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-dark .activity-page .win95-control-btn:active {
+  background: #003300;
   padding-top: 1px;
   padding-bottom: 1px;
 }
@@ -114,8 +180,9 @@
   padding: 8px;
 }
 
-/* Status Bar */
-.activity-page .win95-status-bar {
+/* Status Bar - Light Mode */
+.theme-light .activity-page .win95-status-bar,
+body:not(.theme-dark) .activity-page .win95-status-bar {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   padding: 3px 4px;
@@ -125,7 +192,21 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.activity-page .win95-status-item {
+/* Status Bar - Dark Mode */
+.theme-dark .activity-page .win95-status-bar {
+  background: #000000;
+  border-top: 2px solid #00ff00;
+  padding: 3px 4px;
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  color: #00ff00;
+}
+
+/* Status Bar Items - Light Mode */
+.theme-light .activity-page .win95-status-item,
+body:not(.theme-dark) .activity-page .win95-status-item {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -136,13 +217,24 @@
   border-bottom: 1px solid #FFFFFF;
 }
 
+/* Status Bar Items - Dark Mode */
+.theme-dark .activity-page .win95-status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid #003300;
+  background: #001100;
+}
+
 .activity-page .win95-status-indicator {
   color: #00ff00;
   font-size: 10px;
 }
 
-/* Action Button */
-.activity-page .win95-action-button {
+/* Action Button - Light Mode */
+.theme-light .activity-page .win95-action-button,
+body:not(.theme-dark) .activity-page .win95-action-button {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -156,9 +248,11 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  color: #000000;
 }
 
-.activity-page .win95-action-button:active {
+.theme-light .activity-page .win95-action-button:active,
+body:not(.theme-dark) .activity-page .win95-action-button:active {
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
@@ -167,7 +261,30 @@
   padding-bottom: 4px;
 }
 
-.activity-page .win95-retry-btn {
+/* Action Button - Dark Mode */
+.theme-dark .activity-page .win95-action-button {
+  background: #000000;
+  border: 2px solid #00ff00;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #00ff00;
+}
+
+.theme-dark .activity-page .win95-action-button:active {
+  background: #003300;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+/* Retry Button - Light Mode */
+.theme-light .activity-page .win95-retry-btn,
+body:not(.theme-dark) .activity-page .win95-retry-btn {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -178,13 +295,31 @@
   font-size: 11px;
   font-weight: bold;
   cursor: pointer;
+  color: #000000;
 }
 
-.activity-page .win95-retry-btn:active {
+.theme-light .activity-page .win95-retry-btn:active,
+body:not(.theme-dark) .activity-page .win95-retry-btn:active {
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
+}
+
+/* Retry Button - Dark Mode */
+.theme-dark .activity-page .win95-retry-btn {
+  background: #000000;
+  border: 2px solid #00ff00;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #00ff00;
+}
+
+.theme-dark .activity-page .win95-retry-btn:active {
+  background: #003300;
 }
 
 /* Scrollbar Styling */
@@ -228,9 +363,11 @@
 
 /* Responsive */
 @media (max-width: 640px) {
-  .activity-page .win95-window {
+  .theme-light .activity-page .win95-window,
+  body:not(.theme-dark) .activity-page .win95-window,
+  .theme-dark .activity-page .win95-window {
     max-width: 100%;
-    height: calc(100vh - 85px) !important;
+    height: calc(100vh - 85px);
     margin: 0 8px;
   }
 
