@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON-003: Internet Explorer Era Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans', Arial, sans-serif;
+            background: linear-gradient(180deg, #0055AA 0%, #0088CC 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: normal;
+        }
+
+        /* Icon Grid */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .icon-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .icon-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 8px;
+            border: 1px solid #d0d0d0;
+        }
+
+        .icon-label {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .icon-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Navigation Bar Demo */
+        .navbar-demo {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 50px;
+        }
+
+        .navbar-demo h2 {
+            color: #003366;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .toolbar {
+            background: linear-gradient(180deg, #ffffff 0%, #e8e8e8 100%);
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .toolbar-button {
+            background: linear-gradient(180deg, #ffffff 0%, #e8e8e8 100%);
+            border: 1px solid #999;
+            border-radius: 3px;
+            padding: 8px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            min-width: 80px;
+        }
+
+        .toolbar-button:hover {
+            background: linear-gradient(180deg, #fffacd 0%, #ffeaa7 100%);
+            border-color: #666;
+        }
+
+        .toolbar-button:active {
+            background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 100%);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .toolbar-button span {
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* SVG Icon Styles */
+        svg {
+            width: 64px;
+            height: 64px;
+            display: block;
+        }
+
+        .toolbar-button svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Design Notes */
+        .design-notes {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .design-notes h3 {
+            color: #003366;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .design-notes ul {
+            color: #333;
+            line-height: 1.8;
+            padding-left: 24px;
+        }
+
+        .design-notes li {
+            margin-bottom: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .icon-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ICON-003</h1>
+            <p class="subtitle">Internet Explorer Era Navigation Icons</p>
+        </header>
+
+        <!-- Individual Icon Showcase -->
+        <div class="icon-grid">
+            <div class="icon-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Satellite Dish Gradient -->
+                            <linearGradient id="dishGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00DDFF;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#00AADD;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0088BB;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="dishHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Dish Base -->
+                        <ellipse cx="32" cy="48" rx="8" ry="3" fill="#0066AA" opacity="0.3"/>
+
+                        <!-- Pole -->
+                        <rect x="30" y="32" width="4" height="16" fill="#0088BB" rx="1"/>
+
+                        <!-- Dish Body -->
+                        <path d="M 16 24 Q 32 36 48 24 L 48 28 Q 32 40 16 28 Z"
+                              fill="url(#dishGradient)"
+                              stroke="#006699"
+                              stroke-width="1.5"/>
+
+                        <!-- Dish Highlight -->
+                        <ellipse cx="32" cy="24" rx="14" ry="4"
+                                 fill="url(#dishHighlight)"/>
+
+                        <!-- Signal Waves -->
+                        <path d="M 32 16 Q 26 12 20 12"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.8"/>
+                        <path d="M 32 16 Q 38 12 44 12"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.8"/>
+                        <path d="M 32 14 Q 24 8 16 8"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.5"/>
+                        <path d="M 32 14 Q 40 8 48 8"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.5"/>
+
+                        <!-- Center Receiver -->
+                        <circle cx="32" cy="24" r="3" fill="#FFCC00"/>
+                        <circle cx="32" cy="24" r="2" fill="#FFE066"/>
+                    </svg>
+                </div>
+                <div class="icon-label">CHANNELS</div>
+                <div class="icon-description">Broadcast satellite dish with signal waves - cyan gradient with professional shine</div>
+            </div>
+
+            <div class="icon-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Gauge Body Gradient -->
+                            <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFEE44;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#FFCC22;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#44DD44;stop-opacity:1" />
+                            </linearGradient>
+                            <radialGradient id="gaugeShine" cx="30%" cy="30%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.5" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Gauge Shadow -->
+                        <ellipse cx="32" cy="54" rx="18" ry="3" fill="#000000" opacity="0.15"/>
+
+                        <!-- Gauge Body -->
+                        <circle cx="32" cy="34" r="22" fill="url(#gaugeGradient)" stroke="#CC9900" stroke-width="2"/>
+
+                        <!-- Gauge Shine -->
+                        <circle cx="32" cy="34" r="22" fill="url(#gaugeShine)"/>
+
+                        <!-- Gauge Face -->
+                        <circle cx="32" cy="34" r="18" fill="#FFFFFF" opacity="0.9"/>
+
+                        <!-- Tick Marks -->
+                        <g stroke="#333333" stroke-width="2" stroke-linecap="round">
+                            <line x1="20" y1="42" x2="23" y2="40"/>
+                            <line x1="17" y1="34" x2="20" y2="34"/>
+                            <line x1="20" y1="26" x2="23" y2="28"/>
+                            <line x1="26" y1="20" x2="28" y2="23"/>
+                            <line x1="32" y1="18" x2="32" y2="21"/>
+                            <line x1="38" y1="20" x2="36" y2="23"/>
+                            <line x1="44" y1="26" x2="41" y2="28"/>
+                            <line x1="47" y1="34" x2="44" y2="34"/>
+                        </g>
+
+                        <!-- Colored Segments -->
+                        <path d="M 20 42 A 18 18 0 0 1 26 20"
+                              stroke="#FF6600"
+                              stroke-width="3"
+                              fill="none"
+                              opacity="0.6"/>
+                        <path d="M 26 20 A 18 18 0 0 1 38 20"
+                              stroke="#FFCC00"
+                              stroke-width="3"
+                              fill="none"
+                              opacity="0.6"/>
+                        <path d="M 38 20 A 18 18 0 0 1 44 26"
+                              stroke="#44DD44"
+                              stroke-width="3"
+                              fill="none"
+                              opacity="0.6"/>
+
+                        <!-- Needle -->
+                        <g transform="rotate(45 32 34)">
+                            <polygon points="32,34 30,36 32,22 34,36"
+                                     fill="#CC0000"/>
+                            <polygon points="32,22 31,23 32,20 33,23"
+                                     fill="#FF3333"/>
+                        </g>
+
+                        <!-- Center Cap -->
+                        <circle cx="32" cy="34" r="3" fill="#333333"/>
+                        <circle cx="32" cy="34" r="2" fill="#666666"/>
+                    </svg>
+                </div>
+                <div class="icon-label">ACTIVITY</div>
+                <div class="icon-description">Speedometer gauge with needle - yellow to green gradient showing momentum</div>
+            </div>
+
+            <div class="icon-card">
+                <div class="icon-wrapper">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- Profile Circle Gradient -->
+                            <linearGradient id="profileGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF44DD;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#DD22BB;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#BB1199;stop-opacity:1" />
+                            </linearGradient>
+                            <radialGradient id="profileShine" cx="35%" cy="25%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Outer Circle Shadow -->
+                        <circle cx="32" cy="34" r="24" fill="#000000" opacity="0.15"/>
+
+                        <!-- Outer Circle -->
+                        <circle cx="32" cy="32" r="24"
+                                fill="url(#profileGradient)"
+                                stroke="#991177"
+                                stroke-width="2"/>
+
+                        <!-- Circle Shine -->
+                        <circle cx="32" cy="32" r="24" fill="url(#profileShine)"/>
+
+                        <!-- Inner White Background -->
+                        <circle cx="32" cy="32" r="20" fill="#FFFFFF" opacity="0.95"/>
+
+                        <!-- Person Head -->
+                        <circle cx="32" cy="26" r="7" fill="#DD22BB"/>
+                        <circle cx="32" cy="26" r="7" fill="url(#profileShine)"/>
+
+                        <!-- Person Body -->
+                        <path d="M 18 50 Q 18 38 32 38 Q 46 38 46 50"
+                              fill="#DD22BB"
+                              clip-path="circle(20px at 32px 32px)"/>
+                        <ellipse cx="32" cy="42" rx="12" ry="6"
+                                 fill="url(#profileShine)"
+                                 opacity="0.4"
+                                 clip-path="circle(20px at 32px 32px)"/>
+                    </svg>
+                </div>
+                <div class="icon-label">PROFILE</div>
+                <div class="icon-description">Person silhouette in circle - magenta gradient with classic Windows style</div>
+            </div>
+        </div>
+
+        <!-- Toolbar Demo -->
+        <div class="navbar-demo">
+            <h2>Microsoft Toolbar Style Navigation</h2>
+            <div class="toolbar">
+                <button class="toolbar-button">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="dishGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00DDFF;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#00AADD;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0088BB;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="dishHighlight2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <ellipse cx="32" cy="48" rx="8" ry="3" fill="#0066AA" opacity="0.3"/>
+                        <rect x="30" y="32" width="4" height="16" fill="#0088BB" rx="1"/>
+                        <path d="M 16 24 Q 32 36 48 24 L 48 28 Q 32 40 16 28 Z"
+                              fill="url(#dishGradient2)"
+                              stroke="#006699"
+                              stroke-width="1.5"/>
+                        <ellipse cx="32" cy="24" rx="14" ry="4"
+                                 fill="url(#dishHighlight2)"/>
+                        <path d="M 32 16 Q 26 12 20 12"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.8"/>
+                        <path d="M 32 16 Q 38 12 44 12"
+                              stroke="#00DDFF"
+                              stroke-width="2"
+                              fill="none"
+                              stroke-linecap="round"
+                              opacity="0.8"/>
+                        <circle cx="32" cy="24" r="3" fill="#FFCC00"/>
+                    </svg>
+                    <span>Channels</span>
+                </button>
+
+                <button class="toolbar-button">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="gaugeGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFEE44;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#FFCC22;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#44DD44;stop-opacity:1" />
+                            </linearGradient>
+                            <radialGradient id="gaugeShine2" cx="30%" cy="30%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.5" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="32" cy="34" r="22" fill="url(#gaugeGradient2)" stroke="#CC9900" stroke-width="2"/>
+                        <circle cx="32" cy="34" r="22" fill="url(#gaugeShine2)"/>
+                        <circle cx="32" cy="34" r="18" fill="#FFFFFF" opacity="0.9"/>
+                        <g stroke="#333333" stroke-width="2" stroke-linecap="round">
+                            <line x1="20" y1="42" x2="23" y2="40"/>
+                            <line x1="17" y1="34" x2="20" y2="34"/>
+                            <line x1="20" y1="26" x2="23" y2="28"/>
+                            <line x1="32" y1="18" x2="32" y2="21"/>
+                            <line x1="44" y1="26" x2="41" y2="28"/>
+                            <line x1="47" y1="34" x2="44" y2="34"/>
+                        </g>
+                        <g transform="rotate(45 32 34)">
+                            <polygon points="32,34 30,36 32,22 34,36" fill="#CC0000"/>
+                        </g>
+                        <circle cx="32" cy="34" r="3" fill="#333333"/>
+                    </svg>
+                    <span>Activity</span>
+                </button>
+
+                <button class="toolbar-button">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="profileGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF44DD;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#DD22BB;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#BB1199;stop-opacity:1" />
+                            </linearGradient>
+                            <radialGradient id="profileShine2" cx="35%" cy="25%">
+                                <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+                                <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="32" cy="32" r="24"
+                                fill="url(#profileGradient2)"
+                                stroke="#991177"
+                                stroke-width="2"/>
+                        <circle cx="32" cy="32" r="24" fill="url(#profileShine2)"/>
+                        <circle cx="32" cy="32" r="20" fill="#FFFFFF" opacity="0.95"/>
+                        <circle cx="32" cy="26" r="7" fill="#DD22BB"/>
+                        <path d="M 18 50 Q 18 38 32 38 Q 46 38 46 50"
+                              fill="#DD22BB"
+                              clip-path="circle(20px at 32px 32px)"/>
+                    </svg>
+                    <span>Profile</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="design-notes">
+            <h3>Design Philosophy: Internet Explorer Era (1997-2003)</h3>
+            <ul>
+                <li><strong>Subtle Gradients:</strong> Not flat, but not overly complex - the perfect balance of dimension using top-to-bottom linear gradients</li>
+                <li><strong>Professional Shine:</strong> Radial gradient overlays create that polished "professional software" look that defined Microsoft's golden age</li>
+                <li><strong>Clean Vector Aesthetic:</strong> Smooth paths, proper anti-aliasing, and careful stroke weights for that clean toolbar icon feel</li>
+                <li><strong>Slight 3D Effect:</strong> Shadows and highlights suggest depth without heavy bevels - just enough to feel tactile</li>
+                <li><strong>Colorful but Purposeful:</strong> Each icon uses a distinct primary hue (cyan, yellow-green, magenta) with natural gradient transitions</li>
+                <li><strong>Button States:</strong> Hover changes to Windows-yellow highlight, active state shows inset shadow - authentic toolbar interaction</li>
+                <li><strong>Size Optimization:</strong> Icons work perfectly at 32x32px (toolbar size) and scale up to 64x64px for larger displays</li>
+                <li><strong>Historical Accuracy:</strong> Channels = broadcast/connectivity (like IE favorites), Activity = performance metric (like WMP visualizer), Profile = user identity (like Outlook contacts)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

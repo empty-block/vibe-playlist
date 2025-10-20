@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON-001: Classic Software Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            background: #008080;
+            color: #000;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .window {
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: #fff;
+            padding: 3px 5px;
+            font-weight: bold;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .description {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .toolbar {
+            background: #c0c0c0;
+            border-top: 1px solid #fff;
+            border-left: 1px solid #fff;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            padding: 4px;
+            display: flex;
+            gap: 2px;
+            margin-bottom: 30px;
+        }
+
+        .icon-button {
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .icon-button:active {
+            border-top: 2px solid #000;
+            border-left: 2px solid #000;
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+        }
+
+        .icon-button:active svg {
+            transform: translate(1px, 1px);
+        }
+
+        .icon-label {
+            font-size: 9px;
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .icon-showcase {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .icon-showcase h3 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .icon-large {
+            margin: 20px 0;
+        }
+
+        .specs {
+            background: #ffffcc;
+            border: 1px solid #000;
+            padding: 10px;
+            font-size: 11px;
+            text-align: left;
+            margin-top: 15px;
+        }
+
+        .specs strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <span>💿</span>
+            ICON-001: Classic Software Icons
+        </div>
+        <div class="content">
+            <h1>Classic 90s Software Toolbar Icons</h1>
+
+            <div class="description">
+                <strong>Design Philosophy:</strong><br>
+                Authentic Windows 95/98 era toolbar icons inspired by Napster, Winamp, ICQ, and AIM. Simple, functional shapes with clean outlines and subtle 3D shading. Each icon uses 2-3 shades of color to create depth while maintaining instant recognizability.
+            </div>
+
+            <h2 style="font-size: 14px; margin: 20px 0 10px;">Live Toolbar Demo:</h2>
+            <div class="toolbar">
+                <div class="icon-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- CHANNELS: Folder with music notes -->
+                        <!-- Folder body -->
+                        <path d="M 3 10 L 12 10 L 14 7 L 29 7 L 29 27 L 3 27 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5"/>
+                        <!-- Folder tab -->
+                        <path d="M 12 10 L 14 7 L 29 7 L 29 11 L 3 11" fill="#FFD700" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                        <!-- Folder shadow/depth -->
+                        <path d="M 4 12 L 4 26 L 28 26 L 28 12" fill="none" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+                        <!-- Music note 1 -->
+                        <ellipse cx="17" cy="21" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="19" y="13" width="1.5" height="8" fill="#000"/>
+                        <!-- Music note 2 -->
+                        <ellipse cx="22" cy="19" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="24" y="11" width="1.5" height="8" fill="#000"/>
+                        <!-- Connecting beam -->
+                        <path d="M 19.5 13 L 24.5 11 L 24.5 12 L 19.5 14 Z" fill="#000"/>
+                    </svg>
+                    <div class="icon-label">CHANNELS</div>
+                </div>
+
+                <div class="icon-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- ACTIVITY: Lightning bolt in circle -->
+                        <!-- Circle background -->
+                        <circle cx="16" cy="16" r="13" fill="#04caf4" stroke="#000" stroke-width="1.5"/>
+                        <!-- Highlight arc -->
+                        <path d="M 8 10 A 13 13 0 0 1 24 8" fill="none" stroke="#5DDEF4" stroke-width="2" opacity="0.8"/>
+                        <!-- Shadow arc -->
+                        <path d="M 24 24 A 13 13 0 0 1 8 22" fill="none" stroke="#0288a8" stroke-width="2" opacity="0.6"/>
+                        <!-- Lightning bolt -->
+                        <path d="M 18 7 L 12 16 L 16 16 L 14 25 L 22 14 L 18 14 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                        <!-- Lightning highlight -->
+                        <path d="M 17 8 L 13 15 L 16 15" fill="#fff" opacity="0.4" stroke="none"/>
+                    </svg>
+                    <div class="icon-label">ACTIVITY</div>
+                </div>
+
+                <div class="icon-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- PROFILE: User bust icon -->
+                        <!-- Head -->
+                        <circle cx="16" cy="11" r="6" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                        <!-- Head highlight -->
+                        <circle cx="14" cy="9" r="2" fill="#7FFCA5" opacity="0.6" stroke="none"/>
+                        <!-- Head shadow -->
+                        <path d="M 19 14 A 6 6 0 0 1 13 14" fill="#00b520" opacity="0.4" stroke="none"/>
+                        <!-- Shoulders/body -->
+                        <path d="M 8 28 Q 8 20 16 20 Q 24 20 24 28 Z" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                        <!-- Body highlight -->
+                        <path d="M 10 28 Q 10 22 16 22 Q 18 22 19 23" fill="#7FFCA5" opacity="0.3" stroke="none"/>
+                        <!-- Body shadow -->
+                        <path d="M 22 28 Q 22 22 16 22" fill="#00b520" opacity="0.3" stroke="none"/>
+                    </svg>
+                    <div class="icon-label">PROFILE</div>
+                </div>
+            </div>
+
+            <h2 style="font-size: 14px; margin: 30px 0 15px;">Individual Icon Specifications:</h2>
+
+            <div class="icon-grid">
+                <!-- CHANNELS -->
+                <div class="icon-showcase">
+                    <h3>CHANNELS</h3>
+                    <div class="icon-large">
+                        <svg width="64" height="64" viewBox="0 0 32 32">
+                            <path d="M 3 10 L 12 10 L 14 7 L 29 7 L 29 27 L 3 27 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5"/>
+                            <path d="M 12 10 L 14 7 L 29 7 L 29 11 L 3 11" fill="#FFD700" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                            <path d="M 4 12 L 4 26 L 28 26 L 28 12" fill="none" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+                            <ellipse cx="17" cy="21" rx="2.5" ry="2" fill="#000"/>
+                            <rect x="19" y="13" width="1.5" height="8" fill="#000"/>
+                            <ellipse cx="22" cy="19" rx="2.5" ry="2" fill="#000"/>
+                            <rect x="24" y="11" width="1.5" height="8" fill="#000"/>
+                            <path d="M 19.5 13 L 24.5 11 L 24.5 12 L 19.5 14 Z" fill="#000"/>
+                        </svg>
+                    </div>
+                    <div class="specs">
+                        <strong>Metaphor:</strong> Music library/collection<br>
+                        <strong>Style:</strong> Folder with musical notes<br>
+                        <strong>Colors:</strong>
+                        <span class="color-swatch" style="background: #FFFF00;"></span> Yellow (base)
+                        <span class="color-swatch" style="background: #FFD700;"></span> Gold (highlight)<br>
+                        <strong>Inspiration:</strong> Windows folder + Napster library icon
+                    </div>
+                </div>
+
+                <!-- ACTIVITY -->
+                <div class="icon-showcase">
+                    <h3>ACTIVITY</h3>
+                    <div class="icon-large">
+                        <svg width="64" height="64" viewBox="0 0 32 32">
+                            <circle cx="16" cy="16" r="13" fill="#04caf4" stroke="#000" stroke-width="1.5"/>
+                            <path d="M 8 10 A 13 13 0 0 1 24 8" fill="none" stroke="#5DDEF4" stroke-width="2" opacity="0.8"/>
+                            <path d="M 24 24 A 13 13 0 0 1 8 22" fill="none" stroke="#0288a8" stroke-width="2" opacity="0.6"/>
+                            <path d="M 18 7 L 12 16 L 16 16 L 14 25 L 22 14 L 18 14 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                            <path d="M 17 8 L 13 15 L 16 15" fill="#fff" opacity="0.4" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="specs">
+                        <strong>Metaphor:</strong> Fast action/energy<br>
+                        <strong>Style:</strong> Lightning bolt in circle<br>
+                        <strong>Colors:</strong>
+                        <span class="color-swatch" style="background: #04caf4;"></span> Cyan (base)
+                        <span class="color-swatch" style="background: #5DDEF4;"></span> Light cyan (highlight)
+                        <span class="color-swatch" style="background: #0288a8;"></span> Dark cyan (shadow)<br>
+                        <strong>Inspiration:</strong> Napster transfer + ICQ activity icons
+                    </div>
+                </div>
+
+                <!-- PROFILE -->
+                <div class="icon-showcase">
+                    <h3>PROFILE</h3>
+                    <div class="icon-large">
+                        <svg width="64" height="64" viewBox="0 0 32 32">
+                            <circle cx="16" cy="11" r="6" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                            <circle cx="14" cy="9" r="2" fill="#7FFCA5" opacity="0.6" stroke="none"/>
+                            <path d="M 19 14 A 6 6 0 0 1 13 14" fill="#00b520" opacity="0.4" stroke="none"/>
+                            <path d="M 8 28 Q 8 20 16 20 Q 24 20 24 28 Z" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                            <path d="M 10 28 Q 10 22 16 22 Q 18 22 19 23" fill="#7FFCA5" opacity="0.3" stroke="none"/>
+                            <path d="M 22 28 Q 22 22 16 22" fill="#00b520" opacity="0.3" stroke="none"/>
+                        </svg>
+                    </div>
+                    <div class="specs">
+                        <strong>Metaphor:</strong> User identity<br>
+                        <strong>Style:</strong> Simple person bust silhouette<br>
+                        <strong>Colors:</strong>
+                        <span class="color-swatch" style="background: #00f92a;"></span> Neon green (base)
+                        <span class="color-swatch" style="background: #7FFCA5;"></span> Light green (highlight)
+                        <span class="color-swatch" style="background: #00b520;"></span> Dark green (shadow)<br>
+                        <strong>Inspiration:</strong> AIM buddy icon + Windows user account
+                    </div>
+                </div>
+            </div>
+
+            <div class="description">
+                <strong>Design Notes:</strong><br>
+                • Each icon uses clean black outlines (1.5px) for crisp definition<br>
+                • 3D effect achieved through highlight and shadow overlays at the edges<br>
+                • Icons remain recognizable even at small sizes (16x16px minimum)<br>
+                • Color palette uses Jamzy's neon colors in authentic 90s application style<br>
+                • Shapes are simple geometric primitives - circles, paths, rectangles<br>
+                • No gradients or modern effects - pure flat colors with strategic shading<br>
+                • Button press effect simulated with border inversion and 1px translation
+            </div>
+
+            <h2 style="font-size: 14px; margin: 30px 0 10px;">Implementation Sizes:</h2>
+            <div style="background: #fff; border: 1px solid #000; padding: 15px; display: flex; gap: 30px; align-items: center; justify-content: center;">
+                <!-- 16x16 -->
+                <div style="text-align: center;">
+                    <svg width="16" height="16" viewBox="0 0 32 32">
+                        <path d="M 3 10 L 12 10 L 14 7 L 29 7 L 29 27 L 3 27 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 12 10 L 14 7 L 29 7 L 29 11 L 3 11" fill="#FFD700" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                        <ellipse cx="17" cy="21" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="19" y="13" width="1.5" height="8" fill="#000"/>
+                        <ellipse cx="22" cy="19" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="24" y="11" width="1.5" height="8" fill="#000"/>
+                        <path d="M 19.5 13 L 24.5 11 L 24.5 12 L 19.5 14 Z" fill="#000"/>
+                    </svg>
+                    <div style="font-size: 10px; margin-top: 5px;">16x16</div>
+                </div>
+
+                <!-- 24x24 -->
+                <div style="text-align: center;">
+                    <svg width="24" height="24" viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="13" fill="#04caf4" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 8 10 A 13 13 0 0 1 24 8" fill="none" stroke="#5DDEF4" stroke-width="2" opacity="0.8"/>
+                        <path d="M 24 24 A 13 13 0 0 1 8 22" fill="none" stroke="#0288a8" stroke-width="2" opacity="0.6"/>
+                        <path d="M 18 7 L 12 16 L 16 16 L 14 25 L 22 14 L 18 14 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M 17 8 L 13 15 L 16 15" fill="#fff" opacity="0.4" stroke="none"/>
+                    </svg>
+                    <div style="font-size: 10px; margin-top: 5px;">24x24</div>
+                </div>
+
+                <!-- 32x32 -->
+                <div style="text-align: center;">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <circle cx="16" cy="11" r="6" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                        <circle cx="14" cy="9" r="2" fill="#7FFCA5" opacity="0.6" stroke="none"/>
+                        <path d="M 19 14 A 6 6 0 0 1 13 14" fill="#00b520" opacity="0.4" stroke="none"/>
+                        <path d="M 8 28 Q 8 20 16 20 Q 24 20 24 28 Z" fill="#00f92a" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 10 28 Q 10 22 16 22 Q 18 22 19 23" fill="#7FFCA5" opacity="0.3" stroke="none"/>
+                        <path d="M 22 28 Q 22 22 16 22" fill="#00b520" opacity="0.3" stroke="none"/>
+                    </svg>
+                    <div style="font-size: 10px; margin-top: 5px;">32x32</div>
+                </div>
+
+                <!-- 48x48 -->
+                <div style="text-align: center;">
+                    <svg width="48" height="48" viewBox="0 0 32 32">
+                        <path d="M 3 10 L 12 10 L 14 7 L 29 7 L 29 27 L 3 27 Z" fill="#FFFF00" stroke="#000" stroke-width="1.5"/>
+                        <path d="M 12 10 L 14 7 L 29 7 L 29 11 L 3 11" fill="#FFD700" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M 4 12 L 4 26 L 28 26 L 28 12" fill="none" stroke="#000" stroke-width="0.5" opacity="0.3"/>
+                        <ellipse cx="17" cy="21" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="19" y="13" width="1.5" height="8" fill="#000"/>
+                        <ellipse cx="22" cy="19" rx="2.5" ry="2" fill="#000"/>
+                        <rect x="24" y="11" width="1.5" height="8" fill="#000"/>
+                        <path d="M 19.5 13 L 24.5 11 L 24.5 12 L 19.5 14 Z" fill="#000"/>
+                    </svg>
+                    <div style="font-size: 10px; margin-top: 5px;">48x48</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

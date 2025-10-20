@@ -35,12 +35,15 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
             <path d="M18.5 11 L18.5 12 L21 11.5 L21 10 Z" fill="#000"/>
           </svg>
         );
-      case 'activity':
+      case 'trending':
         return (
           <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
-            <path d="M13 3 L9 12 L12 12 L10 21 L16 10 L13 10 Z"
-                  fill="#FFD700" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
-            <path d="M12.5 12 L11 21 L10 21 L12 12 Z" fill="#FFB000"/>
+            {/* Flame icon */}
+            <path d="M12 3 L10 8 L8 12 C8 14 9 16 11 17 C11 15 12 13 13 13 L14 15 C15 15 17 14 17 12 L15 8 Z"
+                  fill="#FF6B35" stroke="#000" stroke-width="0.5" stroke-linejoin="miter"/>
+            <path d="M12 7 L11 10 C11 11 11.5 12 12.5 12.5 C12.5 11.5 13 10.5 13 10.5 L13.5 11.5 C14 11.5 15 11 15 10 L13.5 7.5 Z"
+                  fill="#FFD700" stroke="#000" stroke-width="0.5"/>
+            <ellipse cx="12" cy="18" rx="5" ry="1.5" fill="#FF6B35" opacity="0.3"/>
           </svg>
         );
       case 'profile':

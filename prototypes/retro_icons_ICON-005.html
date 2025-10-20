@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON-005: AIM/ICQ Buddy List Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 0.3em;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ffd700;
+            font-size: 1.1em;
+            margin-bottom: 2em;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+
+        .buddy-window {
+            background: #d6e3f0;
+            border: 3px solid #4a7ba7;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .window-titlebar {
+            background: linear-gradient(180deg, #6fa3d8 0%, #4a7ba7 100%);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #365a7d;
+        }
+
+        .window-title {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .window-btn {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        .minimize { background: #ffd700; }
+        .maximize { background: #7cfc00; }
+        .close { background: #ff6b6b; }
+
+        .buddy-list {
+            background: white;
+            padding: 20px;
+        }
+
+        .buddy-group {
+            margin-bottom: 24px;
+        }
+
+        .group-header {
+            background: #e8f0f7;
+            padding: 6px 10px;
+            border: 1px solid #b0c4d8;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #2c5282;
+            font-size: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .group-header:before {
+            content: '▼ ';
+            font-size: 10px;
+        }
+
+        .buddy-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 4px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .buddy-item:hover {
+            background: #f0f7ff;
+        }
+
+        .buddy-item.active {
+            background: #e6f2ff;
+            border-left: 3px solid #4a7ba7;
+            padding-left: 7px;
+        }
+
+        /* Icon Styles */
+        .icon-wrapper {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .icon {
+            width: 36px;
+            height: 36px;
+            position: relative;
+            filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.25));
+        }
+
+        /* CHANNELS - CD with musical note */
+        .channels-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border-radius: 50%;
+            border: 3px solid #15803d;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4),
+                        inset 0 -2px 4px rgba(0,0,0,0.2);
+        }
+
+        .channels-icon:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid #15803d;
+        }
+
+        .channels-icon:after {
+            content: '♪';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 18px;
+            color: #fbbf24;
+            text-shadow: 1px 1px 0 #d97706,
+                        -1px -1px 0 #d97706,
+                        1px -1px 0 #d97706,
+                        -1px 1px 0 #d97706;
+            font-weight: bold;
+        }
+
+        /* ACTIVITY - Starburst "NEW!" */
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            position: relative;
+        }
+
+        .starburst {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .starburst-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+        }
+
+        .star-ray {
+            position: absolute;
+            width: 6px;
+            height: 16px;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+            top: 50%;
+            left: 50%;
+            transform-origin: 3px 0;
+            border-radius: 3px;
+        }
+
+        .star-ray:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+        .star-ray:nth-child(2) { transform: translate(-50%, -100%) rotate(45deg); }
+        .star-ray:nth-child(3) { transform: translate(-50%, -100%) rotate(90deg); }
+        .star-ray:nth-child(4) { transform: translate(-50%, -100%) rotate(135deg); }
+        .star-ray:nth-child(5) { transform: translate(-50%, -100%) rotate(180deg); }
+        .star-ray:nth-child(6) { transform: translate(-50%, -100%) rotate(225deg); }
+        .star-ray:nth-child(7) { transform: translate(-50%, -100%) rotate(270deg); }
+        .star-ray:nth-child(8) { transform: translate(-50%, -100%) rotate(315deg); }
+
+        .star-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            border-radius: 50%;
+            border: 2px solid #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        }
+
+        /* PROFILE - Smiley Face */
+        .profile-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            border-radius: 50%;
+            border: 3px solid #0e7490;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4),
+                        inset 0 -2px 4px rgba(0,0,0,0.2);
+        }
+
+        .smiley-eye {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #1e293b;
+            border-radius: 50%;
+            top: 10px;
+        }
+
+        .smiley-eye.left { left: 9px; }
+        .smiley-eye.right { right: 9px; }
+
+        .smiley-mouth {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 9px;
+            border: 3px solid #ec4899;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            background: transparent;
+        }
+
+        /* Buddy Info */
+        .buddy-info {
+            flex: 1;
+        }
+
+        .buddy-name {
+            font-weight: bold;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .buddy-status {
+            font-size: 11px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(34, 197, 94, 0.6);
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* States Demo Section */
+        .states-demo {
+            margin-top: 30px;
+            background: white;
+            border: 2px solid #b0c4d8;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .states-title {
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 16px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .icon-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-label {
+            font-size: 11px;
+            color: #475569;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .size-demo {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+        }
+
+        .size-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            margin: 16px 0;
+        }
+
+        .size-label {
+            font-size: 11px;
+            color: #475569;
+            min-width: 60px;
+            font-weight: bold;
+        }
+
+        .icon-size-16 .icon { width: 16px; height: 16px; font-size: 8px; }
+        .icon-size-16 .channels-icon:before { width: 4px; height: 4px; }
+        .icon-size-16 .channels-icon:after { font-size: 10px; top: 0; right: 0; }
+        .icon-size-16 .star-center { width: 10px; height: 10px; font-size: 6px; }
+        .icon-size-16 .star-ray { width: 3px; height: 8px; }
+        .icon-size-16 .smiley-eye { width: 2px; height: 2px; top: 4px; }
+        .icon-size-16 .smiley-eye.left { left: 4px; }
+        .icon-size-16 .smiley-eye.right { right: 4px; }
+        .icon-size-16 .smiley-mouth { width: 8px; height: 4px; border-width: 2px; bottom: 3px; }
+
+        .icon-size-24 .icon { width: 24px; height: 24px; }
+        .icon-size-24 .channels-icon:before { width: 6px; height: 6px; }
+        .icon-size-24 .channels-icon:after { font-size: 12px; }
+        .icon-size-24 .star-center { width: 14px; height: 14px; font-size: 7px; }
+        .icon-size-24 .star-ray { width: 4px; height: 12px; }
+        .icon-size-24 .smiley-eye { width: 3px; height: 3px; top: 7px; }
+        .icon-size-24 .smiley-eye.left { left: 6px; }
+        .icon-size-24 .smiley-eye.right { right: 6px; }
+        .icon-size-24 .smiley-mouth { width: 12px; height: 6px; bottom: 5px; }
+
+        .icon-size-48 .icon { width: 48px; height: 48px; }
+        .icon-size-48 .channels-icon:before { width: 14px; height: 14px; border-width: 3px; }
+        .icon-size-48 .channels-icon:after { font-size: 24px; top: 3px; right: 3px; }
+        .icon-size-48 .star-center { width: 26px; height: 26px; font-size: 13px; }
+        .icon-size-48 .star-ray { width: 8px; height: 22px; }
+        .icon-size-48 .smiley-eye { width: 7px; height: 7px; top: 13px; }
+        .icon-size-48 .smiley-eye.left { left: 12px; }
+        .icon-size-48 .smiley-eye.right { right: 12px; }
+        .icon-size-48 .smiley-mouth { width: 24px; height: 12px; border-width: 4px; bottom: 10px; }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .buddy-item:hover .icon {
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .buddy-item:hover .channels-icon:before {
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .buddy-item:hover .star-center {
+            animation: twinkle 0.8s ease-in-out infinite;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer strong {
+            color: #ffd700;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .subtitle { font-size: 0.95em; }
+            .icon-grid { grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); }
+            .size-row { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 ICON-005</h1>
+        <p class="subtitle">AIM/ICQ Buddy List Icons - Instant Messenger Vibes</p>
+
+        <div class="buddy-window">
+            <div class="window-titlebar">
+                <div class="window-title">Buddy List - JamzyIM</div>
+                <div class="window-controls">
+                    <div class="window-btn minimize"></div>
+                    <div class="window-btn maximize"></div>
+                    <div class="window-btn close"></div>
+                </div>
+            </div>
+
+            <div class="buddy-list">
+                <div class="buddy-group">
+                    <div class="group-header">Navigation (3/3 online)</div>
+
+                    <div class="buddy-item active">
+                        <div class="icon-wrapper">
+                            <div class="icon channels-icon"></div>
+                        </div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Channels</div>
+                            <div class="buddy-status">Spinning that new track! 💿</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+
+                    <div class="buddy-item">
+                        <div class="icon-wrapper">
+                            <div class="icon activity-icon">
+                                <div class="starburst">
+                                    <div class="starburst-bg">
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                    </div>
+                                    <div class="star-center">!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Activity</div>
+                            <div class="buddy-status">Check out what's new! ⭐</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+
+                    <div class="buddy-item">
+                        <div class="icon-wrapper">
+                            <div class="icon profile-icon">
+                                <div class="smiley-eye left"></div>
+                                <div class="smiley-eye right"></div>
+                                <div class="smiley-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="buddy-info">
+                            <div class="buddy-name">Profile</div>
+                            <div class="buddy-status">Happy vibes only 😊</div>
+                        </div>
+                        <div class="online-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="states-demo">
+                    <div class="states-title">📱 Icon Showcase - All Sizes</div>
+
+                    <div class="icon-grid">
+                        <div class="icon-demo">
+                            <div class="icon channels-icon"></div>
+                            <div class="icon-label">CHANNELS<br>CD + Note</div>
+                        </div>
+
+                        <div class="icon-demo">
+                            <div class="icon activity-icon">
+                                <div class="starburst">
+                                    <div class="starburst-bg">
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                        <div class="star-ray"></div>
+                                    </div>
+                                    <div class="star-center">!</div>
+                                </div>
+                            </div>
+                            <div class="icon-label">ACTIVITY<br>Starburst</div>
+                        </div>
+
+                        <div class="icon-demo">
+                            <div class="icon profile-icon">
+                                <div class="smiley-eye left"></div>
+                                <div class="smiley-eye right"></div>
+                                <div class="smiley-mouth"></div>
+                            </div>
+                            <div class="icon-label">PROFILE<br>Smiley</div>
+                        </div>
+                    </div>
+
+                    <div class="size-demo">
+                        <div class="states-title">📏 Size Variations</div>
+
+                        <div class="size-row">
+                            <div class="size-label">16px:</div>
+                            <div class="icon-size-16">
+                                <div class="icon channels-icon"></div>
+                            </div>
+                            <div class="icon-size-16">
+                                <div class="icon activity-icon">
+                                    <div class="starburst">
+                                        <div class="starburst-bg">
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                        </div>
+                                        <div class="star-center">!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-size-16">
+                                <div class="icon profile-icon">
+                                    <div class="smiley-eye left"></div>
+                                    <div class="smiley-eye right"></div>
+                                    <div class="smiley-mouth"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="size-row">
+                            <div class="size-label">24px:</div>
+                            <div class="icon-size-24">
+                                <div class="icon channels-icon"></div>
+                            </div>
+                            <div class="icon-size-24">
+                                <div class="icon activity-icon">
+                                    <div class="starburst">
+                                        <div class="starburst-bg">
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                        </div>
+                                        <div class="star-center">!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-size-24">
+                                <div class="icon profile-icon">
+                                    <div class="smiley-eye left"></div>
+                                    <div class="smiley-eye right"></div>
+                                    <div class="smiley-mouth"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="size-row">
+                            <div class="size-label">36px:</div>
+                            <div class="icon-demo">
+                                <div class="icon channels-icon"></div>
+                            </div>
+                            <div class="icon-demo">
+                                <div class="icon activity-icon">
+                                    <div class="starburst">
+                                        <div class="starburst-bg">
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                        </div>
+                                        <div class="star-center">!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-demo">
+                                <div class="icon profile-icon">
+                                    <div class="smiley-eye left"></div>
+                                    <div class="smiley-eye right"></div>
+                                    <div class="smiley-mouth"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="size-row">
+                            <div class="size-label">48px:</div>
+                            <div class="icon-size-48">
+                                <div class="icon channels-icon"></div>
+                            </div>
+                            <div class="icon-size-48">
+                                <div class="icon activity-icon">
+                                    <div class="starburst">
+                                        <div class="starburst-bg">
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                            <div class="star-ray"></div>
+                                        </div>
+                                        <div class="star-center">!</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="icon-size-48">
+                                <div class="icon profile-icon">
+                                    <div class="smiley-eye left"></div>
+                                    <div class="smiley-eye right"></div>
+                                    <div class="smiley-mouth"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <strong>Design Notes:</strong> These icons channel the friendly, approachable aesthetic of classic instant messenger buddy list icons from AIM, ICQ, and MSN Messenger era. Bold colors, simple geometric shapes, and playful personality make them instantly recognizable at any size. The CD with musical note, starburst notification, and classic smiley face are timeless symbols that need no explanation - just like the iconic AIM running man or ICQ flower. Perfect for creating that warm, nostalgic feeling of the golden age of instant messaging!
+        </div>
+    </div>
+</body>
+</html>

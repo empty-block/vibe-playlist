@@ -1,0 +1,430 @@
+/* Trending Page - Win95 Aesthetic */
+
+/* Page Container */
+.trending-page {
+  min-height: 100vh;
+  background: #008080;
+  padding: 16px;
+  padding-bottom: 80px; /* Space for mobile navigation */
+}
+
+/* Main Dashboard Container */
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Classic Win95 Window Style */
+.window {
+  background: #C0C0C8;
+  border: 2px solid;
+  border-color: #FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  position: relative;
+}
+
+/* Win95 Title Bar */
+.title-bar {
+  background: linear-gradient(90deg, #000080, #1084D0);
+  padding: 3px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  flex-shrink: 0;
+}
+
+.title-text {
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-icon {
+  width: 16px;
+  height: 16px;
+  background: #FFFF00;
+  border: 1px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.title-subtitle {
+  font-size: 10px;
+  opacity: 0.9;
+  margin-left: 4px;
+  font-weight: normal;
+}
+
+.title-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.title-btn {
+  width: 16px;
+  height: 14px;
+  background: #C0C0C8;
+  border: 1px solid;
+  border-color: #FFFFFF #000000 #000000 #FFFFFF;
+  font-size: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.title-btn:active {
+  border-color: #000000 #FFFFFF #FFFFFF #000000;
+}
+
+/* Window Content with Win95 Borders & Scrolling */
+.window-content {
+  padding: 0;
+  background: #FFFFFF;
+  border: 2px solid;
+  border-color: #808080 #FFFFFF #FFFFFF #808080;
+  margin: 4px;
+  height: 500px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: relative;
+  transition: height 0.3s ease;
+}
+
+/* Win95 Scrollbar Styling */
+.window-content::-webkit-scrollbar {
+  width: 16px;
+  background: #C0C0C8;
+}
+
+.window-content::-webkit-scrollbar-track {
+  background: #C0C0C8;
+  border-left: 1px solid #FFFFFF;
+  border-right: 1px solid #000000;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+  background: #C0C0C8;
+  border: 2px solid;
+  border-color: #FFFFFF #000000 #000000 #FFFFFF;
+  min-height: 20px;
+}
+
+.window-content::-webkit-scrollbar-thumb:hover {
+  background: #DFDFDF;
+}
+
+.window-content::-webkit-scrollbar-thumb:active {
+  border-color: #000000 #FFFFFF #FFFFFF #000000;
+}
+
+.window-content::-webkit-scrollbar-button {
+  height: 16px;
+  background: #C0C0C8;
+  border: 2px solid;
+  border-color: #FFFFFF #000000 #000000 #FFFFFF;
+  display: block;
+}
+
+.window-content::-webkit-scrollbar-button:vertical:decrement {
+  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 5l-4 4h8z" fill="%23000"/></svg>') center no-repeat;
+}
+
+.window-content::-webkit-scrollbar-button:vertical:increment {
+  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 11l-4-4h8z" fill="%23000"/></svg>') center no-repeat;
+}
+
+.window-content::-webkit-scrollbar-button:active {
+  border-color: #000000 #FFFFFF #FFFFFF #000000;
+}
+
+/* Inner Content Padding */
+.content-inner {
+  padding: 12px;
+}
+
+/* Minimized Window State */
+.window.minimized .window-content {
+  display: none;
+}
+
+.window.minimized .status-bar {
+  display: none;
+}
+
+/* Section Header */
+.section-header {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: #DFDFDF;
+  border: 2px solid;
+  border-top-color: #FFFFFF;
+  border-left-color: #FFFFFF;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #000080;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Clean Track Card */
+.track-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #F0F0F0;
+  border: 2px solid #C0C0C0;
+  border-top-color: #FFFFFF;
+  border-left-color: #FFFFFF;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.track-item:hover {
+  background: #E8E8E8;
+}
+
+/* Track Rank - Golden Gradient for Top 3 */
+.track-rank {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000080;
+  min-width: 32px;
+  text-align: center;
+}
+
+.track-rank.top-3 {
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 22px;
+}
+
+/* Emoji Thumbnail */
+.track-thumbnail {
+  width: 50px;
+  height: 50px;
+  background: #808080;
+  border: 2px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Black Text for Titles */
+.track-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Normal Colored Text for Artists */
+.track-artist {
+  font-size: 12px;
+  color: #555555;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* Magenta Share Counts */
+.track-shares {
+  font-size: 14px;
+  font-weight: bold;
+  color: #E010E0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Fire Icon Animation */
+.fire-icon {
+  font-size: 16px;
+  animation: flicker 1.5s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Clean Contributor Card */
+.contributor-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #F0F0F0;
+  border: 2px solid #C0C0C0;
+  border-top-color: #FFFFFF;
+  border-left-color: #FFFFFF;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.contributor-item:hover {
+  background: #E8E8E8;
+}
+
+.contributor-rank {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* Circular Avatar with Gradient Background */
+.contributor-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #04CAF4, #E010E0);
+  border: 2px solid #000000;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.contributor-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Normal Colored Text for Usernames */
+.contributor-username {
+  font-weight: bold;
+  font-size: 14px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contributor-fid {
+  font-size: 11px;
+  color: #666666;
+  margin-top: 2px;
+}
+
+/* Neon Green Track Counts */
+.contributor-count {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00F92A;
+  text-align: right;
+}
+
+.contributor-label {
+  font-size: 10px;
+  color: #666666;
+  text-align: right;
+}
+
+/* Win95 Status Bar */
+.status-bar {
+  background: #C0C0C8;
+  border-top: 2px solid;
+  border-color: #FFFFFF #000000 #000000 #FFFFFF;
+  padding: 3px 6px;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.status-bar-section {
+  border: 1px solid;
+  border-color: #808080 #FFFFFF #FFFFFF #808080;
+  padding: 2px 6px;
+  background: #C0C0C8;
+}
+
+/* Responsive: Mobile Stacking */
+@media (max-width: 768px) {
+  .trending-page {
+    padding: 8px;
+    padding-bottom: 80px;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .window-content {
+    height: 400px;
+  }
+
+  .track-item,
+  .contributor-item {
+    padding: 8px;
+  }
+
+  .track-thumbnail {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .contributor-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+}

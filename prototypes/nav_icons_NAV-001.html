@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAV-001: Pixel Art Icons - Napster Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .demo-container {
+            background: #c0c0c0;
+            border: 2px solid #000;
+            padding: 40px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 30px;
+            text-align: center;
+            background: #000080;
+            color: #fff;
+            padding: 8px;
+            border: 2px solid;
+            border-color: #fff #000 #000 #fff;
+        }
+
+        /* Win95 Taskbar Navigation */
+        .taskbar-nav {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #fff #000 #000 #fff;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #fff #808080 #808080 #fff;
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 80px;
+            transition: all 0.05s;
+        }
+
+        .nav-button:hover {
+            background: #d4d4d4;
+        }
+
+        .nav-button:active,
+        .nav-button.active {
+            border-color: #808080 #fff #fff #808080;
+            padding: 9px 11px 7px 13px;
+            background: #a0a0a0;
+        }
+
+        .nav-button.active {
+            background: #000080;
+        }
+
+        .nav-button.active .nav-label {
+            color: #fff;
+        }
+
+        .icon-container {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .pixel {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            image-rendering: pixelated;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Color palette */
+        .neon-green { background-color: #00f92a; }
+        .cyan { background-color: #04caf4; }
+        .magenta { background-color: #FF00FF; }
+        .yellow { background-color: #FFFF00; }
+        .white { background-color: #fff; }
+        .black { background-color: #000; }
+        .gray { background-color: #808080; }
+        .dark-gray { background-color: #404040; }
+        .light-gray { background-color: #c0c0c0; }
+
+        /* Spacing examples */
+        .spacer {
+            margin: 40px 0;
+        }
+
+        .info {
+            margin-top: 30px;
+            padding: 15px;
+            background: #fff;
+            border: 2px solid;
+            border-color: #808080 #fff #fff #808080;
+            font-size: 12px;
+            line-align: center;
+        }
+
+        .info h3 {
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #000080;
+        }
+
+        .info p {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="title">NAV-001: PIXEL ART ICONS - NAPSTER STYLE</div>
+
+        <div class="taskbar-nav">
+            <div class="nav-button" data-nav="channels">
+                <div class="icon-container" id="channels-icon"></div>
+                <div class="nav-label">Channels</div>
+            </div>
+
+            <div class="nav-button active" data-nav="activity">
+                <div class="icon-container" id="activity-icon"></div>
+                <div class="nav-label">Activity</div>
+            </div>
+
+            <div class="nav-button" data-nav="profile">
+                <div class="icon-container" id="profile-icon"></div>
+                <div class="nav-label">Profile</div>
+            </div>
+        </div>
+
+        <div class="info">
+            <h3>Design Specs:</h3>
+            <p><strong>Style:</strong> Detailed 24×24px pixel art icons inspired by classic Napster toolbar</p>
+            <p><strong>Colors:</strong> Neon green (#00f92a), Cyan (#04caf4), Magenta (#FF00FF), Yellow (#FFFF00)</p>
+            <p><strong>Layout:</strong> Win95 taskbar buttons with 3D borders and active states</p>
+            <p><strong>Icons:</strong> CHANNELS (TV/antenna), ACTIVITY (lightning bolt), PROFILE (user avatar)</p>
+            <p><strong>Interaction:</strong> Click buttons to toggle active state (inverted borders)</p>
+        </div>
+    </div>
+
+    <script>
+        // Pixel art drawing utility
+        function drawPixel(container, x, y, colorClass) {
+            const pixel = document.createElement('div');
+            pixel.className = `pixel ${colorClass}`;
+            pixel.style.left = `${x}px`;
+            pixel.style.top = `${y}px`;
+            container.appendChild(pixel);
+        }
+
+        function drawRect(container, x, y, width, height, colorClass) {
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    drawPixel(container, x + i, y + j, colorClass);
+                }
+            }
+        }
+
+        function drawLine(container, x1, y1, x2, y2, colorClass) {
+            const dx = Math.abs(x2 - x1);
+            const dy = Math.abs(y2 - y1);
+            const sx = x1 < x2 ? 1 : -1;
+            const sy = y1 < y2 ? 1 : -1;
+            let err = dx - dy;
+
+            while (true) {
+                drawPixel(container, x1, y1, colorClass);
+                if (x1 === x2 && y1 === y2) break;
+                const e2 = 2 * err;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y1 += sy;
+                }
+            }
+        }
+
+        // CHANNELS Icon - Retro TV with antenna
+        function drawChannelsIcon(container) {
+            // TV screen outer frame (cyan)
+            drawRect(container, 4, 8, 16, 13, 'cyan');
+            // TV screen inner (dark)
+            drawRect(container, 6, 10, 12, 9, 'dark-gray');
+            // Screen content (neon green)
+            drawRect(container, 7, 11, 10, 7, 'neon-green');
+
+            // Control knobs
+            drawRect(container, 3, 14, 2, 2, 'yellow');
+            drawRect(container, 19, 14, 2, 2, 'magenta');
+
+            // Antenna left
+            drawLine(container, 8, 7, 5, 2, 'gray');
+            drawLine(container, 8, 7, 6, 2, 'white');
+            drawPixel(container, 5, 1, 'yellow');
+            drawPixel(container, 6, 1, 'yellow');
+
+            // Antenna right
+            drawLine(container, 16, 7, 19, 2, 'gray');
+            drawLine(container, 16, 7, 18, 2, 'white');
+            drawPixel(container, 18, 1, 'magenta');
+            drawPixel(container, 19, 1, 'magenta');
+
+            // TV base/stand
+            drawRect(container, 10, 21, 4, 2, 'cyan');
+        }
+
+        // ACTIVITY Icon - Lightning bolt with energy
+        function drawActivityIcon(container) {
+            // Lightning bolt (yellow to magenta gradient effect)
+            const lightning = [
+                [12, 1], [11, 2], [12, 2], [11, 3], [12, 3],
+                [10, 4], [11, 4], [12, 4],
+                [9, 5], [10, 5], [11, 5], [12, 5],
+                [10, 6], [11, 6], [12, 6], [13, 6],
+                [11, 7], [12, 7], [13, 7], [14, 7],
+                [12, 8], [13, 8], [14, 8],
+                // Lower part
+                [11, 9], [12, 9], [13, 9],
+                [10, 10], [11, 10], [12, 10],
+                [10, 11], [11, 11],
+                [9, 12], [10, 12],
+                [9, 13], [10, 13],
+                [8, 14], [9, 14],
+                [8, 15], [9, 15],
+                [7, 16], [8, 16],
+                [7, 17], [8, 17],
+                [7, 18], [8, 18],
+                [7, 19], [8, 19],
+                [7, 20], [8, 20],
+                [7, 21], [8, 21],
+                [7, 22], [8, 22]
+            ];
+
+            lightning.forEach(([x, y]) => {
+                // Gradient effect: yellow at top, magenta at bottom
+                if (y < 8) {
+                    drawPixel(container, x, y, 'yellow');
+                } else if (y < 13) {
+                    drawPixel(container, x, y, y % 2 === 0 ? 'yellow' : 'magenta');
+                } else {
+                    drawPixel(container, x, y, 'magenta');
+                }
+            });
+
+            // Energy sparks around it (cyan and neon green)
+            const sparks = [
+                [6, 6, 'cyan'], [16, 5, 'neon-green'],
+                [5, 10, 'neon-green'], [15, 11, 'cyan'],
+                [4, 15, 'cyan'], [13, 16, 'neon-green']
+            ];
+
+            sparks.forEach(([x, y, color]) => {
+                drawPixel(container, x, y, color);
+                drawPixel(container, x + 1, y, color);
+            });
+        }
+
+        // PROFILE Icon - User avatar/ID card
+        function drawProfileIcon(container) {
+            // ID card background (cyan)
+            drawRect(container, 3, 5, 18, 16, 'cyan');
+
+            // Card inner frame (white)
+            drawRect(container, 4, 6, 16, 14, 'white');
+
+            // Head (magenta circle)
+            drawRect(container, 10, 8, 4, 4, 'magenta');
+            drawPixel(container, 9, 9, 'magenta');
+            drawPixel(container, 14, 9, 'magenta');
+            drawPixel(container, 9, 10, 'magenta');
+            drawPixel(container, 14, 10, 'magenta');
+
+            // Body/shoulders (magenta)
+            drawRect(container, 8, 12, 8, 2, 'magenta');
+            drawRect(container, 7, 14, 10, 3, 'magenta');
+
+            // Info lines (neon green)
+            drawRect(container, 6, 17, 4, 1, 'neon-green');
+            drawRect(container, 6, 19, 6, 1, 'neon-green');
+            drawRect(container, 14, 17, 4, 1, 'yellow');
+            drawRect(container, 14, 19, 4, 1, 'yellow');
+
+            // Corner markers (yellow accent)
+            drawPixel(container, 3, 5, 'yellow');
+            drawPixel(container, 4, 5, 'yellow');
+            drawPixel(container, 3, 6, 'yellow');
+            drawPixel(container, 20, 5, 'yellow');
+            drawPixel(container, 19, 5, 'yellow');
+            drawPixel(container, 20, 6, 'yellow');
+        }
+
+        // Draw all icons
+        const channelsIcon = document.getElementById('channels-icon');
+        const activityIcon = document.getElementById('activity-icon');
+        const profileIcon = document.getElementById('profile-icon');
+
+        drawChannelsIcon(channelsIcon);
+        drawActivityIcon(activityIcon);
+        drawProfileIcon(profileIcon);
+
+        // Button interactions
+        const buttons = document.querySelectorAll('.nav-button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                buttons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

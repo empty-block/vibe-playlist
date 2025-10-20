@@ -6,6 +6,7 @@ import ChannelViewPage from './pages/ChannelViewPage';
 import ActivityPage from './pages/ActivityPage';
 import ProfilePage from './pages/ProfilePage';
 import ChannelsPage from './pages/ChannelsPage';
+import TrendingPage from './pages/TrendingPage';
 import MediaPlayer from './components/player/MediaPlayer';
 import { currentTrack } from './stores/playerStore';
 
@@ -30,6 +31,7 @@ const App: Component = () => {
       <Route path="/channels" component={ChannelsPage} />
       <Route path="/channels/:id" component={ChannelViewPage} />
       <Route path="/activity" component={ActivityPage} />
+      <Route path="/trending" component={TrendingPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
       <Route path="/profile" component={ProfilePage} />
     </Router>
