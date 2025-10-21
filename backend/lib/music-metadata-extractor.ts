@@ -96,6 +96,7 @@ async function upsertMusicLibrary(
     url,
     og_title: ogData.og_title,
     og_artist: ogData.og_artist,
+    og_description: ogData.og_description,
     og_image_url: ogData.og_image_url,
     og_metadata: ogData.og_metadata,
     og_fetched_at: new Date().toISOString(),

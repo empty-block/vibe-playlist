@@ -15,6 +15,7 @@ export interface QueueItem {
   url: string
   og_title: string | null
   og_artist: string | null
+  og_description: string | null
   og_metadata: any
 }
 
@@ -75,6 +76,7 @@ export async function processBatch(options?: {
       platform_id: item.platform_id,
       og_title: item.og_title,
       og_artist: item.og_artist,
+      og_description: item.og_description,
       og_metadata: item.og_metadata
     }))
 
