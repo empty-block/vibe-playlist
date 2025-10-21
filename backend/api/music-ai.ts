@@ -3,10 +3,12 @@
  * Endpoints for triggering and monitoring AI music metadata extraction
  *
  * TASK-650: API endpoints for manual AI processing and queue status
+ * TASK-657: Worker control endpoints
  */
 
 import { Hono } from 'hono'
 import { processBatch, getQueueStats, getFailedItems } from '../lib/ai-queue-processor'
+import { getWorker } from '../lib/ai-worker'
 
 const app = new Hono()
 
@@ -129,6 +131,90 @@ app.get('/health', (c) => {
       ? 'AI music extractor is ready'
       : 'ANTHROPIC_API_KEY not configured'
   })
+})
+
+/**
+ * GET /api/music-ai/worker/status
+ * Get background worker status
+ */
+app.get('/worker/status', (c) => {
+  try {
+    const worker = getWorker()
+    const status = worker.getStatus()
+
+    return c.json({
+      worker: {
+        enabled: process.env.AI_WORKER_ENABLED !== 'false',
+        isRunning: status.isRunning,
+        isPaused: status.isPaused,
+        isProcessing: status.isProcessing,
+        lastRunAt: status.lastRunAt,
+        nextRunAt: status.nextRunAt
+      },
+      stats: {
+        totalRuns: status.totalRuns,
+        totalProcessed: status.totalProcessed,
+        totalSuccessful: status.totalSuccessful,
+        totalFailed: status.totalFailed,
+        successRate: status.totalProcessed > 0
+          ? ((status.totalSuccessful / status.totalProcessed) * 100).toFixed(1)
+          : '0.0'
+      },
+      config: {
+        intervalMs: parseInt(process.env.AI_WORKER_INTERVAL_MS || '30000'),
+        batchSize: parseInt(process.env.AI_WORKER_BATCH_SIZE || '20')
+      }
+    })
+  } catch (error: any) {
+    console.error('[Music AI API] Failed to get worker status:', error.message)
+    return c.json({
+      error: `Failed to get worker status: ${error.message}`
+    }, 500)
+  }
+})
+
+/**
+ * POST /api/music-ai/worker/pause
+ * Pause the background worker
+ */
+app.post('/worker/pause', (c) => {
+  try {
+    const worker = getWorker()
+    worker.pause()
+
+    return c.json({
+      success: true,
+      message: 'Worker paused',
+      status: worker.getStatus()
+    })
+  } catch (error: any) {
+    console.error('[Music AI API] Failed to pause worker:', error.message)
+    return c.json({
+      error: `Failed to pause worker: ${error.message}`
+    }, 400)
+  }
+})
+
+/**
+ * POST /api/music-ai/worker/resume
+ * Resume the background worker
+ */
+app.post('/worker/resume', (c) => {
+  try {
+    const worker = getWorker()
+    worker.resume()
+
+    return c.json({
+      success: true,
+      message: 'Worker resumed',
+      status: worker.getStatus()
+    })
+  } catch (error: any) {
+    console.error('[Music AI API] Failed to resume worker:', error.message)
+    return c.json({
+      error: `Failed to resume worker: ${error.message}`
+    }, 400)
+  }
 })
 
 export default app
