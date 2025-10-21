@@ -45,45 +45,37 @@ app.get('/trending', async (c) => {
 
     const supabase = getSupabaseClient()
 
-    // Calculate date threshold based on timeframe
-    let dateThreshold: Date
-    let velocityThreshold: Date // For 3-day velocity window
+    // Calculate timeframe parameters
+    let timeframeDays: number
+    let velocityDays: number
 
     switch (timeframe) {
       case '7d':
-        dateThreshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        velocityThreshold = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+        timeframeDays = 7
+        velocityDays = 3
         break
       case '30d':
-        dateThreshold = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-        velocityThreshold = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+        timeframeDays = 30
+        velocityDays = 10
         break
       case '90d':
-        dateThreshold = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
-        velocityThreshold = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        timeframeDays = 90
+        velocityDays = 30
         break
       default:
-        dateThreshold = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        velocityThreshold = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+        timeframeDays = 7
+        velocityDays = 3
     }
 
-    // Get all music shares with author info for DISTINCT counting
-    const { data: musicShares, error: sharesError } = await supabase
-      .from('cast_music_edges')
-      .select(`
-        music_platform_name,
-        music_platform_id,
-        created_at,
-        cast_id,
-        cast_nodes!cast_music_edges_cast_id_fkey!inner (
-          author_fid,
-          created_at
-        )
-      `)
-      .gte('cast_nodes.created_at', dateThreshold.toISOString())
+    // Call Postgres function to get trending tracks
+    const { data: tracks, error } = await supabase.rpc('get_trending_tracks', {
+      timeframe_days: timeframeDays,
+      limit_count: limit,
+      velocity_days: velocityDays
+    })
 
-    if (sharesError) {
-      console.error('Error fetching music shares:', sharesError)
+    if (error) {
+      console.error('Error fetching trending tracks:', error)
       return c.json({
         error: {
           code: 'INTERNAL_ERROR',
@@ -92,199 +84,28 @@ app.get('/trending', async (c) => {
       }, 500)
     }
 
-    // Count DISTINCT sharers per track and track timestamps
-    const trackData = new Map<string, {
-      platform: string,
-      platformId: string,
-      uniqueSharers: Set<string>,
-      recentSharers: Set<string>,
-      castIds: Set<string>
-    }>()
-
-    musicShares?.forEach((share: any) => {
-      const key = `${share.music_platform_name}-${share.music_platform_id}`
-      const authorFid = share.cast_nodes.author_fid
-      const createdAt = new Date(share.created_at)
-
-      if (!trackData.has(key)) {
-        const [platform, ...platformIdParts] = key.split('-')
-        trackData.set(key, {
-          platform: share.music_platform_name,
-          platformId: share.music_platform_id,
-          uniqueSharers: new Set(),
-          recentSharers: new Set(),
-          castIds: new Set()
-        })
-      }
-
-      const data = trackData.get(key)!
-      data.uniqueSharers.add(authorFid)
-      data.castIds.add(share.cast_id)
-
-      // Track recent sharers for velocity
-      if (createdAt >= velocityThreshold) {
-        data.recentSharers.add(authorFid)
-      }
-    })
-
-    if (trackData.size === 0) {
-      return c.json({ tracks: [], updatedAt: new Date(now).toISOString() })
-    }
-
-    // Get DISTINCT likes and replies for each track
-    const scoredTracks = await Promise.all(
-      Array.from(trackData.entries()).map(async ([key, data]) => {
-        const castIdsArray = Array.from(data.castIds)
-
-        // Get unique likers and repliers for this track's casts
-        const { data: interactions } = await supabase
-          .from('interaction_edges')
-          .select('source_id, edge_type, created_at')
-          .in('cast_id', castIdsArray)
-          .in('edge_type', ['LIKED', 'REPLIED'])
-          .gte('created_at', dateThreshold.toISOString())
-
-        const uniqueLikers = new Set<string>()
-        const uniqueRepliers = new Set<string>()
-        const recentEngagers = new Set<string>()
-
-        interactions?.forEach((interaction: any) => {
-          const createdAt = new Date(interaction.created_at)
-
-          if (interaction.edge_type === 'LIKED') {
-            uniqueLikers.add(interaction.source_id)
-          } else if (interaction.edge_type === 'REPLIED') {
-            uniqueRepliers.add(interaction.source_id)
-          }
-
-          // Track recent engagers for velocity
-          if (createdAt >= velocityThreshold) {
-            recentEngagers.add(interaction.source_id)
-          }
-        })
-
-        // Calculate weighted engagement score
-        // shares × 10 + likes × 3 + replies × 2
-        const uniqueSharers = data.uniqueSharers.size
-        const uniqueLikesCount = uniqueLikers.size
-        const uniqueRepliesCount = uniqueRepliers.size
-
-        const weightedScore = (uniqueSharers * 10) + (uniqueLikesCount * 3) + (uniqueRepliesCount * 2)
-
-        // Calculate velocity multiplier
-        // Total unique engagers = sharers + likers + repliers
-        const totalUniqueEngagers = new Set([
-          ...data.uniqueSharers,
-          ...uniqueLikers,
-          ...uniqueRepliers
-        ]).size
-
-        const recentUniqueEngagers = new Set([
-          ...data.recentSharers,
-          ...recentEngagers
-        ]).size
-
-        const velocityMultiplier = totalUniqueEngagers > 0
-          ? (recentUniqueEngagers / totalUniqueEngagers) + 1
-          : 1
-
-        const finalScore = weightedScore * velocityMultiplier
-
-        return {
-          key,
-          platform: data.platform,
-          platformId: data.platformId,
-          uniqueShares: uniqueSharers,
-          uniqueLikes: uniqueLikesCount,
-          uniqueReplies: uniqueRepliesCount,
-          score: finalScore,
-          castIds: castIdsArray
-        }
-      })
-    )
-
-    // Sort by score and take top tracks
-    const topTracks = scoredTracks
-      .filter(t => t.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
-
-    if (topTracks.length === 0) {
-      return c.json({ tracks: [], updatedAt: new Date(now).toISOString() })
-    }
-
-    // Fetch music library data for top tracks
-    const musicPromises = topTracks.map(async (track, index) => {
-      const { data: musicData } = await supabase
-        .from('music_library')
-        .select('*')
-        .eq('platform_name', track.platform)
-        .eq('platform_id', track.platformId)
-        .single()
-
-      if (!musicData) return null
-
-      // Fetch recent casts for this track (up to 3)
-      const { data: recentCasts } = await supabase
-        .from('cast_music_edges')
-        .select(`
-          cast_id,
-          cast_nodes!cast_music_edges_cast_id_fkey!inner (
-            node_id,
-            cast_text,
-            author_fid,
-            created_at,
-            user_nodes!inner (
-              node_id,
-              fname,
-              display_name,
-              avatar_url
-            )
-          )
-        `)
-        .eq('music_platform_name', track.platform)
-        .eq('music_platform_id', track.platformId)
-        .gte('cast_nodes.created_at', dateThreshold.toISOString())
-        .order('cast_nodes.created_at', { ascending: false })
-        .limit(3)
-
-      const formattedRecentCasts = (recentCasts || []).map((rc: any) => ({
-        castHash: rc.cast_nodes.node_id,
-        text: rc.cast_nodes.cast_text,
-        author: {
-          fid: rc.cast_nodes.author_fid,
-          username: rc.cast_nodes.user_nodes.fname || 'unknown',
-          displayName: rc.cast_nodes.user_nodes.display_name || 'Unknown User',
-          pfpUrl: rc.cast_nodes.user_nodes.avatar_url
-        },
-        timestamp: rc.cast_nodes.created_at
-      }))
-
-      return {
-        rank: index + 1,
-        id: `${track.platform}-${track.platformId}`,
-        title: musicData.title || musicData.og_title || 'Unknown Track',
-        artist: musicData.artist || musicData.og_artist || 'Unknown Artist',
-        platform: track.platform,
-        platformId: track.platformId,
-        url: musicData.url,
-        thumbnail: musicData.og_image_url || musicData.thumbnail_url,
-        shares: track.uniqueShares,
-        uniqueLikes: track.uniqueLikes,
-        uniqueReplies: track.uniqueReplies,
-        score: Math.round(track.score * 100) / 100,
-        recentCasts: formattedRecentCasts
-      }
-    })
-
-    const tracks = (await Promise.all(musicPromises)).filter(t => t !== null)
+    // Format response to match existing API structure
+    const formattedTracks = (tracks || []).map((track: any) => ({
+      rank: track.rank,
+      id: `${track.platform_name}-${track.platform_id}`,
+      title: track.title,
+      artist: track.artist,
+      platform: track.platform_name,
+      platformId: track.platform_id,
+      url: track.url,
+      thumbnail: track.thumbnail,
+      shares: track.shares,
+      uniqueLikes: track.unique_likes,
+      uniqueReplies: track.unique_replies,
+      score: track.score
+    }))
 
     // Update cache
-    tracksCache.tracks = tracks
+    tracksCache.tracks = formattedTracks
     tracksCache.calculatedAt = now
 
     return c.json({
-      tracks,
+      tracks: formattedTracks,
       updatedAt: new Date(now).toISOString()
     })
   } catch (error) {

@@ -53,46 +53,46 @@ const TrackCard: Component<TrackCardProps> = (props) => {
   };
 
   return (
-    <div class="win95-activity-card">
+    <div class="activity-card">
       {/* Navy header bar */}
-      <div class="win95-activity-header">
-        <div class="win95-user-info">
+      <div class="activity-header">
+        <div class="user-info">
           <Show when={props.author.pfpUrl} fallback={
-            <div class="win95-user-avatar-fallback">
+            <div class="user-avatar-fallback">
               {props.author.username.charAt(0).toUpperCase()}
             </div>
           }>
             <img
               src={props.author.pfpUrl}
               alt={props.author.username}
-              class="win95-user-avatar"
+              class="user-avatar"
             />
           </Show>
           <span
-            class="win95-username"
+            class="username"
             onClick={handleUsernameClick}
             style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
           >
             {props.author.username}
           </span>
         </div>
-        <span class="win95-timestamp">{formatTimeAgo(props.timestamp)}</span>
+        <span class="timestamp">{formatTimeAgo(props.timestamp)}</span>
       </div>
 
       {/* Track content */}
-      <div class="win95-track-content">
-        <div class="win95-thumbnail">
+      <div class="track-content">
+        <div class="thumbnail">
           <Show when={props.track.thumbnail} fallback={<span>🎵</span>}>
             <img src={props.track.thumbnail} alt={props.track.title} />
           </Show>
         </div>
-        <div class="win95-track-info">
-          <div class="win95-track-title">{props.track.title}</div>
-          <div class="win95-track-artist">{props.track.artist}</div>
-          <div class="win95-track-meta">via {props.track.platform}</div>
+        <div class="track-info">
+          <div class="track-title">{props.track.title}</div>
+          <div class="track-artist">{props.track.artist}</div>
+          <div class="track-meta">via {props.track.platform}</div>
         </div>
         <button
-          class="win95-play-button"
+          class="play-button"
           onClick={() => props.onPlay({
             id: props.track.id,
             title: props.track.title,
@@ -109,22 +109,22 @@ const TrackCard: Component<TrackCardProps> = (props) => {
 
       {/* Comment if present */}
       <Show when={props.text && props.text.trim()}>
-        <div class="win95-comment-box">
+        <div class="comment-box">
           {props.text}
         </div>
       </Show>
 
       {/* Stats row */}
-      <div class="win95-stats-row">
-        <div class="win95-stat-box">
+      <div class="stats-row">
+        <div class="stat-box">
           <span>♥</span>
           <span class="count">{props.stats.likes || 0}</span>
         </div>
-        <div class="win95-stat-box">
+        <div class="stat-box">
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
         </div>
-        <div class="win95-stat-box">
+        <div class="stat-box">
           <span>🔄</span>
           <span class="count">{props.stats.recasts || 0}</span>
         </div>
