@@ -48,37 +48,37 @@ const TrackShareActivity: Component<TrackShareActivityProps> = (props) => {
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   return (
-    <div class="win95-activity-card">
+    <div class="activity-card">
       {/* Navy header bar */}
-      <div class="win95-activity-header">
-        <div class="win95-user-info">
+      <div class="activity-header">
+        <div class="user-info">
           <Show when={props.activity.user.pfp} fallback={
-            <div class="win95-user-avatar-fallback">{props.activity.user.username.charAt(0).toUpperCase()}</div>
+            <div class="user-avatar-fallback">{props.activity.user.username.charAt(0).toUpperCase()}</div>
           }>
-            <img src={props.activity.user.pfp} alt={props.activity.user.username} class="win95-user-avatar" />
+            <img src={props.activity.user.pfp} alt={props.activity.user.username} class="user-avatar" />
           </Show>
-          <span class="win95-username">
+          <span class="username">
             {props.activity.user.username}
             <span style={{ 'font-weight': 'normal', 'margin-left': '4px' }}>• shared track</span>
           </span>
         </div>
-        <span class="win95-timestamp">{formatTimeAgo(props.activity.timestamp)}</span>
+        <span class="timestamp">{formatTimeAgo(props.activity.timestamp)}</span>
       </div>
 
       {/* Track content */}
-      <div class="win95-track-content">
-        <div class="win95-thumbnail">
+      <div class="track-content">
+        <div class="thumbnail">
           <Show when={props.activity.track.thumbnail} fallback={<span>🎵</span>}>
             <img src={props.activity.track.thumbnail} alt={props.activity.track.title} />
           </Show>
         </div>
-        <div class="win95-track-info">
-          <div class="win95-track-title">{props.activity.track.title}</div>
-          <div class="win95-track-artist">{props.activity.track.artist}</div>
-          <div class="win95-track-meta">via {props.activity.track.source}</div>
+        <div class="track-info">
+          <div class="track-title">{props.activity.track.title}</div>
+          <div class="track-artist">{props.activity.track.artist}</div>
+          <div class="track-meta">via {props.activity.track.source}</div>
         </div>
         <button
-          class="win95-play-button"
+          class="play-button"
           onClick={handleTrackPlay}
         >
           {isTrackPlaying() ? '⏸' : '▶'}
@@ -87,22 +87,22 @@ const TrackShareActivity: Component<TrackShareActivityProps> = (props) => {
 
       {/* Comment if present */}
       <Show when={props.activity.track.comment && props.activity.track.comment.trim()}>
-        <div class="win95-comment-box">
+        <div class="comment-box">
           {props.activity.track.comment}
         </div>
       </Show>
 
       {/* Stats row */}
-      <div class="win95-stats-row">
-        <div class="win95-stat-box">
+      <div class="stats-row">
+        <div class="stat-box">
           <span>♥</span>
           <span class="count">{props.activity.track.likes || 0}</span>
         </div>
-        <div class="win95-stat-box">
+        <div class="stat-box">
           <span>💬</span>
           <span class="count">{props.activity.track.replies || 0}</span>
         </div>
-        <div class="win95-stat-box">
+        <div class="stat-box">
           <span>🔄</span>
           <span class="count">{props.activity.track.recasts || 0}</span>
         </div>

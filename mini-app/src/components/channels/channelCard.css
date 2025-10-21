@@ -1,14 +1,13 @@
 /* ChannelCard - Clean Napster-inspired design */
 
 .channel-card {
-  position: relative;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--neon-magenta);
+  /* Override RetroPanel defaults with custom magenta border */
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--neon-magenta) !important;
   margin-bottom: 12px;
   cursor: pointer;
   user-select: none;
   transition: all 200ms ease;
-  isolation: isolate;
   /* Ensure crisp rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

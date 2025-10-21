@@ -142,8 +142,8 @@ body {
    Utility Classes for Theme-Aware Styling
    ============================================ */
 
-/* Win95 Button (theme-aware) */
-.win95-button {
+/* Retro Button (theme-aware) */
+.retro-button {
   background: var(--bg-panel);
   border-top: 2px solid var(--border-raised-light);
   border-left: 2px solid var(--border-raised-light);
@@ -152,8 +152,8 @@ body {
   color: var(--text-primary);
 }
 
-.win95-button:active,
-.win95-button.active {
+.retro-button:active,
+.retro-button.active {
   border-top: 2px solid var(--border-sunken-light);
   border-left: 2px solid var(--border-sunken-light);
   border-right: 2px solid var(--border-sunken-dark);
@@ -161,17 +161,17 @@ body {
 }
 
 /* Dark mode adds glow effect */
-.theme-dark .win95-button:hover {
+.theme-dark .retro-button:hover {
   box-shadow: 0 0 10px var(--glow-accent);
 }
 
-/* Win95 Window */
-.win95-window {
+/* Retro Window */
+.retro-window {
   background: var(--bg-window);
   border: var(--border-thick) solid var(--border-accent);
 }
 
-.theme-dark .win95-window {
+.theme-dark .retro-window {
   box-shadow: 0 0 20px var(--glow-accent);
 }
 

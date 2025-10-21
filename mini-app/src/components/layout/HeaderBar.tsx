@@ -65,7 +65,7 @@ const HeaderBar: Component<HeaderBarProps> = (props) => {
           {!isMobile() && (
             <>
               <button 
-                class="win95-header-button header-minimize-btn"
+                class="header-button header-minimize-btn"
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
                 aria-label="Minimize (disabled)"
@@ -74,7 +74,7 @@ const HeaderBar: Component<HeaderBarProps> = (props) => {
                 _
               </button>
               <button 
-                class="win95-header-button header-maximize-btn"
+                class="header-button header-maximize-btn"
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
                 aria-label="Maximize (disabled)"
@@ -85,7 +85,7 @@ const HeaderBar: Component<HeaderBarProps> = (props) => {
             </>
           )}
           <button 
-            class="win95-header-button header-close-btn"
+            class="header-button header-close-btn"
             onMouseEnter={handleButtonHover}
             onMouseLeave={handleButtonLeave}
             onClick={handleCloseClick}

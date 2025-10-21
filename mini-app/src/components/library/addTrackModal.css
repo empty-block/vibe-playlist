@@ -92,7 +92,7 @@
 }
 
 /* Override SongInputForm styles for modal context */
-.add-track-modal .win95-panel {
+.add-track-modal .retro-panel {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -100,12 +100,12 @@
   margin-bottom: 0 !important;
 }
 
-.add-track-modal .win95-panel,
-.add-track-modal .win95-panel * {
+.add-track-modal .retro-panel,
+.add-track-modal .retro-panel * {
   color: var(--light-text, #ffffff) !important;
 }
 
-.add-track-modal .win95-panel h2 {
+.add-track-modal .retro-panel h2 {
   color: var(--neon-cyan, #04caf4) !important;
   background: transparent !important;
   border: none !important;
@@ -116,7 +116,7 @@
   font-size: 14px !important;
 }
 
-.add-track-modal .win95-panel h2 i {
+.add-track-modal .retro-panel h2 i {
   color: var(--neon-green, #00f92a) !important;
 }
 
@@ -182,7 +182,7 @@
     font-size: 10px;
   }
 
-  .add-track-modal .win95-panel {
+  .add-track-modal .retro-panel {
     padding: 20px 16px !important;
   }
 

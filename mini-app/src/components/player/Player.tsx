@@ -14,7 +14,8 @@ import {
   isSeekable
 } from '../../stores/playerStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
-import './playerWin95.css';
+import RetroTitleBar from '../common/RetroTitleBar';
+import './player.css';
 
 interface PlayerProps {
   mediaComponent: JSX.Element;
@@ -119,42 +120,37 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class="win95-player-bar">
-        {/* Win95 Title Bar */}
-        <div class="win95-player-titlebar">
-          <div class="win95-player-titlebar-text">
-            <div class="win95-player-titlebar-icon"></div>
-            <span>Now Playing</span>
-          </div>
-          <div class="win95-player-titlebar-buttons">
-            <div class="win95-titlebar-button">_</div>
-            <div class="win95-titlebar-button">□</div>
-            <div class="win95-titlebar-button">×</div>
-          </div>
-        </div>
+      <div class="player-bar">
+        {/* Retro Title Bar */}
+        <RetroTitleBar
+          title="Now Playing"
+          showMinimize={true}
+          showMaximize={true}
+          showClose={true}
+        />
 
-        <div class="win95-player-content">
+        <div class="player-content">
           {/* YouTube Video Container - hide when paused but keep mounted */}
-          <div class="win95-video-container" classList={{ 'win95-video-hidden': !isPlaying() }}>
+          <div class="player-video" classList={{ 'player-video--hidden': !isPlaying() }}>
             {props.mediaComponent}
           </div>
 
           {/* Track Info Panel - Green LCD style with integrated controls */}
-          <div class="win95-track-info-panel">
-            <div class="win95-track-metadata">
-              <div class="win95-track-title">{currentTrack()?.title}</div>
-              <div class="win95-track-subtitle">{currentTrack()?.artist}</div>
-              <div class="win95-track-meta">
-                <span class="win95-shared-by">shared by @{currentTrack()?.addedBy}</span>
+          <div class="player-track-info">
+            <div class="player-track-metadata">
+              <div class="player-track-title">{currentTrack()?.title}</div>
+              <div class="player-track-subtitle">{currentTrack()?.artist}</div>
+              <div class="player-track-meta">
+                <span class="player-shared-by">shared by @{currentTrack()?.addedBy}</span>
               </div>
             </div>
 
             {/* Playback Controls - integrated into track info panel */}
-            <div class="win95-track-controls">
+            <div class="player-controls">
               <button
                 ref={playButtonRef!}
                 onClick={props.onTogglePlay}
-                class="win95-control-btn win95-control-btn-play"
+                class="player-control player-control--play"
                 disabled={!props.playerReady()}
                 title={isPlaying() ? 'Pause' : 'Play'}
               >
@@ -163,7 +159,7 @@ const Player: Component<PlayerProps> = (props) => {
               <button
                 ref={prevButtonRef!}
                 onClick={handleSkipPrevious}
-                class="win95-control-btn"
+                class="player-control"
                 disabled={!props.playerReady()}
                 title="Previous track"
               >
@@ -172,7 +168,7 @@ const Player: Component<PlayerProps> = (props) => {
               <button
                 ref={nextButtonRef!}
                 onClick={handleSkipNext}
-                class="win95-control-btn"
+                class="player-control"
                 disabled={!props.playerReady()}
                 title="Next track"
               >
@@ -183,9 +179,9 @@ const Player: Component<PlayerProps> = (props) => {
 
           {/* Animated Visualizer - only show when playing and player is ready */}
           <Show when={isPlaying() && props.playerReady()}>
-            <div class="win95-visualizer">
+            <div class="player-visualizer">
               <For each={Array(16).fill(0)}>
-                {() => <div class="win95-visualizer-bar"></div>}
+                {() => <div class="player-visualizer-bar"></div>}
               </For>
             </div>
           </Show>

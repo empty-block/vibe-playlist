@@ -3,7 +3,7 @@ import { For } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
 import { setCurrentSection, currentSection } from '../../../stores/navigationStore';
 import { navigationSections } from '../Sidebar/NavigationData';
-import './mobileNavigationWin95.css';
+import './mobileNavigation.css';
 
 interface MobileNavigationProps {
   class?: string;
@@ -63,7 +63,7 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
 
   return (
     <nav
-      class={`win95-nav-bar ${props.class || ''}`}
+      class={`nav-bar ${props.class || ''}`}
       role="navigation"
       aria-label="Main navigation"
     >
@@ -71,19 +71,19 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
         {(section) => (
           <A
             href={section.href}
-            class="win95-nav-button"
+            class="nav-button"
             classList={{
-              'win95-nav-button-active': currentSection() === section.id
+              'nav-button--active': currentSection() === section.id
             }}
             role="menuitem"
             aria-label={`Navigate to ${section.label} page`}
             aria-current={currentSection() === section.id ? 'page' : undefined}
             onClick={() => handleSectionClick(section.id)}
           >
-            <div class="win95-nav-icon">
+            <div class="nav-icon">
               {getIcon(section.id)}
             </div>
-            <span class="win95-nav-label">{section.label}</span>
+            <span class="nav-label">{section.label}</span>
           </A>
         )}
       </For>

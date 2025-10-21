@@ -1,145 +1,49 @@
-/* Windows 95 Window Container - Light Mode */
-.theme-light .win95-window,
-body:not(.theme-dark) .win95-window {
-  background: #C0C0C8;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #000000;
-  border-bottom: 2px solid #000000;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+/* Window sizing (RetroWindow component handles chrome) */
+.retro-window {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
   height: calc(100vh - 100px);
 }
 
-/* Windows 95 Window Container - Dark Mode */
-.theme-dark .win95-window {
-  background: #000000;
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px);
-}
-
-/* Title Bar - Light Mode */
-.theme-light .win95-title-bar,
-body:not(.theme-dark) .win95-title-bar {
-  background: linear-gradient(to right, #000080, #1084D0);
-  padding: 3px 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-  font-weight: bold;
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-}
-
-/* Title Bar - Dark Mode */
-.theme-dark .win95-title-bar {
-  background: #000000;
-  border-bottom: 2px solid #00ff00;
-  padding: 3px 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-}
-
-.win95-title-text {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.win95-title-icon {
+/* Title icon styling */
+.title-icon {
   width: 16px;
   height: 16px;
   background: #FFFFFF;
   border: 1px solid #000080;
 }
 
-.win95-window-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.win95-control-btn {
-  width: 18px;
-  height: 16px;
-  background: #C0C0C8;
-  border-top: 1px solid #FFFFFF;
-  border-left: 1px solid #FFFFFF;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  font-size: 11px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #000000;
-  padding-bottom: 2px;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-}
-
-.win95-control-btn:active {
-  border-top: 1px solid #000000;
-  border-left: 1px solid #000000;
-  border-right: 1px solid #FFFFFF;
-  border-bottom: 1px solid #FFFFFF;
-  padding-top: 1px;
-  padding-bottom: 1px;
-}
-
-/* Content Area - Light Mode */
-.theme-light .win95-content,
-body:not(.theme-dark) .win95-content {
-  flex: 1;
+/* Channels Container - Scrollable - Light Mode */
+.theme-light .channels-container,
+body:not(.theme-dark) .channels-container {
+  height: 100%;
   background: #FFFFFF;
   margin: 3px;
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #FFFFFF;
   border-bottom: 1px solid #FFFFFF;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Content Area - Dark Mode */
-.theme-dark .win95-content {
-  flex: 1;
-  background: #000000;
-  margin: 3px;
-  border: 2px solid #00ff00;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* Channels Container - Scrollable */
-.win95-channels-container {
-  flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
+  box-sizing: border-box;
+}
+
+/* Channels Container - Dark Mode */
+.theme-dark .channels-container {
+  height: 100%;
+  background: #000000;
+  margin: 3px;
+  border: 2px solid #00ff00;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 /* Empty State */
-.win95-empty-state {
+.empty-state {
   padding: 40px 20px;
   text-align: center;
   color: #808080;
@@ -148,29 +52,29 @@ body:not(.theme-dark) .win95-content {
 }
 
 /* Search Section - Bottom - Light Mode */
-.theme-light .win95-search-section,
-body:not(.theme-dark) .win95-search-section {
+.theme-light .search-section,
+body:not(.theme-dark) .search-section {
   padding: 8px;
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
 }
 
 /* Search Section - Dark Mode */
-.theme-dark .win95-search-section {
+.theme-dark .search-section {
   padding: 8px;
   background: #000000;
   border-top: 2px solid #00ff00;
 }
 
-.win95-search-container {
+.search-container {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 /* Search Label - Light Mode */
-.theme-light .win95-search-label,
-body:not(.theme-dark) .win95-search-label {
+.theme-light .search-label,
+body:not(.theme-dark) .search-label {
   font-size: 11px;
   font-weight: bold;
   color: #000000;
@@ -179,7 +83,7 @@ body:not(.theme-dark) .win95-search-label {
 }
 
 /* Search Label - Dark Mode */
-.theme-dark .win95-search-label {
+.theme-dark .search-label {
   font-size: 11px;
   font-weight: bold;
   color: #00ff00;
@@ -187,14 +91,14 @@ body:not(.theme-dark) .win95-search-label {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.win95-search-input-wrapper {
+.search-input-wrapper {
   flex: 1;
   position: relative;
 }
 
 /* Search Input - Light Mode */
-.theme-light .win95-search-input,
-body:not(.theme-dark) .win95-search-input {
+.theme-light .search-input,
+body:not(.theme-dark) .search-input {
   width: 100%;
   padding: 3px 4px;
   border-top: 1px solid #808080;
@@ -209,7 +113,7 @@ body:not(.theme-dark) .win95-search-input {
 }
 
 /* Search Input - Dark Mode */
-.theme-dark .win95-search-input {
+.theme-dark .search-input {
   width: 100%;
   padding: 3px 4px;
   border: 1px solid #00ff00;
@@ -220,22 +124,22 @@ body:not(.theme-dark) .win95-search-input {
   outline: none;
 }
 
-.win95-search-input:focus {
+.search-input:focus {
   outline: 1px dotted;
   outline-offset: -2px;
 }
 
 /* Scrollbar Styling */
-.win95-channels-container::-webkit-scrollbar {
+.channels-container::-webkit-scrollbar {
   width: 16px;
 }
 
-.win95-channels-container::-webkit-scrollbar-track {
+.channels-container::-webkit-scrollbar-track {
   background: #FFFFFF;
   border-left: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-thumb {
+.channels-container::-webkit-scrollbar-thumb {
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
   border-left: 1px solid #FFFFFF;
@@ -243,11 +147,11 @@ body:not(.theme-dark) .win95-search-input {
   border-bottom: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-thumb:hover {
+.channels-container::-webkit-scrollbar-thumb:hover {
   background: #A8A8A8;
 }
 
-.win95-channels-container::-webkit-scrollbar-button {
+.channels-container::-webkit-scrollbar-button {
   height: 16px;
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
@@ -256,31 +160,31 @@ body:not(.theme-dark) .win95-search-input {
   border-bottom: 1px solid #808080;
 }
 
-.win95-channels-container::-webkit-scrollbar-button:vertical:decrement {
+.channels-container::-webkit-scrollbar-button:vertical:decrement {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 6l-4 4h8z" fill="%23000000"/></svg>') center no-repeat;
 }
 
-.win95-channels-container::-webkit-scrollbar-button:vertical:increment {
+.channels-container::-webkit-scrollbar-button:vertical:increment {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 10l4-4H4z" fill="%23000000"/></svg>') center no-repeat;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .win95-window {
+  .retro-window {
     max-width: 100%;
     height: calc(100vh - 85px) !important;
     margin: 0 8px;
   }
 
-  .win95-title-bar {
+  .title-bar {
     font-size: 12px;
   }
 
-  .win95-channels-container {
+  .channels-container {
     padding: 4px;
   }
 
-  .win95-search-section {
+  .search-section {
     padding: 6px;
   }
 }

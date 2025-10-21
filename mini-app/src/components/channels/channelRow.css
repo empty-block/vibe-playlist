@@ -1,6 +1,6 @@
 /* Channel Item - Windows 95 Style - Light Mode */
-.theme-light .win95-channel-item,
-body:not(.theme-dark) .win95-channel-item {
+.theme-light .channel-item,
+body:not(.theme-dark) .channel-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -13,31 +13,31 @@ body:not(.theme-dark) .win95-channel-item {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.theme-light .win95-channel-item.even,
-body:not(.theme-dark) .win95-channel-item.even {
+.theme-light .channel-item.even,
+body:not(.theme-dark) .channel-item.even {
   background: #F0F0F0;
 }
 
-.theme-light .win95-channel-item:hover,
-body:not(.theme-dark) .win95-channel-item:hover {
+.theme-light .channel-item:hover,
+body:not(.theme-dark) .channel-item:hover {
   background: #000080 !important;
   color: #FFFFFF;
   border: 2px dotted #FFFFFF;
 }
 
-.theme-light .win95-channel-item:active,
-body:not(.theme-dark) .win95-channel-item:active {
+.theme-light .channel-item:active,
+body:not(.theme-dark) .channel-item:active {
   background: #00007F !important;
 }
 
-.theme-light .win95-channel-item:focus,
-body:not(.theme-dark) .win95-channel-item:focus {
+.theme-light .channel-item:focus,
+body:not(.theme-dark) .channel-item:focus {
   outline: 2px dotted #000000;
   outline-offset: -4px;
 }
 
 /* Channel Item - Dark Mode */
-.theme-dark .win95-channel-item {
+.theme-dark .channel-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -50,28 +50,28 @@ body:not(.theme-dark) .win95-channel-item:focus {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.theme-dark .win95-channel-item.even {
+.theme-dark .channel-item.even {
   background: #0a0a0a;
 }
 
-.theme-dark .win95-channel-item:hover {
+.theme-dark .channel-item:hover {
   background: #1a1a1a !important;
   color: #00ff00;
   border: 2px solid #00ff00;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
-.theme-dark .win95-channel-item:active {
+.theme-dark .channel-item:active {
   background: #0d0d0d !important;
 }
 
-.theme-dark .win95-channel-item:focus {
+.theme-dark .channel-item:focus {
   outline: 2px dotted #00ff00;
   outline-offset: -4px;
 }
 
 /* Channel Image - 40x40 */
-.win95-channel-image {
+.channel-image {
   width: 40px;
   height: 40px;
   min-width: 40px;
@@ -86,40 +86,40 @@ body:not(.theme-dark) .win95-channel-item:focus {
 }
 
 /* Gradient variations for channel images */
-.win95-channel-image.gradient-1 {
+.channel-image.gradient-1 {
   background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
 }
 
-.win95-channel-image.gradient-2 {
+.channel-image.gradient-2 {
   background: linear-gradient(135deg, #A8E6CF 0%, #3D84A8 100%);
 }
 
-.win95-channel-image.gradient-3 {
+.channel-image.gradient-3 {
   background: linear-gradient(135deg, #FFD93D 0%, #FF6B6B 100%);
 }
 
-.win95-channel-image.gradient-4 {
+.channel-image.gradient-4 {
   background: linear-gradient(135deg, #B388EB 0%, #8093F1 100%);
 }
 
-.win95-channel-image.gradient-5 {
+.channel-image.gradient-5 {
   background: linear-gradient(135deg, #FFC0CB 0%, #FF6B9D 100%);
 }
 
-.win95-channel-image.gradient-6 {
+.channel-image.gradient-6 {
   background: linear-gradient(135deg, #FFE66D 0%, #FF6B6B 100%);
 }
 
-.win95-channel-image.gradient-7 {
+.channel-image.gradient-7 {
   background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
 }
 
-.win95-channel-image.gradient-8 {
+.channel-image.gradient-8 {
   background: linear-gradient(135deg, #A8A8A8 0%, #5D5D5D 100%);
 }
 
 /* Channel Info */
-.win95-channel-info {
+.channel-info {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -128,41 +128,41 @@ body:not(.theme-dark) .win95-channel-item:focus {
 }
 
 /* Channel Header - Name + Badge */
-.win95-channel-header {
+.channel-header {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 /* Channel Name - Light Mode */
-.theme-light .win95-channel-name,
-body:not(.theme-dark) .win95-channel-name {
+.theme-light .channel-name,
+body:not(.theme-dark) .channel-name {
   font-weight: bold;
   font-size: 13px;
   line-height: 1.2;
   color: #000000;
 }
 
-.theme-light .win95-channel-item:hover .win95-channel-name,
-body:not(.theme-dark) .win95-channel-item:hover .win95-channel-name {
+.theme-light .channel-item:hover .channel-name,
+body:not(.theme-dark) .channel-item:hover .channel-name {
   color: #FFFFFF;
 }
 
 /* Channel Name - Dark Mode */
-.theme-dark .win95-channel-name {
+.theme-dark .channel-name {
   font-weight: bold;
   font-size: 13px;
   line-height: 1.2;
   color: #00ff00;
 }
 
-.theme-dark .win95-channel-item:hover .win95-channel-name {
+.theme-dark .channel-item:hover .channel-name {
   color: #00ff00;
 }
 
 /* User Badge - Windows 95 3D Style - Light Mode */
-.theme-light .win95-user-badge,
-body:not(.theme-dark) .win95-user-badge {
+.theme-light .user-badge,
+body:not(.theme-dark) .user-badge {
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
   border-left: 1px solid #FFFFFF;
@@ -176,8 +176,8 @@ body:not(.theme-dark) .win95-user-badge {
   line-height: 1.4;
 }
 
-.theme-light .win95-channel-item:hover .win95-user-badge,
-body:not(.theme-dark) .win95-channel-item:hover .win95-user-badge {
+.theme-light .channel-item:hover .user-badge,
+body:not(.theme-dark) .channel-item:hover .user-badge {
   background: #FFFFFF;
   color: #000080;
   border-top: 1px solid #808080;
@@ -187,7 +187,7 @@ body:not(.theme-dark) .win95-channel-item:hover .win95-user-badge {
 }
 
 /* User Badge - Dark Mode */
-.theme-dark .win95-user-badge {
+.theme-dark .user-badge {
   background: #001100;
   border: 1px solid #00ff00;
   padding: 1px 5px;
@@ -198,15 +198,15 @@ body:not(.theme-dark) .win95-channel-item:hover .win95-user-badge {
   line-height: 1.4;
 }
 
-.theme-dark .win95-channel-item:hover .win95-user-badge {
+.theme-dark .channel-item:hover .user-badge {
   background: #00ff00;
   color: #000000;
   border: 1px solid #00ff00;
 }
 
 /* Channel Description - Single line with ellipsis - Light Mode */
-.theme-light .win95-channel-description,
-body:not(.theme-dark) .win95-channel-description {
+.theme-light .channel-description,
+body:not(.theme-dark) .channel-description {
   font-size: 11px;
   line-height: 1.3;
   color: #666666;
@@ -215,13 +215,13 @@ body:not(.theme-dark) .win95-channel-description {
   white-space: nowrap;
 }
 
-.theme-light .win95-channel-item:hover .win95-channel-description,
-body:not(.theme-dark) .win95-channel-item:hover .win95-channel-description {
+.theme-light .channel-item:hover .channel-description,
+body:not(.theme-dark) .channel-item:hover .channel-description {
   color: #FFFFFF;
 }
 
 /* Channel Description - Dark Mode */
-.theme-dark .win95-channel-description {
+.theme-dark .channel-description {
   font-size: 11px;
   line-height: 1.3;
   color: #00aa00;
@@ -230,26 +230,26 @@ body:not(.theme-dark) .win95-channel-item:hover .win95-channel-description {
   white-space: nowrap;
 }
 
-.theme-dark .win95-channel-item:hover .win95-channel-description {
+.theme-dark .channel-item:hover .channel-description {
   color: #00ff00;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .win95-channel-item {
+  .channel-item {
     gap: 8px;
     padding: 6px;
   }
 
-  .win95-channel-description {
+  .channel-description {
     font-size: 10px;
   }
 
-  .win95-channel-name {
+  .channel-name {
     font-size: 12px;
   }
 
-  .win95-user-badge {
+  .user-badge {
     font-size: 9px;
     padding: 1px 4px;
   }

@@ -27,116 +27,53 @@ body:not(.theme-dark) .channel-view-page {
   height: calc(100vh - 100px); /* Account for margins and mobile nav */
 }
 
-/* Window Chrome - Light Mode */
-.theme-light .channel-view-page .win95-window,
-body:not(.theme-dark) .channel-view-page .win95-window {
-  background: #c0c0c0;
-  border: 2px solid;
-  border-color: #ffffff #000000 #000000 #ffffff;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
+/* Window sizing (RetroWindow component handles chrome) */
+.channel-view-page .retro-window {
   height: 100%;
 }
 
-/* Window Chrome - Dark Mode */
-.theme-dark .channel-view-page .win95-window {
-  background: #000000;
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* Title Bar - Light Mode */
-.theme-light .channel-view-page .win95-title-bar,
-body:not(.theme-dark) .channel-view-page .win95-title-bar {
-  background: linear-gradient(90deg, #000080, #1084d0);
-  color: white;
-  padding: 3px 5px;
-  font-weight: bold;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-/* Title Bar - Dark Mode */
-.theme-dark .channel-view-page .win95-title-bar {
-  background: #000000;
-  border-bottom: 2px solid #00ff00;
-  color: #00ff00;
-  padding: 3px 5px;
-  font-weight: bold;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.win95-title-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.win95-title-icon {
+.title-icon {
   font-size: 14px;
 }
 
-/* Window Controls */
-.win95-window-controls {
-  display: flex;
-  gap: 2px;
-}
-
-.win95-control-btn {
-  width: 16px;
-  height: 14px;
-  background: #c0c0c0;
-  border: 1px solid;
-  border-color: #ffffff #000000 #000000 #ffffff;
-  font-size: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.win95-control-btn:active {
-  border-color: #000000 #ffffff #ffffff #000000;
-}
-
-/* Content Area */
-.win95-content {
-  flex: 1 !important;
-  background: transparent;
+/* Content Area - Light Mode */
+.theme-light .content,
+body:not(.theme-dark) .content {
+  height: 100%;
+  background: #FFFFFF;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
-  min-height: 0 !important; /* Allow flex child to shrink below content size */
+  box-sizing: border-box;
+}
+
+/* Content Area - Dark Mode */
+.theme-dark .content {
+  height: 100%;
+  background: #000000;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 /* Windows 95 Scrollbar */
-.win95-content::-webkit-scrollbar {
+.content::-webkit-scrollbar {
   width: 16px;
 }
 
-.win95-content::-webkit-scrollbar-track {
+.content::-webkit-scrollbar-track {
   background: #c0c0c0;
   border-left: 1px solid #808080;
 }
 
-.win95-content::-webkit-scrollbar-thumb {
+.content::-webkit-scrollbar-thumb {
   background: #dfdfdf;
   border: 2px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
 }
 
-.win95-content::-webkit-scrollbar-button {
+.content::-webkit-scrollbar-button {
   height: 16px;
   background: #c0c0c0;
   border: 2px solid;
@@ -144,24 +81,24 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
 }
 
 /* Channel Header Card */
-.channel-view-page .win95-channel-header {
+.channel-view-page .channel-header {
   background: linear-gradient(135deg, #000080 0%, #1084d0 100%);
   padding: 16px;
   border-bottom: 4px solid #000000;
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
-.channel-view-page .win95-channel-main {
+.channel-view-page .channel-main {
   display: flex;
   gap: 16px;
   align-items: flex-start;
 }
 
-.channel-view-page .win95-channel-image-container {
+.channel-view-page .channel-image-container {
   flex-shrink: 0;
 }
 
-.channel-view-page .win95-channel-image {
+.channel-view-page .channel-image {
   width: 100px;
   height: 100px;
   background: linear-gradient(135deg, #ff00ff, #00ffff);
@@ -178,13 +115,13 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
   overflow: hidden;
 }
 
-.channel-view-page .win95-channel-image img {
+.channel-view-page .channel-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.channel-view-page .win95-channel-image::after {
+.channel-view-page .channel-image::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -192,12 +129,12 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
   pointer-events: none;
 }
 
-.channel-view-page .win95-channel-details {
+.channel-view-page .channel-details {
   flex: 1;
   min-width: 0;
 }
 
-.channel-view-page .win95-channel-name {
+.channel-view-page .channel-name {
   font-size: 18px;
   font-weight: bold;
   color: #ffffff;
@@ -206,7 +143,7 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
   letter-spacing: 0.5px;
 }
 
-.channel-view-page .win95-channel-description {
+.channel-view-page .channel-description {
   font-size: 12px;
   color: #e0e0e0;
   line-height: 1.6;
@@ -214,13 +151,13 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 
-.channel-view-page .win95-channel-stats {
+.channel-view-page .channel-stats {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
 }
 
-.win95-stat-item {
+.stat-item {
   background: rgba(0, 0, 0, 0.3);
   padding: 4px 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -232,14 +169,14 @@ body:not(.theme-dark) .channel-view-page .win95-title-bar {
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
-.win95-stat-item .number {
+.stat-item .number {
   font-weight: bold;
   color: #00ffff;
 }
 
 /* Action Bar - Light Mode */
-.theme-light .win95-action-bar,
-body:not(.theme-dark) .win95-action-bar {
+.theme-light .action-bar,
+body:not(.theme-dark) .action-bar {
   background: #c0c0c0;
   padding: 10px;
   border-bottom: 2px solid;
@@ -251,7 +188,7 @@ body:not(.theme-dark) .win95-action-bar {
 }
 
 /* Action Bar - Dark Mode */
-.theme-dark .win95-action-bar {
+.theme-dark .action-bar {
   background: #000000;
   padding: 10px;
   border-bottom: 2px solid #00ff00;
@@ -261,13 +198,13 @@ body:not(.theme-dark) .win95-action-bar {
   flex-wrap: wrap;
 }
 
-.win95-primary-actions {
+.primary-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.win95-action-button {
+.action-button {
   padding: 8px 20px;
   background: #c0c0c0;
   border: 2px solid;
@@ -283,31 +220,31 @@ body:not(.theme-dark) .win95-action-bar {
   white-space: nowrap;
 }
 
-.win95-action-button:hover {
+.action-button:hover {
   background: #dfdfdf;
 }
 
-.win95-action-button:active {
+.action-button:active {
   border-color: #000000 #ffffff #ffffff #000000;
   padding: 9px 19px 7px 21px;
 }
 
-.win95-action-button.primary {
+.action-button.primary {
   background: #000080;
   color: #ffffff;
   border-color: #1084d0 #000050 #000050 #1084d0;
 }
 
-.win95-action-button.primary:hover {
+.action-button.primary:hover {
   background: #0000a0;
 }
 
-.win95-action-button .icon {
+.action-button .icon {
   font-size: 15px;
 }
 
 /* Sort Control */
-.win95-sort-control {
+.sort-control {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -316,23 +253,23 @@ body:not(.theme-dark) .win95-action-bar {
 }
 
 /* Sort Label - Light Mode */
-.theme-light .win95-sort-label,
-body:not(.theme-dark) .win95-sort-label {
+.theme-light .sort-label,
+body:not(.theme-dark) .sort-label {
   color: #000000;
   font-weight: bold;
 }
 
 /* Sort Label - Dark Mode */
-.theme-dark .win95-sort-label {
+.theme-dark .sort-label {
   color: #00ff00;
   font-weight: bold;
 }
 
-.win95-dropdown {
+.dropdown {
   position: relative;
 }
 
-.win95-dropdown-button {
+.dropdown-button {
   padding: 6px 28px 6px 10px;
   background: #ffffff;
   border: 2px solid;
@@ -345,7 +282,7 @@ body:not(.theme-dark) .win95-sort-label {
   position: relative;
 }
 
-.win95-dropdown-button::after {
+.dropdown-button::after {
   content: '▼';
   position: absolute;
   right: 8px;
@@ -355,15 +292,15 @@ body:not(.theme-dark) .win95-sort-label {
   color: #000000;
 }
 
-.win95-dropdown-button:hover {
+.dropdown-button:hover {
   background: #f0f0f0;
 }
 
-.win95-dropdown-button:active {
+.dropdown-button:active {
   border-color: #000000 #ffffff #ffffff #000000;
 }
 
-.win95-dropdown-menu {
+.dropdown-menu {
   display: none;
   position: absolute;
   top: 100%;
@@ -377,34 +314,34 @@ body:not(.theme-dark) .win95-sort-label {
   margin-top: 2px;
 }
 
-.win95-dropdown-menu.active {
+.dropdown-menu.active {
   display: block;
 }
 
-.win95-dropdown-item {
+.dropdown-item {
   padding: 5px 10px;
   cursor: pointer;
   font-size: 12px;
 }
 
-.win95-dropdown-item:hover {
+.dropdown-item:hover {
   background: #000080;
   color: #ffffff;
 }
 
-.win95-dropdown-item.selected {
+.dropdown-item.selected {
   background: #000080;
   color: #ffffff;
 }
 
 /* Track Feed */
-.win95-track-feed {
+.track-feed {
   padding: 8px;
 }
 
 /* Feed Header - Light Mode */
-.theme-light .win95-feed-header,
-body:not(.theme-dark) .win95-feed-header {
+.theme-light .feed-header,
+body:not(.theme-dark) .feed-header {
   background: #dfdfdf;
   padding: 6px 10px;
   border: 2px solid;
@@ -419,7 +356,7 @@ body:not(.theme-dark) .win95-feed-header {
 }
 
 /* Feed Header - Dark Mode */
-.theme-dark .win95-feed-header {
+.theme-dark .feed-header {
   background: #000000;
   padding: 6px 10px;
   border: 2px solid #00ff00;
@@ -432,13 +369,13 @@ body:not(.theme-dark) .win95-feed-header {
   gap: 8px;
 }
 
-.win95-feed-header .icon {
+.feed-header .icon {
   font-size: 14px;
 }
 
 /* Activity Card - AF-001 Design - Light Mode */
-.theme-light .win95-activity-card,
-body:not(.theme-dark) .win95-activity-card {
+.theme-light .activity-card,
+body:not(.theme-dark) .activity-card {
   background: #ffffff;
   border: 3px solid #000000;
   margin-bottom: 12px;
@@ -446,20 +383,20 @@ body:not(.theme-dark) .win95-activity-card {
 }
 
 /* Activity Card - Dark Mode */
-.theme-dark .win95-activity-card {
+.theme-dark .activity-card {
   background: #000000;
   border: 3px solid #00ff00;
   margin-bottom: 12px;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
-.win95-activity-card:last-child {
+.activity-card:last-child {
   margin-bottom: 0;
 }
 
 /* Navy blue header bar - Light Mode */
-.theme-light .win95-activity-header,
-body:not(.theme-dark) .win95-activity-header {
+.theme-light .activity-header,
+body:not(.theme-dark) .activity-header {
   background: #000080;
   color: white;
   padding: 8px 10px;
@@ -470,7 +407,7 @@ body:not(.theme-dark) .win95-activity-header {
 }
 
 /* Activity Header - Dark Mode */
-.theme-dark .win95-activity-header {
+.theme-dark .activity-header {
   background: #000000;
   color: #00ff00;
   padding: 8px 10px;
@@ -480,13 +417,13 @@ body:not(.theme-dark) .win95-activity-header {
   border-bottom: 2px solid #00ff00;
 }
 
-.win95-user-info {
+.user-info {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.win95-user-avatar {
+.user-avatar {
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -494,7 +431,7 @@ body:not(.theme-dark) .win95-activity-header {
   object-fit: cover;
 }
 
-.win95-user-avatar-fallback {
+.user-avatar-fallback {
   width: 24px;
   height: 24px;
   border-radius: 50%;
@@ -507,19 +444,19 @@ body:not(.theme-dark) .win95-activity-header {
   font-size: 11px;
 }
 
-.win95-username {
+.username {
   font-weight: bold;
   font-size: 13px;
 }
 
-.win95-timestamp {
+.timestamp {
   font-size: 11px;
   opacity: 0.9;
 }
 
 /* Track Content - Light Mode */
-.theme-light .win95-track-content,
-body:not(.theme-dark) .win95-track-content {
+.theme-light .track-content,
+body:not(.theme-dark) .track-content {
   display: flex;
   gap: 10px;
   padding: 10px;
@@ -528,7 +465,7 @@ body:not(.theme-dark) .win95-track-content {
 }
 
 /* Track Content - Dark Mode */
-.theme-dark .win95-track-content {
+.theme-dark .track-content {
   display: flex;
   gap: 10px;
   padding: 10px;
@@ -536,7 +473,7 @@ body:not(.theme-dark) .win95-track-content {
   background: #0a0a0a;
 }
 
-.win95-thumbnail {
+.thumbnail {
   width: 48px;
   height: 48px;
   flex-shrink: 0;
@@ -549,18 +486,18 @@ body:not(.theme-dark) .win95-track-content {
   overflow: hidden;
 }
 
-.win95-thumbnail img {
+.thumbnail img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.win95-track-info {
+.track-info {
   flex: 1;
   min-width: 0;
 }
 
-.win95-track-title {
+.track-title {
   font-weight: bold;
   font-size: 13px;
   margin-bottom: 3px;
@@ -570,7 +507,7 @@ body:not(.theme-dark) .win95-track-content {
   color: #000000 !important; /* Black - readable against gray background */
 }
 
-.win95-track-artist {
+.track-artist {
   font-size: 12px;
   color: #e010e0 !important; /* Magenta */
   font-weight: bold;
@@ -580,13 +517,13 @@ body:not(.theme-dark) .win95-track-content {
   white-space: nowrap;
 }
 
-.win95-track-meta {
+.track-meta {
   font-size: 10px;
   color: #666;
 }
 
 /* Bright green play button */
-.win95-play-button {
+.play-button {
   width: 48px;
   height: 48px;
   flex-shrink: 0;
@@ -601,12 +538,12 @@ body:not(.theme-dark) .win95-track-content {
   transition: all 0.2s ease;
 }
 
-.win95-play-button:hover {
+.play-button:hover {
   background: #00dd00;
   transform: scale(1.05);
 }
 
-.win95-play-button:active {
+.play-button:active {
   transform: scale(0.95);
 }
 
@@ -625,17 +562,17 @@ body:not(.theme-dark) .win95-track-content {
   }
 }
 
-.win95-play-button {
+.play-button {
   animation: playGlow 2s ease-in-out infinite;
 }
 
-.win95-play-button:hover {
+.play-button:hover {
   animation: none;
 }
 
 /* Comment Box - Light Mode */
-.theme-light .win95-comment-box,
-body:not(.theme-dark) .win95-comment-box {
+.theme-light .comment-box,
+body:not(.theme-dark) .comment-box {
   background: #ffffff;
   padding: 8px 10px;
   font-size: 12px;
@@ -647,7 +584,7 @@ body:not(.theme-dark) .win95-comment-box {
 }
 
 /* Comment Box - Dark Mode */
-.theme-dark .win95-comment-box {
+.theme-dark .comment-box {
   background: #000000;
   padding: 8px 10px;
   font-size: 12px;
@@ -659,8 +596,8 @@ body:not(.theme-dark) .win95-comment-box {
 }
 
 /* Stats Row - Inset boxes - Light Mode */
-.theme-light .win95-stats-row,
-body:not(.theme-dark) .win95-stats-row {
+.theme-light .stats-row,
+body:not(.theme-dark) .stats-row {
   padding: 6px 10px;
   display: flex;
   gap: 10px;
@@ -668,7 +605,7 @@ body:not(.theme-dark) .win95-stats-row {
 }
 
 /* Stats Row - Dark Mode */
-.theme-dark .win95-stats-row {
+.theme-dark .stats-row {
   padding: 6px 10px;
   display: flex;
   gap: 10px;
@@ -676,8 +613,8 @@ body:not(.theme-dark) .win95-stats-row {
 }
 
 /* Stat Box - Light Mode */
-.theme-light .win95-stat-box,
-body:not(.theme-dark) .win95-stat-box {
+.theme-light .stat-box,
+body:not(.theme-dark) .stat-box {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -693,13 +630,13 @@ body:not(.theme-dark) .win95-stat-box {
   color: #000000;
 }
 
-.theme-light .win95-stat-box:hover,
-body:not(.theme-dark) .win95-stat-box:hover {
+.theme-light .stat-box:hover,
+body:not(.theme-dark) .stat-box:hover {
   background: #f8f8f8;
 }
 
 /* Stat Box - Dark Mode */
-.theme-dark .win95-stat-box {
+.theme-dark .stat-box {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -712,17 +649,17 @@ body:not(.theme-dark) .win95-stat-box:hover {
   color: #00ff00;
 }
 
-.theme-dark .win95-stat-box:hover {
+.theme-dark .stat-box:hover {
   background: #001100;
 }
 
-.win95-stat-box .count {
+.stat-box .count {
   font-weight: bold;
   font-family: 'Courier New', monospace;
 }
 
 /* Status Bar */
-.win95-status-bar {
+.status-bar {
   padding: 4px 8px;
   background: #c0c0c0;
   border-top: 2px solid;
@@ -733,13 +670,13 @@ body:not(.theme-dark) .win95-stat-box:hover {
   flex-shrink: 0;
 }
 
-.win95-status-item {
+.status-item {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.win95-status-indicator {
+.status-indicator {
   width: 16px;
   height: 16px;
   border: 2px solid;
@@ -752,7 +689,7 @@ body:not(.theme-dark) .win95-stat-box:hover {
 }
 
 /* Empty State */
-.win95-empty-state {
+.empty-state {
   padding: 40px 20px;
   text-align: center;
   background: #ffffff;
@@ -761,13 +698,13 @@ body:not(.theme-dark) .win95-stat-box:hover {
   margin: 8px;
 }
 
-.win95-empty-state .icon {
+.empty-state .icon {
   font-size: 48px;
   margin-bottom: 16px;
   opacity: 0.3;
 }
 
-.win95-empty-state .message {
+.empty-state .message {
   font-size: 13px;
   color: #808080;
   margin-bottom: 16px;
@@ -785,124 +722,124 @@ body:not(.theme-dark) .win95-stat-box:hover {
     height: calc(100vh - 85px);
   }
 
-  .channel-view-page .win95-channel-header {
+  .channel-view-page .channel-header {
     padding: 12px;
   }
 
-  .channel-view-page .win95-channel-main {
+  .channel-view-page .channel-main {
     gap: 12px;
   }
 
-  .channel-view-page .win95-channel-image {
+  .channel-view-page .channel-image {
     width: 80px;
     height: 80px;
     font-size: 32px;
     border-width: 2px;
   }
 
-  .channel-view-page .win95-channel-name {
+  .channel-view-page .channel-name {
     font-size: 16px;
   }
 
-  .channel-view-page .win95-channel-description {
+  .channel-view-page .channel-description {
     font-size: 11px;
   }
 
-  .channel-view-page .win95-channel-stats {
+  .channel-view-page .channel-stats {
     gap: 8px;
   }
 
-  .win95-stat-item {
+  .stat-item {
     font-size: 10px;
     padding: 3px 8px;
   }
 
-  .win95-action-bar {
+  .action-bar {
     padding: 8px;
     gap: 6px;
   }
 
-  .win95-primary-actions {
+  .primary-actions {
     gap: 6px;
   }
 
-  .win95-action-button {
+  .action-button {
     padding: 6px 12px;
     font-size: 11px;
   }
 
-  .win95-action-button .icon {
+  .action-button .icon {
     font-size: 12px;
   }
 
-  .win95-sort-control {
+  .sort-control {
     font-size: 11px;
   }
 
-  .win95-dropdown-button {
+  .dropdown-button {
     min-width: 90px;
     font-size: 11px;
     padding: 5px 24px 5px 8px;
   }
 
-  .win95-dropdown-button::after {
+  .dropdown-button::after {
     font-size: 8px;
     right: 6px;
   }
 
-  .win95-track-feed {
+  .track-feed {
     padding: 6px;
   }
 
-  .win95-activity-card {
+  .activity-card {
     margin-bottom: 10px;
   }
 
-  .win95-track-content {
+  .track-content {
     gap: 10px;
   }
 
-  .win95-thumbnail {
+  .thumbnail {
     width: 44px;
     height: 44px;
     font-size: 18px;
   }
 
-  .win95-play-button {
+  .play-button {
     width: 44px;
     height: 44px;
     font-size: 16px;
     border-width: 2px;
   }
 
-  .win95-track-title {
+  .track-title {
     font-size: 13px;
   }
 
-  .win95-track-artist {
+  .track-artist {
     font-size: 11px;
   }
 
-  .win95-track-meta {
+  .track-meta {
     font-size: 9px;
   }
 
-  .win95-comment-box {
+  .comment-box {
     padding: 6px 8px;
     font-size: 11px;
   }
 
-  .win95-stats-row {
+  .stats-row {
     padding: 5px 8px;
     gap: 8px;
   }
 
-  .win95-stat-box {
+  .stat-box {
     padding: 3px 5px;
     font-size: 10px;
   }
 
-  .win95-status-bar {
+  .status-bar {
     gap: 12px;
     font-size: 10px;
   }
@@ -910,40 +847,40 @@ body:not(.theme-dark) .win95-stat-box:hover {
 
 /* Ultra-mobile (very small phones) */
 @media (max-width: 360px) {
-  .channel-view-page .win95-channel-main {
+  .channel-view-page .channel-main {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .channel-view-page .win95-channel-image {
+  .channel-view-page .channel-image {
     width: 100px;
     height: 100px;
   }
 
-  .channel-view-page .win95-channel-stats {
+  .channel-view-page .channel-stats {
     justify-content: center;
   }
 
-  .win95-primary-actions {
+  .primary-actions {
     width: 100%;
   }
 
-  .win95-action-button {
+  .action-button {
     flex: 1;
   }
 
-  .win95-track-content {
+  .track-content {
     gap: 8px;
   }
 
-  .win95-thumbnail {
+  .thumbnail {
     width: 40px;
     height: 40px;
     font-size: 16px;
   }
 
-  .win95-play-button {
+  .play-button {
     width: 40px;
     height: 40px;
     font-size: 14px;

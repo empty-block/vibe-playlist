@@ -29,8 +29,8 @@ body:not(.theme-dark) .activity-page {
 }
 
 /* Windows 95 Window Container - Light Mode */
-.theme-light .activity-page .win95-window,
-body:not(.theme-dark) .activity-page .win95-window {
+.theme-light .activity-page .retro-window,
+body:not(.theme-dark) .activity-page .retro-window {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -46,7 +46,7 @@ body:not(.theme-dark) .activity-page .win95-window {
 }
 
 /* Windows 95 Window Container - Dark Mode */
-.theme-dark .activity-page .win95-window {
+.theme-dark .activity-page .retro-window {
   background: #000000;
   border: 3px solid #00ff00;
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
@@ -59,8 +59,8 @@ body:not(.theme-dark) .activity-page .win95-window {
 }
 
 /* Title Bar - Light Mode (keep blue gradient) */
-.theme-light .activity-page .win95-title-bar,
-body:not(.theme-dark) .activity-page .win95-title-bar {
+.theme-light .activity-page .title-bar,
+body:not(.theme-dark) .activity-page .title-bar {
   background: linear-gradient(to right, #000080, #1084D0);
   padding: 3px 4px;
   display: flex;
@@ -74,7 +74,7 @@ body:not(.theme-dark) .activity-page .win95-title-bar {
 }
 
 /* Title Bar - Dark Mode (black with green border bottom) */
-.theme-dark .activity-page .win95-title-bar {
+.theme-dark .activity-page .title-bar {
   background: #000000;
   border-bottom: 2px solid #00ff00;
   padding: 3px 4px;
@@ -88,25 +88,25 @@ body:not(.theme-dark) .activity-page .win95-title-bar {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.activity-page .win95-title-left {
+.activity-page .title-left {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.activity-page .win95-title-icon {
+.activity-page .title-icon {
   width: 16px;
   height: 16px;
 }
 
-.activity-page .win95-window-controls {
+.activity-page .retro-window-controls {
   display: flex;
   gap: 2px;
 }
 
 /* Control Buttons - Light Mode */
-.theme-light .activity-page .win95-control-btn,
-body:not(.theme-dark) .activity-page .win95-control-btn {
+.theme-light .activity-page .control-btn,
+body:not(.theme-dark) .activity-page .control-btn {
   width: 18px;
   height: 16px;
   background: #C0C0C8;
@@ -125,8 +125,8 @@ body:not(.theme-dark) .activity-page .win95-control-btn {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.theme-light .activity-page .win95-control-btn:active,
-body:not(.theme-dark) .activity-page .win95-control-btn:active {
+.theme-light .activity-page .control-btn:active,
+body:not(.theme-dark) .activity-page .control-btn:active {
   border-top: 1px solid #000000;
   border-left: 1px solid #000000;
   border-right: 1px solid #FFFFFF;
@@ -136,7 +136,7 @@ body:not(.theme-dark) .activity-page .win95-control-btn:active {
 }
 
 /* Control Buttons - Dark Mode */
-.theme-dark .activity-page .win95-control-btn {
+.theme-dark .activity-page .control-btn {
   width: 18px;
   height: 16px;
   background: #000000;
@@ -152,14 +152,14 @@ body:not(.theme-dark) .activity-page .win95-control-btn:active {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-.theme-dark .activity-page .win95-control-btn:active {
+.theme-dark .activity-page .control-btn:active {
   background: #003300;
   padding-top: 1px;
   padding-bottom: 1px;
 }
 
 /* Content Area */
-.activity-page .win95-content {
+.activity-page .content {
   flex: 1;
   background: transparent;
   margin: 3px;
@@ -173,7 +173,7 @@ body:not(.theme-dark) .activity-page .win95-control-btn:active {
 }
 
 /* Activity Feed - Scrollable */
-.activity-page .win95-activity-feed {
+.activity-page .activity-feed {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -181,8 +181,8 @@ body:not(.theme-dark) .activity-page .win95-control-btn:active {
 }
 
 /* Status Bar - Light Mode */
-.theme-light .activity-page .win95-status-bar,
-body:not(.theme-dark) .activity-page .win95-status-bar {
+.theme-light .activity-page .status-bar,
+body:not(.theme-dark) .activity-page .status-bar {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   padding: 3px 4px;
@@ -193,7 +193,7 @@ body:not(.theme-dark) .activity-page .win95-status-bar {
 }
 
 /* Status Bar - Dark Mode */
-.theme-dark .activity-page .win95-status-bar {
+.theme-dark .activity-page .status-bar {
   background: #000000;
   border-top: 2px solid #00ff00;
   padding: 3px 4px;
@@ -205,8 +205,8 @@ body:not(.theme-dark) .activity-page .win95-status-bar {
 }
 
 /* Status Bar Items - Light Mode */
-.theme-light .activity-page .win95-status-item,
-body:not(.theme-dark) .activity-page .win95-status-item {
+.theme-light .activity-page .status-item,
+body:not(.theme-dark) .activity-page .status-item {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -218,7 +218,7 @@ body:not(.theme-dark) .activity-page .win95-status-item {
 }
 
 /* Status Bar Items - Dark Mode */
-.theme-dark .activity-page .win95-status-item {
+.theme-dark .activity-page .status-item {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -227,14 +227,14 @@ body:not(.theme-dark) .activity-page .win95-status-item {
   background: #001100;
 }
 
-.activity-page .win95-status-indicator {
+.activity-page .status-indicator {
   color: #00ff00;
   font-size: 10px;
 }
 
 /* Action Button - Light Mode */
-.theme-light .activity-page .win95-action-button,
-body:not(.theme-dark) .activity-page .win95-action-button {
+.theme-light .activity-page .action-button,
+body:not(.theme-dark) .activity-page .action-button {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -251,8 +251,8 @@ body:not(.theme-dark) .activity-page .win95-action-button {
   color: #000000;
 }
 
-.theme-light .activity-page .win95-action-button:active,
-body:not(.theme-dark) .activity-page .win95-action-button:active {
+.theme-light .activity-page .action-button:active,
+body:not(.theme-dark) .activity-page .action-button:active {
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
@@ -262,7 +262,7 @@ body:not(.theme-dark) .activity-page .win95-action-button:active {
 }
 
 /* Action Button - Dark Mode */
-.theme-dark .activity-page .win95-action-button {
+.theme-dark .activity-page .action-button {
   background: #000000;
   border: 2px solid #00ff00;
   padding: 6px 16px;
@@ -276,15 +276,15 @@ body:not(.theme-dark) .activity-page .win95-action-button:active {
   color: #00ff00;
 }
 
-.theme-dark .activity-page .win95-action-button:active {
+.theme-dark .activity-page .action-button:active {
   background: #003300;
   padding-top: 8px;
   padding-bottom: 4px;
 }
 
 /* Retry Button - Light Mode */
-.theme-light .activity-page .win95-retry-btn,
-body:not(.theme-dark) .activity-page .win95-retry-btn {
+.theme-light .activity-page .retry-btn,
+body:not(.theme-dark) .activity-page .retry-btn {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -298,8 +298,8 @@ body:not(.theme-dark) .activity-page .win95-retry-btn {
   color: #000000;
 }
 
-.theme-light .activity-page .win95-retry-btn:active,
-body:not(.theme-dark) .activity-page .win95-retry-btn:active {
+.theme-light .activity-page .retry-btn:active,
+body:not(.theme-dark) .activity-page .retry-btn:active {
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
@@ -307,7 +307,7 @@ body:not(.theme-dark) .activity-page .win95-retry-btn:active {
 }
 
 /* Retry Button - Dark Mode */
-.theme-dark .activity-page .win95-retry-btn {
+.theme-dark .activity-page .retry-btn {
   background: #000000;
   border: 2px solid #00ff00;
   padding: 6px 16px;
@@ -318,21 +318,21 @@ body:not(.theme-dark) .activity-page .win95-retry-btn:active {
   color: #00ff00;
 }
 
-.theme-dark .activity-page .win95-retry-btn:active {
+.theme-dark .activity-page .retry-btn:active {
   background: #003300;
 }
 
 /* Scrollbar Styling */
-.activity-page .win95-activity-feed::-webkit-scrollbar {
+.activity-page .activity-feed::-webkit-scrollbar {
   width: 16px;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-track {
+.activity-page .activity-feed::-webkit-scrollbar-track {
   background: #FFFFFF;
   border-left: 1px solid #808080;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-thumb {
+.activity-page .activity-feed::-webkit-scrollbar-thumb {
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
   border-left: 1px solid #FFFFFF;
@@ -340,11 +340,11 @@ body:not(.theme-dark) .activity-page .win95-retry-btn:active {
   border-bottom: 1px solid #808080;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-thumb:hover {
+.activity-page .activity-feed::-webkit-scrollbar-thumb:hover {
   background: #A8A8A8;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-button {
+.activity-page .activity-feed::-webkit-scrollbar-button {
   height: 16px;
   background: #C0C0C8;
   border-top: 1px solid #FFFFFF;
@@ -353,25 +353,25 @@ body:not(.theme-dark) .activity-page .win95-retry-btn:active {
   border-bottom: 1px solid #808080;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-button:vertical:decrement {
+.activity-page .activity-feed::-webkit-scrollbar-button:vertical:decrement {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 6l-4 4h8z" fill="%23000000"/></svg>') center no-repeat;
 }
 
-.activity-page .win95-activity-feed::-webkit-scrollbar-button:vertical:increment {
+.activity-page .activity-feed::-webkit-scrollbar-button:vertical:increment {
   background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 10l4-4H4z" fill="%23000000"/></svg>') center no-repeat;
 }
 
 /* Responsive */
 @media (max-width: 640px) {
-  .theme-light .activity-page .win95-window,
-  body:not(.theme-dark) .activity-page .win95-window,
-  .theme-dark .activity-page .win95-window {
+  .theme-light .activity-page .retro-window,
+  body:not(.theme-dark) .activity-page .retro-window,
+  .theme-dark .activity-page .retro-window {
     max-width: 100%;
     height: calc(100vh - 85px);
     margin: 0 8px;
   }
 
-  .activity-page .win95-title-bar {
+  .activity-page .title-bar {
     font-size: 12px;
   }
 
@@ -379,7 +379,7 @@ body:not(.theme-dark) .activity-page .win95-retry-btn:active {
     padding: 10px;
   }
 
-  .activity-page .win95-activity-feed {
+  .activity-page .activity-feed {
     padding: 4px;
   }
 }

@@ -51,7 +51,7 @@ const ChannelRow: Component<ChannelRowProps> = (props) => {
 
   return (
     <div
-      class={`win95-channel-item ${props.isEven ? 'even' : ''}`}
+      class={`channel-item ${props.isEven ? 'even' : ''}`}
       onClick={handleClick}
       role="button"
       tabindex="0"
@@ -59,20 +59,20 @@ const ChannelRow: Component<ChannelRowProps> = (props) => {
       onKeyDown={handleKeyDown}
     >
       {/* Channel Image - 40x40 */}
-      <div class={`win95-channel-image ${getGradientClass()}`}>
+      <div class={`channel-image ${getGradientClass()}`}>
         {getChannelEmoji()}
       </div>
 
       {/* Channel Info */}
-      <div class="win95-channel-info">
+      <div class="channel-info">
         {/* Channel Header - Name + Badge */}
-        <div class="win95-channel-header">
-          <span class="win95-channel-name">{props.name}</span>
-          <span class="win95-user-badge">{props.messageCount} users</span>
+        <div class="channel-header">
+          <span class="channel-name">{props.name}</span>
+          <span class="user-badge">{props.messageCount} users</span>
         </div>
 
         {/* Channel Description */}
-        <div class="win95-channel-description">{props.topic}</div>
+        <div class="channel-description">{props.topic}</div>
       </div>
     </div>
   );

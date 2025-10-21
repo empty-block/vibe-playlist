@@ -3,7 +3,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
 import { mockThreads } from '../data/mockThreads';
-import './profilePageWin95.css';
+import './profilePage.css';
 
 type FilterType = 'threads' | 'replies' | 'all';
 
@@ -189,25 +189,25 @@ const ProfilePage: Component = () => {
                 const isTrackPlaying = () => currentTrack()?.id === track.id && isPlaying();
 
                 return (
-                  <div class="win95-activity-card">
-                    <div class="win95-activity-header">
-                      <span class="win95-username">@{user.username}</span>
-                      <span class="win95-timestamp">{formatTimeAgo(item.timestamp)}</span>
+                  <div class="activity-card">
+                    <div class="activity-header">
+                      <span class="username">@{user.username}</span>
+                      <span class="timestamp">{formatTimeAgo(item.timestamp)}</span>
                     </div>
 
-                    <div class="win95-track-content">
-                      <div class="win95-thumbnail">
+                    <div class="track-content">
+                      <div class="thumbnail">
                         <Show when={track.thumbnail} fallback={<span>🎵</span>}>
                           <img src={track.thumbnail} alt={track.title} />
                         </Show>
                       </div>
-                      <div class="win95-track-info">
-                        <div class="win95-track-title">{track.title}</div>
-                        <div class="win95-track-artist">{track.artist}</div>
-                        <div class="win95-track-meta">via {track.source}</div>
+                      <div class="track-info">
+                        <div class="track-title">{track.title}</div>
+                        <div class="track-artist">{track.artist}</div>
+                        <div class="track-meta">via {track.source}</div>
                       </div>
                       <button
-                        class="win95-play-button"
+                        class="play-button"
                         onClick={() => playTrack(track)}
                       >
                         {isTrackPlaying() ? '⏸' : '▶'}
@@ -215,19 +215,19 @@ const ProfilePage: Component = () => {
                     </div>
 
                     <Show when={track.comment && track.comment.trim()}>
-                      <div class="win95-comment-box">{track.comment}</div>
+                      <div class="comment-box">{track.comment}</div>
                     </Show>
 
-                    <div class="win95-stats-row">
-                      <div class="win95-stat-box">
+                    <div class="stats-row">
+                      <div class="stat-box">
                         <span>♥</span>
                         <span class="count">{track.likes || 0}</span>
                       </div>
-                      <div class="win95-stat-box">
+                      <div class="stat-box">
                         <span>💬</span>
                         <span class="count">{track.replies || 0}</span>
                       </div>
-                      <div class="win95-stat-box">
+                      <div class="stat-box">
                         <span>🔄</span>
                         <span class="count">{track.recasts || 0}</span>
                       </div>

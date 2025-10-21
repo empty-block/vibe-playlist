@@ -1,5 +1,5 @@
-/* WINAMP-STYLE MUSIC PLAYER BAR - Windows 95 Aesthetic */
-.win95-player-bar {
+/* WINAMP-STYLE MUSIC PLAYER BAR - Retro Aesthetic */
+.player-bar {
   position: fixed;
   bottom: 60px; /* Space for navigation bar */
   left: 4px;
@@ -15,11 +15,11 @@
 }
 
 /* Dark mode adds glow effect to player */
-.theme-dark .win95-player-bar {
+.theme-dark .player-bar {
   box-shadow: 0 0 20px var(--glow-accent);
 }
 
-.win95-player-titlebar {
+.player-titlebar {
   background: linear-gradient(90deg, #000080, #1084D0);
   color: #FFFFFF;
   font-size: 11px;
@@ -31,32 +31,32 @@
 }
 
 /* Dark mode: darker gradient with green accent */
-.theme-dark .win95-player-titlebar {
+.theme-dark .player-titlebar {
   background: linear-gradient(90deg, #001a00, #003300);
   color: var(--text-lcd);
   border-bottom: 1px solid var(--border-accent);
   text-shadow: 0 0 5px var(--glow-accent);
 }
 
-.win95-player-titlebar-text {
+.player-titlebar-text {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.win95-player-titlebar-icon {
+.player-titlebar-icon {
   width: 12px;
   height: 12px;
   background: #00FF00;
   border: 1px solid #000;
 }
 
-.win95-player-titlebar-buttons {
+.player-titlebar-buttons {
   display: flex;
   gap: 2px;
 }
 
-.win95-titlebar-button {
+.player-titlebar-button {
   width: 14px;
   height: 13px;
   background: var(--bg-panel);
@@ -73,7 +73,7 @@
   color: var(--text-primary);
 }
 
-.win95-titlebar-button:active {
+.player-titlebar-button:active {
   border-top: 1px solid var(--border-sunken-light);
   border-left: 1px solid var(--border-sunken-light);
   border-right: 1px solid var(--border-sunken-dark);
@@ -81,16 +81,16 @@
 }
 
 /* Dark mode effects */
-.theme-dark .win95-titlebar-button:hover {
+.theme-dark .player-titlebar-button:hover {
   background: var(--hover-bg);
   box-shadow: 0 0 8px var(--glow-accent);
 }
 
-.win95-player-content {
+.player-content {
   padding: 4px;
 }
 
-.win95-video-container {
+.player-video {
   background: #000;
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
@@ -110,7 +110,7 @@
 }
 
 /* Hide video container smoothly when not playing */
-.win95-video-container.win95-video-hidden {
+.player-video.player-video--hidden {
   max-height: 0;
   margin-bottom: 0;
   padding: 0;
@@ -118,12 +118,12 @@
   opacity: 0;
 }
 
-.win95-video-container > * {
+.player-video > * {
   width: 100%;
   height: 100%;
 }
 
-.win95-track-info-panel {
+.player-track-info {
   background: #000000;
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
@@ -138,12 +138,12 @@
   gap: 12px;
 }
 
-.win95-track-metadata {
+.player-track-metadata {
   flex: 1;
   min-width: 0; /* Allow text to shrink */
 }
 
-.win95-track-title {
+.player-track-title {
   color: #00FF00;
   font-size: 14px;
   font-weight: bold;
@@ -153,7 +153,7 @@
   text-overflow: ellipsis;
 }
 
-.win95-track-subtitle {
+.player-track-subtitle {
   color: #00FF00;
   font-size: 12px;
   margin-bottom: 2px;
@@ -163,7 +163,7 @@
   text-overflow: ellipsis;
 }
 
-.win95-track-meta {
+.player-track-meta {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -171,13 +171,13 @@
   flex-wrap: wrap;
 }
 
-.win95-track-controls {
+.player-controls {
   display: flex;
   gap: 3px;
   flex-shrink: 0;
 }
 
-.win95-source-badge {
+.player-source-badge {
   background: #FF00FF;
   color: #000;
   padding: 2px 6px;
@@ -185,11 +185,11 @@
   border: 1px solid #000;
 }
 
-.win95-shared-by {
+.player-shared-by {
   color: #00FFFF;
 }
 
-.win95-visualizer {
+.player-visualizer {
   height: 28px;
   background: #000;
   border-top: 1px solid #000000;
@@ -203,7 +203,7 @@
   padding: 2px;
 }
 
-.win95-visualizer-bar {
+.player-visualizer-bar {
   flex: 1;
   background: linear-gradient(to top, #00FF00, #00FF00 60%, #FFFF00 60%, #FFFF00 85%, #FF0000 85%);
   height: 20%; /* Start at low height */
@@ -266,76 +266,76 @@
 /* Apply animations with frequency-correlated timing */
 
 /* BASS BARS (1-5): Slow tempo (1.6-1.8s), similar delays, powerful movements */
-.win95-visualizer-bar:nth-child(1) {
+.player-visualizer-bar:nth-child(1) {
   animation: bass-pulse-1 1.8s ease-in-out infinite alternate;
   animation-delay: 1.0s;
 }
-.win95-visualizer-bar:nth-child(2) {
+.player-visualizer-bar:nth-child(2) {
   animation: bass-pulse-2 1.75s ease-in-out infinite alternate;
   animation-delay: 1.05s; /* Very close to bar 1 - correlated */
 }
-.win95-visualizer-bar:nth-child(3) {
+.player-visualizer-bar:nth-child(3) {
   animation: bass-pulse-3 1.7s ease-in-out infinite alternate;
   animation-delay: 1.1s; /* Still close - bass moves together */
 }
-.win95-visualizer-bar:nth-child(4) {
+.player-visualizer-bar:nth-child(4) {
   animation: bass-pulse-1 1.8s ease-in-out infinite alternate;
   animation-delay: 1.15s; /* Cycling back to bass-pulse-1 */
 }
-.win95-visualizer-bar:nth-child(5) {
+.player-visualizer-bar:nth-child(5) {
   animation: bass-pulse-2 1.65s ease-in-out infinite alternate;
   animation-delay: 1.2s; /* Transition to mids */
 }
 
 /* MIDS BARS (6-11): Medium tempo (1.2-1.5s), moderate correlation */
-.win95-visualizer-bar:nth-child(6) {
+.player-visualizer-bar:nth-child(6) {
   animation: mids-pulse-1 1.4s ease infinite alternate;
   animation-delay: 1.25s;
 }
-.win95-visualizer-bar:nth-child(7) {
+.player-visualizer-bar:nth-child(7) {
   animation: mids-pulse-2 1.35s ease-in-out infinite alternate;
   animation-delay: 1.3s; /* Close to bar 6 */
 }
-.win95-visualizer-bar:nth-child(8) {
+.player-visualizer-bar:nth-child(8) {
   animation: mids-pulse-3 1.5s ease infinite alternate;
   animation-delay: 1.35s;
 }
-.win95-visualizer-bar:nth-child(9) {
+.player-visualizer-bar:nth-child(9) {
   animation: mids-pulse-1 1.3s ease-in-out infinite alternate;
   animation-delay: 1.4s;
 }
-.win95-visualizer-bar:nth-child(10) {
+.player-visualizer-bar:nth-child(10) {
   animation: mids-pulse-2 1.45s ease infinite alternate;
   animation-delay: 1.45s;
 }
-.win95-visualizer-bar:nth-child(11) {
+.player-visualizer-bar:nth-child(11) {
   animation: mids-pulse-3 1.4s ease-in-out infinite alternate;
   animation-delay: 1.5s; /* Transition to highs */
 }
 
 /* HIGHS BARS (12-16): Fast tempo (1.0-1.2s), more independent, sharp movements */
-.win95-visualizer-bar:nth-child(12) {
+.player-visualizer-bar:nth-child(12) {
   animation: highs-pulse-1 1.1s ease infinite alternate;
   animation-delay: 1.55s;
 }
-.win95-visualizer-bar:nth-child(13) {
+.player-visualizer-bar:nth-child(13) {
   animation: highs-pulse-2 1.0s linear infinite alternate;
   animation-delay: 1.6s; /* Less correlation in highs */
 }
-.win95-visualizer-bar:nth-child(14) {
+.player-visualizer-bar:nth-child(14) {
   animation: highs-pulse-3 1.15s ease infinite alternate;
   animation-delay: 1.65s;
 }
-.win95-visualizer-bar:nth-child(15) {
+.player-visualizer-bar:nth-child(15) {
   animation: highs-pulse-1 1.05s ease-in-out infinite alternate;
   animation-delay: 1.7s;
 }
-.win95-visualizer-bar:nth-child(16) {
+.player-visualizer-bar:nth-child(16) {
   animation: highs-pulse-2 1.2s ease infinite alternate;
   animation-delay: 1.75s;
 }
 
-.win95-control-btn {
+.player-control {
   background: var(--bg-panel);
   border-top: 2px solid var(--border-raised-light);
   border-left: 2px solid var(--border-raised-light);
@@ -354,7 +354,7 @@
   font-family: var(--font-main);
 }
 
-.win95-control-btn:active {
+.player-control:active {
   border-top: 2px solid var(--border-sunken-light);
   border-left: 2px solid var(--border-sunken-light);
   border-right: 2px solid var(--border-sunken-dark);
@@ -362,34 +362,34 @@
   transform: translateY(1px);
 }
 
-.win95-control-btn:disabled {
+.player-control:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.win95-control-btn-play {
+.player-control-play {
   width: 56px;
   background: var(--accent-secondary);
   color: #000080;
 }
 
 /* Dark mode control button effects */
-.theme-dark .win95-control-btn {
+.theme-dark .player-control {
   background: var(--bg-card);
   color: var(--text-lcd);
 }
 
-.theme-dark .win95-control-btn:hover {
+.theme-dark .player-control:hover {
   background: var(--hover-bg);
   box-shadow: 0 0 10px var(--glow-accent);
 }
 
-.theme-dark .win95-control-btn:active {
+.theme-dark .player-control:active {
   background: var(--active-bg);
 }
 
 /* Play button stays cyan in dark mode */
-.theme-dark .win95-control-btn-play {
+.theme-dark .player-control-play {
   background: var(--accent-secondary);
   color: #000000;
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
@@ -397,81 +397,81 @@
 
 /* Mobile responsive */
 @media (max-width: 640px) {
-  .win95-player-bar {
+  .player-bar {
     left: 2px;
     right: 2px;
     bottom: 56px;
   }
 
-  .win95-player-content {
+  .player-content {
     padding: 3px;
   }
 
-  .win95-track-info-panel {
+  .player-track-info {
     padding: 6px;
     gap: 10px;
   }
 
-  .win95-track-title {
+  .player-track-title {
     font-size: 13px;
   }
 
-  .win95-track-subtitle {
+  .player-track-subtitle {
     font-size: 11px;
   }
 
-  .win95-track-meta {
+  .player-track-meta {
     font-size: 9px;
   }
 
-  .win95-track-controls {
+  .player-controls {
     gap: 2px;
   }
 
-  .win95-visualizer {
+  .player-visualizer {
     height: 24px;
   }
 
-  .win95-control-btn {
+  .player-control {
     width: 40px;
     height: 36px;
     font-size: 16px;
   }
 
-  .win95-control-btn-play {
+  .player-control-play {
     width: 50px;
   }
 }
 
 @media (max-width: 360px) {
-  .win95-track-info-panel {
+  .player-track-info {
     padding: 5px;
     gap: 8px;
   }
 
-  .win95-track-title {
+  .player-track-title {
     font-size: 12px;
   }
 
-  .win95-track-subtitle {
+  .player-track-subtitle {
     font-size: 10px;
   }
 
-  .win95-track-meta {
+  .player-track-meta {
     font-size: 8px;
   }
 
-  .win95-track-controls {
+  .player-controls {
     gap: 2px;
   }
 
-  .win95-control-btn {
+  .player-control {
     width: 38px;
     height: 34px;
     font-size: 15px;
   }
 
-  .win95-control-btn-play {
+  .player-control-play {
     width: 46px;
   }
 }
