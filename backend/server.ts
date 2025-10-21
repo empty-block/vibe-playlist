@@ -6,6 +6,7 @@ import { AggregationsAPI } from './api/aggregations'
 import threadsApp from './api/threads'
 import musicApp from './api/music'
 import musicAiApp from './api/music-ai'
+import trendingApp from './api/trending'
 import interactionsApp from './api/interactions'
 import usersApp from './api/users'
 import activityApp from './api/activity'
@@ -51,6 +52,9 @@ app.route('/api/music', musicApp)
 
 // Mount music AI processing routes
 app.route('/api/music-ai', musicAiApp)
+
+// Mount trending routes
+app.route('/api/trending', trendingApp)
 
 // Mount user routes
 app.route('/api/users', usersApp)
@@ -145,6 +149,7 @@ console.log('  GET    /api/users/:fid/activity')
 console.log('  GET    /api/activity')
 console.log('  GET    /api/music/trending')
 console.log('  GET    /api/music/:musicId/casts')
+console.log('  GET    /api/trending/users')
 console.log('  POST   /api/music-ai/process')
 console.log('  GET    /api/music-ai/status')
 console.log('  GET    /api/music-ai/failed')

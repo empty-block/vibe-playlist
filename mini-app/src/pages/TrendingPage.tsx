@@ -1,22 +1,8 @@
-import { Component, createSignal, For } from 'solid-js';
+import { Component, createSignal, For, onMount } from 'solid-js';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
+import { formatRelativeTime } from '../utils/time';
 import './trendingPageWin95.css';
-
-interface TrendingTrack {
-  rank: number;
-  title: string;
-  artist: string;
-  thumbnail: string;
-  shares: number;
-}
-
-interface TopContributor {
-  rank: number;
-  username: string;
-  fid: string;
-  avatar: string;
-  trackCount: number;
-}
 
 const TrendingPage: Component = () => {
   // Window state management
@@ -25,44 +11,27 @@ const TrendingPage: Component = () => {
   const [window1Maximized, setWindow1Maximized] = createSignal(false);
   const [window2Maximized, setWindow2Maximized] = createSignal(false);
 
-  // Mock data for trending tracks
-  const trendingTracks: TrendingTrack[] = [
-    { rank: 1, title: 'Midnight Synthwave Dreams', artist: 'Neon Nights', thumbnail: '🎸', shares: 342 },
-    { rank: 2, title: 'Electric Sunset Boulevard', artist: 'RetroWave Collective', thumbnail: '🎹', shares: 298 },
-    { rank: 3, title: 'Cyber Love Connection', artist: 'Digital Hearts', thumbnail: '🎤', shares: 267 },
-    { rank: 4, title: 'Neon Tokyo Nights', artist: 'Urban Synth', thumbnail: '🎧', shares: 234 },
-    { rank: 5, title: 'Vaporwave Paradise', artist: 'Aesthetic Waves', thumbnail: '🎵', shares: 189 },
-    { rank: 6, title: 'Crystal Memories \'89', artist: 'Time Machine', thumbnail: '🎶', shares: 167 },
-    { rank: 7, title: 'Digital Rain Dance', artist: 'Pixel Dreams', thumbnail: '🎸', shares: 143 },
-    { rank: 8, title: 'Retro Future Groove', artist: 'Synth Masters', thumbnail: '🎹', shares: 128 },
-    { rank: 9, title: 'Arcade Heartbeat', artist: '8-Bit Romance', thumbnail: '🎤', shares: 115 },
-    { rank: 10, title: 'Cosmic Highway Drive', artist: 'Space Cruiser', thumbnail: '🎧', shares: 98 }
-  ];
-
-  // Mock data for top contributors
-  const topContributors: TopContributor[] = [
-    { rank: 1, username: '@musicvibe', fid: '12847', avatar: 'MV', trackCount: 47 },
-    { rank: 2, username: '@synthhunter', fid: '8493', avatar: 'SH', trackCount: 39 },
-    { rank: 3, username: '@retroguru', fid: '15672', avatar: 'RG', trackCount: 34 },
-    { rank: 4, username: '@neonwave', fid: '23451', avatar: 'NW', trackCount: 28 },
-    { rank: 5, username: '@vapordreams', fid: '9834', avatar: 'VD', trackCount: 25 },
-    { rank: 6, username: '@digitalmusic', fid: '17892', avatar: 'DM', trackCount: 22 },
-    { rank: 7, username: '@electrocity', fid: '31245', avatar: 'EC', trackCount: 19 },
-    { rank: 8, username: '@pixelmelody', fid: '6789', avatar: 'PM', trackCount: 17 },
-    { rank: 9, username: '@cybersounds', fid: '42156', avatar: 'CS', trackCount: 15 },
-    { rank: 10, username: '@arcaderave', fid: '28934', avatar: 'AR', trackCount: 13 }
-  ];
+  // Load trending data on mount
+  onMount(() => {
+    loadTrendingData();
+  });
 
   // Calculate total tracks from contributors
-  const totalTracks = () => topContributors.reduce((sum, c) => sum + c.trackCount, 0);
+  const totalTracks = () => contributors().reduce((sum, c) => sum + c.trackCount, 0);
+
+  // Format the last updated timestamp
+  const updatedTimeAgo = () => {
+    const updated = lastUpdated();
+    return updated ? formatRelativeTime(updated.toISOString()) : 'just now';
+  };
 
   // Event handlers
-  const handleTrackClick = (track: TrendingTrack) => {
+  const handleTrackClick = (track: any) => {
     console.log('Track clicked:', track.title);
     // TODO: Implement track detail view
   };
 
-  const handleContributorClick = (contributor: TopContributor) => {
+  const handleContributorClick = (contributor: any) => {
     console.log('Contributor clicked:', contributor.username);
     // TODO: Implement contributor profile view
   };
@@ -80,7 +49,7 @@ const TrendingPage: Component = () => {
               <div class="title-icon">⚡</div>
               <span>
                 TRENDING TRACKS
-                <span class="title-subtitle">- Last 24 Hours</span>
+                <span class="title-subtitle">- Last 7 Days</span>
               </span>
             </div>
             <div class="title-buttons">
@@ -110,38 +79,58 @@ const TrendingPage: Component = () => {
                 <div class="section-title">Hot Right Now</div>
               </div>
 
-              <For each={trendingTracks}>
-                {(track) => (
-                  <div
-                    class="track-item"
-                    onClick={() => handleTrackClick(track)}
-                  >
+              {isLoading() && tracks().length === 0 ? (
+                <div style="padding: 20px; text-align: center; color: #666;">
+                  Loading trending tracks...
+                </div>
+              ) : error() ? (
+                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+                  Error: {error()}
+                </div>
+              ) : tracks().length === 0 ? (
+                <div style="padding: 20px; text-align: center; color: #666;">
+                  No trending tracks yet
+                </div>
+              ) : (
+                <For each={tracks()}>
+                  {(track) => (
                     <div
-                      class="track-rank"
-                      classList={{ 'top-3': track.rank <= 3 }}
+                      class="track-item"
+                      onClick={() => handleTrackClick(track)}
                     >
-                      {track.rank}
-                    </div>
-                    <div class="track-thumbnail">{track.thumbnail}</div>
-                    <div class="track-info">
-                      <div class="track-title">{track.title}</div>
-                      <div class="track-artist">{track.artist}</div>
-                    </div>
-                    <div class="track-stats">
-                      <div class="track-shares">
-                        {track.rank <= 3 && <span class="fire-icon">🔥</span>}
-                        <span>{track.shares}</span>
+                      <div
+                        class="track-rank"
+                        classList={{ 'top-3': track.rank <= 3 }}
+                      >
+                        {track.rank}
+                      </div>
+                      <div class="track-thumbnail">
+                        {track.thumbnail ? (
+                          <img src={track.thumbnail} alt={track.title} style="width: 40px; height: 40px; object-fit: cover; border-radius: 2px;" />
+                        ) : (
+                          '🎵'
+                        )}
+                      </div>
+                      <div class="track-info">
+                        <div class="track-title">{track.title}</div>
+                        <div class="track-artist">{track.artist}</div>
+                      </div>
+                      <div class="track-stats">
+                        <div class="track-shares">
+                          {track.rank <= 3 && <span class="fire-icon">🔥</span>}
+                          <span>{track.shares}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </For>
+                  )}
+                </For>
+              )}
             </div>
           </div>
 
           <div class="status-bar">
-            <span class="status-bar-section">{trendingTracks.length} tracks</span>
-            <span class="status-bar-section">Updated: 2m ago</span>
+            <span class="status-bar-section">{tracks().length} tracks</span>
+            <span class="status-bar-section">Updated: {updatedTimeAgo()}</span>
           </div>
         </div>
 
@@ -155,7 +144,7 @@ const TrendingPage: Component = () => {
               <div class="title-icon">👥</div>
               <span>
                 TOP CONTRIBUTORS
-                <span class="title-subtitle">- Last 24 Hours</span>
+                <span class="title-subtitle">- Last 7 Days</span>
               </span>
             </div>
             <div class="title-buttons">
@@ -185,30 +174,50 @@ const TrendingPage: Component = () => {
                 <div class="section-title">Power Users</div>
               </div>
 
-              <For each={topContributors}>
-                {(contributor) => (
-                  <div
-                    class="contributor-item"
-                    onClick={() => handleContributorClick(contributor)}
-                  >
-                    <div class="contributor-rank">{contributor.rank}</div>
-                    <div class="contributor-avatar">{contributor.avatar}</div>
-                    <div class="contributor-info">
-                      <div class="contributor-username">{contributor.username}</div>
-                      <div class="contributor-fid">FID: {contributor.fid}</div>
+              {isLoading() && contributors().length === 0 ? (
+                <div style="padding: 20px; text-align: center; color: #666;">
+                  Loading contributors...
+                </div>
+              ) : error() ? (
+                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+                  Error: {error()}
+                </div>
+              ) : contributors().length === 0 ? (
+                <div style="padding: 20px; text-align: center; color: #666;">
+                  No contributors yet
+                </div>
+              ) : (
+                <For each={contributors()}>
+                  {(contributor) => (
+                    <div
+                      class="contributor-item"
+                      onClick={() => handleContributorClick(contributor)}
+                    >
+                      <div class="contributor-rank">{contributor.rank}</div>
+                      <div class="contributor-avatar">
+                        {contributor.avatar ? (
+                          <img src={contributor.avatar} alt={contributor.username} style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;" />
+                        ) : (
+                          contributor.username.substring(0, 2).toUpperCase()
+                        )}
+                      </div>
+                      <div class="contributor-info">
+                        <div class="contributor-username">@{contributor.username}</div>
+                        <div class="contributor-fid">FID: {contributor.fid}</div>
+                      </div>
+                      <div>
+                        <div class="contributor-count">{contributor.trackCount}</div>
+                        <div class="contributor-label">tracks</div>
+                      </div>
                     </div>
-                    <div>
-                      <div class="contributor-count">{contributor.trackCount}</div>
-                      <div class="contributor-label">tracks</div>
-                    </div>
-                  </div>
-                )}
-              </For>
+                  )}
+                </For>
+              )}
             </div>
           </div>
 
           <div class="status-bar">
-            <span class="status-bar-section">{topContributors.length} users</span>
+            <span class="status-bar-section">{contributors().length} users</span>
             <span class="status-bar-section">Total: {totalTracks()} tracks</span>
           </div>
         </div>
