@@ -12,6 +12,7 @@ import usersApp from './api/users'
 import activityApp from './api/activity'
 import channelsApp from './api/channels'
 import syncApp from './api/sync'
+import { getWorker } from './lib/ai-worker'
 
 const app = new Hono()
 
@@ -157,6 +158,45 @@ console.log('  GET    /api/music-ai/health')
 console.log('  GET    /api/library (legacy)')
 console.log('  GET    /api/library/aggregations (legacy)')
 console.log('')
+
+// =====================================================
+// AI Worker - Background music metadata processing
+// =====================================================
+
+// Start AI worker if enabled (default: true)
+const workerEnabled = process.env.AI_WORKER_ENABLED !== 'false'
+
+if (workerEnabled) {
+  const workerConfig = {
+    intervalMs: parseInt(process.env.AI_WORKER_INTERVAL_MS || '30000'),
+    batchSize: parseInt(process.env.AI_WORKER_BATCH_SIZE || '20'),
+    runImmediately: true
+  }
+
+  const worker = getWorker(workerConfig)
+  worker.start()
+
+  console.log('🤖 AI Worker Status:')
+  console.log(`   ✓ Enabled and running`)
+  console.log(`   Interval: ${workerConfig.intervalMs}ms (${workerConfig.intervalMs / 1000}s)`)
+  console.log(`   Batch size: ${workerConfig.batchSize} tracks`)
+  console.log('')
+
+  // Graceful shutdown handler
+  const shutdown = () => {
+    console.log('\n🛑 Shutting down gracefully...')
+    worker.stop()
+    console.log('✓ AI Worker stopped')
+    process.exit(0)
+  }
+
+  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', shutdown)
+} else {
+  console.log('🤖 AI Worker Status:')
+  console.log('   ✗ Disabled (set AI_WORKER_ENABLED=true to enable)')
+  console.log('')
+}
 
 export default {
   port,

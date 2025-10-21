@@ -9,7 +9,8 @@ import { extractMusicMetadata } from './ai-music-extractor'
 import { getSupabaseClient } from './api-utils'
 import type { MusicContext } from './ai-music-extractor'
 
-const BATCH_SIZE = 10 // Process 10 at a time to start
+const BATCH_SIZE = 20 // Process 20 at a time (matches AI worker batch size)
+const MAX_TOTAL = 227 // Process all tracks missing og_description
 
 interface TrackToFix {
   platform_name: string
@@ -23,31 +24,41 @@ interface TrackToFix {
 async function backfillOgDescription() {
   const supabase = getSupabaseClient()
 
-  console.log('🔧 Backfilling og_description for tracks missing artist data')
+  console.log('🔧 Backfilling og_description for ALL tracks')
+  console.log('=' .repeat(80))
+  console.log(`Target: Up to ${MAX_TOTAL} tracks in batches of ${BATCH_SIZE}`)
   console.log('=' .repeat(80))
 
-  // Step 1: Get tracks that need fixing
-  console.log(`\n📋 Fetching ${BATCH_SIZE} tracks to fix...`)
-  const { data: tracks, error: fetchError } = await supabase
-    .from('music_library')
-    .select('platform_name, platform_id, url, og_title, og_artist, og_description')
-    .is('og_description', null)
-    .is('artist', null)
-    .not('url', 'is', null)
-    .limit(BATCH_SIZE)
+  let totalProcessed = 0
+  let totalSuccessful = 0
+  let batchNumber = 1
+
+  while (totalProcessed < MAX_TOTAL) {
+    console.log(`\n\n${'='.repeat(80)}`)
+    console.log(`📦 BATCH ${batchNumber} (Processed so far: ${totalProcessed}/${MAX_TOTAL})`)
+    console.log('=' .repeat(80))
+
+    // Step 1: Get tracks that need fixing
+    console.log(`\n📋 Fetching next ${BATCH_SIZE} tracks...`)
+    const { data: tracks, error: fetchError } = await supabase
+      .from('music_library')
+      .select('platform_name, platform_id, url, og_title, og_artist, og_description')
+      .is('og_description', null)
+      .not('url', 'is', null)
+      .limit(BATCH_SIZE)
 
   if (fetchError) {
     throw new Error(`Failed to fetch tracks: ${fetchError.message}`)
   }
 
-  if (!tracks || tracks.length === 0) {
-    console.log('✓ No tracks need fixing!')
-    return
-  }
+    if (!tracks || tracks.length === 0) {
+      console.log('✓ No more tracks to fix!')
+      break
+    }
 
-  console.log(`Found ${tracks.length} tracks to process\n`)
+    console.log(`Found ${tracks.length} tracks in this batch\n`)
 
-  const results = []
+    const results = []
 
   for (let i = 0; i < tracks.length; i++) {
     const track = tracks[i] as TrackToFix
@@ -187,38 +198,32 @@ async function backfillOgDescription() {
     }
   }
 
-  // Print summary
-  console.log('\n\n' + '='.repeat(80))
-  console.log('📊 BACKFILL SUMMARY')
-  console.log('='.repeat(80))
+    // Batch summary
+    const successful = results.filter(r => r.status === 'success')
+    totalProcessed += tracks.length
+    totalSuccessful += successful.length
 
-  const successful = results.filter(r => r.status === 'success')
-  const withDescription = successful.filter(r => r.og_description_present)
+    console.log(`\n📊 Batch ${batchNumber} Summary: ${successful.length}/${tracks.length} successful`)
 
-  console.log(`\nTotal processed: ${results.length}`)
-  console.log(`Successful: ${successful.length}/${results.length}`)
-  console.log(`With og_description: ${withDescription.length}/${successful.length}`)
+    batchNumber++
 
-  if (successful.length > 0) {
-    const avgConfidence = successful.reduce((sum, r) => sum + (r.confidence || 0), 0) / successful.length
-    console.log(`Average confidence: ${(avgConfidence * 100).toFixed(1)}%`)
+    // Small delay between batches to avoid rate limits
+    if (totalProcessed < MAX_TOTAL) {
+      console.log('\n⏳ Waiting 3 seconds before next batch...')
+      await new Promise(resolve => setTimeout(resolve, 3000))
+    }
   }
 
-  console.log('\n📋 Results Table:')
-  console.log('-'.repeat(80))
-  console.table(results.map(r => ({
-    Track: r.track,
-    Status: r.status,
-    'Has og_description': r.og_description_present ? '✓' : '✗',
-    Artist: r.artist || 'N/A',
-    Confidence: r.confidence ? `${(r.confidence * 100).toFixed(0)}%` : 'N/A'
-  })))
-
+  // Final summary
+  console.log('\n\n' + '='.repeat(80))
+  console.log('📊 FINAL BACKFILL SUMMARY')
+  console.log('='.repeat(80))
+  console.log(`\nTotal processed: ${totalProcessed}`)
+  console.log(`Total successful: ${totalSuccessful}`)
+  console.log(`Success rate: ${((totalSuccessful / totalProcessed) * 100).toFixed(1)}%`)
   console.log('\n✅ Backfill complete!')
-  console.log(`\n💡 ${tracks.length - successful.length} tracks still need fixing`)
-  console.log('   Run this script again to process more batches')
 
-  return results
+  return { totalProcessed, totalSuccessful }
 }
 
 // Run the backfill
