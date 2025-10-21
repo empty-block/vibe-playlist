@@ -3,7 +3,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
 import { setCurrentTrack, setIsPlaying } from '../stores/playerStore';
 import { formatRelativeTime } from '../utils/time';
-import './trendingPageWin95.css';
+import './trendingPage.css';
 
 const TrendingPage: Component = () => {
   // Window state management

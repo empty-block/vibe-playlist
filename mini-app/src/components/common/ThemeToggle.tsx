@@ -9,7 +9,7 @@ interface ThemeToggleProps {
 const ThemeToggle: Component<ThemeToggleProps> = (props) => {
   return (
     <button
-      class={`theme-toggle win95-button ${props.class || ''}`}
+      class={`theme-toggle retro-button ${props.class || ''}`}
       onClick={toggleTheme}
       title={`Switch to ${theme() === 'light' ? 'dark' : 'light'} mode`}
       aria-label={`Switch to ${theme() === 'light' ? 'dark' : 'light'} mode`}

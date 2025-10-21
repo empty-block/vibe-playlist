@@ -2,6 +2,7 @@ import { Component, JSXElement, onMount, onCleanup, createEffect, Show } from 's
 import { Portal } from 'solid-js/web';
 import ModalBackdrop from './ModalBackdrop';
 import { modalAnimations } from '../../../utils/animations';
+import RetroWindow from '../RetroWindow';
 import './modal.css';
 
 interface BaseModalProps {
@@ -115,7 +116,7 @@ const BaseModal: Component<BaseModalProps> = (props) => {
               cursor: getCloseButtonHandler() ? 'pointer' : 'default'
             }}
           />
-          <div 
+          <div
             class="modal-container"
             onClick={getCloseButtonHandler()}
             style={{
@@ -132,33 +133,30 @@ const BaseModal: Component<BaseModalProps> = (props) => {
               cursor: getCloseButtonHandler() ? 'pointer' : 'default'
             }}
           >
-            {props.showCloseButton !== false && (
-              <button
-                class="modal-close-button"
-                onClick={props.onClose}
-                aria-label="Close modal"
-              >
-                X
-              </button>
-            )}
             <div
               ref={modalRef}
-              class={`base-modal ${getSizeClass()} ${props.className || ''}`}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="modal-title"
               onClick={(e) => e.stopPropagation()}
               style={{
                 'max-width': '90vw',
                 'max-height': '90vh',
-                'overflow-y': 'auto',
                 position: 'relative'
               }}
             >
-              
-              <h2 id="modal-title" class="sr-only">{props.title}</h2>
-              
-              {props.children}
+              <RetroWindow
+                title={props.title}
+                variant="neon"
+                showClose={props.showCloseButton !== false}
+                onClose={props.onClose}
+                class={`modal-window ${getSizeClass()} ${props.className || ''}`}
+                style={{
+                  'max-height': '90vh',
+                  'overflow-y': 'auto'
+                }}
+                role="dialog"
+                aria-label={props.title}
+              >
+                {props.children}
+              </RetroWindow>
             </div>
           </div>
         </div>

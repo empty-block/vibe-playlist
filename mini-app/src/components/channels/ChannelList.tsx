@@ -1,5 +1,6 @@
 import { Component, For, createSignal } from 'solid-js';
 import ChannelRow, { ChannelRowProps } from './ChannelRow';
+import RetroWindow from '../common/RetroWindow';
 import './channelList.css';
 
 export interface ChannelListProps {
@@ -22,63 +23,55 @@ const ChannelList: Component<ChannelListProps> = (props) => {
   };
 
   return (
-    <div class="win95-window">
-      {/* Title Bar */}
-      <div class="win95-title-bar">
-        <div class="win95-title-text">
-          <div class="win95-title-icon"></div>
-          <span>Music Channels</span>
-        </div>
-        <div class="win95-window-controls">
-          <button class="win95-control-btn" title="Minimize">_</button>
-          <button class="win95-control-btn" title="Maximize">□</button>
-          <button class="win95-control-btn" title="Close">×</button>
-        </div>
-      </div>
-
-      {/* Content Area */}
-      <div class="win95-content">
-        {/* Channels Container - Scrollable */}
-        <div class="win95-channels-container" role="list" aria-label="Available channels">
-          <For each={filteredChannels()}>
-            {(channel, index) => (
-              <ChannelRow
-                id={channel.id}
-                name={channel.name}
-                topic={channel.topic}
-                messageCount={channel.messageCount}
-                colorHex={channel.colorHex}
-                isEven={index() % 2 === 1}
-                onClick={() => props.onChannelClick(channel.id, channel.threadId)}
+    <RetroWindow
+      title="Music Channels"
+      icon={<div class="title-icon"></div>}
+      variant="3d"
+      showMinimize={true}
+      showMaximize={true}
+      showClose={true}
+      contentPadding="0"
+      footer={
+        <div class="search-section">
+          <div class="search-container">
+            <label class="search-label" for="channelSearchInput">Find:</label>
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                id="channelSearchInput"
+                class="search-input"
+                placeholder="Search channels..."
+                autocomplete="off"
+                value={searchTerm()}
+                onInput={(e) => setSearchTerm(e.currentTarget.value)}
               />
-            )}
-          </For>
-          {filteredChannels().length === 0 && searchTerm() !== '' && (
-            <div class="win95-empty-state">
-              No channels found matching your search.
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Search Section - Bottom */}
-      <div class="win95-search-section">
-        <div class="win95-search-container">
-          <label class="win95-search-label" for="channelSearchInput">Find:</label>
-          <div class="win95-search-input-wrapper">
-            <input
-              type="text"
-              id="channelSearchInput"
-              class="win95-search-input"
-              placeholder="Search channels..."
-              autocomplete="off"
-              value={searchTerm()}
-              onInput={(e) => setSearchTerm(e.currentTarget.value)}
-            />
           </div>
         </div>
+      }
+    >
+      {/* Channels Container - Scrollable */}
+      <div class="channels-container" role="list" aria-label="Available channels">
+        <For each={filteredChannels()}>
+          {(channel, index) => (
+            <ChannelRow
+              id={channel.id}
+              name={channel.name}
+              topic={channel.topic}
+              messageCount={channel.messageCount}
+              colorHex={channel.colorHex}
+              isEven={index() % 2 === 1}
+              onClick={() => props.onChannelClick(channel.id, channel.threadId)}
+            />
+          )}
+        </For>
+        {filteredChannels().length === 0 && searchTerm() !== '' && (
+          <div class="empty-state">
+            No channels found matching your search.
+          </div>
+        )}
       </div>
-    </div>
+    </RetroWindow>
   );
 };
 

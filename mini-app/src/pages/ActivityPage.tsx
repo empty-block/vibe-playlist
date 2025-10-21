@@ -2,7 +2,7 @@ import { Component, onMount, For, Show } from 'solid-js';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import ActivityItem from '../components/activity/ActivityItem';
 import { activityFeed, isLoading, error, hasMore, loadActivity, loadMore } from '../stores/activityStore';
-import './activityPageWin95.css';
+import './activityPage.css';
 
 const ActivityPage: Component = () => {
   // Load activity on mount
@@ -13,22 +13,22 @@ const ActivityPage: Component = () => {
   return (
     <div class="activity-page">
       <div class="activity-container">
-        <div class="win95-window">
+        <div class="retro-window">
           {/* Title Bar */}
-          <div class="win95-title-bar">
-            <div class="win95-title-left">
-              <span class="win95-title-icon">📡</span>
+          <div class="title-bar">
+            <div class="title-left">
+              <span class="title-icon">📡</span>
               <span>Network Activity - Jamzy Monitor</span>
             </div>
-            <div class="win95-window-controls">
-              <button class="win95-control-btn">_</button>
-              <button class="win95-control-btn">□</button>
-              <button class="win95-control-btn">×</button>
+            <div class="window-controls">
+              <button class="control-btn">_</button>
+              <button class="control-btn">□</button>
+              <button class="control-btn">×</button>
             </div>
           </div>
 
           {/* Content Area */}
-          <div class="win95-content">
+          <div class="content">
             {/* Loading State */}
             <Show when={isLoading() && activityFeed().length === 0}>
               <div style={{ padding: '2rem', 'text-align': 'center', color: '#000080' }}>
@@ -42,7 +42,7 @@ const ActivityPage: Component = () => {
                 <div>Error: {error()}</div>
                 <button
                   onClick={() => loadActivity(true)}
-                  class="win95-retry-btn"
+                  class="retry-btn"
                   style={{
                     'margin-top': '1rem',
                     padding: '6px 12px'
@@ -54,7 +54,7 @@ const ActivityPage: Component = () => {
             </Show>
 
             {/* Activity Feed */}
-            <div class="win95-activity-feed">
+            <div class="activity-feed">
               <For each={activityFeed()}>
                 {(activity) => <ActivityItem activity={activity} />}
               </For>
@@ -67,7 +67,7 @@ const ActivityPage: Component = () => {
                 }}>
                   <button
                     onClick={loadMore}
-                    class="win95-action-button"
+                    class="action-button"
                     style={{
                       padding: '6px 12px'
                     }}
@@ -91,12 +91,12 @@ const ActivityPage: Component = () => {
           </div>
 
           {/* Status Bar */}
-          <div class="win95-status-bar">
-            <div class="win95-status-item">
-              <div class="win95-status-indicator">●</div>
+          <div class="status-bar">
+            <div class="status-item">
+              <div class="status-indicator">●</div>
               <span>Online</span>
             </div>
-            <div class="win95-status-item">
+            <div class="status-item">
               <span>{activityFeed().length} activities loaded</span>
             </div>
           </div>

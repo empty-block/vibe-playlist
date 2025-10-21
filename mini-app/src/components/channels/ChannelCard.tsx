@@ -1,4 +1,5 @@
 import { Component } from 'solid-js';
+import RetroPanel from '../common/RetroPanel';
 import './channelCard.css';
 
 interface ChannelCardProps {
@@ -9,7 +10,9 @@ interface ChannelCardProps {
 
 const ChannelCard: Component<ChannelCardProps> = (props) => {
   return (
-    <article
+    <RetroPanel
+      variant="minimal"
+      padding="0"
       class="channel-card"
       role="article"
       aria-label={`Channel ${props.channelName}: ${props.channelDescription}`}
@@ -24,7 +27,7 @@ const ChannelCard: Component<ChannelCardProps> = (props) => {
       <div class="channel-card-body">
         <p class="channel-description">{props.channelDescription}</p>
       </div>
-    </article>
+    </RetroPanel>
   );
 };
 

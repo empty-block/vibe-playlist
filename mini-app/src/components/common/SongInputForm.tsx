@@ -1,6 +1,7 @@
 import { Component, createSignal } from 'solid-js';
 import TextInput from './TextInput';
 import AnimatedButton from './AnimatedButton';
+import RetroPanel from './RetroPanel';
 
 interface SongInputFormProps {
   onSubmit: (data: { songUrl: string; comment: string }) => void;
@@ -16,12 +17,12 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
 
   const handleSubmit = () => {
     if (!songUrl().trim()) return;
-    
+
     props.onSubmit({
       songUrl: songUrl().trim(),
       comment: comment().trim()
     });
-    
+
     // Reset form if no initial values provided
     if (!props.initialSongUrl && !props.initialComment) {
       setSongUrl('');
@@ -34,12 +35,12 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
   };
 
   return (
-    <div class="win95-panel mb-6 p-4">
+    <RetroPanel variant="3d" class="mb-6">
       <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
         <i class="fas fa-music"></i>
         What's the track?
       </h2>
-      
+
       <div class="space-y-4">
         <TextInput
           label="Song URL (YouTube, Spotify, SoundCloud, etc.)"
@@ -48,7 +49,7 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
           placeholder="https://youtu.be/dQw4w9WgXcQ or https://open.spotify.com/track/..."
           disabled={props.disabled}
         />
-        
+
         <TextInput
           label="Your take (optional)"
           value={comment()}
@@ -59,12 +60,12 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
           disabled={props.disabled}
         />
       </div>
-      
+
       <div class="text-center mt-6">
         <AnimatedButton
           onClick={handleSubmit}
           disabled={!isValidSubmission() || props.disabled}
-          class="win95-button px-8 py-3 text-lg font-bold"
+          class="retro-button px-8 py-3 text-lg font-bold"
           classList={{
             'hover:bg-green-100': isValidSubmission() && !props.disabled,
             'cursor-not-allowed opacity-50': !isValidSubmission() || props.disabled
@@ -75,7 +76,7 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
           {props.submitLabel || 'Add Track! 🎵'}
         </AnimatedButton>
       </div>
-    </div>
+    </RetroPanel>
   );
 };
 
