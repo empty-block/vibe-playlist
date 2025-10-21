@@ -10,6 +10,7 @@ import ogs from 'open-graph-scraper'
 export interface OpenGraphMetadata {
   og_title: string | null
   og_artist: string | null
+  og_description: string | null
   og_image_url: string | null
   og_metadata: Record<string, any>
   success: boolean
@@ -61,6 +62,7 @@ export async function fetchOpenGraph(
 
       // Extract relevant fields
       const og_title = result.ogTitle || result.dcTitle || result.twitterTitle || null
+      const og_description = result.ogDescription || result.dcDescription || result.twitterDescription || null
       const og_image_url =
         result.ogImage?.[0]?.url ||
         result.twitterImage?.[0]?.url ||
@@ -129,6 +131,7 @@ export async function fetchOpenGraph(
       return {
         og_title,
         og_artist,
+        og_description,
         og_image_url,
         og_metadata: {
           description: result.ogDescription || result.dcDescription || null,
@@ -163,6 +166,7 @@ export async function fetchOpenGraph(
   return {
     og_title: null,
     og_artist: null,
+    og_description: null,
     og_image_url: null,
     og_metadata: {},
     success: false,

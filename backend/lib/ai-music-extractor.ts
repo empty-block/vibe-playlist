@@ -27,6 +27,7 @@ export interface MusicContext {
   platform_id: string
   og_title: string | null
   og_artist: string | null
+  og_description: string | null
   og_metadata: any
   cast_text?: string // Optional: user's comment about the music
 }
@@ -119,6 +120,7 @@ function buildExtractionPrompt(contexts: MusicContext[]): string {
     const metadataParts: string[] = []
     if (ctx.og_title) metadataParts.push(`title - ${ctx.og_title}`)
     if (ctx.og_artist) metadataParts.push(`artist - ${ctx.og_artist}`)
+    if (ctx.og_description) metadataParts.push(`description - ${ctx.og_description}`)
 
     // Extract additional metadata from og_metadata JSONB
     if (ctx.og_metadata) {
