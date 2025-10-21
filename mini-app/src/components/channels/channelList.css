@@ -1,5 +1,6 @@
-/* Windows 95 Window Container */
-.win95-window {
+/* Windows 95 Window Container - Light Mode */
+.theme-light .win95-window,
+body:not(.theme-dark) .win95-window {
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid #FFFFFF;
@@ -11,17 +12,46 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 100px) !important;
+  height: calc(100vh - 100px);
 }
 
-/* Title Bar */
-.win95-title-bar {
+/* Windows 95 Window Container - Dark Mode */
+.theme-dark .win95-window {
+  background: #000000;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+
+/* Title Bar - Light Mode */
+.theme-light .win95-title-bar,
+body:not(.theme-dark) .win95-title-bar {
   background: linear-gradient(to right, #000080, #1084D0);
   padding: 3px 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Title Bar - Dark Mode */
+.theme-dark .win95-title-bar {
+  background: #000000;
+  border-bottom: 2px solid #00ff00;
+  padding: 3px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #00ff00;
   font-weight: bold;
   font-size: 13px;
   letter-spacing: 0.3px;
@@ -74,8 +104,9 @@
   padding-bottom: 1px;
 }
 
-/* Content Area */
-.win95-content {
+/* Content Area - Light Mode */
+.theme-light .win95-content,
+body:not(.theme-dark) .win95-content {
   flex: 1;
   background: #FFFFFF;
   margin: 3px;
@@ -83,6 +114,17 @@
   border-left: 1px solid #808080;
   border-right: 1px solid #FFFFFF;
   border-bottom: 1px solid #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Content Area - Dark Mode */
+.theme-dark .win95-content {
+  flex: 1;
+  background: #000000;
+  margin: 3px;
+  border: 2px solid #00ff00;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -105,11 +147,19 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
-/* Search Section - Bottom */
-.win95-search-section {
+/* Search Section - Bottom - Light Mode */
+.theme-light .win95-search-section,
+body:not(.theme-dark) .win95-search-section {
   padding: 8px;
   background: #C0C0C8;
   border-top: 2px solid #FFFFFF;
+}
+
+/* Search Section - Dark Mode */
+.theme-dark .win95-search-section {
+  padding: 8px;
+  background: #000000;
+  border-top: 2px solid #00ff00;
 }
 
 .win95-search-container {
@@ -118,10 +168,21 @@
   gap: 6px;
 }
 
-.win95-search-label {
+/* Search Label - Light Mode */
+.theme-light .win95-search-label,
+body:not(.theme-dark) .win95-search-label {
   font-size: 11px;
   font-weight: bold;
   color: #000000;
+  white-space: nowrap;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Search Label - Dark Mode */
+.theme-dark .win95-search-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #00ff00;
   white-space: nowrap;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
@@ -131,7 +192,9 @@
   position: relative;
 }
 
-.win95-search-input {
+/* Search Input - Light Mode */
+.theme-light .win95-search-input,
+body:not(.theme-dark) .win95-search-input {
   width: 100%;
   padding: 3px 4px;
   border-top: 1px solid #808080;
@@ -141,11 +204,24 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   font-size: 11px;
   background: #FFFFFF;
+  color: #000000;
+  outline: none;
+}
+
+/* Search Input - Dark Mode */
+.theme-dark .win95-search-input {
+  width: 100%;
+  padding: 3px 4px;
+  border: 1px solid #00ff00;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  background: #001100;
+  color: #00ff00;
   outline: none;
 }
 
 .win95-search-input:focus {
-  outline: 1px dotted #000000;
+  outline: 1px dotted;
   outline-offset: -2px;
 }
 

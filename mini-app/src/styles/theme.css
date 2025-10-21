@@ -1,0 +1,195 @@
+/**
+ * JAMZY Theme System - Light & Dark Modes
+ * Based on v6 Dark Cyberpunk design
+ */
+
+/* ============================================
+   LIGHT MODE (Default Win95 Style)
+   ============================================ */
+.theme-light,
+body:not(.theme-dark) {
+  /* Background Colors */
+  --bg-page: #008080; /* Cyan teal background */
+  --bg-window: #C0C0C8; /* Win95 gray */
+  --bg-card: #FFFFFF; /* White cards */
+  --bg-panel: #C0C0C8; /* Panel background */
+  --bg-lcd: #000000; /* LCD display (black) */
+
+  /* Border Colors - Win95 3D Effect */
+  --border-raised-light: #FFFFFF;
+  --border-raised-dark: #000000;
+  --border-sunken-light: #000000;
+  --border-sunken-dark: #FFFFFF;
+  --border-accent: #808080; /* Medium gray */
+
+  /* Text Colors */
+  --text-primary: #000000; /* Black text */
+  --text-secondary: #808080; /* Gray text */
+  --text-tertiary: #A0A0A0; /* Light gray text */
+  --text-lcd: #00FF00; /* Green LCD text */
+  --text-lcd-secondary: #00FFFF; /* Cyan LCD text */
+
+  /* Accent Colors */
+  --accent-primary: #000080; /* Dark blue (Win95) */
+  --accent-secondary: #00FFFF; /* Cyan */
+  --accent-tertiary: #FF00FF; /* Magenta */
+
+  /* Interactive States */
+  --hover-bg: #E0E0E8;
+  --active-bg: #A0A0A8;
+  --focus-outline: #000080;
+
+  /* Shadows */
+  --shadow-subtle: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.2);
+  --shadow-strong: rgba(0, 0, 0, 0.3);
+  --glow-accent: transparent; /* No glow in light mode */
+}
+
+/* ============================================
+   DARK MODE (v6 Cyberpunk Terminal)
+   ============================================ */
+.theme-dark {
+  /* Background Colors */
+  --bg-page: #008080; /* Keep cyan background */
+  --bg-window: #000000; /* Pure black window */
+  --bg-card: #1a1a1a; /* Dark gray cards */
+  --bg-panel: #1a1a1a; /* Dark panel background */
+  --bg-lcd: #000000; /* LCD display (black) */
+
+  /* Border Colors - Neon Green Terminal Style */
+  --border-raised-light: #00ff00; /* Neon green */
+  --border-raised-dark: #003300; /* Dark green */
+  --border-sunken-light: #003300; /* Dark green */
+  --border-sunken-dark: #00ff00; /* Neon green */
+  --border-accent: #00ff00; /* Neon green accent */
+
+  /* Text Colors */
+  --text-primary: #FFFFFF; /* White text */
+  --text-secondary: #888888; /* Gray text */
+  --text-tertiary: #666666; /* Darker gray */
+  --text-lcd: #00FF00; /* Green LCD text (same) */
+  --text-lcd-secondary: #00FFFF; /* Cyan LCD text (same) */
+
+  /* Accent Colors */
+  --accent-primary: #00ff00; /* Neon green */
+  --accent-secondary: #00FFFF; /* Cyan (same) */
+  --accent-tertiary: #E010E0; /* Magenta (from v6) */
+
+  /* Interactive States */
+  --hover-bg: #222222;
+  --active-bg: #002200; /* Dark green */
+  --focus-outline: #00ff00;
+
+  /* Shadows & Glows */
+  --shadow-subtle: rgba(0, 255, 0, 0.1);
+  --shadow-medium: rgba(0, 255, 0, 0.2);
+  --shadow-strong: rgba(0, 255, 0, 0.3);
+  --glow-accent: rgba(0, 255, 0, 0.3); /* Neon green glow */
+}
+
+/* ============================================
+   Shared Semantic Variables
+   ============================================ */
+:root {
+  /* Typography */
+  --font-main: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  --font-mono: 'Courier New', monospace;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+
+  /* Border Widths */
+  --border-thin: 1px;
+  --border-medium: 2px;
+  --border-thick: 3px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Z-index layers */
+  --z-base: 1;
+  --z-player: 999;
+  --z-nav: 1000;
+  --z-modal: 1100;
+  --z-toast: 1200;
+}
+
+/* ============================================
+   Theme Transition Effect & Global Background
+   ============================================ */
+body {
+  /* Same gradient background for ALL pages in both themes */
+  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%);
+  min-height: 100vh;
+  transition: background-color var(--transition-medium),
+              color var(--transition-medium);
+}
+
+* {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: var(--transition-medium);
+  transition-timing-function: ease;
+}
+
+/* ============================================
+   Utility Classes for Theme-Aware Styling
+   ============================================ */
+
+/* Win95 Button (theme-aware) */
+.win95-button {
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+  color: var(--text-primary);
+}
+
+.win95-button:active,
+.win95-button.active {
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
+}
+
+/* Dark mode adds glow effect */
+.theme-dark .win95-button:hover {
+  box-shadow: 0 0 10px var(--glow-accent);
+}
+
+/* Win95 Window */
+.win95-window {
+  background: var(--bg-window);
+  border: var(--border-thick) solid var(--border-accent);
+}
+
+.theme-dark .win95-window {
+  box-shadow: 0 0 20px var(--glow-accent);
+}
+
+/* LCD Panel */
+.lcd-panel {
+  background: var(--bg-lcd);
+  color: var(--text-lcd);
+  font-family: var(--font-mono);
+}
+
+/* Card */
+.card {
+  background: var(--bg-card);
+  border: var(--border-medium) solid var(--border-accent);
+  color: var(--text-primary);
+}
+
+.theme-dark .card:hover {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 10px var(--glow-accent);
+}
