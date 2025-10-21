@@ -1,4 +1,5 @@
 import { Component, createSignal, For, onMount } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
 import { setCurrentTrack, setIsPlaying } from '../stores/playerStore';
@@ -6,6 +7,8 @@ import { formatRelativeTime } from '../utils/time';
 import './trendingPageWin95.css';
 
 const TrendingPage: Component = () => {
+  const navigate = useNavigate();
+
   // Window state management
   const [window1Minimized, setWindow1Minimized] = createSignal(false);
   const [window2Minimized, setWindow2Minimized] = createSignal(false);
@@ -46,8 +49,7 @@ const TrendingPage: Component = () => {
   };
 
   const handleContributorClick = (contributor: any) => {
-    console.log('Contributor clicked:', contributor.username);
-    // TODO: Implement contributor profile view
+    navigate(`/profile/${contributor.fid}`);
   };
 
   return (

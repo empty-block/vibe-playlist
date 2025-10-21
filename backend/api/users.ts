@@ -9,6 +9,83 @@ import { addRateLimitHeaders } from '../lib/rate-limit'
 const app = new Hono()
 
 /**
+ * GET /api/users/:fid
+ * Get user profile with activity stats
+ */
+app.get('/:fid', async (c) => {
+  try {
+    const fid = c.req.param('fid')
+    const supabase = getSupabaseClient()
+
+    // Fetch user basic info
+    const { data: user, error: userError } = await supabase
+      .from('user_nodes')
+      .select('node_id, fname, display_name, avatar_url')
+      .eq('node_id', fid)
+      .single()
+
+    if (userError || !user) {
+      return c.json({
+        error: {
+          code: 'USER_NOT_FOUND',
+          message: 'User not found'
+        }
+      }, 404)
+    }
+
+    // Fetch activity stats grouped by edge type
+    const { data: statsData } = await supabase
+      .from('interaction_edges')
+      .select('edge_type')
+      .eq('source_id', fid)
+
+    // Count stats by type
+    const stats = {
+      tracksShared: 0,
+      tracksLiked: 0,
+      tracksReplied: 0,
+      tracksRecasted: 0
+    }
+
+    statsData?.forEach(edge => {
+      switch (edge.edge_type) {
+        case 'AUTHORED':
+          stats.tracksShared++
+          break
+        case 'LIKED':
+          stats.tracksLiked++
+          break
+        case 'REPLIED':
+          stats.tracksReplied++
+          break
+        case 'RECASTED':
+          stats.tracksRecasted++
+          break
+      }
+    })
+
+    addRateLimitHeaders(c)
+    return c.json({
+      user: {
+        fid: user.node_id,
+        username: user.fname || 'unknown',
+        displayName: user.display_name || 'Unknown User',
+        avatar: user.avatar_url
+      },
+      stats
+    })
+  } catch (error) {
+    console.error('Get user profile error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error'
+      }
+    }, 500)
+  }
+})
+
+/**
  * GET /api/users/:fid/threads
  * Get all threads created by a user
  */

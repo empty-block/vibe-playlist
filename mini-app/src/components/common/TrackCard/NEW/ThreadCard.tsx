@@ -7,6 +7,7 @@ interface ThreadCardProps {
   threadId: string;
   threadText: string;
   creatorUsername: string;
+  creatorFid?: string;
   creatorAvatar?: string;
   timestamp: string;
   replyCount: number;
@@ -21,7 +22,7 @@ interface ThreadCardProps {
     sourceId?: string;
   };
   onCardClick?: () => void;
-  onUsernameClick?: (e: Event) => void;
+  onUsernameClick?: (fid: string, username: string, e: Event) => void;
   onArtistClick?: (e: Event) => void;
   onTrackPlay?: (track: any) => void;
 }
@@ -35,8 +36,8 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
 
   const handleUsernameClick = (e: Event) => {
     e.stopPropagation();
-    if (props.onUsernameClick) {
-      props.onUsernameClick(e);
+    if (props.onUsernameClick && props.creatorFid) {
+      props.onUsernameClick(props.creatorFid, props.creatorUsername, e);
     }
   };
 
