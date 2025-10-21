@@ -71,3 +71,74 @@ export async function fetchActivity(cursor?: string): Promise<ApiActivityRespons
 
   return response.json();
 }
+
+/**
+ * Trending API types
+ */
+export interface ApiTrendingTrack {
+  rank: number;
+  id: string;
+  title: string;
+  artist: string;
+  thumbnail?: string;
+  shares: number;
+  uniqueLikes?: number;
+  uniqueReplies?: number;
+  score?: number;
+}
+
+export interface ApiTrendingContributor {
+  rank: number;
+  fid: string;
+  username: string;
+  displayName: string;
+  avatar: string;
+  trackCount: number;
+  uniqueEngagers: number;
+  score?: number;
+}
+
+export interface ApiTrendingTracksResponse {
+  tracks: ApiTrendingTrack[];
+  updatedAt: string;
+  cached?: boolean;
+}
+
+export interface ApiTrendingUsersResponse {
+  contributors: ApiTrendingContributor[];
+  updatedAt: string;
+  cached?: boolean;
+}
+
+/**
+ * Fetch trending tracks from backend
+ */
+export async function fetchTrendingTracks(limit: number = 10): Promise<ApiTrendingTracksResponse> {
+  const url = new URL(`${getApiUrl()}/api/music/trending`);
+  url.searchParams.set('limit', limit.toString());
+  url.searchParams.set('timeframe', '7d');
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch trending tracks: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetch trending users/contributors from backend
+ */
+export async function fetchTrendingUsers(limit: number = 10): Promise<ApiTrendingUsersResponse> {
+  const url = new URL(`${getApiUrl()}/api/trending/users`);
+  url.searchParams.set('limit', limit.toString());
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch trending users: ${response.statusText}`);
+  }
+
+  return response.json();
+}
