@@ -6,6 +6,9 @@ export interface TrendingTrack {
   id: string;
   title: string;
   artist: string;
+  platform: string;
+  platformId: string;
+  url: string;
   thumbnail: string;
   shares: number;
   uniqueLikes?: number;

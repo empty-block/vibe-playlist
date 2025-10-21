@@ -1,6 +1,7 @@
 import { Component, createSignal, For, onMount } from 'solid-js';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
+import { setCurrentTrack, setIsPlaying } from '../stores/playerStore';
 import { formatRelativeTime } from '../utils/time';
 import './trendingPageWin95.css';
 
@@ -25,10 +26,23 @@ const TrendingPage: Component = () => {
     return updated ? formatRelativeTime(updated.toISOString()) : 'just now';
   };
 
+  // Play track function
+  const playTrack = (track: any) => {
+    setCurrentTrack({
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      thumbnail: track.thumbnail,
+      source: track.platform,
+      url: track.url,
+      sourceId: track.platformId
+    });
+    setIsPlaying(true);
+  };
+
   // Event handlers
   const handleTrackClick = (track: any) => {
-    console.log('Track clicked:', track.title);
-    // TODO: Implement track detail view
+    playTrack(track);
   };
 
   const handleContributorClick = (contributor: any) => {
