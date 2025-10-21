@@ -1,5 +1,5 @@
 import { Component, createSignal, createMemo, For, onMount, createResource, Show } from 'solid-js';
-import { A } from '@solidjs/router';
+import { A, useNavigate } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
@@ -27,6 +27,7 @@ const replyToTrack = (track: Track) => {
 };
 
 const ThreadsPage: Component = () => {
+  const navigate = useNavigate();
   const [sortBy, setSortBy] = createSignal<SortType>('hot');
 
   // Fetch threads from API
@@ -93,8 +94,9 @@ const ThreadsPage: Component = () => {
     });
   });
 
-  const handleUsernameClick = (username: string) => {
-    window.location.href = `/user/${username}`;
+  const handleUsernameClick = (fid: string, username: string, e: Event) => {
+    e.preventDefault();
+    navigate(`/profile/${fid}`);
   };
 
   const handleArtistClick = (artist: string) => {
@@ -163,6 +165,7 @@ const ThreadsPage: Component = () => {
                   threadId={thread.id}
                   threadText={thread.initialPost.text}
                   creatorUsername={thread.initialPost.author.username}
+                  creatorFid={thread.initialPost.author.fid}
                   creatorAvatar={thread.initialPost.author.pfpUrl}
                   timestamp={thread.initialPost.timestamp}
                   replyCount={thread.replyCount}
@@ -176,8 +179,8 @@ const ThreadsPage: Component = () => {
                     url: thread.initialPost.track.url,
                     sourceId: thread.initialPost.track.sourceId
                   } : undefined}
-                  onCardClick={() => window.location.href = `/thread/${thread.id}`}
-                  onUsernameClick={() => handleUsernameClick(thread.initialPost.author.username)}
+                  onCardClick={() => navigate(`/thread/${thread.id}`)}
+                  onUsernameClick={handleUsernameClick}
                   onArtistClick={() => thread.initialPost.track && handleArtistClick(thread.initialPost.track.artist)}
                   onTrackPlay={playTrack}
                 />

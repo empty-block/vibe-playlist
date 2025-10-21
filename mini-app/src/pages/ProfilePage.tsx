@@ -1,70 +1,74 @@
-import { Component, createSignal, createMemo, For, Show } from 'solid-js';
+import { Component, createSignal, createMemo, For, Show, onMount } from 'solid-js';
+import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import { TrackCard } from '../components/common/TrackCard/NEW';
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
-import { mockThreads } from '../data/mockThreads';
+import {
+  profileUser,
+  threads,
+  isLoading,
+  error,
+  nextCursor,
+  loadUserProfile,
+  loadMoreThreads
+} from '../stores/profileStore';
 import './profilePage.css';
 
 type FilterType = 'threads' | 'replies' | 'all';
 
 const ProfilePage: Component = () => {
-  const user = currentUser();
+  const params = useParams();
+  const navigate = useNavigate();
   const [currentFilter, setCurrentFilter] = createSignal<FilterType>('threads');
 
-  // Extract user's threads and replies
+  // Get FID from route params or use current user's FID
+  const userFid = () => params.fid || currentUser().fid;
+
+  // Load profile data on mount
+  onMount(() => {
+    loadUserProfile(userFid());
+  });
+
+  // Get user display info
+  const user = createMemo(() => {
+    const profile = profileUser();
+    if (profile) {
+      return {
+        fid: profile.user.fid,
+        username: profile.user.username,
+        displayName: profile.user.displayName,
+        avatar: profile.user.avatar,
+        bio: undefined // Will add later when we have bio in DB
+      };
+    }
+    return currentUser(); // Fallback while loading
+  });
+
+  // Separate threads and replies from API data
   const userThreads = createMemo(() =>
-    mockThreads.filter(t => t.initialPost.author.username === user.username)
+    threads().filter(t => t.music && t.music.length > 0 && !t.text.startsWith('@'))
   );
 
   const userReplies = createMemo(() =>
-    mockThreads.flatMap(t =>
-      t.replies.filter(r => r.author.username === user.username)
-    )
+    threads().filter(t => t.music && t.music.length > 0 && t.text.startsWith('@'))
   );
-
-  // Helper to convert ThreadTrack to Track format
-  const convertToTrack = (threadTrack: any, author: any): Track => ({
-    id: threadTrack.id,
-    title: threadTrack.title,
-    artist: threadTrack.artist,
-    duration: threadTrack.duration || '0:00',
-    source: threadTrack.source as 'youtube' | 'spotify',
-    sourceId: threadTrack.sourceId,
-    thumbnail: threadTrack.thumbnail,
-    addedBy: author.username,
-    userAvatar: author.pfpUrl,
-    timestamp: threadTrack.timestamp,
-    comment: threadTrack.comment || '',
-    likes: threadTrack.likes || 0,
-    replies: threadTrack.replies || 0,
-    recasts: threadTrack.recasts || 0
-  });
 
   // Filtered content based on current filter
   const filteredContent = createMemo(() => {
     const filter = currentFilter();
 
     if (filter === 'threads') {
-      return userThreads().map(t => ({
-        type: 'thread' as const,
-        track: convertToTrack(t.initialPost.track, t.initialPost.author),
-        timestamp: t.initialPost.timestamp
-      }));
+      return userThreads();
     }
 
     if (filter === 'replies') {
-      return userReplies().map(r => ({
-        type: 'reply' as const,
-        track: convertToTrack(r.track, r.author),
-        timestamp: r.timestamp
-      }));
+      return userReplies();
     }
 
-    // 'all'
-    return [
-      ...userThreads().map(t => ({ type: 'thread' as const, track: convertToTrack(t.initialPost.track, t.initialPost.author), timestamp: t.initialPost.timestamp })),
-      ...userReplies().map(r => ({ type: 'reply' as const, track: convertToTrack(r.track, r.author), timestamp: r.timestamp }))
-    ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    // 'all' - combine threads and replies sorted by timestamp
+    return [...userThreads(), ...userReplies()]
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   });
 
   // Track actions
@@ -113,37 +117,65 @@ const ProfilePage: Component = () => {
   return (
     <div class="profile-page">
       <div class="profile-container">
-        {/* Napster Buddy List Style Header */}
-        <div class="profile-header">
-          <Show when={user.avatar} fallback={
-            <div class="profile-avatar-fallback">
-              {user.displayName.charAt(0).toUpperCase()}
-            </div>
-          }>
-            <img
-              src={user.avatar}
-              alt={user.displayName}
-              class="profile-avatar"
-            />
-          </Show>
-          <div class="profile-info">
-            <div class="profile-username">@{user.username}</div>
-            <Show when={user.bio}>
-              <div class="profile-bio">{user.bio}</div>
+        {/* Loading State */}
+        <Show when={isLoading() && !profileUser()}>
+          <div class="profile-loading">
+            <div>Loading profile...</div>
+          </div>
+        </Show>
+
+        {/* Error State */}
+        <Show when={error()}>
+          <div class="profile-error">
+            <span class="empty-icon">⚠️</span>
+            <p class="empty-message">{error()}</p>
+          </div>
+        </Show>
+
+        {/* Profile Content */}
+        <Show when={!isLoading() || profileUser()}>
+          {/* Napster Buddy List Style Header */}
+          <div class="profile-header">
+            <Show when={user().avatar} fallback={
+              <div class="profile-avatar-fallback">
+                {user().displayName.charAt(0).toUpperCase()}
+              </div>
+            }>
+              <img
+                src={user().avatar}
+                alt={user().displayName}
+                class="profile-avatar"
+              />
             </Show>
-            <div class="profile-stats-inline">
-              <div class="stat-inline">
-                <span class="number">{userThreads().length}</span> threads
-              </div>
-              <div class="stat-inline">
-                <span class="number">{userReplies().length}</span> replies
-              </div>
-              <div class="stat-inline">
-                <span class="number">{userThreads().length + userReplies().length}</span> total
+            <div class="profile-info">
+              <div class="profile-username">@{user().username}</div>
+              <Show when={user().bio}>
+                <div class="profile-bio">{user().bio}</div>
+              </Show>
+              <div class="profile-stats-inline">
+                <Show when={profileUser()} fallback={
+                  <>
+                    <div class="stat-inline">
+                      <span class="number">{userThreads().length}</span> threads
+                    </div>
+                    <div class="stat-inline">
+                      <span class="number">{userReplies().length}</span> replies
+                    </div>
+                  </>
+                }>
+                  <div class="stat-inline">
+                    <span class="number">{profileUser()!.stats.tracksShared}</span> shared
+                  </div>
+                  <div class="stat-inline">
+                    <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
+                  </div>
+                  <div class="stat-inline">
+                    <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
+                  </div>
+                </Show>
               </div>
             </div>
           </div>
-        </div>
 
         {/* Feed Filter Buttons */}
         <div class="feed-filter">
@@ -184,60 +216,46 @@ const ProfilePage: Component = () => {
 
           <Show when={filteredContent().length > 0}>
             <For each={filteredContent()}>
-              {(item) => {
-                const track = item.track;
-                const isTrackPlaying = () => currentTrack()?.id === track.id && isPlaying();
+              {(thread) => {
+                const track = thread.music && thread.music[0] ? thread.music[0] : null;
 
                 return (
-                  <div class="activity-card">
-                    <div class="activity-header">
-                      <span class="username">@{user.username}</span>
-                      <span class="timestamp">{formatTimeAgo(item.timestamp)}</span>
-                    </div>
-
-                    <div class="track-content">
-                      <div class="thumbnail">
-                        <Show when={track.thumbnail} fallback={<span>🎵</span>}>
-                          <img src={track.thumbnail} alt={track.title} />
-                        </Show>
-                      </div>
-                      <div class="track-info">
-                        <div class="track-title">{track.title}</div>
-                        <div class="track-artist">{track.artist}</div>
-                        <div class="track-meta">via {track.source}</div>
-                      </div>
-                      <button
-                        class="play-button"
-                        onClick={() => playTrack(track)}
-                      >
-                        {isTrackPlaying() ? '⏸' : '▶'}
-                      </button>
-                    </div>
-
-                    <Show when={track.comment && track.comment.trim()}>
-                      <div class="comment-box">{track.comment}</div>
-                    </Show>
-
-                    <div class="stats-row">
-                      <div class="stat-box">
-                        <span>♥</span>
-                        <span class="count">{track.likes || 0}</span>
-                      </div>
-                      <div class="stat-box">
-                        <span>💬</span>
-                        <span class="count">{track.replies || 0}</span>
-                      </div>
-                      <div class="stat-box">
-                        <span>🔄</span>
-                        <span class="count">{track.recasts || 0}</span>
-                      </div>
-                    </div>
-                  </div>
+                  <Show when={track}>
+                    <TrackCard
+                      author={thread.author}
+                      track={track!}
+                      text={thread.text}
+                      timestamp={thread.timestamp}
+                      stats={thread.stats}
+                      onPlay={(trackData) => {
+                        setCurrentTrack(trackData);
+                        setIsPlaying(true);
+                      }}
+                      onUsernameClick={(fid, e) => {
+                        e.preventDefault();
+                        navigate(`/profile/${fid}`);
+                      }}
+                    />
+                  </Show>
                 );
               }}
             </For>
           </Show>
+
+          {/* Load More Button */}
+          <Show when={nextCursor()}>
+            <div style="text-align: center; padding: 20px;">
+              <button
+                class="filter-button"
+                onClick={() => loadMoreThreads()}
+                disabled={isLoading()}
+              >
+                {isLoading() ? 'Loading...' : 'Load More'}
+              </button>
+            </div>
+          </Show>
         </div>
+        </Show>
       </div>
 
       {/* Bottom Navigation */}

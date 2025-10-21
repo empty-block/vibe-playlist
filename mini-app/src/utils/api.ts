@@ -142,3 +142,90 @@ export async function fetchTrendingUsers(limit: number = 10): Promise<ApiTrendin
 
   return response.json();
 }
+
+/**
+ * User Profile API types
+ */
+export interface ApiUserProfile {
+  user: {
+    fid: string;
+    username: string;
+    displayName: string;
+    avatar: string;
+  };
+  stats: {
+    tracksShared: number;
+    tracksLiked: number;
+    tracksReplied: number;
+    tracksRecasted: number;
+  };
+}
+
+export interface ApiUserThread {
+  castHash: string;
+  text: string;
+  author: {
+    fid: string;
+    username: string;
+    displayName: string;
+    pfpUrl?: string;
+  };
+  timestamp: string;
+  music: Array<{
+    id: string;
+    title: string;
+    artist: string;
+    platform: string;
+    platformId: string;
+    url: string;
+    thumbnail?: string;
+  }>;
+  stats: {
+    replies: number;
+    likes: number;
+    recasts: number;
+  };
+}
+
+export interface ApiUserThreadsResponse {
+  threads: ApiUserThread[];
+  nextCursor?: string;
+}
+
+/**
+ * Fetch user profile with activity stats
+ */
+export async function fetchUserProfile(fid: string): Promise<ApiUserProfile> {
+  const url = new URL(`${getApiUrl()}/api/users/${fid}`);
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('User not found');
+    }
+    throw new Error(`Failed to fetch user profile: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Fetch user threads with pagination
+ */
+export async function fetchUserThreads(fid: string, cursor?: string, limit: number = 50): Promise<ApiUserThreadsResponse> {
+  const url = new URL(`${getApiUrl()}/api/users/${fid}/threads`);
+
+  url.searchParams.set('limit', limit.toString());
+  if (cursor) {
+    url.searchParams.set('cursor', cursor);
+  }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user threads: ${response.statusText}`);
+  }
+
+  return response.json();
+}

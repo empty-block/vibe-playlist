@@ -22,6 +22,7 @@ export interface Track {
   sourceId: string; // videoId for YouTube, track ID for Spotify, etc.
   thumbnail: string;
   addedBy: string;
+  userFid?: string; // Farcaster ID of the user who added the track
   userAvatar: string;
   timestamp: string;
   comment: string;

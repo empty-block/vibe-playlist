@@ -38,6 +38,7 @@ const App: Component = () => {
       <Route path="/trending" component={TrendingPage} />
       <Route path="/thread/:id" component={ThreadViewPage} />
       <Route path="/profile" component={ProfilePage} />
+      <Route path="/profile/:fid" component={ProfilePage} />
     </Router>
   );
 };

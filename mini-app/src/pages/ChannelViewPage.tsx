@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import AddTrackModal from '../components/library/AddTrackModal';
 import RetroWindow from '../components/common/RetroWindow';
+import { TrackCard } from '../components/common/TrackCard/NEW';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import './channelViewPage.css';
@@ -98,6 +99,12 @@ const ChannelViewPage: Component = () => {
     } else {
       playTrack(track);
     }
+  };
+
+  // Username click handler
+  const handleUsernameClick = (fid: string, e: MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/profile/${fid}`);
   };
 
   // Close dropdown when clicking outside
@@ -233,77 +240,19 @@ const ChannelViewPage: Component = () => {
                   <For each={feedData()!.threads}>
                     {(thread) => {
                       const track = thread.music && thread.music[0] ? thread.music[0] : null;
-                      const isCurrentTrack = () => track && currentTrack()?.id === track.id;
-                      const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
                       return (
-                        <div class="activity-card">
-                          {/* Navy header bar */}
-                          <div class="activity-header">
-                            <div class="user-info">
-                              <Show when={thread.author.pfpUrl} fallback={
-                                <div class="user-avatar-fallback">{thread.author.username.charAt(0).toUpperCase()}</div>
-                              }>
-                                <img src={thread.author.pfpUrl} alt={thread.author.username} class="user-avatar" />
-                              </Show>
-                              <span class="username">{thread.author.username}</span>
-                            </div>
-                            <span class="timestamp">{formatTimeAgo(thread.timestamp)}</span>
-                          </div>
-
-                          {/* Track content */}
-                          <Show when={track}>
-                            <div class="track-content">
-                              <div class="thumbnail">
-                                <Show when={track!.thumbnail} fallback={<span>🎵</span>}>
-                                  <img src={track!.thumbnail} alt={track!.title} />
-                                </Show>
-                              </div>
-                              <div class="track-info">
-                                <div class="track-title">{track!.title}</div>
-                                <div class="track-artist">{track!.artist}</div>
-                                <div class="track-meta">via {track!.platform}</div>
-                              </div>
-                              <button
-                                class="play-button"
-                                onClick={() => handleTrackPlay({
-                                  id: track!.id,
-                                  title: track!.title,
-                                  artist: track!.artist,
-                                  thumbnail: track!.thumbnail,
-                                  source: track!.platform,
-                                  url: track!.url,
-                                  sourceId: track!.platformId
-                                })}
-                              >
-                                {isTrackPlaying() ? '⏸' : '▶'}
-                              </button>
-                            </div>
-                          </Show>
-
-                          {/* Comment if present */}
-                          <Show when={thread.text && thread.text.trim()}>
-                            <div class="comment-box">
-                              {thread.text}
-                            </div>
-                          </Show>
-
-                          {/* Stats row */}
-                          <div class="stats-row">
-                            <div class="stat-box">
-                              <span>♥</span>
-                              <span class="count">{thread.stats.likes || 0}</span>
-                            </div>
-                            <div class="stat-box">
-                              <span>💬</span>
-                              <span class="count">{thread.stats.replies || 0}</span>
-                            </div>
-                            <div class="stat-box">
-                              <span>🔄</span>
-                              <span class="count">{thread.stats.recasts || 0}</span>
-                            </div>
-                          </div>
-                        </div>
+                        <Show when={track}>
+                          <TrackCard
+                            author={thread.author}
+                            track={track!}
+                            text={thread.text}
+                            timestamp={thread.timestamp}
+                            stats={thread.stats}
+                            onPlay={handleTrackPlay}
+                            onUsernameClick={handleUsernameClick}
+                          />
+                        </Show>
                       );
                     }}
                   </For>

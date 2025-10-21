@@ -7,6 +7,7 @@ interface RowTrackCardProps {
   onPlay: (track: Track) => void;
   onLike: (track: Track) => void;
   onReply: (track: Track) => void;
+  onUsernameClick?: (fid: string, username: string, e: MouseEvent) => void;
   showComment?: boolean;
   className?: string;
 }
@@ -31,6 +32,13 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
   const handleReplyClick = (e: MouseEvent) => {
     e.stopPropagation();
     props.onReply(props.track);
+  };
+
+  const handleUsernameClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (props.onUsernameClick && props.track.addedBy && props.track.userFid) {
+      props.onUsernameClick(props.track.userFid, props.track.addedBy, e);
+    }
   };
 
   const getShortId = () => {
@@ -68,7 +76,15 @@ const RowTrackCard: Component<RowTrackCardProps> = (props) => {
         <div class="terminal-block-meta">
           <span class="border-v">│</span>
           <span class="meta-arrow">&gt;&gt;</span>
-          <span class="meta-username">@{props.track.addedBy}</span>
+          <span
+            class="meta-username"
+            onClick={handleUsernameClick}
+            role="button"
+            tabindex="0"
+            style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+          >
+            @{props.track.addedBy}
+          </span>
           <span style={{ color: 'var(--terminal-text)' }}> shared a track</span>
           <Show when={props.track.timestamp}>
             <span class="info-separator"> • </span>

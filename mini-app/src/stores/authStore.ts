@@ -3,6 +3,7 @@ import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 
 // Current user state (mock for now - would come from Farcaster in real app)
 export const [currentUser, setCurrentUser] = createSignal({
+  fid: '326181',
   username: 'hendrix_69',
   avatar: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
   displayName: 'Jimi'
