@@ -14,6 +14,11 @@ export interface TrendingTrack {
   uniqueLikes?: number;
   uniqueReplies?: number;
   score?: number;
+  submittedBy?: Array<{
+    fid: string;
+    username: string;
+    display_name: string;
+  }>;
 }
 
 export interface TrendingContributor {

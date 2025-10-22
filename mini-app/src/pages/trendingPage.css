@@ -3,8 +3,11 @@
 /* Page Container - Background inherited from body */
 .trending-page {
   min-height: 100vh;
+  height: 100vh;
   padding: 16px;
   padding-bottom: 80px; /* Space for mobile navigation */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Main Dashboard Container */
@@ -14,6 +17,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  flex: 1;
+  height: 100%;
 }
 
 /* Classic Win95 Window Style - Light Mode */
@@ -25,7 +30,7 @@ body:not(.theme-dark) .window {
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  height: 100%;
   position: relative;
 }
 
@@ -36,7 +41,7 @@ body:not(.theme-dark) .window {
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  height: 100%;
   position: relative;
 }
 
@@ -137,11 +142,10 @@ body:not(.theme-dark) .window-content {
   border: 2px solid;
   border-color: #808080 #FFFFFF #FFFFFF #808080;
   margin: 4px;
-  height: 500px;
+  flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
-  transition: height 0.3s ease;
 }
 
 /* Window Content - Dark Mode */
@@ -150,11 +154,10 @@ body:not(.theme-dark) .window-content {
   background: #000000;
   border: 2px solid #00ff00;
   margin: 4px;
-  height: 500px;
+  flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
-  transition: height 0.3s ease;
 }
 
 /* Win95 Scrollbar Styling */
@@ -352,6 +355,33 @@ body:not(.theme-dark) .track-item:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Submitted By Text */
+.track-submitted {
+  font-size: 11px;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.submitted-username {
+  color: #000080;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.submitted-username:hover {
+  color: #1084D0;
+  text-decoration: underline;
+}
+
+.theme-dark .submitted-username {
+  color: #00ff00;
+}
+
+.theme-dark .submitted-username:hover {
+  color: #00ffaa;
 }
 
 .track-stats {

@@ -85,6 +85,11 @@ export interface ApiTrendingTrack {
   uniqueLikes?: number;
   uniqueReplies?: number;
   score?: number;
+  submittedBy?: Array<{
+    fid: string;
+    username: string;
+    display_name: string;
+  }>;
 }
 
 export interface ApiTrendingContributor {
@@ -116,7 +121,7 @@ export interface ApiTrendingUsersResponse {
 export async function fetchTrendingTracks(limit: number = 10): Promise<ApiTrendingTracksResponse> {
   const url = new URL(`${getApiUrl()}/api/music/trending`);
   url.searchParams.set('limit', limit.toString());
-  url.searchParams.set('timeframe', '7d');
+  url.searchParams.set('timeframe', '1d');
 
   const response = await fetch(url.toString());
 

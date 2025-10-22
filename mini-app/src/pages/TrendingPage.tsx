@@ -11,17 +11,12 @@ const TrendingPage: Component = () => {
 
   // Window state management
   const [window1Minimized, setWindow1Minimized] = createSignal(false);
-  const [window2Minimized, setWindow2Minimized] = createSignal(false);
   const [window1Maximized, setWindow1Maximized] = createSignal(false);
-  const [window2Maximized, setWindow2Maximized] = createSignal(false);
 
   // Load trending data on mount
   onMount(() => {
     loadTrendingData();
   });
-
-  // Calculate total tracks from contributors
-  const totalTracks = () => contributors().reduce((sum, c) => sum + c.trackCount, 0);
 
   // Format the last updated timestamp
   const updatedTimeAgo = () => {
@@ -48,8 +43,9 @@ const TrendingPage: Component = () => {
     playTrack(track);
   };
 
-  const handleContributorClick = (contributor: any) => {
-    navigate(`/profile/${contributor.fid}`);
+  const handleUsernameClick = (fid: string, e: MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/profile/${fid}`);
   };
 
   return (
@@ -65,7 +61,7 @@ const TrendingPage: Component = () => {
               <div class="title-icon">⚡</div>
               <span>
                 TRENDING TRACKS
-                <span class="title-subtitle">- Last 7 Days</span>
+                <span class="title-subtitle">- Last 24 Hours</span>
               </span>
             </div>
             <div class="title-buttons">
@@ -86,10 +82,7 @@ const TrendingPage: Component = () => {
             </div>
           </div>
 
-          <div
-            class="window-content"
-            style={{ height: window1Maximized() ? '650px' : '500px' }}
-          >
+          <div class="window-content">
             <div class="content-inner">
               <div class="section-header">
                 <div class="section-title">Hot Right Now</div>
@@ -130,12 +123,24 @@ const TrendingPage: Component = () => {
                       <div class="track-info">
                         <div class="track-title">{track.title}</div>
                         <div class="track-artist">{track.artist}</div>
+                        {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
+                          <div class="track-submitted">
+                            Shared by {(track as any).submittedBy.map((user: any, idx: number) => (
+                              <>
+                                <span
+                                  class="submitted-username"
+                                  onClick={(e) => handleUsernameClick(user.fid, e)}
+                                >
+                                  @{user.username}
+                                </span>
+                                {idx < (track as any).submittedBy.length - 1 && ', '}
+                              </>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div class="track-stats">
-                        <div class="track-shares">
-                          {track.rank <= 3 && <span class="fire-icon">🔥</span>}
-                          <span>{track.shares}</span>
-                        </div>
+                        {track.rank <= 3 && <span class="fire-icon">🔥</span>}
                       </div>
                     </div>
                   )}
@@ -147,94 +152,6 @@ const TrendingPage: Component = () => {
           <div class="status-bar">
             <span class="status-bar-section">{tracks().length} tracks</span>
             <span class="status-bar-section">Updated: {updatedTimeAgo()}</span>
-          </div>
-        </div>
-
-        {/* Window 2: Top Contributors */}
-        <div
-          class="window"
-          classList={{ minimized: window2Minimized() }}
-        >
-          <div class="title-bar">
-            <div class="title-text">
-              <div class="title-icon">👥</div>
-              <span>
-                TOP CONTRIBUTORS
-                <span class="title-subtitle">- Last 7 Days</span>
-              </span>
-            </div>
-            <div class="title-buttons">
-              <button
-                class="title-btn"
-                onClick={() => setWindow2Minimized(!window2Minimized())}
-                title="Minimize"
-              >
-                _
-              </button>
-              <button
-                class="title-btn"
-                onClick={() => setWindow2Maximized(!window2Maximized())}
-                title="Maximize"
-              >
-                □
-              </button>
-            </div>
-          </div>
-
-          <div
-            class="window-content"
-            style={{ height: window2Maximized() ? '650px' : '500px' }}
-          >
-            <div class="content-inner">
-              <div class="section-header">
-                <div class="section-title">Power Users</div>
-              </div>
-
-              {isLoading() && contributors().length === 0 ? (
-                <div style="padding: 20px; text-align: center; color: #666;">
-                  Loading contributors...
-                </div>
-              ) : error() ? (
-                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
-                  Error: {error()}
-                </div>
-              ) : contributors().length === 0 ? (
-                <div style="padding: 20px; text-align: center; color: #666;">
-                  No contributors yet
-                </div>
-              ) : (
-                <For each={contributors()}>
-                  {(contributor) => (
-                    <div
-                      class="contributor-item"
-                      onClick={() => handleContributorClick(contributor)}
-                    >
-                      <div class="contributor-rank">{contributor.rank}</div>
-                      <div class="contributor-avatar">
-                        {contributor.avatar ? (
-                          <img src={contributor.avatar} alt={contributor.username} style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;" />
-                        ) : (
-                          contributor.username.substring(0, 2).toUpperCase()
-                        )}
-                      </div>
-                      <div class="contributor-info">
-                        <div class="contributor-username">@{contributor.username}</div>
-                        <div class="contributor-fid">FID: {contributor.fid}</div>
-                      </div>
-                      <div>
-                        <div class="contributor-count">{contributor.trackCount}</div>
-                        <div class="contributor-label">tracks</div>
-                      </div>
-                    </div>
-                  )}
-                </For>
-              )}
-            </div>
-          </div>
-
-          <div class="status-bar">
-            <span class="status-bar-section">{contributors().length} users</span>
-            <span class="status-bar-section">Total: {totalTracks()} tracks</span>
           </div>
         </div>
       </div>

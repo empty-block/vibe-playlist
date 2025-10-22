@@ -50,6 +50,10 @@ app.get('/trending', async (c) => {
     let velocityDays: number
 
     switch (timeframe) {
+      case '1d':
+        timeframeDays = 1
+        velocityDays = 1
+        break
       case '7d':
         timeframeDays = 7
         velocityDays = 3
@@ -63,8 +67,8 @@ app.get('/trending', async (c) => {
         velocityDays = 30
         break
       default:
-        timeframeDays = 7
-        velocityDays = 3
+        timeframeDays = 1
+        velocityDays = 1
     }
 
     // Call Postgres function to get trending tracks
@@ -97,7 +101,8 @@ app.get('/trending', async (c) => {
       shares: track.shares,
       uniqueLikes: track.unique_likes,
       uniqueReplies: track.unique_replies,
-      score: track.score
+      score: track.score,
+      submittedBy: track.submitted_by || []
     }))
 
     // Update cache

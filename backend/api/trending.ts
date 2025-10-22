@@ -38,7 +38,7 @@ app.get('/users', async (c) => {
 
     // Call Postgres function to get trending users
     const { data: users, error } = await supabase.rpc('get_trending_users', {
-      timeframe_days: 7,
+      timeframe_days: 1,
       limit_count: limit
     })
 
