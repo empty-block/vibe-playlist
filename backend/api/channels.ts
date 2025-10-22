@@ -5,6 +5,7 @@ import {
   decodeCursor
 } from '../lib/api-utils'
 import { getSyncEngine } from '../lib/sync-engine'
+import type { ChannelFeedSortOption, MusicPlatform } from '../../shared/types/channels'
 
 const app = new Hono()
 
@@ -159,6 +160,34 @@ app.get('/:channelId/feed', async (c) => {
     // Parse musicOnly filter
     const musicOnly = c.req.query('musicOnly') === 'true'
 
+    // Parse sort option (defaults to 'recent')
+    const sort = (c.req.query('sort') || 'recent') as ChannelFeedSortOption
+
+    // Parse quality filter (min likes)
+    const minLikes = parseInt(c.req.query('minLikes') || '0')
+
+    // Parse music sources filter (comma-separated)
+    const musicSourcesParam = c.req.query('musicSources')
+    const musicSources = musicSourcesParam
+      ? musicSourcesParam.split(',').filter(Boolean) as MusicPlatform[]
+      : null
+
+    // Parse genres filter (comma-separated)
+    const genresParam = c.req.query('genres')
+    const genres = genresParam
+      ? genresParam.split(',').filter(Boolean)
+      : null
+
+    // Log the parameters being sent to database
+    console.log('[Channels API] Calling get_channel_feed with:', {
+      p_channel_id: channelId,
+      limit_count: limit + 1,
+      sort_by: sort,
+      min_likes: minLikes,
+      p_music_sources: musicSources,
+      p_genres: genres
+    });
+
     // Fetch channel feed using postgres function
     const { data: threads, error: threadsError } = await supabase
       .rpc('get_channel_feed', {
@@ -166,8 +195,18 @@ app.get('/:channelId/feed', async (c) => {
         limit_count: limit + 1,  // Fetch one extra to check hasMore
         cursor_timestamp: cursorTimestamp,
         cursor_id: cursorId,
-        music_only: musicOnly
+        music_only: musicOnly,
+        sort_by: sort,
+        min_likes: minLikes,
+        p_music_sources: musicSources,
+        p_genres: genres
       })
+
+    console.log('[Channels API] Database returned:', {
+      threadCount: threads?.length || 0,
+      firstThreadHash: threads?.[0]?.cast_hash,
+      firstThreadLikes: threads?.[0]?.likes_count
+    });
 
     if (threadsError) {
       console.error('Error fetching channel feed:', threadsError)

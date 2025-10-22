@@ -1,12 +1,24 @@
-import { Component, createSignal, For, Show, createResource, onMount, onCleanup } from 'solid-js';
+import { Component, createSignal, For, Show, createResource, onMount, onCleanup, createEffect, createMemo } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import AddTrackModal from '../components/library/AddTrackModal';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
+import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
+import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './channelViewPage.css';
+
+// Fisher-Yates shuffle algorithm for randomizing array
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 // Format time ago helper
 const formatTimeAgo = (timestamp: string) => {
@@ -34,16 +46,88 @@ const ChannelViewPage: Component = () => {
   const navigate = useNavigate();
   const channelId = () => params.id;
 
-  // Fetch channel details and feed from API
+  // Fetch channel details
   const [channelData] = createResource(channelId, fetchChannelDetails);
-  const [feedData] = createResource(channelId, (id) => fetchChannelFeed(id, { limit: 50 }));
 
   // Modal state
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
 
-  // Sort state
-  const [sortOption, setSortOption] = createSignal('Recent');
-  const [showSortMenu, setShowSortMenu] = createSignal(false);
+  // Filter and sort state
+  const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
+  const [qualityFilter, setQualityFilter] = createSignal<number>(0); // 0 = all, 3 = 3+ likes
+  const [musicSources, setMusicSources] = createSignal<MusicPlatform[]>([]);
+  const [genres, setGenres] = createSignal<string[]>([]);
+  const [shuffleSeed, setShuffleSeed] = createSignal<number>(0); // Increment to trigger new shuffle
+  const [filterDialogOpen, setFilterDialogOpen] = createSignal(false); // Filter dialog state
+
+  // Available filter options (these would ideally come from the API)
+  const availablePlatforms: MusicPlatform[] = ['spotify', 'youtube', 'apple_music', 'soundcloud', 'songlink', 'audius'];
+  const availableGenres = ['hip-hop', 'electronic', 'rock', 'jazz', 'classical', 'metal', 'indie', 'folk', 'r&b', 'pop'];
+
+  // Handle sort change with shuffle seed
+  const handleSortChange = (newSort: ChannelFeedSortOption) => {
+    console.log('[ChannelViewPage] handleSortChange called:', newSort);
+    if (newSort === 'shuffle') {
+      // Increment shuffle seed to trigger new random order
+      setShuffleSeed(prev => prev + 1);
+    }
+    setActiveSort(newSort);
+  };
+
+  // Fetch feed with filters - recreate resource when filters change
+  const [feedData] = createResource(
+    () => ({
+      channelId: channelId(),
+      sort: activeSort(),
+      minLikes: qualityFilter(),
+      musicSources: musicSources(),
+      genres: genres()
+    }),
+    async (params) => {
+      console.log('[ChannelViewPage] Fetching feed with params:', params);
+
+      // Convert 'shuffle' to 'recent' for backend (shuffle happens client-side)
+      const backendSort = params.sort === 'shuffle' ? 'recent' : params.sort;
+
+      return fetchChannelFeed(params.channelId, {
+        limit: 50,
+        sort: backendSort,
+        minLikes: params.minLikes > 0 ? params.minLikes : undefined,
+        musicSources: params.musicSources.length > 0 ? params.musicSources : undefined,
+        genres: params.genres.length > 0 ? params.genres : undefined
+      });
+    }
+  );
+
+  // Apply shuffle to feed data when shuffle sort is active
+  const displayedFeed = createMemo(() => {
+    const data = feedData();
+    if (!data || !data.threads) {
+      console.log('[ChannelViewPage] No feed data yet');
+      return data;
+    }
+
+    console.log('[ChannelViewPage] Feed data received:', {
+      threadCount: data.threads.length,
+      firstThreadHash: data.threads[0]?.castHash,
+      firstThreadLikes: data.threads[0]?.stats.likes,
+      activeSort: activeSort()
+    });
+
+    // If shuffle is active, randomize the feed order
+    // shuffleSeed ensures we get a new order each time shuffle is clicked
+    if (activeSort() === 'shuffle') {
+      // Access shuffleSeed to make this reactive
+      const seed = shuffleSeed();
+      console.log('[ChannelViewPage] Shuffling with seed:', seed);
+      return {
+        ...data,
+        threads: shuffleArray(data.threads)
+      };
+    }
+
+    return data;
+  });
 
   // Add track handler
   const handleAddTrack = () => {
@@ -58,8 +142,8 @@ const ChannelViewPage: Component = () => {
 
   // Play all tracks
   const handlePlayAll = () => {
-    if (feedData()?.threads && feedData()!.threads.length > 0) {
-      const firstTrack = feedData()!.threads[0];
+    if (displayedFeed()?.threads && displayedFeed()!.threads.length > 0) {
+      const firstTrack = displayedFeed()!.threads[0];
       if (firstTrack.music && firstTrack.music[0]) {
         playTrack({
           id: firstTrack.music[0].id,
@@ -72,16 +156,6 @@ const ChannelViewPage: Component = () => {
         });
       }
     }
-  };
-
-  // Sort dropdown handlers
-  const toggleSortMenu = () => {
-    setShowSortMenu(!showSortMenu());
-  };
-
-  const selectSortOption = (option: string) => {
-    setSortOption(option);
-    setShowSortMenu(false);
   };
 
   // Close handler for window
@@ -107,17 +181,6 @@ const ChannelViewPage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
-  // Close dropdown when clicking outside
-  onMount(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('.dropdown')) {
-        setShowSortMenu(false);
-      }
-    };
-    document.addEventListener('click', handleClickOutside);
-    onCleanup(() => document.removeEventListener('click', handleClickOutside));
-  });
 
   return (
     <div class="channel-view-page">
@@ -138,7 +201,7 @@ const ChannelViewPage: Component = () => {
                 <span>Online</span>
               </div>
               <div class="status-item">
-                <span>{feedData()?.threads?.length || 0} tracks loaded</span>
+                <span>{displayedFeed()?.threads?.length || 0} tracks loaded</span>
               </div>
             </div>
           }
@@ -156,7 +219,7 @@ const ChannelViewPage: Component = () => {
               </div>
             </Show>
 
-            <Show when={!channelData.loading && !feedData.loading && channelData() && feedData()}>
+            <Show when={!channelData.loading && !feedData.loading && channelData() && displayedFeed()}>
               {/* Channel Header Card */}
               <div class="channel-header">
                 <div class="channel-main">
@@ -174,7 +237,7 @@ const ChannelViewPage: Component = () => {
                     </div>
                     <div class="channel-stats">
                       <div class="stat-item">
-                        <span class="number">{feedData()!.threads?.length || 0}</span> tracks
+                        <span class="number">{displayedFeed()!.threads?.length || 0}</span> tracks
                       </div>
                       <div class="stat-item">
                         <span class="number">{channelData()!.stats?.memberCount || 0}</span> members
@@ -187,46 +250,27 @@ const ChannelViewPage: Component = () => {
                 </div>
               </div>
 
-              {/* Action Bar */}
+              {/* Action Bar with Filters */}
               <div class="action-bar">
-                <div class="primary-actions">
-                  <button class="action-button primary" onClick={handlePlayAll}>
-                    <span class="icon">▶</span>
-                    <span>Play All</span>
-                  </button>
-                  <button class="action-button" onClick={handleAddTrack}>
-                    <span class="icon">➕</span>
-                    <span>Add Track</span>
-                  </button>
-                </div>
-                <div class="sort-control">
-                  <span class="sort-label">Sort:</span>
-                  <div class="dropdown">
-                    <button class="dropdown-button" onClick={toggleSortMenu}>
-                      {sortOption()}
-                    </button>
-                    <div class={`dropdown-menu ${showSortMenu() ? 'active' : ''}`}>
-                      <div
-                        class={`dropdown-item ${sortOption() === 'Recent' ? 'selected' : ''}`}
-                        onClick={() => selectSortOption('Recent')}
-                      >
-                        Recent
-                      </div>
-                      <div
-                        class={`dropdown-item ${sortOption() === 'Popular' ? 'selected' : ''}`}
-                        onClick={() => selectSortOption('Popular')}
-                      >
-                        Popular
-                      </div>
-                      <div
-                        class={`dropdown-item ${sortOption() === 'A-Z' ? 'selected' : ''}`}
-                        onClick={() => selectSortOption('A-Z')}
-                      >
-                        A-Z
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <button class="action-button" onClick={handleAddTrack}>
+                  <span class="icon">➕</span>
+                  <span>Add Track</span>
+                </button>
+
+                <ChannelFilterBar
+                  activeSort={activeSort()}
+                  onSortChange={handleSortChange}
+                  qualityFilter={qualityFilter()}
+                  onQualityFilterChange={setQualityFilter}
+                  musicSources={musicSources()}
+                  onMusicSourcesChange={setMusicSources}
+                  genres={genres()}
+                  onGenresChange={setGenres}
+                  availablePlatforms={availablePlatforms}
+                  availableGenres={availableGenres}
+                  filterDialogOpen={filterDialogOpen()}
+                  onFilterDialogOpenChange={setFilterDialogOpen}
+                />
               </div>
 
               {/* Track Feed */}
@@ -236,8 +280,8 @@ const ChannelViewPage: Component = () => {
                   <span>Channel Tracks</span>
                 </div>
 
-                <Show when={feedData()!.threads && feedData()!.threads.length > 0}>
-                  <For each={feedData()!.threads}>
+                <Show when={displayedFeed()!.threads && displayedFeed()!.threads.length > 0}>
+                  <For each={displayedFeed()!.threads}>
                     {(thread) => {
                       const track = thread.music && thread.music[0] ? thread.music[0] : null;
 
@@ -258,7 +302,7 @@ const ChannelViewPage: Component = () => {
                   </For>
                 </Show>
 
-                <Show when={!feedData()!.threads || feedData()!.threads.length === 0}>
+                <Show when={!displayedFeed()!.threads || displayedFeed()!.threads.length === 0}>
                   <div class="empty-state">
                     <div class="icon">💿</div>
                     <div class="message">
