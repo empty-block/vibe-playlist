@@ -1,9 +1,10 @@
-import { Component, createEffect, onMount, createSignal } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playerStore';
+import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
+import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
+  onSeek?: (seekFn: (time: number) => void) => void;
 }
 
 declare global {
@@ -16,8 +17,9 @@ declare global {
 const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let player: any;
   let playerContainer: HTMLDivElement | undefined;
+  let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
-  
+
   // Always use compact size for bottom bar
 
   onMount(() => {
@@ -94,21 +96,79 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   const onPlayerReady = (event: any) => {
     setPlayerReady(true);
     props.onPlayerReady(true);
-    
-    // Provide toggle function to parent
+
+    // Provide toggle and seek functions to parent
     props.onTogglePlay(() => togglePlay());
-    
+    if (props.onSeek) {
+      props.onSeek((time: number) => seekToPosition(time));
+    }
+
+    // Enable seeking for YouTube
+    setIsSeekable(true);
+
+    // Start progress tracking
+    startProgressTracking();
+
     console.log('YouTube player ready');
+  };
+
+  const seekToPosition = (timeInSeconds: number) => {
+    if (!player || !playerReady()) {
+      console.log('YouTube player not ready for seeking');
+      return;
+    }
+
+    try {
+      player.seekTo(timeInSeconds, true);
+      console.log('Seeked to position:', timeInSeconds);
+    } catch (error) {
+      console.error('Error seeking in YouTube video:', error);
+    }
+  };
+
+  const startProgressTracking = () => {
+    // Clear any existing interval
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
+
+    // Update progress every 500ms when playing
+    progressInterval = setInterval(() => {
+      if (player && playerReady() && isPlaying()) {
+        try {
+          const current = player.getCurrentTime();
+          const total = player.getDuration();
+
+          if (current !== undefined && total !== undefined) {
+            setCurrentTime(current);
+            setDuration(total);
+          }
+        } catch (error) {
+          // Silently fail - player might not be ready yet
+        }
+      }
+    }, 500) as unknown as number;
   };
   
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
-    } else if (event.data === window.YT.PlayerState.PAUSED || 
-               event.data === window.YT.PlayerState.ENDED) {
+      startProgressTracking();
+    } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
+    } else if (event.data === window.YT.PlayerState.ENDED) {
+      setIsPlaying(false);
+      console.log('YouTube track finished, playing next track');
+      playNextTrack();
     }
   };
+
+  // Cleanup interval on unmount
+  onCleanup(() => {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
+  });
   
   const togglePlay = () => {
     console.log('togglePlay called:', { 

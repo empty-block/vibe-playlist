@@ -90,27 +90,28 @@
   padding: 4px;
 }
 
-.player-video {
+/* Removed old .player-video styles - now using unified .player-audio-container */
+
+/* Audio Player Container - for all sources now */
+.player-audio-container {
   background: #000;
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
-  padding: 2px;
+  padding: 8px;
   margin-bottom: 4px;
-  aspect-ratio: 16/9;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+  flex-direction: column;
+  gap: 8px;
   max-height: 500px;
-  transition: max-height 0.3s ease-out, margin-bottom 0.3s ease-out, opacity 0.2s ease-out;
+  transition: max-height 0.3s ease-out, margin-bottom 0.3s ease-out, opacity 0.2s ease-out, padding 0.3s ease-out;
   opacity: 1;
+  overflow: hidden;
 }
 
-/* Hide video container smoothly when not playing */
-.player-video.player-video--hidden {
+/* Hide media container smoothly when not playing */
+.player-audio-container--hidden {
   max-height: 0;
   margin-bottom: 0;
   padding: 0;
@@ -118,9 +119,90 @@
   opacity: 0;
 }
 
-.player-video > * {
+.player-audio-embed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+/* YouTube video embed - smaller but compliant with 200px minimum */
+.player-video-embed {
+  min-height: 200px;
+  max-height: 240px;
   width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+
+.player-video-embed > div,
+.player-video-embed iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Progress Bar */
+.player-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.player-time {
+  color: #00FF00;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.player-progress-bar {
+  flex: 1;
+  height: 14px;
+  background: #001a00;
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #00FF00;
+  border-bottom: 2px solid #00FF00;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.player-progress-fill {
   height: 100%;
+  background: linear-gradient(90deg, #00FF00, #00CC00);
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px #00FF00;
+}
+
+.player-progress-bar:hover .player-progress-fill {
+  box-shadow: 0 0 12px #00FF00;
+}
+
+/* Error Message */
+.player-error-message {
+  background: #FF0000;
+  color: #FFFFFF;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid #000000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+  animation: error-pulse 1s ease-in-out infinite;
+}
+
+@keyframes error-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .player-track-info {
