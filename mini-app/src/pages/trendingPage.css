@@ -24,6 +24,11 @@
 /* Window Content Inner Wrapper */
 .window-content-inner {
   padding: 12px;
+  background: #FFFFFF;
+}
+
+.theme-dark .window-content-inner {
+  background: #000000;
 }
 
 /* Minimized Window State */

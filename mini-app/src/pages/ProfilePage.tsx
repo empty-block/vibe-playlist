@@ -1,6 +1,7 @@
 import { Component, createSignal, createMemo, For, Show, onMount } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
@@ -147,157 +148,177 @@ const ProfilePage: Component = () => {
 
   return (
     <div class="profile-page">
-      <div class="profile-container">
-        {/* Loading State */}
-        <Show when={isLoading() && !profileUser()}>
-          <div class="profile-loading">
-            <div>Loading profile...</div>
-          </div>
-        </Show>
-
-        {/* Error State */}
-        <Show when={error()}>
-          <div class="profile-error">
-            <span class="empty-icon">⚠️</span>
-            <p class="empty-message">{error()}</p>
-          </div>
-        </Show>
-
-        {/* Profile Content */}
-        <Show when={!isLoading() || profileUser()}>
-          {/* Napster Buddy List Style Header */}
-          <div class="profile-header">
-            <Show when={user().avatar} fallback={
-              <div class="profile-avatar-fallback">
-                {user().displayName.charAt(0).toUpperCase()}
+      <div class="page-window-container">
+        <RetroWindow
+          title={`${user().displayName} (@${user().username})`}
+          icon={<div class="title-icon">👤</div>}
+          variant="3d"
+          showMinimize={true}
+          showMaximize={true}
+          showClose={true}
+          onClose={() => navigate('/trending')}
+          contentPadding="0"
+          footer={
+            <div class="status-bar">
+              <span class="status-bar-section">
+                {sharedCount()} shared • {likesCount()} liked • {repliesCount()} replies
+              </span>
+            </div>
+          }
+        >
+          <div class="profile-content">
+            {/* Loading State */}
+            <Show when={isLoading() && !profileUser()}>
+              <div class="profile-loading">
+                <div>Loading profile...</div>
               </div>
-            }>
-              <img
-                src={user().avatar}
-                alt={user().displayName}
-                class="profile-avatar"
-              />
             </Show>
-            <div class="profile-info">
-              <div class="profile-username">@{user().username}</div>
-              <Show when={user().bio}>
-                <div class="profile-bio">{user().bio}</div>
-              </Show>
-              <div class="profile-stats-inline">
-                <Show when={profileUser()} fallback={
-                  <>
-                    <div class="stat-inline">
-                      <span class="number">{sharedTracks().length}</span> shared
-                    </div>
-                    <div class="stat-inline">
-                      <span class="number">{likedTracks().length}</span> liked
-                    </div>
-                    <div class="stat-inline">
-                      <span class="number">{repliedTracks().length}</span> replies
-                    </div>
-                  </>
+
+            {/* Error State */}
+            <Show when={error()}>
+              <div class="profile-error">
+                <span class="empty-icon">⚠️</span>
+                <p class="empty-message">{error()}</p>
+              </div>
+            </Show>
+
+            {/* Profile Content */}
+            <Show when={!isLoading() || profileUser()}>
+              {/* Napster Buddy List Style Header */}
+              <div class="profile-header">
+                <Show when={user().avatar} fallback={
+                  <div class="profile-avatar-fallback">
+                    {user().displayName.charAt(0).toUpperCase()}
+                  </div>
                 }>
-                  <div class="stat-inline">
-                    <span class="number">{profileUser()!.stats.tracksShared}</span> shared
+                  <img
+                    src={user().avatar}
+                    alt={user().displayName}
+                    class="profile-avatar"
+                  />
+                </Show>
+                <div class="profile-info">
+                  <div class="profile-username">@{user().username}</div>
+                  <Show when={user().bio}>
+                    <div class="profile-bio">{user().bio}</div>
+                  </Show>
+                  <div class="profile-stats-inline">
+                    <Show when={profileUser()} fallback={
+                      <>
+                        <div class="stat-inline">
+                          <span class="number">{sharedTracks().length}</span> shared
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{likedTracks().length}</span> liked
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{repliedTracks().length}</span> replies
+                        </div>
+                      </>
+                    }>
+                      <div class="stat-inline">
+                        <span class="number">{profileUser()!.stats.tracksShared}</span> shared
+                      </div>
+                      <div class="stat-inline">
+                        <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
+                      </div>
+                      <div class="stat-inline">
+                        <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
+                      </div>
+                    </Show>
                   </div>
-                  <div class="stat-inline">
-                    <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
+                </div>
+              </div>
+
+              {/* Feed Filter Buttons */}
+              <div class="feed-filter">
+                <button
+                  class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
+                  onClick={() => setCurrentFilter('all')}
+                >
+                  {getFilterLabel('all')}
+                </button>
+                <button
+                  class={`filter-button ${currentFilter() === 'shared' ? 'active' : ''}`}
+                  onClick={() => setCurrentFilter('shared')}
+                >
+                  {getFilterLabel('shared')}
+                </button>
+                <button
+                  class={`filter-button ${currentFilter() === 'likes' ? 'active' : ''}`}
+                  onClick={() => setCurrentFilter('likes')}
+                >
+                  {getFilterLabel('likes')}
+                </button>
+                <button
+                  class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
+                  onClick={() => setCurrentFilter('replies')}
+                >
+                  {getFilterLabel('replies')}
+                </button>
+              </div>
+
+              {/* Track Feed */}
+              <div class="track-feed">
+                <div class="feed-header">
+                  📤 Showing: <span class="feed-type">
+                    {currentFilter() === 'all' ? 'All Activity' :
+                     currentFilter() === 'shared' ? 'Shared Tracks' :
+                     currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
+                  </span> (<span class="feed-count">{filteredContent().length}</span>)
+                </div>
+
+                <Show when={filteredContent().length === 0}>
+                  <div class="profile-empty-state">
+                    <span class="empty-icon">🎵</span>
+                    <p class="empty-message">{getEmptyMessage(currentFilter())}</p>
                   </div>
-                  <div class="stat-inline">
-                    <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
+                </Show>
+
+                <Show when={filteredContent().length > 0}>
+                  <For each={filteredContent()}>
+                    {(activityItem) => {
+                      const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
+
+                      return (
+                        <Show when={track}>
+                          <TrackCard
+                            author={activityItem.cast.author}
+                            track={track!}
+                            text={activityItem.cast.text}
+                            timestamp={activityItem.cast.timestamp}
+                            stats={activityItem.cast.stats}
+                            onPlay={(trackData) => {
+                              setCurrentTrack(trackData);
+                              setIsPlaying(true);
+                            }}
+                            onUsernameClick={(fid, e) => {
+                              e.preventDefault();
+                              navigate(`/profile/${fid}`);
+                            }}
+                          />
+                        </Show>
+                      );
+                    }}
+                  </For>
+                </Show>
+
+                {/* Load More Button */}
+                <Show when={nextCursor()}>
+                  <div style="text-align: center; padding: 20px;">
+                    <button
+                      class="filter-button"
+                      onClick={() => loadMoreActivity()}
+                      disabled={isLoading()}
+                    >
+                      {isLoading() ? 'Loading...' : 'Load More'}
+                    </button>
                   </div>
                 </Show>
               </div>
-            </div>
+            </Show>
           </div>
-
-        {/* Feed Filter Buttons */}
-        <div class="feed-filter">
-          <button
-            class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('all')}
-          >
-            {getFilterLabel('all')}
-          </button>
-          <button
-            class={`filter-button ${currentFilter() === 'shared' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('shared')}
-          >
-            {getFilterLabel('shared')}
-          </button>
-          <button
-            class={`filter-button ${currentFilter() === 'likes' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('likes')}
-          >
-            {getFilterLabel('likes')}
-          </button>
-          <button
-            class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('replies')}
-          >
-            {getFilterLabel('replies')}
-          </button>
-        </div>
-
-        {/* Track Feed */}
-        <div class="track-feed">
-          <div class="feed-header">
-            📤 Showing: <span class="feed-type">
-              {currentFilter() === 'all' ? 'All Activity' :
-               currentFilter() === 'shared' ? 'Shared Tracks' :
-               currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
-            </span> (<span class="feed-count">{filteredContent().length}</span>)
-          </div>
-
-          <Show when={filteredContent().length === 0}>
-            <div class="profile-empty-state">
-              <span class="empty-icon">🎵</span>
-              <p class="empty-message">{getEmptyMessage(currentFilter())}</p>
-            </div>
-          </Show>
-
-          <Show when={filteredContent().length > 0}>
-            <For each={filteredContent()}>
-              {(activityItem) => {
-                const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
-
-                return (
-                  <Show when={track}>
-                    <TrackCard
-                      author={activityItem.cast.author}
-                      track={track!}
-                      text={activityItem.cast.text}
-                      timestamp={activityItem.cast.timestamp}
-                      stats={activityItem.cast.stats}
-                      onPlay={(trackData) => {
-                        setCurrentTrack(trackData);
-                        setIsPlaying(true);
-                      }}
-                      onUsernameClick={(fid, e) => {
-                        e.preventDefault();
-                        navigate(`/profile/${fid}`);
-                      }}
-                    />
-                  </Show>
-                );
-              }}
-            </For>
-          </Show>
-
-          {/* Load More Button */}
-          <Show when={nextCursor()}>
-            <div style="text-align: center; padding: 20px;">
-              <button
-                class="filter-button"
-                onClick={() => loadMoreActivity()}
-                disabled={isLoading()}
-              >
-                {isLoading() ? 'Loading...' : 'Load More'}
-              </button>
-            </div>
-          </Show>
-        </div>
-        </Show>
+        </RetroWindow>
       </div>
 
       {/* Bottom Navigation */}
