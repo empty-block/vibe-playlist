@@ -91,6 +91,23 @@ export const [currentTime, setCurrentTime] = createSignal(0);
 export const [duration, setDuration] = createSignal(0);
 export const [isSeekable, setIsSeekable] = createSignal(false);
 
+// Error handling
+export const [playerError, setPlayerError] = createSignal<string | null>(null);
+
+export const handleTrackError = (errorMessage: string, autoSkip: boolean = true) => {
+  console.error('Track playback error:', errorMessage);
+  setPlayerError(errorMessage);
+
+  if (autoSkip) {
+    // Auto-skip to next track after a delay
+    setTimeout(() => {
+      console.log('Auto-skipping to next track due to error');
+      setPlayerError(null);
+      playNextTrack();
+    }, 2000);
+  }
+};
+
 // Temporary migration function to add missing source fields
 const addMissingSourceFields = (track: any): Track => {
   if (!track.source && track.videoId) {
@@ -128,4 +145,96 @@ export const getAllTracksAsync = async () => {
 
 export const getTracksByUserAsync = async (username: string) => {
   return await mockDataService.getTracksByUser(username);
+};
+
+// Playlist navigation helpers
+export const getCurrentTrackIndex = (): number => {
+  const current = currentTrack();
+  if (!current) return -1;
+
+  const tracks = getCurrentPlaylistTracks();
+  return tracks.findIndex(track => track.id === current.id);
+};
+
+export const playNextTrack = () => {
+  const tracks = getCurrentPlaylistTracks();
+  if (tracks.length === 0) return;
+
+  const currentIndex = getCurrentTrackIndex();
+  const repeat = repeatMode();
+
+  // Handle repeat one mode
+  if (repeat === 'one' && currentIndex >= 0) {
+    // Replay the same track
+    const current = currentTrack();
+    if (current) {
+      console.log('Repeating current track:', current.title);
+      setCurrentTrack(null); // Reset to trigger reload
+      setTimeout(() => setCurrentTrack(current), 50);
+      setIsPlaying(true);
+    }
+    return;
+  }
+
+  let nextIndex: number;
+
+  if (shuffleMode()) {
+    // Random track (but not the current one)
+    const availableIndices = tracks
+      .map((_, index) => index)
+      .filter(index => index !== currentIndex);
+    nextIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+  } else {
+    // Sequential play
+    nextIndex = currentIndex + 1;
+  }
+
+  // Handle end of playlist
+  if (nextIndex >= tracks.length) {
+    if (repeat === 'all') {
+      nextIndex = 0; // Loop back to start
+    } else {
+      console.log('End of playlist reached');
+      setIsPlaying(false);
+      return;
+    }
+  }
+
+  const nextTrack = tracks[nextIndex];
+  if (nextTrack) {
+    console.log('Playing next track:', nextTrack.title);
+    setCurrentTrack(nextTrack);
+    setIsPlaying(true);
+  }
+};
+
+export const playPreviousTrack = () => {
+  const tracks = getCurrentPlaylistTracks();
+  if (tracks.length === 0) return;
+
+  const currentIndex = getCurrentTrackIndex();
+  if (currentIndex <= 0) {
+    console.log('Already at first track');
+    return;
+  }
+
+  let previousIndex: number;
+
+  if (shuffleMode()) {
+    // Random track (but not the current one)
+    const availableIndices = tracks
+      .map((_, index) => index)
+      .filter(index => index !== currentIndex);
+    previousIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+  } else {
+    // Sequential play
+    previousIndex = currentIndex - 1;
+  }
+
+  const previousTrack = tracks[previousIndex];
+  if (previousTrack) {
+    console.log('Playing previous track:', previousTrack.title);
+    setCurrentTrack(previousTrack);
+    setIsPlaying(true);
+  }
 };

@@ -11,7 +11,10 @@ import {
   setRepeatMode,
   currentTime,
   duration,
-  isSeekable
+  isSeekable,
+  playNextTrack,
+  playPreviousTrack,
+  playerError
 } from '../../stores/playerStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
 import RetroTitleBar from '../common/RetroTitleBar';
@@ -45,12 +48,12 @@ const Player: Component<PlayerProps> = (props) => {
 
   const handleSkipPrevious = () => {
     console.log('Skip to previous track');
-    // TODO: Implement playlist navigation
+    playPreviousTrack();
   };
 
   const handleSkipNext = () => {
     console.log('Skip to next track');
-    // TODO: Implement playlist navigation
+    playNextTrack();
   };
 
   const handleShuffleToggle = () => {
@@ -130,10 +133,41 @@ const Player: Component<PlayerProps> = (props) => {
         />
 
         <div class="player-content">
-          {/* YouTube Video Container - hide when paused but keep mounted */}
-          <div class="player-video" classList={{ 'player-video--hidden': !isPlaying() }}>
-            {props.mediaComponent}
+          {/* Media Container - all sources now show in consistent layout */}
+          <div class="player-audio-container" classList={{
+            'player-audio-container--hidden': !isPlaying()
+          }}>
+            <div class="player-audio-embed" classList={{
+              'player-video-embed': currentTrack()?.source === 'youtube'
+            }}>
+              {props.mediaComponent}
+            </div>
+            {/* Progress Bar - show for all sources */}
+            <Show when={isSeekable()}>
+              <div class="player-progress-container">
+                <div class="player-time">{formatTime(currentTime())}</div>
+                <div
+                  class="player-progress-bar"
+                  onClick={handleProgressClick}
+                >
+                  <div
+                    class="player-progress-fill"
+                    style={{
+                      width: `${duration() > 0 ? (currentTime() / duration()) * 100 : 0}%`
+                    }}
+                  ></div>
+                </div>
+                <div class="player-time">{formatTime(duration())}</div>
+              </div>
+            </Show>
           </div>
+
+          {/* Error Message Display */}
+          <Show when={playerError()}>
+            <div class="player-error-message">
+              ⚠️ {playerError()}
+            </div>
+          </Show>
 
           {/* Track Info Panel - Green LCD style with integrated controls */}
           <div class="player-track-info">

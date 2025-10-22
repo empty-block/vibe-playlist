@@ -258,7 +258,7 @@ export const mockTrackSubmissions: Track[] = [
     tags: ['grunge', '90s', 'alternative', 'rock']
   },
   {
-    id: 'track_2', 
+    id: 'track_2',
     title: 'Come As You Are',
     artist: 'Nirvana',
     duration: '3:39',
@@ -273,6 +273,23 @@ export const mockTrackSubmissions: Track[] = [
     replies: 18,
     recasts: 32,
     tags: ['nirvana', 'grunge', 'classic']
+  },
+  {
+    id: 'track_2b',
+    title: 'Chill Vibes Mix',
+    artist: 'Various Artists',
+    duration: '4:04',
+    source: 'soundcloud',
+    sourceId: 'https://soundcloud.com/chilledcow/sets/chillhop-essentials',
+    thumbnail: 'https://i1.sndcdn.com/artworks-000000568988-7z5hja-t500x500.jpg',
+    addedBy: 'synth_prophet_85',
+    userAvatar: '🌈',
+    timestamp: '5 hours ago',
+    comment: 'This track is pure chill magic! Perfect for coding or just relaxing. The lo-fi beats just hit different! 🎧✨',
+    likes: 54,
+    replies: 12,
+    recasts: 28,
+    tags: ['lofi', 'chillhop', 'electronic']
   },
   {
     id: 'track_3',

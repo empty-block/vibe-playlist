@@ -3,6 +3,7 @@ import { currentTrack } from '../../stores/playerStore';
 import Player from './Player';
 import YouTubeMedia from './YouTubeMedia';
 import SpotifyMedia from './SpotifyMedia';
+import SoundCloudMedia from './SoundCloudMedia';
 
 interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
@@ -11,19 +12,31 @@ interface MediaPlayerProps {
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [togglePlayFn, setTogglePlayFn] = createSignal<(() => void) | null>(null);
-  
+  const [seekFn, setSeekFn] = createSignal<((time: number) => void) | null>(null);
+
   const handlePlayerReady = (ready: boolean) => {
     setPlayerReady(ready);
   };
-  
+
   const handleTogglePlaySetup = (toggleFn: () => void) => {
     setTogglePlayFn(() => toggleFn);
   };
-  
+
+  const handleSeekSetup = (seekFunc: (time: number) => void) => {
+    setSeekFn(() => seekFunc);
+  };
+
   const onTogglePlay = () => {
     const toggleFn = togglePlayFn();
     if (toggleFn) {
       toggleFn();
+    }
+  };
+
+  const onSeek = (time: number) => {
+    const seekFunc = seekFn();
+    if (seekFunc) {
+      seekFunc(time);
     }
   };
 
@@ -34,16 +47,26 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
     switch (track.source) {
       case 'youtube':
         return (
-          <YouTubeMedia 
+          <YouTubeMedia
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
+            onSeek={handleSeekSetup}
           />
         );
       case 'spotify':
         return (
-          <SpotifyMedia 
+          <SpotifyMedia
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
+            onSeek={handleSeekSetup}
+          />
+        );
+      case 'soundcloud':
+        return (
+          <SoundCloudMedia
+            onPlayerReady={handlePlayerReady}
+            onTogglePlay={handleTogglePlaySetup}
+            onSeek={handleSeekSetup}
           />
         );
       default:
@@ -65,6 +88,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         mediaComponent={getMediaComponent()}
         onTogglePlay={onTogglePlay}
         playerReady={playerReady}
+        onSeek={onSeek}
       />
     </Show>
   );
