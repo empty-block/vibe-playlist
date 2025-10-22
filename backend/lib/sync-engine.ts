@@ -545,6 +545,148 @@ export class SyncEngine {
       return 0
     }
   }
+
+  /**
+   * Sync reactions (likes/recasts) made by a specific user
+   *
+   * Fetches all reactions from Neynar API and processes each liked cast.
+   * Uses pagination to handle users with many reactions.
+   *
+   * @param fid - Farcaster ID of the user
+   * @param options - Optional sync parameters
+   * @returns Sync result with counts and status
+   */
+  async syncUserReactions(
+    fid: number,
+    options?: {
+      type?: 'likes' | 'recasts' | 'all'
+      limit?: number
+      forceFullSync?: boolean
+    }
+  ): Promise<{
+    success: boolean
+    reactionsProcessed: number
+    castsProcessed: number
+    errors: string[]
+  }> {
+    const startTime = Date.now()
+    const errors: string[] = []
+    let reactionsProcessed = 0
+    let castsProcessed = 0
+
+    try {
+      const reactionType = options?.type || 'likes'
+      console.log(`[Sync] Starting ${reactionType} sync for user: ${fid}`)
+
+      // Fetch user reactions with pagination
+      let cursor: string | undefined = undefined
+      let hasMore = true
+      const pageLimit = Math.min(options?.limit || 100, 100)
+
+      while (hasMore) {
+        const { reactions, nextCursor } = await this.neynar.fetchUserReactions(fid, {
+          type: reactionType,
+          limit: pageLimit,
+          cursor
+        })
+
+        console.log(`[Sync] Fetched ${reactions.length} ${reactionType} from Neynar`)
+
+        // Process each reaction
+        for (const reaction of reactions) {
+          try {
+            const cast = reaction.cast
+            if (!cast) {
+              console.warn(`[Sync] Reaction missing cast data, skipping`)
+              continue
+            }
+
+            // Determine channel (use cast's channel if available)
+            const channelId = cast.channel?.id || 'unknown'
+
+            // Process the cast (upsert to database)
+            await this.processCast(cast, channelId)
+            castsProcessed++
+
+            // Create the reaction edge (LIKED or RECASTED)
+            const edgeType = reaction.reaction_type === 'like' ? 'LIKED' : 'RECASTED'
+
+            // Upsert the user who made the reaction
+            const { error: userError } = await this.supabase
+              .from('user_nodes')
+              .upsert({
+                node_id: fid.toString(),
+                fname: reaction.user?.username || '',
+                display_name: reaction.user?.display_name || '',
+                avatar_url: reaction.user?.pfp_url || ''
+              }, {
+                onConflict: 'node_id'
+              })
+
+            if (userError) {
+              console.warn(`[Sync] Failed to upsert user ${fid}:`, userError.message)
+              continue
+            }
+
+            // Insert the reaction edge
+            const { error: edgeError } = await this.supabase
+              .from('interaction_edges')
+              .insert({
+                source_id: fid.toString(),
+                cast_id: cast.hash,
+                edge_type: edgeType,
+                created_at: reaction.reaction_timestamp || new Date().toISOString()
+              })
+              .select()
+
+            if (edgeError) {
+              // Ignore duplicate key errors (already synced)
+              if (!edgeError.message.includes('duplicate key')) {
+                console.warn(`[Sync] Failed to insert ${edgeType} edge:`, edgeError.message)
+                errors.push(`Failed to insert ${edgeType} edge for cast ${cast.hash}`)
+              }
+            } else {
+              reactionsProcessed++
+            }
+          } catch (error) {
+            const errorMsg = `Failed to process reaction: ${error}`
+            console.error(`[Sync] ${errorMsg}`)
+            errors.push(errorMsg)
+          }
+        }
+
+        // Handle pagination
+        if (nextCursor && reactions.length > 0) {
+          cursor = nextCursor
+          console.log(`[Sync] Fetching next page of ${reactionType} (cursor: ${cursor.substring(0, 10)}...)`)
+        } else {
+          hasMore = false
+        }
+      }
+
+      const duration = Date.now() - startTime
+      console.log(
+        `[Sync] Completed ${reactionType} sync for user ${fid} in ${duration}ms: ` +
+        `${reactionsProcessed} reactions, ${castsProcessed} casts processed, ${errors.length} errors`
+      )
+
+      return {
+        success: errors.length === 0,
+        reactionsProcessed,
+        castsProcessed,
+        errors
+      }
+    } catch (error) {
+      const errorMsg = `User reactions sync failed: ${error}`
+      console.error(`[Sync] ${errorMsg}`)
+      return {
+        success: false,
+        reactionsProcessed,
+        castsProcessed,
+        errors: [errorMsg, ...errors]
+      }
+    }
+  }
 }
 
 // Singleton instance

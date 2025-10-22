@@ -254,3 +254,41 @@ export async function fetchUserActivity(fid: string, cursor?: string, limit: num
 
   return response.json();
 }
+
+/**
+ * Sync API types
+ */
+export interface ApiUserSyncResponse {
+  fid: number;
+  type: 'likes' | 'recasts' | 'all';
+  success: boolean;
+  reactionsProcessed: number;
+  castsProcessed: number;
+  errors: string[];
+}
+
+/**
+ * Trigger user reactions sync
+ * Background operation - fires and forgets
+ */
+export async function triggerUserSync(
+  fid: string,
+  options?: {
+    type?: 'likes' | 'recasts' | 'all';
+    limit?: number;
+  }
+): Promise<void> {
+  const url = new URL(`${getApiUrl()}/api/sync/user/${fid}/reactions`);
+
+  if (options?.type) {
+    url.searchParams.set('type', options.type);
+  }
+  if (options?.limit) {
+    url.searchParams.set('limit', options.limit.toString());
+  }
+
+  // Fire and forget - don't wait for response
+  fetch(url.toString(), { method: 'POST' }).catch((error) => {
+    console.warn('Background user sync failed:', error);
+  });
+}

@@ -109,7 +109,7 @@ export class NeynarService {
 
       return {
         casts: response.casts || [],
-        nextCursor: response.next?.cursor
+        nextCursor: response.next?.cursor || undefined
       }
     })
   }
@@ -151,10 +151,8 @@ export class NeynarService {
     await this.throttle()
 
     return this.retryWithBackoff(async () => {
-      // SDK expects an object with casts as comma-separated string
-      const response = await this.client.fetchBulkCasts({
-        casts: castHashes.join(',')
-      })
+      // SDK expects { casts: string[] } format
+      const response = await this.client.fetchBulkCasts({ casts: castHashes } as any)
       return response.result?.casts || []
     })
   }
@@ -169,7 +167,7 @@ export class NeynarService {
     await this.throttle()
 
     return this.retryWithBackoff(async () => {
-      const response = await this.client.fetchBulkUsers([fid])
+      const response = await this.client.fetchBulkUsers({ fids: [fid] })
       return response.users?.[0]
     })
   }
@@ -212,6 +210,46 @@ export class NeynarService {
       const recasts = reactions.filter((r: any) => r.reaction_type === 'recast')
 
       return { likes, recasts }
+    })
+  }
+
+  /**
+   * Fetch all reactions (likes/recasts) made by a specific user
+   *
+   * @param fid - Farcaster ID of the user
+   * @param options - Optional parameters for reaction type, pagination, and limit
+   * @returns User reactions with cast data and pagination cursor
+   */
+  async fetchUserReactions(
+    fid: number,
+    options?: {
+      type?: 'likes' | 'recasts' | 'all'
+      limit?: number
+      cursor?: string
+      viewerFid?: number
+    }
+  ): Promise<{
+    reactions: any[]
+    nextCursor?: string
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const type = options?.type || 'likes'
+      const limit = Math.min(options?.limit || 25, 100) // Max 100 per API docs
+
+      const response = await this.client.fetchUserReactions({
+        fid,
+        type: type as any,
+        limit,
+        cursor: options?.cursor,
+        viewerFid: options?.viewerFid
+      })
+
+      return {
+        reactions: response.reactions || [],
+        nextCursor: response.next?.cursor || undefined
+      }
     })
   }
 }

@@ -30,7 +30,26 @@ const ChannelViewPage: Component = () => {
 
   // Fetch channel details and feed from API
   const [channelData] = createResource(channelId, fetchChannelDetails);
-  const [feedData] = createResource(channelId, (id) => fetchChannelFeed(id, { limit: 50 }));
+  const [feedData, { refetch: refetchFeed }] = createResource(channelId, (id) => fetchChannelFeed(id, { limit: 50 }));
+
+  // Track refetch timeout for cleanup
+  let syncRefetchTimeout: number | undefined;
+
+  // Schedule delayed refetch after initial load to pick up newly synced tracks
+  onMount(() => {
+    // Wait for initial feed load, then schedule refetch
+    syncRefetchTimeout = setTimeout(() => {
+      console.log('[Channel View] Refetching feed after background sync...');
+      refetchFeed();
+    }, 10000) as unknown as number; // 10 seconds
+  });
+
+  // Cleanup timeout on unmount
+  onCleanup(() => {
+    if (syncRefetchTimeout) {
+      clearTimeout(syncRefetchTimeout);
+    }
+  });
 
   // Convert feed data to Track array for playlist context
   const getFeedTracks = (): Track[] => {

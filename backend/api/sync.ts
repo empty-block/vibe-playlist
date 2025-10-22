@@ -109,4 +109,53 @@ app.post('/replies/:castHash', async (c) => {
   }
 })
 
+/**
+ * POST /api/sync/user/:fid/reactions
+ * Trigger sync of reactions (likes/recasts) for a specific user
+ */
+app.post('/user/:fid/reactions', async (c) => {
+  try {
+    const fid = parseInt(c.req.param('fid'))
+    const type = (c.req.query('type') || 'likes') as 'likes' | 'recasts' | 'all'
+    const limit = parseInt(c.req.query('limit') || '100')
+    const forceFullSync = c.req.query('forceFullSync') === 'true'
+
+    if (isNaN(fid)) {
+      return c.json({
+        error: {
+          code: 'INVALID_PARAM',
+          message: 'Invalid FID parameter'
+        }
+      }, 400)
+    }
+
+    const syncEngine = getSyncEngine()
+
+    console.log(`[Sync API] Triggering ${type} sync for user: ${fid}`)
+
+    const result = await syncEngine.syncUserReactions(fid, {
+      type,
+      limit,
+      forceFullSync
+    })
+
+    return c.json({
+      fid,
+      type,
+      success: result.success,
+      reactionsProcessed: result.reactionsProcessed,
+      castsProcessed: result.castsProcessed,
+      errors: result.errors
+    })
+  } catch (error) {
+    console.error('Trigger user reactions sync error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to trigger user reactions sync'
+      }
+    }, 500)
+  }
+})
+
 export default app
