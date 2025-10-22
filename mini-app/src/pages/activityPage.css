@@ -1,0 +1,385 @@
+/* Page Container - Background inherited from body */
+.activity-page {
+  min-height: 100vh;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  line-height: 1.4;
+}
+
+/* Light Mode Text Color */
+.theme-light .activity-page,
+body:not(.theme-dark) .activity-page {
+  color: #000;
+}
+
+/* Dark Mode Text Color */
+.theme-dark .activity-page {
+  color: #FFFFFF;
+}
+
+.activity-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Windows 95 Window Container - Light Mode */
+.theme-light .activity-page .retro-window,
+body:not(.theme-dark) .activity-page .retro-window {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+
+/* Windows 95 Window Container - Dark Mode */
+.theme-dark .activity-page .retro-window {
+  background: #000000;
+  border: 3px solid #00ff00;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+
+/* Title Bar - Light Mode (keep blue gradient) */
+.theme-light .activity-page .title-bar,
+body:not(.theme-dark) .activity-page .title-bar {
+  background: linear-gradient(to right, #000080, #1084D0);
+  padding: 3px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Title Bar - Dark Mode (black with green border bottom) */
+.theme-dark .activity-page .title-bar {
+  background: #000000;
+  border-bottom: 2px solid #00ff00;
+  padding: 3px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.activity-page .title-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.activity-page .title-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.activity-page .retro-window-controls {
+  display: flex;
+  gap: 2px;
+}
+
+/* Control Buttons - Light Mode */
+.theme-light .activity-page .control-btn,
+body:not(.theme-dark) .activity-page .control-btn {
+  width: 18px;
+  height: 16px;
+  background: #C0C0C8;
+  border-top: 1px solid #FFFFFF;
+  border-left: 1px solid #FFFFFF;
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #000000;
+  padding-bottom: 2px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-light .activity-page .control-btn:active,
+body:not(.theme-dark) .activity-page .control-btn:active {
+  border-top: 1px solid #000000;
+  border-left: 1px solid #000000;
+  border-right: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* Control Buttons - Dark Mode */
+.theme-dark .activity-page .control-btn {
+  width: 18px;
+  height: 16px;
+  background: #000000;
+  border: 1px solid #00ff00;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #00ff00;
+  padding-bottom: 2px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-dark .activity-page .control-btn:active {
+  background: #003300;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* Content Area */
+.activity-page .content {
+  flex: 1;
+  background: transparent;
+  margin: 3px;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Activity Feed - Scrollable */
+.activity-page .activity-feed {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+
+/* Status Bar - Light Mode */
+.theme-light .activity-page .status-bar,
+body:not(.theme-dark) .activity-page .status-bar {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  padding: 3px 4px;
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Status Bar - Dark Mode */
+.theme-dark .activity-page .status-bar {
+  background: #000000;
+  border-top: 2px solid #00ff00;
+  padding: 3px 4px;
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  color: #00ff00;
+}
+
+/* Status Bar Items - Light Mode */
+.theme-light .activity-page .status-item,
+body:not(.theme-dark) .activity-page .status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+/* Status Bar Items - Dark Mode */
+.theme-dark .activity-page .status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid #003300;
+  background: #001100;
+}
+
+.activity-page .status-indicator {
+  color: #00ff00;
+  font-size: 10px;
+}
+
+/* Action Button - Light Mode */
+.theme-light .activity-page .action-button,
+body:not(.theme-dark) .activity-page .action-button {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #000000;
+}
+
+.theme-light .activity-page .action-button:active,
+body:not(.theme-dark) .activity-page .action-button:active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+/* Action Button - Dark Mode */
+.theme-dark .activity-page .action-button {
+  background: #000000;
+  border: 2px solid #00ff00;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #00ff00;
+}
+
+.theme-dark .activity-page .action-button:active {
+  background: #003300;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+/* Retry Button - Light Mode */
+.theme-light .activity-page .retry-btn,
+body:not(.theme-dark) .activity-page .retry-btn {
+  background: #C0C0C8;
+  border-top: 2px solid #FFFFFF;
+  border-left: 2px solid #FFFFFF;
+  border-right: 2px solid #000000;
+  border-bottom: 2px solid #000000;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #000000;
+}
+
+.theme-light .activity-page .retry-btn:active,
+body:not(.theme-dark) .activity-page .retry-btn:active {
+  border-top: 2px solid #000000;
+  border-left: 2px solid #000000;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+}
+
+/* Retry Button - Dark Mode */
+.theme-dark .activity-page .retry-btn {
+  background: #000000;
+  border: 2px solid #00ff00;
+  padding: 6px 16px;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #00ff00;
+}
+
+.theme-dark .activity-page .retry-btn:active {
+  background: #003300;
+}
+
+/* Scrollbar Styling */
+.activity-page .activity-feed::-webkit-scrollbar {
+  width: 16px;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-track {
+  background: #FFFFFF;
+  border-left: 1px solid #808080;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-thumb {
+  background: #C0C0C8;
+  border-top: 1px solid #FFFFFF;
+  border-left: 1px solid #FFFFFF;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-thumb:hover {
+  background: #A8A8A8;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-button {
+  height: 16px;
+  background: #C0C0C8;
+  border-top: 1px solid #FFFFFF;
+  border-left: 1px solid #FFFFFF;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-button:vertical:decrement {
+  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 6l-4 4h8z" fill="%23000000"/></svg>') center no-repeat;
+}
+
+.activity-page .activity-feed::-webkit-scrollbar-button:vertical:increment {
+  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 10l4-4H4z" fill="%23000000"/></svg>') center no-repeat;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .theme-light .activity-page .retro-window,
+  body:not(.theme-dark) .activity-page .retro-window,
+  .theme-dark .activity-page .retro-window {
+    max-width: 100%;
+    height: calc(100vh - 85px);
+    margin: 0 8px;
+  }
+
+  .activity-page .title-bar {
+    font-size: 12px;
+  }
+
+  .activity-container {
+    padding: 10px;
+  }
+
+  .activity-page .activity-feed {
+    padding: 4px;
+  }
+}

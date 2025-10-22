@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selected Designs Gallery - Windows 95 Redesign</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .design-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .design-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+
+        .card-header {
+            background: #000080;
+            color: white;
+            padding: 20px;
+            border-bottom: 3px solid #C0C0C8;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .card-header .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .card-preview {
+            height: 600px;
+            background: #008080;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .card-footer {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: #000080;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #0000A0;
+        }
+
+        .badge {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .notes {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .notes h3 {
+            color: #000080;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .notes ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .notes li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .notes li:last-child {
+            border-bottom: none;
+        }
+
+        .notes li strong {
+            color: #000080;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card-preview {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✅ Selected Designs - Windows 95 Redesign</h1>
+        <p>Our final design choices for the Jamzy mini-app (4 core views)</p>
+    </div>
+
+    <!-- Design 1: Channels List -->
+    <div class="design-section">
+        <h2 class="section-title">1. 📁 Channels List</h2>
+        <div class="design-card">
+            <div class="card-header">
+                <h2>Channels v2.5 - Zen Master's Choice</h2>
+                <p class="subtitle">40x40 images, alternating backgrounds, perfect balance</p>
+            </div>
+            <div class="card-preview">
+                <iframe src="./channels_v2_5.html"></iframe>
+            </div>
+            <div class="card-footer">
+                <span class="badge">✓ SELECTED</span>
+                <a href="./channels_v2_5.html" target="_blank" class="btn">Open Full View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design 2: Track Card -->
+    <div class="design-section">
+        <h2 class="section-title">2. 🎵 Track Card (Universal Component)</h2>
+        <div class="design-card">
+            <div class="card-header">
+                <h2>AF-001 - Navy Header + Green Button</h2>
+                <p class="subtitle">Navy blue header, bright green play button, clean layout</p>
+            </div>
+            <div class="card-preview">
+                <iframe src="./activity_feed_AF-001.html"></iframe>
+            </div>
+            <div class="card-footer">
+                <span class="badge">✓ SELECTED</span>
+                <a href="./activity_feed_AF-001.html" target="_blank" class="btn">Open Full View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design 3: Channel Detail -->
+    <div class="design-section">
+        <h2 class="section-title">3. 📁 Channel Detail View</h2>
+        <div class="design-card">
+            <div class="card-header">
+                <h2>CD-005 - Bold Napster Library</h2>
+                <p class="subtitle">Gradient header, 100x100 image, inline action bar, uses AF-001 track cards</p>
+            </div>
+            <div class="card-preview">
+                <iframe src="./channel_detail_CD-005.html"></iframe>
+            </div>
+            <div class="card-footer">
+                <span class="badge">✓ SELECTED</span>
+                <a href="./channel_detail_CD-005.html" target="_blank" class="btn">Open Full View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design 4: User Profile -->
+    <div class="design-section">
+        <h2 class="section-title">4. 👤 User Profile</h2>
+        <div class="design-card">
+            <div class="card-header">
+                <h2>UP-002 - Napster Buddy List Style</h2>
+                <p class="subtitle">Compact horizontal header, filter buttons for shared/liked/replied, uses AF-001 track cards</p>
+            </div>
+            <div class="card-preview">
+                <iframe src="./user_profile_UP-002.html"></iframe>
+            </div>
+            <div class="card-footer">
+                <span class="badge">✓ SELECTED</span>
+                <a href="./user_profile_UP-002.html" target="_blank" class="btn">Open Full View</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Notes -->
+    <div class="notes">
+        <h3>🎨 Design System Notes</h3>
+        <ul>
+            <li><strong>Color Palette:</strong> Classic gray (#C0C0C8, #D4D0C8), Navy blue (#000080), Bright green (#00FF00)</li>
+            <li><strong>Typography:</strong> MS Sans Serif for UI, Courier New for data/numbers</li>
+            <li><strong>Track Card:</strong> Universal AF-001 design used in Activity Feed, Channel Detail, and User Profile</li>
+            <li><strong>User Profile:</strong> Filter buttons for Shared/Liked/Replied tracks (no Follow/Message buttons)</li>
+            <li><strong>3D Borders:</strong> Light (#FFFFFF) top/left, dark (#000000, #808080) bottom/right</li>
+            <li><strong>Mobile-First:</strong> All designs are fully responsive and mobile-optimized</li>
+        </ul>
+    </div>
+</body>
+</html>

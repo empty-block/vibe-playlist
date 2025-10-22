@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Activity Feed (Win95 Variation 2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #008080;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 3px solid #FFFFFF;
+            border-left: 3px solid #FFFFFF;
+            border-right: 3px solid #000000;
+            border-bottom: 3px solid #000000;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.25);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084D0);
+            padding: 3px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 13px;
+            padding-left: 6px;
+        }
+
+        .title-bar-controls button {
+            width: 18px;
+            height: 16px;
+            background: #C0C0C8;
+            border: 1px outset #FFFFFF;
+            font-size: 9px;
+            cursor: pointer;
+            margin-left: 2px;
+            font-weight: bold;
+        }
+
+        .menu-bar {
+            background: #C0C0C8;
+            padding: 2px 4px;
+            border-bottom: 2px solid #FFFFFF;
+            font-size: 11px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-item {
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .activity-container {
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            margin: 4px;
+            height: 480px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #E0E0E0;
+            cursor: pointer;
+        }
+
+        .activity-item:hover {
+            background: #E8E8FF;
+        }
+
+        .activity-item.playing {
+            background: #E0FFE0;
+            border-left: 4px solid #00A651;
+        }
+
+        .activity-item.playing:hover {
+            background: #D0F0D0;
+        }
+
+        .activity-thumb {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+
+        .activity-user {
+            color: #0054A6;
+            font-weight: bold;
+        }
+
+        .activity-action {
+            color: #000000;
+        }
+
+        .activity-time {
+            margin-left: auto;
+            color: #808080;
+            font-size: 10px;
+        }
+
+        .activity-track {
+            margin-bottom: 8px;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .track-artist {
+            font-size: 11px;
+            color: #404040;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .meta-badge {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            padding: 2px 6px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .play-button {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 6px 16px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .play-button:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .playing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            background: #FFFFFF;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #DFDFDF;
+            border-bottom: 1px solid #DFDFDF;
+            height: 18px;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            background: #00A651;
+            height: 100%;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .status-bar {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            padding: 2px 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-panel {
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            padding: 1px 6px;
+            background: #FFFFFF;
+        }
+
+        @media (max-width: 640px) {
+            .activity-time {
+                position: static;
+                margin-left: 0;
+            }
+
+            .activity-header {
+                flex-wrap: wrap;
+            }
+
+            .play-button {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="win95-window">
+        <div class="title-bar">
+            <div class="title-bar-text">JAMZY - Activity Feed</div>
+            <div class="title-bar-controls">
+                <button>_</button>
+                <button>□</button>
+                <button>✕</button>
+            </div>
+        </div>
+
+        <div class="menu-bar">
+            <div class="menu-item">File</div>
+            <div class="menu-item">View</div>
+            <div class="menu-item">Filter</div>
+            <div class="menu-item">Help</div>
+        </div>
+
+        <div class="activity-container">
+            <!-- Playing Activity -->
+            <div class="activity-item playing">
+                <div class="activity-thumb">🎵</div>
+                <div class="activity-content">
+                    <div class="activity-header">
+                        <span class="activity-user">@musiclover</span>
+                        <span class="activity-action">shared a track</span>
+                        <span class="activity-time">2h ago</span>
+                    </div>
+                    <div class="activity-track">
+                        <div class="track-title">Blinding Lights</div>
+                        <div class="track-artist">The Weeknd</div>
+                    </div>
+                    <div class="activity-meta">
+                        <span class="meta-badge">SPOTIFY</span>
+                        <div class="activity-stats">
+                            <div class="stat-item">♥ 23</div>
+                            <div class="stat-item">💬 5</div>
+                        </div>
+                        <button class="play-button">⏸ PAUSE</button>
+                    </div>
+                    <div class="playing-indicator">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width: 65%;">
+                                <div class="progress-text">2:45 / 4:12 (65%)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 2 -->
+            <div class="activity-item">
+                <div class="activity-thumb">🎵</div>
+                <div class="activity-content">
+                    <div class="activity-header">
+                        <span class="activity-user">@djkool</span>
+                        <span class="activity-action">shared a track</span>
+                        <span class="activity-time">3h ago</span>
+                    </div>
+                    <div class="activity-track">
+                        <div class="track-title">Levitating</div>
+                        <div class="track-artist">Dua Lipa</div>
+                    </div>
+                    <div class="activity-meta">
+                        <span class="meta-badge">YOUTUBE</span>
+                        <div class="activity-stats">
+                            <div class="stat-item">♥ 45</div>
+                            <div class="stat-item">💬 12</div>
+                        </div>
+                        <button class="play-button">▶ PLAY</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 3 -->
+            <div class="activity-item">
+                <div class="activity-thumb">🎵</div>
+                <div class="activity-content">
+                    <div class="activity-header">
+                        <span class="activity-user">@popfan99</span>
+                        <span class="activity-action">shared a track</span>
+                        <span class="activity-time">5h ago</span>
+                    </div>
+                    <div class="activity-track">
+                        <div class="track-title">good 4 u</div>
+                        <div class="track-artist">Olivia Rodrigo</div>
+                    </div>
+                    <div class="activity-meta">
+                        <span class="meta-badge">SPOTIFY</span>
+                        <div class="activity-stats">
+                            <div class="stat-item">♥ 67</div>
+                            <div class="stat-item">💬 8</div>
+                        </div>
+                        <button class="play-button">▶ PLAY</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity 4 -->
+            <div class="activity-item">
+                <div class="activity-thumb">🎵</div>
+                <div class="activity-content">
+                    <div class="activity-header">
+                        <span class="activity-user">@indiekid</span>
+                        <span class="activity-action">shared a track</span>
+                        <span class="activity-time">1d ago</span>
+                    </div>
+                    <div class="activity-track">
+                        <div class="track-title">Heat Waves</div>
+                        <div class="track-artist">Glass Animals</div>
+                    </div>
+                    <div class="activity-meta">
+                        <span class="meta-badge">YOUTUBE</span>
+                        <div class="activity-stats">
+                            <div class="stat-item">♥ 89</div>
+                            <div class="stat-item">💬 15</div>
+                        </div>
+                        <button class="play-button">▶ PLAY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-panel">4 recent activities</div>
+            <div class="status-panel">1 track playing</div>
+        </div>
+    </div>
+</body>
+</html>

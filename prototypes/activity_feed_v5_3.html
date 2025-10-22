@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Feed v5.3 - Icon Sources</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #333;
+        }
+
+        .header h1 {
+            color: #00ff41;
+            font-size: 24px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+
+        .version-info {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .activity-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .activity-card:hover {
+            border-color: #00ff41;
+        }
+
+        .card-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .thumbnail {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 1px solid #444;
+        }
+
+        .source-icon {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid #1a1a1a;
+            cursor: help;
+            transition: transform 0.2s;
+        }
+
+        .source-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .source-icon.spotify {
+            background: #1db954;
+            color: #000;
+        }
+
+        .source-icon.youtube {
+            background: #ff0000;
+            color: #fff;
+        }
+
+        .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .username {
+            color: #00ff41;
+            font-weight: bold;
+            text-decoration: none;
+            transition: text-shadow 0.2s;
+        }
+
+        .username:hover {
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+        }
+
+        .timestamp {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .track-info {
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .track-title {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .play-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s;
+            text-decoration: none;
+            box-shadow: 0 0 5px rgba(0, 255, 65, 0.3);
+            margin-top: 4px;
+        }
+
+        .play-button:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .play-button::before {
+            content: '▶';
+            font-size: 10px;
+        }
+
+        .comment-box {
+            background: #2a2a0a;
+            border-left: 3px solid #ffd700;
+            padding: 8px 12px;
+            margin: 12px 0;
+            color: #f0f0f0;
+            font-size: 14px;
+            border-radius: 2px;
+        }
+
+        .comment-box::before {
+            content: '"';
+            color: #ffd700;
+            font-size: 18px;
+            margin-right: 4px;
+        }
+
+        .comment-box::after {
+            content: '"';
+            color: #ffd700;
+            font-size: 18px;
+            margin-left: 4px;
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #2a2a2a;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .stat-item:hover {
+            color: #00ff41;
+        }
+
+        .stat-icon {
+            font-size: 14px;
+        }
+
+        /* Tooltip */
+        [title] {
+            position: relative;
+        }
+
+        /* Design notes section */
+        .design-notes {
+            margin-top: 48px;
+            padding: 24px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+
+        .design-notes h2 {
+            color: #00ff41;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .design-notes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .design-notes li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .design-notes li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #00ff41;
+        }
+
+        .design-notes .section-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        .design-notes .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .card-stats {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .user-info {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JAMZY ACTIVITY FEED</h1>
+            <div class="version-info">v5.3 - Icon-Based Sources + Neon Play Button</div>
+        </div>
+
+        <div class="feed">
+            <!-- Activity Card 1 - Spotify with comment -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="thumbnail-wrapper">
+                        <div class="thumbnail">🎵</div>
+                        <div class="source-icon spotify" title="Spotify">♫</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-info">
+                            <a href="#" class="username">@musiclover</a>
+                            <span class="timestamp">2h ago</span>
+                        </div>
+                        <div class="track-info">
+                            <span class="track-title">Blinding Lights</span> by The Weeknd
+                        </div>
+                        <a href="#" class="play-button">PLAY</a>
+                    </div>
+                </div>
+
+                <div class="comment-box">
+                    This song never gets old! 🔥
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item" title="Likes">
+                        <span class="stat-icon">♥</span>
+                        <span>23</span>
+                    </div>
+                    <div class="stat-item" title="Replies">
+                        <span class="stat-icon">💬</span>
+                        <span>5</span>
+                    </div>
+                    <div class="stat-item" title="Recasts">
+                        <span class="stat-icon">🔄</span>
+                        <span>12</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Card 2 - YouTube without comment -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="thumbnail-wrapper">
+                        <div class="thumbnail">🎸</div>
+                        <div class="source-icon youtube" title="YouTube">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-info">
+                            <a href="#" class="username">@djkool</a>
+                            <span class="timestamp">3h ago</span>
+                        </div>
+                        <div class="track-info">
+                            <span class="track-title">Levitating</span> by Dua Lipa
+                        </div>
+                        <a href="#" class="play-button">PLAY</a>
+                    </div>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item" title="Likes">
+                        <span class="stat-icon">♥</span>
+                        <span>45</span>
+                    </div>
+                    <div class="stat-item" title="Replies">
+                        <span class="stat-icon">💬</span>
+                        <span>12</span>
+                    </div>
+                    <div class="stat-item" title="Recasts">
+                        <span class="stat-icon">🔄</span>
+                        <span>8</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Card 3 - Spotify with comment -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="thumbnail-wrapper">
+                        <div class="thumbnail" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">💿</div>
+                        <div class="source-icon spotify" title="Spotify">♫</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-info">
+                            <a href="#" class="username">@popfan99</a>
+                            <span class="timestamp">5h ago</span>
+                        </div>
+                        <div class="track-info">
+                            <span class="track-title">good 4 u</span> by Olivia Rodrigo
+                        </div>
+                        <a href="#" class="play-button">PLAY</a>
+                    </div>
+                </div>
+
+                <div class="comment-box">
+                    Absolute banger
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item" title="Likes">
+                        <span class="stat-icon">♥</span>
+                        <span>67</span>
+                    </div>
+                    <div class="stat-item" title="Replies">
+                        <span class="stat-icon">💬</span>
+                        <span>8</span>
+                    </div>
+                    <div class="stat-item" title="Recasts">
+                        <span class="stat-icon">🔄</span>
+                        <span>15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Card 4 - YouTube without comment -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <div class="thumbnail-wrapper">
+                        <div class="thumbnail" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎹</div>
+                        <div class="source-icon youtube" title="YouTube">▶</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="user-info">
+                            <a href="#" class="username">@indiekid</a>
+                            <span class="timestamp">1d ago</span>
+                        </div>
+                        <div class="track-info">
+                            <span class="track-title">Heat Waves</span> by Glass Animals
+                        </div>
+                        <a href="#" class="play-button">PLAY</a>
+                    </div>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-item" title="Likes">
+                        <span class="stat-icon">♥</span>
+                        <span>89</span>
+                    </div>
+                    <div class="stat-item" title="Replies">
+                        <span class="stat-icon">💬</span>
+                        <span>15</span>
+                    </div>
+                    <div class="stat-item" title="Recasts">
+                        <span class="stat-icon">🔄</span>
+                        <span>23</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Notes -->
+        <div class="design-notes">
+            <h2>Design Notes - v5.3</h2>
+
+            <div class="section-title">Key Changes from v5:</div>
+            <ul>
+                <li>Source badges now use icons instead of text labels</li>
+                <li>Spotify: Green circle with "♫" symbol</li>
+                <li>YouTube: Red circle with "▶" symbol</li>
+                <li>Icons positioned at bottom-right of thumbnail (18px circles)</li>
+                <li>Tooltip on hover reveals source name for accessibility</li>
+                <li>Scale animation on hover for subtle interactivity</li>
+            </ul>
+
+            <div class="section-title">Neon Play Button:</div>
+            <ul>
+                <li>Cyberpunk/terminal inspired design</li>
+                <li>Transparent background with green border</li>
+                <li>Green glow effect (box-shadow)</li>
+                <li>Intensified glow on hover</li>
+                <li>Inline play icon (▶) before text</li>
+                <li>Minimal and functional aesthetic</li>
+            </ul>
+
+            <div class="section-title">Benefits of Icon Approach:</div>
+            <ul>
+                <li>Takes up less visual space than text badges</li>
+                <li>More subtle and elegant</li>
+                <li>Colorful badges create instant recognition</li>
+                <li>Better for international users (symbols > words)</li>
+                <li>Cleaner card design overall</li>
+                <li>Works well at small sizes</li>
+            </ul>
+
+            <div class="section-title">Maintained from v5:</div>
+            <ul>
+                <li>48x48px thumbnails with gradients</li>
+                <li>Yellow-bordered comment boxes</li>
+                <li>Clean card layout and spacing</li>
+                <li>Hover states on interactive elements</li>
+                <li>Responsive stat display</li>
+            </ul>
+
+            <div class="section-title">Technical Details:</div>
+            <ul>
+                <li>Source icons: 18px circles, absolute positioned</li>
+                <li>Play button: 1px border, 5-15px glow on hover</li>
+                <li>Icon symbols: Unicode characters for compatibility</li>
+                <li>Spotify green: #1db954 (brand color)</li>
+                <li>YouTube red: #ff0000 (brand color)</li>
+                <li>Neon green: #00ff41 (terminal aesthetic)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

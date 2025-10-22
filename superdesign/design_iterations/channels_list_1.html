@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Channels (Win95 Style)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #008080;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Win95 Window Container */
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: #000080;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 14px;
+            padding-left: 4px;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            margin: 4px;
+            overflow: hidden;
+        }
+
+        /* Table Header */
+        .table-header {
+            background: #C0C0C8;
+            border-bottom: 2px solid #808080;
+            display: grid;
+            grid-template-columns: 24px 200px 80px 1fr;
+            padding: 4px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .table-header-cell {
+            padding: 4px;
+            border-right: 1px solid #808080;
+        }
+
+        .table-header-cell:last-child {
+            border-right: none;
+        }
+
+        /* Table Rows */
+        .table-row {
+            display: grid;
+            grid-template-columns: 24px 200px 80px 1fr;
+            padding: 4px;
+            border-bottom: 1px solid #D4D0C8;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .table-row:nth-child(even) {
+            background: #FFFFFF;
+        }
+
+        .table-row:nth-child(odd) {
+            background: #F0F0F0;
+        }
+
+        .table-row:hover {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .table-cell {
+            padding: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Icon placeholder */
+        .channel-icon {
+            width: 16px;
+            height: 16px;
+            background: #000080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 10px;
+        }
+
+        .user-count {
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+
+        /* Scrollbar styling */
+        .table-body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table-body::-webkit-scrollbar {
+            width: 16px;
+            background: #D4D0C8;
+        }
+
+        .table-body::-webkit-scrollbar-track {
+            background: #FFFFFF;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+        }
+
+        .table-body::-webkit-scrollbar-thumb {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 640px) {
+            .table-header,
+            .table-row {
+                grid-template-columns: 24px 1fr 60px;
+            }
+
+            .description-cell {
+                display: none;
+            }
+
+            .table-header-cell:last-child {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="win95-window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">JAMZY - Channels</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button">_</button>
+                <button class="title-bar-button">□</button>
+                <button class="title-bar-button">✕</button>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <!-- Table Header -->
+            <div class="table-header">
+                <div class="table-header-cell"></div>
+                <div class="table-header-cell">Channel Name</div>
+                <div class="table-header-cell">Users</div>
+                <div class="table-header-cell">Description</div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="table-body">
+                <!-- Hip Hop Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">Hip Hop</div>
+                    <div class="table-cell user-count">247</div>
+                    <div class="table-cell description-cell">Latest hip hop, rap, and urban beats</div>
+                </div>
+
+                <!-- Electronic Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">Electronic</div>
+                    <div class="table-cell user-count">189</div>
+                    <div class="table-cell description-cell">EDM, techno, house, and electronic music</div>
+                </div>
+
+                <!-- Rock Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">Rock</div>
+                    <div class="table-cell user-count">312</div>
+                    <div class="table-cell description-cell">Classic and modern rock anthems</div>
+                </div>
+
+                <!-- Jazz Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">Jazz</div>
+                    <div class="table-cell user-count">156</div>
+                    <div class="table-cell description-cell">Smooth jazz, bebop, and contemporary jazz</div>
+                </div>
+
+                <!-- Indie Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">Indie</div>
+                    <div class="table-cell user-count">203</div>
+                    <div class="table-cell description-cell">Independent and alternative music</div>
+                </div>
+
+                <!-- R&B/Soul Channel -->
+                <div class="table-row">
+                    <div class="table-cell">
+                        <div class="channel-icon">♪</div>
+                    </div>
+                    <div class="table-cell">R&B / Soul</div>
+                    <div class="table-cell user-count">178</div>
+                    <div class="table-cell description-cell">Rhythm and blues, soul classics and new releases</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

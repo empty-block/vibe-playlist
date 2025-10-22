@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy Channels - Napster Style v1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Arial', 'Verdana', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #c0c0c0;
+        }
+
+        .window-chrome {
+            background: linear-gradient(to bottom, #0a246a 0%, #0a246a 24px, #c0c0c0 24px);
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #404040;
+        }
+
+        .title-bar {
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .button-3d {
+            background: linear-gradient(to bottom, #ffffff 0%, #dfdfdf 100%);
+            border: 2px solid;
+            border-color: #ffffff #404040 #404040 #ffffff;
+            box-shadow: inset 1px 1px 0 #f0f0f0, inset -1px -1px 0 #808080;
+            padding: 4px 16px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .button-3d:active {
+            border-color: #404040 #ffffff #ffffff #404040;
+            box-shadow: inset -1px -1px 0 #f0f0f0, inset 1px 1px 0 #808080;
+        }
+
+        .tree-view {
+            background: white;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            box-shadow: inset -1px -1px 0 #dfdfdf, inset 1px 1px 0 #404040;
+        }
+
+        .tree-item {
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tree-item:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online {
+            background: #00ff00;
+            box-shadow: 0 0 4px #00ff00;
+        }
+
+        .status-offline {
+            background: #ff0000;
+            box-shadow: 0 0 4px #ff0000;
+        }
+
+        .content-area {
+            background: white;
+            border: 2px solid;
+            border-color: #808080 #ffffff #ffffff #808080;
+            box-shadow: inset -1px -1px 0 #dfdfdf, inset 1px 1px 0 #404040;
+        }
+
+        .status-bar {
+            background: #c0c0c0;
+            border-top: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 11px;
+        }
+
+        .track-row {
+            padding: 4px 8px;
+            border-bottom: 1px solid #c0c0c0;
+            display: grid;
+            grid-template-columns: 32px 2fr 1fr 80px 80px;
+            gap: 8px;
+            font-size: 11px;
+            align-items: center;
+        }
+
+        .track-row:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        .track-row:hover {
+            background: #0a246a;
+            color: white;
+        }
+
+        .player-controls {
+            background: linear-gradient(to bottom, #e0e0e0 0%, #c0c0c0 100%);
+            border: 2px solid;
+            border-color: #ffffff #808080 #808080 #ffffff;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .play-button {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(to bottom, #ffffff 0%, #dfdfdf 100%);
+            border: 2px solid;
+            border-color: #ffffff #404040 #404040 #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .folder-icon::before {
+            content: '📁';
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="window-chrome max-w-[1200px] mx-auto my-8 h-[800px] flex flex-col">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="flex items-center gap-2">
+                <span>🎵</span>
+                <span>Jamzy - Music Channels</span>
+            </div>
+            <div class="flex gap-2">
+                <button class="w-4 h-4 bg-[#c0c0c0] border border-black text-[8px]">_</button>
+                <button class="w-4 h-4 bg-[#c0c0c0] border border-black text-[8px]">□</button>
+                <button class="w-4 h-4 bg-[#c0c0c0] border border-black text-[8px]">×</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="bg-[#c0c0c0] px-2 py-1 flex gap-4 text-[11px]">
+            <span class="cursor-pointer hover:bg-[#0a246a] hover:text-white px-2">File</span>
+            <span class="cursor-pointer hover:bg-[#0a246a] hover:text-white px-2">Edit</span>
+            <span class="cursor-pointer hover:bg-[#0a246a] hover:text-white px-2">View</span>
+            <span class="cursor-pointer hover:bg-[#0a246a] hover:text-white px-2">Tools</span>
+            <span class="cursor-pointer hover:bg-[#0a246a] hover:text-white px-2">Help</span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="bg-[#c0c0c0] px-2 py-2 flex gap-2 border-b-2 border-[#808080]">
+            <button class="button-3d">🔍 Search</button>
+            <button class="button-3d">⬇️ Download</button>
+            <button class="button-3d">⭐ Favorites</button>
+            <button class="button-3d">⚙️ Settings</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex gap-2 p-2 overflow-hidden">
+            <!-- Sidebar -->
+            <div class="w-[200px] tree-view overflow-y-auto">
+                <div class="bg-[#c0c0c0] px-2 py-1 text-[11px] font-bold border-b border-[#808080]">CHANNELS</div>
+
+                <div class="tree-item">
+                    <span class="folder-icon"></span>
+                    <span>All Channels</span>
+                </div>
+
+                <div class="pl-4">
+                    <div class="tree-item">
+                        <span class="status-indicator status-online"></span>
+                        <span>hip-hop</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="status-indicator status-online"></span>
+                        <span>electronic</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="status-indicator status-online"></span>
+                        <span>indie</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="status-indicator status-offline"></span>
+                        <span>jazz</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="status-indicator status-online"></span>
+                        <span>rock</span>
+                    </div>
+                    <div class="tree-item">
+                        <span class="status-indicator status-online"></span>
+                        <span>pop</span>
+                    </div>
+                </div>
+
+                <div class="tree-item mt-4">
+                    <span class="folder-icon"></span>
+                    <span>My Channels</span>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 flex flex-col gap-2">
+                <div class="content-area flex-1 overflow-y-auto">
+                    <div class="bg-[#c0c0c0] px-2 py-1 grid grid-cols-[32px_2fr_1fr_80px_80px] gap-2 text-[11px] font-bold border-b-2 border-[#808080]">
+                        <span></span>
+                        <span>Track</span>
+                        <span>Artist</span>
+                        <span>Likes</span>
+                        <span>Platform</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Late Night Vibes Mix</span>
+                        <span>DJ Shadow</span>
+                        <span>245</span>
+                        <span>Spotify</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Boom Bap Essentials</span>
+                        <span>J Dilla</span>
+                        <span>892</span>
+                        <span>YouTube</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Golden Age Hip Hop</span>
+                        <span>Tribe Called Quest</span>
+                        <span>1.2K</span>
+                        <span>Spotify</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Underground Classics</span>
+                        <span>MF DOOM</span>
+                        <span>567</span>
+                        <span>SoundCloud</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Chill Beats to Study</span>
+                        <span>Nujabes</span>
+                        <span>3.4K</span>
+                        <span>YouTube</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Modern Hip Hop Hits</span>
+                        <span>Kendrick Lamar</span>
+                        <span>2.1K</span>
+                        <span>Spotify</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>Jazz Rap Fusion</span>
+                        <span>Madlib</span>
+                        <span>445</span>
+                        <span>Bandcamp</span>
+                    </div>
+
+                    <div class="track-row">
+                        <span>♪</span>
+                        <span>West Coast Legends</span>
+                        <span>Dr. Dre</span>
+                        <span>1.8K</span>
+                        <span>Spotify</span>
+                    </div>
+                </div>
+
+                <!-- Player Controls -->
+                <div class="player-controls">
+                    <div class="play-button">▶</div>
+                    <div class="play-button">⏸</div>
+                    <div class="play-button">⏹</div>
+                    <div class="play-button">⏮</div>
+                    <div class="play-button">⏭</div>
+                    <div class="flex-1 h-2 bg-white border-2 border-[#808080]">
+                        <div class="h-full w-[40%] bg-[#0a246a]"></div>
+                    </div>
+                    <span class="text-[11px] font-mono">2:34 / 5:42</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="flex-1 flex gap-4">
+                <span>🟢 Connected</span>
+                <span>|</span>
+                <span>Channel: hip-hop</span>
+                <span>|</span>
+                <span>Tracks: 847</span>
+                <span>|</span>
+                <span>Users Online: 1,234</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

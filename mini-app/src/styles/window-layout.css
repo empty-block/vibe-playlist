@@ -1,0 +1,151 @@
+/**
+ * JAMZY Window Layout System
+ * Centralized responsive sizing for all RetroWindow components
+ * Mobile-first with progressive enhancement
+ */
+
+:root {
+  /* Layout Constants */
+  --nav-height: 64px;
+  --spacing-container: 32px; /* Top + bottom breathing room (16px each, following 8px system) */
+
+  /* Responsive Width System */
+  --window-width-mobile: 95%;      /* 320-640px: Edge-to-edge feel with small margins */
+  --window-width-tablet: 90%;      /* 640-1024px: More breathing room */
+  --window-width-desktop: 85%;     /* >1024px: Focused content area */
+
+  /* Max Width Constraints */
+  --window-max-width-compact: 680px;  /* Optimal for scanning dense info */
+  --window-max-width-standard: 720px; /* For content-rich pages */
+}
+
+/* ============================================
+   STANDARD PAGE WINDOW CONTAINER
+   ============================================ */
+
+/**
+ * Primary container for wrapping RetroWindow components
+ * Handles all responsive sizing, centering, and height calculations
+ */
+.page-window-container {
+  margin: 16px auto;
+  width: var(--window-width-mobile);
+  max-width: var(--window-max-width-compact);
+
+  /* Dynamic viewport height - handles mobile browser chrome */
+  height: calc(100dvh - var(--nav-height) - var(--spacing-container));
+
+  /* Ensure RetroWindow fills container */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Tablet: Wider with standard max-width */
+@media (min-width: 640px) {
+  .page-window-container {
+    width: var(--window-width-tablet);
+    max-width: var(--window-max-width-standard);
+  }
+}
+
+/* Desktop: Even wider, maintain max-width */
+@media (min-width: 1024px) {
+  .page-window-container {
+    width: var(--window-width-desktop);
+  }
+}
+
+/* Ultra-small mobile: Tighter margins */
+@media (max-width: 360px) {
+  .page-window-container {
+    margin: 8px auto;
+    width: calc(100% - 16px);
+    height: calc(100dvh - var(--nav-height) - 24px);
+  }
+}
+
+/* ============================================
+   WINDOW CONTENT VARIANTS
+   ============================================ */
+
+/**
+ * Compact variant for modals and dialogs
+ * Auto-height with max constraint
+ */
+.page-window-container--compact {
+  max-width: 520px;
+  height: auto;
+  max-height: 80dvh;
+}
+
+/**
+ * Full-width variant for dashboard-style layouts
+ * Uses full available width
+ */
+.page-window-container--full {
+  width: 95%;
+  max-width: 100%;
+  margin: 8px auto;
+}
+
+/* ============================================
+   RETRO WINDOW INTEGRATION
+   ============================================ */
+
+/**
+ * Ensure RetroWindow components fill their container properly
+ * This allows the container to control sizing, not the component
+ */
+.page-window-container > .retro-window {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/**
+ * Window content area should scroll internally
+ * Never scroll the entire page
+ */
+.page-window-container .retro-window__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   SAFE AREA HANDLING
+   ============================================ */
+
+/**
+ * Handle mobile safe areas (notches, home indicators)
+ * Applied to bottom navigation, not windows
+ */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/**
+ * Small mobile optimizations
+ * Reduce padding and margins for smaller screens
+ */
+@media (max-width: 640px) {
+  .page-window-container {
+    margin: 10px auto;
+  }
+}
+
+/**
+ * Large desktop optimizations
+ * Ensure content doesn't stretch too wide
+ */
+@media (min-width: 1280px) {
+  .page-window-container {
+    max-width: var(--window-max-width-standard);
+  }
+}

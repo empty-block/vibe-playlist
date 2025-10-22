@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy - Music Channels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            background: #008080;
+            padding: 20px;
+            color: #000000;
+        }
+
+        .window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 1px 1px 0 #808080;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084D0);
+            color: #FFFFFF;
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-bar-text {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar-icon {
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+            border: 1px solid #000000;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            font-size: 9px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #000000;
+        }
+
+        .title-bar-button:active {
+            border-top: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            padding-top: 1px;
+            padding-left: 1px;
+        }
+
+        /* Window Content */
+        .window-content {
+            padding: 2px;
+            background: #D4D0C8;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+            height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #C0C0C8;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #D4D0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        .table-container::-webkit-scrollbar-button {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            height: 16px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #FFFFFF;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 4px 6px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 11px;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        th:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #E0E0E0;
+            font-size: 11px;
+        }
+
+        tbody tr {
+            cursor: pointer;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: #FFFFFF;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #F0F0F0;
+        }
+
+        tbody tr:hover {
+            background: #000080 !important;
+            color: #FFFFFF;
+        }
+
+        tbody tr:active {
+            background: #000060 !important;
+        }
+
+        /* Channel Image */
+        .channel-image {
+            width: 32px;
+            height: 32px;
+            background: #808080;
+            border: 1px solid #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* User Count */
+        .user-count {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-top: 4px;
+            padding: 8px;
+            background: #D4D0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+        }
+
+        .search-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-label {
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 3px 4px;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+            background: #FFFFFF;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            outline: 1px dotted #000000;
+            outline-offset: -3px;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #D4D0C8;
+            border-top: 1px solid #FFFFFF;
+            padding: 2px 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .status-section {
+            padding: 2px 6px;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .window {
+                max-width: 100%;
+            }
+
+            .table-container {
+                height: 300px;
+            }
+
+            th, td {
+                font-size: 10px;
+                padding: 3px 4px;
+            }
+
+            .channel-image {
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            /* Hide description column on mobile */
+            .hide-mobile {
+                display: none;
+            }
+
+            .search-section {
+                padding: 6px;
+            }
+
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .table-container {
+                height: 250px;
+            }
+
+            th, td {
+                font-size: 9px;
+                padding: 2px 3px;
+            }
+
+            .channel-image {
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+            }
+        }
+
+        /* No selection highlighting */
+        table {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <div class="title-bar-icon"></div>
+                <span>Jamzy - Music Channels</span>
+            </div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" title="Minimize">_</button>
+                <button class="title-bar-button" title="Maximize">□</button>
+                <button class="title-bar-button" title="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Window Content -->
+        <div class="window-content">
+            <!-- Table Container -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 48px;">Image</th>
+                            <th style="width: 120px;">Channel</th>
+                            <th style="width: 60px;">Users</th>
+                            <th class="hide-mobile">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="channelList">
+                        <!-- Channels will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-row">
+                    <label class="search-label" for="searchInput">Search:</label>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Type to filter channels..."
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-section" id="channelCount">8 channels</div>
+                <div class="status-section" id="totalUsers">1,911 users online</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Channel data
+        const channels = [
+            { name: 'Hip Hop', users: 247, description: 'Latest hip hop, rap, and urban beats', icon: '🎤' },
+            { name: 'Electronic', users: 189, description: 'EDM, techno, house, and electronic music', icon: '🎧' },
+            { name: 'Rock', users: 312, description: 'Classic and modern rock anthems', icon: '🎸' },
+            { name: 'Jazz', users: 156, description: 'Smooth jazz, bebop, and contemporary', icon: '🎺' },
+            { name: 'Indie', users: 203, description: 'Independent and alternative music', icon: '🎵' },
+            { name: 'R&B/Soul', users: 178, description: 'Rhythm and blues, soul classics', icon: '🎹' },
+            { name: 'Pop', users: 534, description: 'Top 40 hits and popular music', icon: '⭐' },
+            { name: 'Classical', users: 92, description: 'Classical compositions', icon: '🎻' }
+        ];
+
+        let filteredChannels = [...channels];
+
+        // Render channels
+        function renderChannels(channelsToRender = filteredChannels) {
+            const tbody = document.getElementById('channelList');
+            tbody.innerHTML = '';
+
+            channelsToRender.forEach(channel => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => selectChannel(channel.name);
+
+                tr.innerHTML = `
+                    <td>
+                        <div class="channel-image">${channel.icon}</div>
+                    </td>
+                    <td><strong>${channel.name}</strong></td>
+                    <td class="user-count">${channel.users.toLocaleString()}</td>
+                    <td class="hide-mobile">${channel.description}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            // Update status bar
+            const totalUsers = channelsToRender.reduce((sum, ch) => sum + ch.users, 0);
+            document.getElementById('channelCount').textContent = `${channelsToRender.length} channels`;
+            document.getElementById('totalUsers').textContent = `${totalUsers.toLocaleString()} users online`;
+        }
+
+        // Select channel
+        function selectChannel(channelName) {
+            console.log('Selected channel:', channelName);
+            // In real app, navigate to channel
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+
+            if (query === '') {
+                filteredChannels = [...channels];
+            } else {
+                filteredChannels = channels.filter(channel =>
+                    channel.name.toLowerCase().includes(query) ||
+                    channel.description.toLowerCase().includes(query)
+                );
+            }
+
+            renderChannels(filteredChannels);
+        });
+
+        // Window control buttons
+        document.querySelectorAll('.title-bar-button').forEach((button, index) => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (index === 0) {
+                    console.log('Minimize');
+                } else if (index === 1) {
+                    console.log('Maximize');
+                } else if (index === 2) {
+                    console.log('Close');
+                    if (confirm('Close this window?')) {
+                        window.close();
+                    }
+                }
+            });
+        });
+
+        // Initial render
+        renderChannels();
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' || e.key === 'f' && e.ctrlKey) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

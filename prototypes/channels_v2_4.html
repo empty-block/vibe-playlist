@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channels - Jamzy Music</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Windows 95 Window */
+        .window {
+            background: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+            max-height: 800px;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084D0);
+            color: white;
+            padding: 3px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .title-bar-text {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .title-bar-icon {
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+            border: 1px solid #000000;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border: 1px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            color: #000000;
+            cursor: pointer;
+            padding-bottom: 2px;
+        }
+
+        .title-bar-button:active {
+            border-color: #000000 #FFFFFF #FFFFFF #000000;
+            padding-left: 1px;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        /* Window Content */
+        .window-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #C0C0C8;
+            overflow: hidden;
+        }
+
+        /* Header Section */
+        .header-section {
+            padding: 12px;
+            border-bottom: 2px solid;
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000080;
+            margin-bottom: 4px;
+        }
+
+        .header-subtitle {
+            font-size: 11px;
+            color: #000000;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: #C0C0C8;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        /* Channel Card */
+        .channel-card {
+            background: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .channel-card:hover {
+            background: #000080;
+        }
+
+        .channel-card:hover .channel-name,
+        .channel-card:hover .channel-description,
+        .channel-card:hover .user-badge-text {
+            color: #FFFFFF;
+        }
+
+        .channel-card:active {
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+            padding: 11px 9px 9px 11px;
+        }
+
+        /* Channel Image */
+        .channel-image {
+            width: 64px;
+            height: 64px;
+            border: 2px solid;
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+            background: #FFFFFF;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        /* Channel Info */
+        .channel-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.2;
+        }
+
+        .user-badge {
+            background: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            padding: 2px 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .user-badge-icon {
+            font-size: 10px;
+        }
+
+        .user-badge-text {
+            font-size: 11px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .channel-description {
+            font-size: 11px;
+            color: #000000;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 12px;
+            border-top: 2px solid;
+            border-color: #FFFFFF #808080 #808080 #FFFFFF;
+            background: #C0C0C8;
+        }
+
+        .search-label {
+            font-size: 11px;
+            margin-bottom: 4px;
+            color: #000000;
+        }
+
+        .search-input-wrapper {
+            border: 2px solid;
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+            background: #FFFFFF;
+            padding: 3px;
+        }
+
+        .search-input {
+            width: 100%;
+            border: none;
+            background: #FFFFFF;
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            font-size: 12px;
+            padding: 2px;
+            outline: none;
+        }
+
+        /* Scrollbar Styling */
+        .cards-container::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .cards-container::-webkit-scrollbar-track {
+            background: #C0C0C8;
+            border-left: 1px solid #808080;
+        }
+
+        .cards-container::-webkit-scrollbar-thumb {
+            background: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+        }
+
+        .cards-container::-webkit-scrollbar-button {
+            height: 16px;
+            background: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+        }
+
+        .cards-container::-webkit-scrollbar-button:vertical:decrement {
+            background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 4l-6 6h12z" fill="%23000000"/></svg>') center no-repeat;
+            background-size: 8px;
+        }
+
+        .cards-container::-webkit-scrollbar-button:vertical:increment {
+            background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 12l-6-6h12z" fill="%23000000"/></svg>') center no-repeat;
+            background-size: 8px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+
+            .window {
+                max-width: 100%;
+                height: calc(100vh - 20px);
+            }
+
+            .cards-grid {
+                gap: 10px;
+            }
+
+            .channel-card {
+                gap: 10px;
+                padding: 8px;
+            }
+
+            .channel-image {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+
+            .header-section {
+                padding: 10px;
+            }
+
+            .cards-container {
+                padding: 10px;
+            }
+
+            .search-section {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .channel-card {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .channel-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .channel-image {
+                width: 64px;
+                height: 64px;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #808080;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <div class="title-bar-icon"></div>
+                <span>Channels - Jamzy Music</span>
+            </div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" aria-label="Minimize">_</button>
+                <button class="title-bar-button" aria-label="Maximize">□</button>
+                <button class="title-bar-button" aria-label="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Window Body -->
+        <div class="window-body">
+            <!-- Header Section -->
+            <div class="header-section">
+                <div class="header-title">Music Channels</div>
+                <div class="header-subtitle">Browse and join music communities</div>
+            </div>
+
+            <!-- Cards Container -->
+            <div class="cards-container" id="cardsContainer">
+                <div class="cards-grid" id="cardsGrid">
+                    <!-- Cards will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-label">Search channels:</div>
+                <div class="search-input-wrapper">
+                    <input
+                        type="text"
+                        class="search-input"
+                        id="searchInput"
+                        placeholder="Type to filter channels..."
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Channel data
+        const channels = [
+            {
+                name: 'Hip Hop',
+                emoji: '🎤',
+                users: 247,
+                description: 'Share and discover the freshest hip hop tracks, classic rap albums, and underground artists'
+            },
+            {
+                name: 'Electronic',
+                emoji: '🎹',
+                users: 189,
+                description: 'From underground techno to festival anthems, electronic music in all forms'
+            },
+            {
+                name: 'Rock',
+                emoji: '🎸',
+                users: 312,
+                description: 'Guitar-driven music from classic rock legends to modern alternative bands'
+            },
+            {
+                name: 'Jazz',
+                emoji: '🎷',
+                users: 156,
+                description: 'Explore jazz from classic bebop to modern fusion and smooth selections'
+            },
+            {
+                name: 'Indie',
+                emoji: '🎵',
+                users: 203,
+                description: 'Independent and alternative music from emerging artists worldwide'
+            },
+            {
+                name: 'R&B/Soul',
+                emoji: '🎶',
+                users: 178,
+                description: 'Rhythm and blues, soul classics and contemporary releases'
+            },
+            {
+                name: 'Pop',
+                emoji: '⭐',
+                users: 534,
+                description: 'The biggest hits and most popular tracks from today\'s charts'
+            },
+            {
+                name: 'Classical',
+                emoji: '🎻',
+                users: 92,
+                description: 'Classical compositions from baroque to contemporary periods'
+            }
+        ];
+
+        // Render channels
+        function renderChannels(channelsToRender) {
+            const cardsGrid = document.getElementById('cardsGrid');
+
+            if (channelsToRender.length === 0) {
+                cardsGrid.innerHTML = '<div class="empty-state">No channels found. Try a different search.</div>';
+                return;
+            }
+
+            cardsGrid.innerHTML = channelsToRender.map(channel => `
+                <div class="channel-card" onclick="selectChannel('${channel.name}')">
+                    <div class="channel-image">${channel.emoji}</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <div class="channel-name">${channel.name}</div>
+                            <div class="user-badge">
+                                <span class="user-badge-icon">👥</span>
+                                <span class="user-badge-text">${channel.users}</span>
+                            </div>
+                        </div>
+                        <div class="channel-description">${channel.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filtered = channels.filter(channel =>
+                channel.name.toLowerCase().includes(searchTerm) ||
+                channel.description.toLowerCase().includes(searchTerm)
+            );
+            renderChannels(filtered);
+        });
+
+        // Channel selection
+        function selectChannel(channelName) {
+            alert(`Selected channel: ${channelName}\n\nIn the real app, this would navigate to the channel feed.`);
+        }
+
+        // Initial render
+        renderChannels(channels);
+
+        // Title bar button functionality
+        document.querySelectorAll('.title-bar-button').forEach((button, index) => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (index === 2) { // Close button
+                    if (confirm('Close Jamzy Music?')) {
+                        alert('In a real app, this would close the window.');
+                    }
+                }
+            });
+        });
+
+        // Prevent text selection on double-click
+        document.querySelectorAll('.title-bar, .title-bar-button').forEach(el => {
+            el.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>

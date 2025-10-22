@@ -1,0 +1,80 @@
+/* Page Container - Background inherited from body */
+.channels-page {
+  min-height: 100vh;
+  padding-bottom: 80px; /* Space for mobile navigation */
+  display: flex;
+  flex-direction: column;
+}
+
+.channels-terminal-header {
+  margin-bottom: 24px;
+}
+
+.channels-title {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.channels-main {
+  /* Width and padding now handled by page-window-container */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the page-window-container */
+}
+
+.channels-intro {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 0 16px;
+}
+
+.channels-description {
+  font-family: var(--font-interface);
+  font-size: 14px;
+  color: var(--muted-text);
+  line-height: 1.5;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Loading and Error States */
+.channels-main .loading-state,
+.channels-main .error-state {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.channels-main .error-state {
+  color: var(--neon-yellow, #ff6b6b);
+}
+
+/* Screen reader announcements */
+.sr-only {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .channels-intro {
+    margin-bottom: 16px;
+    padding: 0 8px;
+  }
+
+  .channels-description {
+    font-size: 13px;
+  }
+}
+
+/* Safe area for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

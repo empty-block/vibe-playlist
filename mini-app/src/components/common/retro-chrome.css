@@ -1,0 +1,382 @@
+/**
+ * JAMZY Retro Chrome Styles
+ * Unified window, panel, and UI chrome components
+ * Theme-aware: Light (Win95-style) / Dark (Cyberpunk terminal)
+ */
+
+/* ============================================
+   BORDER UTILITIES
+   ============================================ */
+
+/* 3D Raised Border (buttons, panels) */
+.border-3d-raised {
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+}
+
+/* 3D Sunken Border (input fields, inset areas) */
+.border-3d-sunken {
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
+}
+
+/* Active/pressed state for 3D buttons */
+.border-3d-pressed {
+  border-top: 1px solid var(--border-sunken-light);
+  border-left: 1px solid var(--border-sunken-light);
+  border-right: 1px solid var(--border-sunken-dark);
+  border-bottom: 1px solid var(--border-sunken-dark);
+}
+
+/* Neon glow border (dark mode accent) */
+.border-neon {
+  border: 2px solid var(--accent-primary);
+  box-shadow: 0 0 8px var(--glow-accent);
+}
+
+/* Standard retro border */
+.border-retro {
+  border: 1px solid var(--border-accent);
+}
+
+/* ============================================
+   RETRO TITLE BAR
+   ============================================ */
+
+.retro-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: var(--font-main);
+  user-select: none;
+}
+
+/* Light mode: Classic Win95 blue gradient */
+.theme-light .retro-titlebar,
+body:not(.theme-dark) .retro-titlebar {
+  background: linear-gradient(90deg, #000080, #1084D0);
+  color: #FFFFFF;
+}
+
+/* Dark mode: Dark gradient with neon text */
+.theme-dark .retro-titlebar {
+  background: linear-gradient(90deg, #001a00, #003300);
+  color: var(--text-lcd);
+  border-bottom: 1px solid var(--border-accent);
+  text-shadow: 0 0 5px var(--glow-accent);
+}
+
+/* Title bar text section */
+.retro-titlebar__text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.retro-titlebar__icon {
+  width: 12px;
+  height: 12px;
+  background: #00FF00;
+  border: 1px solid #000;
+  flex-shrink: 0;
+}
+
+.retro-titlebar__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Title bar control buttons */
+.retro-titlebar__controls {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.retro-titlebar__button {
+  width: 14px;
+  height: 13px;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-raised-light);
+  border-left: 1px solid var(--border-raised-light);
+  border-right: 1px solid var(--border-raised-dark);
+  border-bottom: 1px solid var(--border-raised-dark);
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--text-primary);
+  padding: 0;
+  font-family: var(--font-main);
+}
+
+.retro-titlebar__button:active {
+  border-top: 1px solid var(--border-sunken-light);
+  border-left: 1px solid var(--border-sunken-light);
+  border-right: 1px solid var(--border-sunken-dark);
+  border-bottom: 1px solid var(--border-sunken-dark);
+}
+
+.theme-dark .retro-titlebar__button:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 8px var(--glow-accent);
+}
+
+/* ============================================
+   RETRO PANEL
+   ============================================ */
+
+.retro-panel {
+  background: var(--bg-panel);
+  position: relative;
+}
+
+/* Panel variant: 3D (default Win95 style) */
+.retro-panel--3d {
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+}
+
+/* Panel variant: Neon (cyberpunk style) */
+.retro-panel--neon {
+  border: 3px solid var(--accent-secondary);
+  box-shadow:
+    0 0 20px rgba(4, 202, 244, 0.4),
+    inset 0 0 20px rgba(4, 202, 244, 0.1);
+}
+
+/* Panel variant: Minimal (simple border) */
+.retro-panel--minimal {
+  border: 1px solid var(--border-accent);
+  background: var(--bg-card);
+}
+
+/* Panel variant: Sunken (inset look) */
+.retro-panel--sunken {
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
+  background: var(--bg-lcd);
+}
+
+/* Dark mode glow for panels */
+.theme-dark .retro-panel--3d {
+  box-shadow: 0 0 10px var(--glow-accent);
+}
+
+/* ============================================
+   RETRO WINDOW
+   ============================================ */
+
+.retro-window {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  position: relative;
+}
+
+/* Window with 3D borders */
+.retro-window--3d {
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+}
+
+/* Window with neon borders */
+.retro-window--neon {
+  border: 3px solid var(--accent-secondary);
+  box-shadow:
+    0 0 20px rgba(4, 202, 244, 0.4),
+    inset 0 0 20px rgba(4, 202, 244, 0.1);
+}
+
+/* Window content area */
+.retro-window__content {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Window footer (optional) */
+.retro-window__footer {
+  border-top: 1px solid var(--border-accent);
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.theme-dark .retro-window__footer {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   RETRO BUTTONS
+   ============================================ */
+
+.retro-button {
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+  padding: 6px 12px;
+  font-family: var(--font-main);
+  font-weight: bold;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.1s ease;
+}
+
+.retro-button:hover:not(:disabled) {
+  background: var(--hover-bg);
+}
+
+.retro-button:active:not(:disabled) {
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
+  transform: translateY(1px);
+}
+
+.retro-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button variant: Primary (cyan accent) */
+.retro-button--primary {
+  background: var(--accent-secondary);
+  color: #000000;
+}
+
+.theme-dark .retro-button--primary {
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+/* Button variant: Small */
+.retro-button--small {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+/* Button variant: Large */
+.retro-button--large {
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+/* Dark mode button effects */
+.theme-dark .retro-button {
+  background: var(--bg-card);
+  color: var(--text-lcd);
+}
+
+.theme-dark .retro-button:hover:not(:disabled) {
+  background: var(--hover-bg);
+  box-shadow: 0 0 10px var(--glow-accent);
+}
+
+.theme-dark .retro-button:active:not(:disabled) {
+  background: var(--active-bg);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Remove default button styling */
+.reset-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Scanline effect overlay (optional, for retro CRT feel) */
+.retro-scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.03) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 640px) {
+  .retro-titlebar {
+    font-size: 10px;
+    padding: 2px 3px;
+  }
+
+  .retro-titlebar__icon {
+    width: 10px;
+    height: 10px;
+  }
+
+  .retro-titlebar__button {
+    width: 12px;
+    height: 11px;
+    font-size: 7px;
+  }
+
+  .retro-button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .retro-button--small {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .retro-titlebar {
+    font-size: 9px;
+  }
+
+  .retro-button {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}

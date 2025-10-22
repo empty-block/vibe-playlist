@@ -2,12 +2,12 @@
 
 ## 📚 Core Documentation
 
-All detailed documentation is in the `/context/` directory:
+All detailed documentation is in the `/docs/` directory:
 
-- **[PROJECT-OVERVIEW.md](./context/PROJECT-OVERVIEW.md)** - Product vision, philosophy, and goals
-- **[TECHNICAL-ARCHITECTURE.md](./context/TECHNICAL-ARCHITECTURE.md)** - Tech stack and system design
-- **[DEV-GUIDE.md](./context/DEV-GUIDE.md)** - Development setup, troubleshooting, and critical quirks
-- **[DESIGN-GUIDELINES.md](./context/DESIGN-GUIDELINES.md)** - UI/UX standards, animations, and component patterns
+- **[PROJECT-OVERVIEW.md](./docs/PROJECT-OVERVIEW.md)** - Product vision, philosophy, and goals
+- **[TECHNICAL-ARCHITECTURE.md](./docs/TECHNICAL-ARCHITECTURE.md)** - Tech stack and system design
+- **[DEV-GUIDE.md](./docs/DEV-GUIDE.md)** - Development setup, troubleshooting, and critical quirks
+- **[DESIGN-GUIDELINES.md](./docs/DESIGN-GUIDELINES.md)** - UI/UX standards, animations, and component patterns
 
 ## 🚀 Quick Start for AI Agents
 
@@ -22,27 +22,54 @@ All detailed documentation is in the `/context/` directory:
 
 ## 🛠 Key Commands
 
+**Frontend Development:**
 ```bash
-bun run dev       # Start dev server (localhost:3001)
-bun run build     # Production build
-bun run typecheck # TypeScript validation
+bun run dev           # Start web app dev server (localhost:3001)
+bun run dev:miniapp   # Start mini-app dev server (localhost:3002)
+bun run build         # Production build
+bun run typecheck     # TypeScript validation
 ```
 
-## 📁 Project Structure
+**Python Data Processing:**
+```bash
+cd data/pipelines
+python -m flow    # Run data pipelines
+pip install -r requirements.txt  # Install Python deps
+```
+
+## 📁 Ultra-Clean Project Structure
 
 ```
-/context/          # All detailed documentation
-/src/components/   # Feature-based component organization
-/src/stores/       # State management (SolidJS signals)
-/src/utils/        # Utilities including animations.ts
+/web-app/         # Main web application (SolidJS)
+  /src/           # Source code (components, stores, utils)
+  /node_modules/  # Dependencies
+  /dist/          # Build output
+/mini-app/        # Farcaster mini-app (SolidJS)
+  /src/           # Mini-app components and logic
+  /dist/          # Mini-app build output
+/backend/         # All backend APIs (TypeScript)
+  /api/           # Main REST API endpoints
+  /analytics/     # Analytics service
+  /server.ts      # Main server file
+/data/            # Python data processing
+  /pipelines/     # Data import and processing flows
+  /lib/           # Python utilities
+/database/        # Database migrations and functions
+/shared/          # Types shared between frontend/backend
+/docs/            # All documentation and guides
 ```
 
 ## 🎯 Common Tasks Quick Reference
-- **Add new component**: `/src/components/[feature]/`
-- **Modify animations**: `/src/utils/animations.ts`
-- **Update state management**: `/src/stores/`
-- **Style changes**: Follow DESIGN-GUIDELINES.md retro aesthetic
+- **Add web app component**: `/web-app/src/components/[feature]/`
+- **Add mini-app component**: `/mini-app/src/components/[feature]/`
+- **Modify animations**: `/web-app/src/utils/animations.ts` or `/mini-app/src/utils/animations.ts`
+- **Update state management**: `/web-app/src/stores/` or `/mini-app/src/stores/`
+- **Style changes**: Follow docs/DESIGN-GUIDELINES.md retro aesthetic
+- **Add data pipeline**: `/data/pipelines/`
+- **Update database schema**: `/database/migrations/`
+- **Python utilities**: `/data/lib/`
+- **Add API endpoint**: `/backend/api/`
 
 
 ---
-*This file serves as an index. All detailed information is in the `/context/` directory files.*
+*This file serves as an index. All detailed information is in the `/docs/` directory files.*

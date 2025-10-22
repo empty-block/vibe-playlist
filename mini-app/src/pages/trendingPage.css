@@ -1,0 +1,319 @@
+/* Trending Page - Content Styles Only */
+/* Window chrome handled by RetroWindow component + window-layout.css */
+
+/* Page Container - Background inherited from body */
+.trending-page {
+  min-height: 100vh;
+  padding-bottom: 80px; /* Space for mobile navigation */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title icon styling */
+.title-icon {
+  width: 16px;
+  height: 16px;
+  background: #FFFF00;
+  border: 1px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+/* Window Content Inner Wrapper */
+.window-content-inner {
+  padding: 12px;
+  background: #FFFFFF;
+}
+
+.theme-dark .window-content-inner {
+  background: #000000;
+}
+
+/* Minimized Window State */
+.window-content-inner.minimized {
+  display: none;
+}
+
+/* Section Header - Light Mode */
+.theme-light .section-header,
+body:not(.theme-dark) .section-header {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: #DFDFDF;
+  border: 2px solid;
+  border-top-color: #FFFFFF;
+  border-left-color: #FFFFFF;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+}
+
+/* Section Header - Dark Mode */
+.theme-dark .section-header {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: #000000;
+  border: 2px solid #00ff00;
+}
+
+/* Section Title - Light Mode */
+.theme-light .section-title,
+body:not(.theme-dark) .section-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #000080;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Section Title - Dark Mode */
+.theme-dark .section-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #00ff00;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* Loading, Error, Empty States */
+.loading-state,
+.error-state,
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.error-state {
+  color: #ff6b6b;
+}
+
+/* Clean Track Card - Light Mode */
+.theme-light .track-item,
+body:not(.theme-dark) .track-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #F0F0F0;
+  border: 2px solid #C0C0C0;
+  border-top-color: #FFFFFF;
+  border-left-color: #FFFFFF;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-light .track-item:hover,
+body:not(.theme-dark) .track-item:hover {
+  background: #E8E8E8;
+}
+
+/* Clean Track Card - Dark Mode */
+.theme-dark .track-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #1a1a1a;
+  border: 2px solid #00ff00;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.theme-dark .track-item:hover {
+  background: #222222;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+/* Track Rank - Golden Gradient for Top 3 */
+.track-rank {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000080;
+  min-width: 32px;
+  text-align: center;
+}
+
+.track-rank.top-3 {
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 22px;
+}
+
+/* Emoji Thumbnail */
+.track-thumbnail {
+  width: 50px;
+  height: 50px;
+  background: #808080;
+  border: 2px solid #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.track-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Black Text for Titles */
+.track-title {
+  font-weight: bold;
+  font-size: 14px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Normal Colored Text for Artists */
+.track-artist {
+  font-size: 12px;
+  color: #555555;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Submitted By Text */
+.track-submitted {
+  font-size: 11px;
+  color: #666666;
+  margin-top: 4px;
+}
+
+.submitted-username {
+  color: #000080;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.submitted-username:hover {
+  color: #1084D0;
+  text-decoration: underline;
+}
+
+.theme-dark .submitted-username {
+  color: #00ff00;
+}
+
+.theme-dark .submitted-username:hover {
+  color: #00ffaa;
+}
+
+.track-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* Fire Icon Animation */
+.fire-icon {
+  font-size: 16px;
+  animation: flicker 1.5s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Status Bar Sections - Light Mode */
+.theme-light .status-bar-section,
+body:not(.theme-dark) .status-bar-section {
+  border: 1px solid;
+  border-color: #808080 #FFFFFF #FFFFFF #808080;
+  padding: 2px 6px;
+  background: #C0C0C8;
+  color: #000000;
+  font-size: 10px;
+}
+
+/* Status Bar Sections - Dark Mode */
+.theme-dark .status-bar-section {
+  border: 1px solid #00ff00;
+  padding: 2px 6px;
+  background: #000000;
+  color: #00ff00;
+  font-size: 10px;
+}
+
+/* Responsive: Mobile Adjustments */
+@media (max-width: 768px) {
+  .track-item {
+    padding: 8px;
+    gap: 10px;
+  }
+
+  .track-thumbnail {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .track-rank {
+    font-size: 18px;
+    min-width: 28px;
+  }
+
+  .track-rank.top-3 {
+    font-size: 20px;
+  }
+
+  .track-title {
+    font-size: 13px;
+  }
+
+  .track-artist {
+    font-size: 11px;
+  }
+
+  .track-submitted {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .window-content-inner {
+    padding: 8px;
+  }
+
+  .track-item {
+    padding: 6px;
+    gap: 8px;
+  }
+
+  .track-thumbnail {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .track-rank {
+    font-size: 16px;
+    min-width: 24px;
+  }
+}

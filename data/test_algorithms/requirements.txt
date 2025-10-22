@@ -1,0 +1,10 @@
+# Requirements for Graph Intelligence Algorithm Testing
+
+# Core dependencies
+numpy>=1.24.0
+pandas>=1.5.0
+networkx>=3.0.0
+supabase>=2.0.0
+
+# Optional for enhanced algorithms
+scikit-learn>=1.3.0

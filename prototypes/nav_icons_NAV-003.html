@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAV-003: Emoji-Style Icons - Navigation Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .header {
+            text-align: center;
+            color: #00f92a;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #04caf4;
+            font-size: 14px;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .demo-section {
+            background: #c0c0c0;
+            border: 2px solid #000;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .demo-section h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        .icon-showcase {
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            background: #fff;
+            padding: 30px;
+            border: 2px inset #808080;
+        }
+
+        .icon-display {
+            text-align: center;
+        }
+
+        .icon-display canvas {
+            display: block;
+            margin: 0 auto 10px;
+            width: 48px;
+            height: 48px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .icon-display label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* Win95 Taskbar Navigation */
+        .taskbar-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            box-shadow:
+                inset 1px 1px 0 #dfdfdf,
+                0 -2px 8px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-width: 80px;
+            height: 48px;
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #fff #000 #000 #fff;
+            box-shadow:
+                inset 1px 1px 0 #dfdfdf,
+                inset -1px -1px 0 #808080;
+            cursor: pointer;
+            transition: all 0.1s;
+            padding: 4px;
+        }
+
+        .nav-button:hover {
+            background: #d4d4d4;
+        }
+
+        .nav-button:active {
+            border-color: #000 #fff #fff #000;
+            box-shadow:
+                inset -1px -1px 0 #dfdfdf,
+                inset 1px 1px 0 #808080;
+            transform: translateY(1px);
+        }
+
+        .nav-button.active {
+            background: #a0a0a0;
+            border-color: #000 #fff #fff #000;
+            box-shadow:
+                inset -1px -1px 0 #dfdfdf,
+                inset 1px 1px 0 #404040;
+        }
+
+        .nav-button canvas {
+            width: 24px;
+            height: 24px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .nav-button span {
+            font-size: 10px;
+            font-weight: bold;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Design Notes */
+        .design-notes {
+            background: #c0c0c0;
+            border: 2px solid #000;
+            padding: 15px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .design-notes h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .design-notes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .design-notes li {
+            font-size: 12px;
+            color: #000;
+            margin-bottom: 5px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .design-notes li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #00f92a;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .nav-button {
+                min-width: 60px;
+                gap: 2px;
+            }
+
+            .nav-button span {
+                font-size: 8px;
+            }
+
+            .taskbar-nav {
+                padding: 0 10px;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NAV-003: Emoji-Style Icons</h1>
+        <p>Pixel Art Messenger-Style Navigation</p>
+    </div>
+
+    <div class="content">
+        <div class="demo-section">
+            <h2>Icon Gallery (Scaled 2x)</h2>
+            <div class="icon-showcase">
+                <div class="icon-display">
+                    <canvas id="channels-large" width="24" height="24"></canvas>
+                    <label>CHANNELS</label>
+                </div>
+                <div class="icon-display">
+                    <canvas id="activity-large" width="24" height="24"></canvas>
+                    <label>ACTIVITY</label>
+                </div>
+                <div class="icon-display">
+                    <canvas id="profile-large" width="24" height="24"></canvas>
+                    <label>PROFILE</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="design-notes">
+            <h3>Design Specifications</h3>
+            <ul>
+                <li>24x24px pixel art emoji icons</li>
+                <li>Neon colors: #00f92a, #04caf4, #FF00FF, #FFFF00</li>
+                <li>Simple, expressive shapes like MSN/AIM</li>
+                <li>Win95 3D button styling</li>
+                <li>High contrast for visibility</li>
+                <li>Personality-driven design</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Win95 Taskbar Navigation -->
+    <nav class="taskbar-nav">
+        <button class="nav-button active" data-nav="channels">
+            <canvas id="channels-icon" width="24" height="24"></canvas>
+            <span>Channels</span>
+        </button>
+        <button class="nav-button" data-nav="activity">
+            <canvas id="activity-icon" width="24" height="24"></canvas>
+            <span>Activity</span>
+        </button>
+        <button class="nav-button" data-nav="profile">
+            <canvas id="profile-icon" width="24" height="24"></canvas>
+            <span>Profile</span>
+        </button>
+    </nav>
+
+    <script>
+        // Pixel Art Drawing Functions
+        function drawPixel(ctx, x, y, color, size = 1) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, size, size);
+        }
+
+        // CHANNELS Icon - Smiley with Headphones
+        function drawChannelsIcon(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, 24, 24);
+
+            // Yellow face circle
+            const facePixels = [
+                [7,4],[8,4],[9,4],[10,4],[11,4],[12,4],[13,4],[14,4],[15,4],[16,4],
+                [6,5],[7,5],[16,5],[17,5],
+                [5,6],[6,6],[17,6],[18,6],
+                [4,7],[5,7],[18,7],[19,7],
+                [4,8],[19,8],
+                [3,9],[4,9],[19,9],[20,9],
+                [3,10],[20,10],
+                [3,11],[20,11],
+                [3,12],[20,12],
+                [3,13],[20,13],
+                [3,14],[20,14],
+                [4,15],[19,15],
+                [4,16],[5,16],[18,16],[19,16],
+                [5,17],[6,17],[17,17],[18,17],
+                [6,18],[7,18],[16,18],[17,18],
+                [7,19],[8,19],[9,19],[10,19],[11,19],[12,19],[13,19],[14,19],[15,19],[16,19]
+            ];
+            facePixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FFFF00'));
+
+            // Cyan headphones
+            const headphonePixels = [
+                // Left headphone
+                [2,8],[2,9],[2,10],[2,11],[2,12],[2,13],
+                [1,10],[1,11],[1,12],
+                // Right headphone
+                [21,8],[21,9],[21,10],[21,11],[21,12],[21,13],
+                [22,10],[22,11],[22,12],
+                // Headband top
+                [8,2],[9,2],[10,2],[11,2],[12,2],[13,2],[14,2],[15,2],
+                [7,3],[16,3]
+            ];
+            headphonePixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#04caf4'));
+
+            // Black eyes
+            drawPixel(ctx, 8, 9, '#000');
+            drawPixel(ctx, 9, 9, '#000');
+            drawPixel(ctx, 14, 9, '#000');
+            drawPixel(ctx, 15, 9, '#000');
+
+            // Green music note on headphones
+            drawPixel(ctx, 1, 8, '#00f92a');
+            drawPixel(ctx, 1, 9, '#00f92a');
+            drawPixel(ctx, 2, 7, '#00f92a');
+
+            drawPixel(ctx, 22, 8, '#00f92a');
+            drawPixel(ctx, 22, 9, '#00f92a');
+            drawPixel(ctx, 21, 7, '#00f92a');
+
+            // Smile
+            const smilePixels = [
+                [8,14],[9,14],[10,14],[11,14],[12,14],[13,14],[14,14],[15,14],
+                [7,13],[16,13]
+            ];
+            smilePixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#000'));
+        }
+
+        // ACTIVITY Icon - Dancing/Bouncing Figure
+        function drawActivityIcon(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.clearRect(0, 0, 24, 24);
+
+            // Magenta dancing figure
+            // Head
+            const headPixels = [
+                [10,3],[11,3],[12,3],[13,3],
+                [9,4],[10,4],[11,4],[12,4],[13,4],[14,4],
+                [9,5],[10,5],[11,5],[12,5],[13,5],[14,5],
+                [10,6],[11,6],[12,6],[13,6]
+            ];
+            headPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FF00FF'));
+
+            // Eyes (cyan)
+            drawPixel(ctx, 10, 5, '#04caf4');
+            drawPixel(ctx, 13, 5, '#04caf4');
+
+            // Body
+            const bodyPixels = [
+                [11,7],[12,7],
+                [10,8],[11,8],[12,8],[13,8],
+                [9,9],[10,9],[11,9],[12,9],[13,9],[14,9],
+                [8,10],[9,10],[10,10],[11,10],[12,10],[13,10],[14,10],[15,10],
+                [10,11],[11,11],[12,11],[13,11],
+                [11,12],[12,12]
+            ];
+            bodyPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FF00FF'));
+
+            // Arms (raised - dancing!)
+            const armsPixels = [
+                // Left arm up
+                [7,8],[8,8],
+                [6,7],[7,7],
+                [5,6],[6,6],
+                // Right arm up
+                [15,8],[16,8],
+                [16,7],[17,7],
+                [17,6],[18,6]
+            ];
+            armsPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FF00FF'));
+
+            // Legs
+            const legsPixels = [
+                // Left leg
+                [10,13],[10,14],
+                [9,15],[10,15],
+                [8,16],[9,16],
+                // Right leg
+                [13,13],[13,14],
+                [13,15],[14,15],
+                [14,16],[15,16]
+            ];
+            legsPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FF00FF'));
+
+            // Yellow energy burst around
+            const burstPixels = [
+                [4,4],[19,4],
+                [3,9],[20,9],
+                [5,15],[18,15],
+                [11,18],[12,18]
+            ];
+            burstPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FFFF00'));
+
+            // Green sparkles
+            drawPixel(ctx, 5, 2, '#00f92a');
+            drawPixel(ctx, 18, 3, '#00f92a');
+            drawPixel(ctx, 2, 12, '#00f92a');
+            drawPixel(ctx, 21, 13, '#00f92a');
+        }
+
+        // PROFILE Icon - Sunglasses Face
+        function drawProfileIcon(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.clearRect(0, 0, 24, 24);
+
+            // Yellow face
+            const facePixels = [
+                [7,4],[8,4],[9,4],[10,4],[11,4],[12,4],[13,4],[14,4],[15,4],[16,4],
+                [6,5],[7,5],[16,5],[17,5],
+                [5,6],[6,6],[17,6],[18,6],
+                [4,7],[5,7],[18,7],[19,7],
+                [4,8],[19,8],
+                [3,9],[4,9],[19,9],[20,9],
+                [3,10],[20,10],
+                [3,11],[20,11],
+                [3,12],[20,12],
+                [3,13],[20,13],
+                [3,14],[20,14],
+                [4,15],[19,15],
+                [4,16],[5,16],[18,16],[19,16],
+                [5,17],[6,17],[17,17],[18,17],
+                [6,18],[7,18],[16,18],[17,18],
+                [7,19],[8,19],[9,19],[10,19],[11,19],[12,19],[13,19],[14,19],[15,19],[16,19]
+            ];
+            facePixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FFFF00'));
+
+            // Cool magenta sunglasses
+            const sunglassesPixels = [
+                // Frame and lenses
+                [5,8],[6,8],[7,8],[8,8],[9,8],[10,8],
+                [5,9],[6,9],[7,9],[8,9],[9,9],[10,9],
+                [5,10],[6,10],[7,10],[8,10],[9,10],[10,10],
+
+                [13,8],[14,8],[15,8],[16,8],[17,8],[18,8],
+                [13,9],[14,9],[15,9],[16,9],[17,9],[18,9],
+                [13,10],[14,10],[15,10],[16,10],[17,10],[18,10],
+
+                // Bridge
+                [11,9],[12,9]
+            ];
+            sunglassesPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#FF00FF'));
+
+            // Darker lens interior
+            const lensPixels = [
+                [6,9],[7,9],[8,9],[9,9],
+                [14,9],[15,9],[16,9],[17,9]
+            ];
+            lensPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#990099'));
+
+            // Cyan reflections on sunglasses
+            drawPixel(ctx, 6, 8, '#04caf4');
+            drawPixel(ctx, 14, 8, '#04caf4');
+
+            // Smirk (cool expression)
+            const smirkPixels = [
+                [9,14],[10,14],[11,14],[12,14],[13,14],[14,14],
+                [14,13],[15,13]
+            ];
+            smirkPixels.forEach(([x, y]) => drawPixel(ctx, x, y, '#000'));
+
+            // Green highlight/sparkle
+            drawPixel(ctx, 2, 6, '#00f92a');
+            drawPixel(ctx, 21, 6, '#00f92a');
+        }
+
+        // Initialize icons
+        function initIcons() {
+            // Draw navigation icons (actual size)
+            drawChannelsIcon(document.getElementById('channels-icon'));
+            drawActivityIcon(document.getElementById('activity-icon'));
+            drawProfileIcon(document.getElementById('profile-icon'));
+
+            // Draw large showcase icons
+            drawChannelsIcon(document.getElementById('channels-large'));
+            drawActivityIcon(document.getElementById('activity-large'));
+            drawProfileIcon(document.getElementById('profile-large'));
+        }
+
+        // Navigation interaction
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.nav-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Initialize on load
+        window.addEventListener('load', initIcons);
+    </script>
+</body>
+</html>

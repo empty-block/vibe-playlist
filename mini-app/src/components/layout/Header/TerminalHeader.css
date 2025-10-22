@@ -1,0 +1,160 @@
+/* Terminal Header Component - Consolidated Styles */
+
+/* Base Terminal Header */
+.terminal-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--terminal-bg);
+  font-family: var(--font-terminal);
+  font-size: 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Color variants */
+.terminal-header--magenta {
+  border-bottom: 1px solid var(--neon-magenta);
+  box-shadow: 0 2px 8px rgba(224, 16, 224, 0.1);
+}
+
+.terminal-header--cyan {
+  border-bottom: 1px solid var(--neon-cyan);
+  box-shadow: 0 2px 8px rgba(4, 202, 244, 0.1);
+}
+
+.terminal-header--yellow {
+  border-bottom: 1px solid var(--neon-yellow);
+  box-shadow: 0 2px 8px rgba(255, 255, 0, 0.1);
+}
+
+.terminal-header--green {
+  border-bottom: 1px solid var(--neon-green);
+  box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+}
+
+/* Title Bar */
+.terminal-title-bar {
+  color: var(--neon-magenta);
+  text-shadow: 0 0 2px var(--neon-magenta);
+  line-height: 1.6;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.terminal-header--cyan .terminal-title-bar {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 2px var(--neon-cyan);
+}
+
+.terminal-header--yellow .terminal-title-bar {
+  color: var(--neon-yellow);
+  text-shadow: 0 0 2px var(--neon-yellow);
+}
+
+.terminal-header--green .terminal-title-bar {
+  color: var(--neon-yellow);
+  text-shadow: 0 0 2px var(--neon-yellow);
+}
+
+.terminal-status-info {
+  color: var(--neon-magenta);
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.terminal-header--cyan .terminal-status-info {
+  color: var(--neon-yellow);
+}
+
+.terminal-header--yellow .terminal-status-info {
+  color: var(--neon-yellow);
+}
+
+.terminal-header--green .terminal-status-info {
+  color: var(--neon-yellow);
+}
+
+/* Content Area (Wrapper for Prompt + Command) */
+.terminal-content-area {
+  width: 100%;
+  padding: 8px 0;
+}
+
+/* Command Prompt Line (User + Path) */
+.terminal-prompt-line {
+  text-align: center;
+  padding: 8px 0;
+  line-height: 1.8;
+  color: var(--terminal-text);
+  font-size: 11px;
+}
+
+/* Command Line ($ command) */
+.terminal-command-line {
+  text-align: center;
+  padding: 4px 0 8px;
+  line-height: 1.8;
+  color: var(--terminal-text);
+  font-size: 11px;
+}
+
+.terminal-user {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+.terminal-colon,
+.terminal-dollar {
+  color: var(--terminal-text);
+}
+
+.terminal-path {
+  color: var(--neon-cyan);
+}
+
+.terminal-dollar {
+  margin-left: 8px;
+}
+
+.terminal-command {
+  color: var(--terminal-white);
+  margin-left: 4px;
+}
+
+.terminal-cursor {
+  color: var(--terminal-white);
+  background: var(--terminal-white);
+}
+
+.border-v {
+  color: var(--terminal-muted);
+  user-select: none;
+}
+
+/* Bottom Border */
+.terminal-bottom-border {
+  color: var(--terminal-muted);
+  margin-top: 8px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .terminal-header {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  .terminal-title-bar {
+    font-size: 10px;
+  }
+
+  .terminal-status-info {
+    font-size: 9px;
+  }
+}

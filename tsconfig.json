@@ -12,6 +12,6 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["bun-types"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "src/types/**/*.d.ts"],
+  "include": ["frontend/**/*.ts", "frontend/**/*.tsx", "backend/**/*.ts", "shared/**/*.ts"],
   "exclude": ["node_modules"]
 }

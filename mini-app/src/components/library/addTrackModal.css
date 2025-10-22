@@ -1,0 +1,208 @@
+/* AddTrack Modal Specific Styles */
+.add-track-modal {
+  background: var(--darker-bg, #0f0f0f) !important;
+  border: 3px solid var(--neon-cyan, #04caf4) !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 0 20px rgba(4, 202, 244, 0.4),
+    inset 0 0 20px rgba(4, 202, 244, 0.1) !important;
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.terminal-header {
+  background: rgba(4, 202, 244, 0.1);
+  border-bottom: 2px solid var(--neon-cyan, #04caf4);
+  padding: 12px 20px;
+  font-size: 12px;
+  color: var(--neon-cyan, #04caf4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.terminal-path-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.terminal-prefix {
+  color: var(--neon-green, #00f92a);
+  font-weight: bold;
+}
+
+.terminal-path {
+  color: var(--neon-orange, #ff8f00);
+}
+
+.cursor-blink {
+  color: var(--neon-cyan, #04caf4);
+  animation: cursor-blink 1s infinite;
+  z-index: 1;
+  position: relative;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.terminal-close-button {
+  background: transparent !important;
+  border: 1px solid var(--neon-cyan, #04caf4) !important;
+  color: var(--neon-cyan, #04caf4) !important;
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-radius: 0 !important;
+  line-height: 1 !important;
+}
+
+.terminal-close-button:hover {
+  background: rgba(4, 202, 244, 0.2) !important;
+  color: var(--neon-green, #00f92a) !important;
+  border-color: var(--neon-green, #00f92a) !important;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(4, 202, 244, 0.3);
+  padding: 12px 20px;
+  background: rgba(15, 15, 15, 0.8);
+}
+
+.terminal-status {
+  font-size: 10px;
+  color: var(--neon-cyan, #04caf4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  opacity: 0.7;
+}
+
+/* Override SongInputForm styles for modal context */
+.add-track-modal .retro-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 24px !important;
+  margin-bottom: 0 !important;
+}
+
+.add-track-modal .retro-panel,
+.add-track-modal .retro-panel * {
+  color: var(--light-text, #ffffff) !important;
+}
+
+.add-track-modal .retro-panel h2 {
+  color: var(--neon-cyan, #04caf4) !important;
+  background: transparent !important;
+  border: none !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  margin-bottom: 20px !important;
+  font-size: 14px !important;
+}
+
+.add-track-modal .retro-panel h2 i {
+  color: var(--neon-green, #00f92a) !important;
+}
+
+/* Target TextInput components directly by element */
+.add-track-modal input[type="text"],
+.add-track-modal textarea {
+  background: rgba(13, 13, 13, 0.8) !important;
+  border: 2px solid rgba(4, 202, 244, 0.3) !important;
+  color: var(--light-text, #ffffff) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  transition: all 0.3s ease !important;
+  border-radius: 0 !important;
+}
+
+.add-track-modal input[type="text"]:focus,
+.add-track-modal textarea:focus {
+  border-color: var(--neon-cyan, #04caf4) !important;
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4) !important;
+  background: rgba(13, 13, 13, 1) !important;
+  outline: none !important;
+}
+
+.add-track-modal label {
+  color: var(--neon-cyan, #04caf4) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 6px !important;
+  font-weight: normal !important;
+}
+
+.add-track-modal .animated-button {
+  background: linear-gradient(135deg, var(--neon-blue, #3b00fd), var(--neon-cyan, #04caf4)) !important;
+  border: none !important;
+  color: var(--light-text, #ffffff) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  font-weight: bold !important;
+  padding: 12px 32px !important;
+  transition: all 0.3s ease !important;
+  border-radius: 0 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.add-track-modal .animated-button:hover:not(:disabled) {
+  box-shadow:
+    0 0 16px rgba(4, 202, 244, 0.4),
+    0 4px 20px rgba(4, 202, 244, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.add-track-modal .animated-button:disabled {
+  background: rgba(59, 0, 253, 0.3) !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+  .terminal-header {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .add-track-modal .retro-panel {
+    padding: 20px 16px !important;
+  }
+
+  .add-track-modal .text-input input,
+  .add-track-modal .text-input textarea {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    padding: 12px 16px !important;
+  }
+
+  .add-track-modal .animated-button {
+    width: 100% !important;
+    padding: 16px !important;
+    font-size: 14px !important;
+  }
+
+  .modal-footer {
+    padding: 8px 16px;
+  }
+
+  .terminal-status {
+    font-size: 9px;
+  }
+}

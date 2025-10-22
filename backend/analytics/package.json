@@ -1,0 +1,21 @@
+{
+  "name": "analytics-api",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot src/main.ts",
+    "start": "bun src/main.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.0.12"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.4",
+    "hono": "^4.8.4"
+  }
+}

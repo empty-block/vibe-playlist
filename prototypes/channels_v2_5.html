@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channels List - Zen Master's Choice v2.5</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Window Container */
+        .window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            max-height: 720px;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084D0);
+            padding: 3px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .title-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-icon {
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+            border: 1px solid #000080;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .control-btn {
+            width: 18px;
+            height: 16px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            font-size: 11px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #000000;
+            padding-bottom: 2px;
+        }
+
+        .control-btn:active {
+            border-top: 1px solid #000000;
+            border-left: 1px solid #000000;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            background: #FFFFFF;
+            margin: 3px;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Channels Container - Scrollable */
+        .channels-container {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 8px;
+        }
+
+        /* Channel Item - Balanced 40x40 Design */
+        .channel-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px;
+            margin-bottom: 2px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background: #FFFFFF;
+            transition: none;
+        }
+
+        .channel-item:nth-child(even) {
+            background: #F0F0F0;
+        }
+
+        .channel-item:hover {
+            background: #000080;
+            color: #FFFFFF;
+            border: 2px dotted #FFFFFF;
+        }
+
+        .channel-item:active {
+            background: #00007F;
+        }
+
+        /* Channel Image - 40x40 sweet spot */
+        .channel-image {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* Channel Info */
+        .channel-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        /* Channel Header - Name + Badge */
+        .channel-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            font-size: 13px;
+            line-height: 1.2;
+        }
+
+        .channel-item:hover .channel-name {
+            color: #FFFFFF;
+        }
+
+        /* User Badge - Compact but visible */
+        .user-badge {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            padding: 1px 5px;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+            color: #000000;
+            line-height: 1.4;
+        }
+
+        .channel-item:hover .user-badge {
+            background: #FFFFFF;
+            color: #000080;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+        }
+
+        /* Channel Description - Single line with ellipsis */
+        .channel-description {
+            font-size: 11px;
+            line-height: 1.3;
+            color: #666666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .channel-item:hover .channel-description {
+            color: #FFFFFF;
+        }
+
+        /* Search Section - Bottom */
+        .search-section {
+            padding: 8px;
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 3px 4px;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #FFFFFF;
+            border-bottom: 1px solid #FFFFFF;
+            font-family: 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            background: #FFFFFF;
+        }
+
+        .search-input:focus {
+            outline: 1px dotted #000000;
+            outline-offset: -2px;
+        }
+
+        /* Scrollbar Styling */
+        .channels-container::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .channels-container::-webkit-scrollbar-track {
+            background: #FFFFFF;
+            border-left: 1px solid #808080;
+        }
+
+        .channels-container::-webkit-scrollbar-thumb {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        .channels-container::-webkit-scrollbar-thumb:hover {
+            background: #A8A8A8;
+        }
+
+        .channels-container::-webkit-scrollbar-button {
+            height: 16px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+        }
+
+        .channels-container::-webkit-scrollbar-button:vertical:decrement {
+            background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 6l-4 4h8z" fill="%23000000"/></svg>') center no-repeat;
+        }
+
+        .channels-container::-webkit-scrollbar-button:vertical:increment {
+            background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 10l4-4H4z" fill="%23000000"/></svg>') center no-repeat;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            body {
+                padding: 10px;
+            }
+
+            .window {
+                max-width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .channel-item {
+                gap: 8px;
+                padding: 6px;
+            }
+
+            .channel-description {
+                font-size: 10px;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: none;
+            padding: 40px 20px;
+            text-align: center;
+            color: #808080;
+            font-size: 11px;
+        }
+
+        .channels-container:empty + .empty-state {
+            display: block;
+        }
+
+        /* Gradient variations for channel images */
+        .channel-image.gradient-1 { background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%); }
+        .channel-image.gradient-2 { background: linear-gradient(135deg, #A8E6CF 0%, #3D84A8 100%); }
+        .channel-image.gradient-3 { background: linear-gradient(135deg, #FFD93D 0%, #FF6B6B 100%); }
+        .channel-image.gradient-4 { background: linear-gradient(135deg, #B388EB 0%, #8093F1 100%); }
+        .channel-image.gradient-5 { background: linear-gradient(135deg, #FFC0CB 0%, #FF6B9D 100%); }
+        .channel-image.gradient-6 { background: linear-gradient(135deg, #FFE66D 0%, #FF6B6B 100%); }
+        .channel-image.gradient-7 { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .channel-image.gradient-8 { background: linear-gradient(135deg, #A8A8A8 0%, #5D5D5D 100%); }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-text">
+                <div class="title-icon"></div>
+                <span>Music Channels</span>
+            </div>
+            <div class="window-controls">
+                <button class="control-btn" title="Minimize">_</button>
+                <button class="control-btn" title="Maximize">□</button>
+                <button class="control-btn" title="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Channels List -->
+            <div class="channels-container" id="channelsList">
+                <!-- Hip Hop -->
+                <div class="channel-item" data-channel="hip-hop">
+                    <div class="channel-image gradient-1">🎤</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Hip Hop</span>
+                            <span class="user-badge">247 users</span>
+                        </div>
+                        <div class="channel-description">Latest hip hop, rap, and urban beats from around the world</div>
+                    </div>
+                </div>
+
+                <!-- Electronic -->
+                <div class="channel-item" data-channel="electronic">
+                    <div class="channel-image gradient-2">🎹</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Electronic</span>
+                            <span class="user-badge">189 users</span>
+                        </div>
+                        <div class="channel-description">EDM, techno, house, and electronic music</div>
+                    </div>
+                </div>
+
+                <!-- Rock -->
+                <div class="channel-item" data-channel="rock">
+                    <div class="channel-image gradient-3">🎸</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Rock</span>
+                            <span class="user-badge">312 users</span>
+                        </div>
+                        <div class="channel-description">Classic and modern rock anthems that never get old</div>
+                    </div>
+                </div>
+
+                <!-- Jazz -->
+                <div class="channel-item" data-channel="jazz">
+                    <div class="channel-image gradient-4">🎺</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Jazz</span>
+                            <span class="user-badge">156 users</span>
+                        </div>
+                        <div class="channel-description">Smooth jazz, bebop, and contemporary jazz selections</div>
+                    </div>
+                </div>
+
+                <!-- Indie -->
+                <div class="channel-item" data-channel="indie">
+                    <div class="channel-image gradient-5">🎵</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Indie</span>
+                            <span class="user-badge">203 users</span>
+                        </div>
+                        <div class="channel-description">Independent and alternative music from emerging artists</div>
+                    </div>
+                </div>
+
+                <!-- R&B/Soul -->
+                <div class="channel-item" data-channel="rnb-soul">
+                    <div class="channel-image gradient-6">🎶</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">R&B/Soul</span>
+                            <span class="user-badge">178 users</span>
+                        </div>
+                        <div class="channel-description">Rhythm and blues, soul classics and new releases</div>
+                    </div>
+                </div>
+
+                <!-- Pop -->
+                <div class="channel-item" data-channel="pop">
+                    <div class="channel-image gradient-7">⭐</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Pop</span>
+                            <span class="user-badge">534 users</span>
+                        </div>
+                        <div class="channel-description">Top 40 hits and popular music from today's charts</div>
+                    </div>
+                </div>
+
+                <!-- Classical -->
+                <div class="channel-item" data-channel="classical">
+                    <div class="channel-image gradient-8">🎻</div>
+                    <div class="channel-info">
+                        <div class="channel-header">
+                            <span class="channel-name">Classical</span>
+                            <span class="user-badge">92 users</span>
+                        </div>
+                        <div class="channel-description">Classical compositions from baroque to contemporary</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-state">
+                No channels found matching your search.
+            </div>
+        </div>
+
+        <!-- Search Section - Bottom -->
+        <div class="search-section">
+            <div class="search-container">
+                <label class="search-label" for="searchInput">Find:</label>
+                <div class="search-input-wrapper">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Search channels..."
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const channelsList = document.getElementById('channelsList');
+        const channelItems = document.querySelectorAll('.channel-item');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+
+            let visibleCount = 0;
+
+            channelItems.forEach(item => {
+                const name = item.querySelector('.channel-name').textContent.toLowerCase();
+                const description = item.querySelector('.channel-description').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || description.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Show/hide empty state
+            if (visibleCount === 0 && searchTerm !== '') {
+                channelsList.style.display = 'none';
+                channelsList.nextElementSibling.style.display = 'block';
+            } else {
+                channelsList.style.display = 'block';
+                channelsList.nextElementSibling.style.display = 'none';
+            }
+        });
+
+        // Channel click handler
+        channelItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const channelName = item.querySelector('.channel-name').textContent;
+                console.log(`Navigating to channel: ${channelName}`);
+                // In real app, would navigate to channel details
+            });
+        });
+
+        // Window control handlers
+        document.querySelector('.control-btn[title="Close"]').addEventListener('click', () => {
+            console.log('Close window');
+        });
+
+        document.querySelector('.control-btn[title="Minimize"]').addEventListener('click', () => {
+            console.log('Minimize window');
+        });
+
+        document.querySelector('.control-btn[title="Maximize"]').addEventListener('click', () => {
+            console.log('Maximize window');
+        });
+    </script>
+</body>
+</html>

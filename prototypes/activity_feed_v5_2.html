@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Feed v5.2 - Radical Subtlety</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+      background: #008080;
+      padding: 40px 20px;
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .window {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+
+    .title-bar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      padding: 3px 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-text {
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-button {
+      width: 16px;
+      height: 14px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .window-button:active {
+      border-color: #000000 #ffffff #ffffff #000000;
+    }
+
+    .content {
+      padding: 16px;
+      background: #ffffff;
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
+      margin: 2px;
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .activity-card {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      padding: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+
+    .thumbnail-container {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .thumbnail {
+      width: 48px;
+      height: 48px;
+      background: #000000;
+      border: 1px solid #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00ff41;
+      font-size: 20px;
+    }
+
+    /* Ultra-minimal source badge - bottom-right corner overlay */
+    .source-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #606060;
+      font-family: 'Courier New', monospace;
+      font-size: 7px;
+      padding: 1px 3px;
+      letter-spacing: 0.3px;
+      text-transform: lowercase;
+      opacity: 0.6;
+    }
+
+    .card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .username {
+      color: #000080;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .timestamp {
+      color: #808080;
+      font-size: 11px;
+    }
+
+    .track-info {
+      margin-bottom: 8px;
+    }
+
+    .track-title {
+      font-weight: bold;
+      font-size: 13px;
+      color: #000000;
+      margin-bottom: 2px;
+    }
+
+    .track-artist {
+      color: #404040;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Alternative inline source badge style */
+    .source-inline {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      color: #909090;
+      opacity: 0.5;
+      text-transform: lowercase;
+      letter-spacing: 0.2px;
+    }
+
+    .comment-box {
+      background: #ffffe0;
+      border: 1px solid #c0c000;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 12px;
+      color: #000000;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: #404040;
+      margin-top: 8px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .stat-icon {
+      font-size: 10px;
+    }
+
+    /* Outlined play button - cyberpunk minimal */
+    .play-button {
+      margin-top: 8px;
+      background: transparent;
+      border: 1px solid #00ff41;
+      color: #00ff41;
+      padding: 4px 12px;
+      font-family: 'MS Sans Serif', sans-serif;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .play-button:hover {
+      box-shadow: 0 0 8px rgba(0, 255, 65, 0.4),
+                  inset 0 0 8px rgba(0, 255, 65, 0.1);
+      background: rgba(0, 255, 65, 0.05);
+    }
+
+    .play-button:active {
+      background: #00ff41;
+      color: #000000;
+      box-shadow: 0 0 12px rgba(0, 255, 65, 0.6);
+    }
+
+    /* Separator between cards */
+    .separator {
+      height: 1px;
+      background: #808080;
+      margin: 8px 0;
+      border: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      body {
+        padding: 20px 10px;
+      }
+
+      .activity-card {
+        padding: 10px;
+      }
+
+      .thumbnail {
+        width: 40px;
+        height: 40px;
+      }
+
+      .stats {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+    }
+
+    /* Alternative layout experiment - source badge variations */
+    .layout-experiment {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 3px solid #808080;
+    }
+
+    .experiment-label {
+      background: #000080;
+      color: white;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    /* Experiment 2: Source as tiny text below artist */
+    .track-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .source-below {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      color: #a0a0a0;
+      opacity: 0.4;
+      text-transform: lowercase;
+      letter-spacing: 0.3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Main Feed Window -->
+    <div class="window">
+      <div class="title-bar">
+        <span class="title-text">Activity Feed v5.2 - Radical Subtlety</span>
+        <div class="window-controls">
+          <div class="window-button">_</div>
+          <div class="window-button">□</div>
+          <div class="window-button">×</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="feed">
+          <!-- Activity Card 1 - Badge on thumbnail corner -->
+          <div class="activity-card">
+            <div class="card-header">
+              <div class="thumbnail-container">
+                <div class="thumbnail">♪</div>
+                <div class="source-badge">spotify</div>
+              </div>
+              <div class="card-info">
+                <div class="user-line">
+                  <span class="username">@musiclover</span>
+                  <span class="timestamp">• 2h ago</span>
+                </div>
+                <div class="track-info">
+                  <div class="track-title">"Blinding Lights"</div>
+                  <div class="track-artist">The Weeknd</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="comment-box">
+              This song never gets old! 🔥
+            </div>
+
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>23</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>5</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>12</span>
+              </div>
+            </div>
+
+            <button class="play-button">▶ Play</button>
+          </div>
+
+          <!-- Activity Card 2 - Inline source style -->
+          <div class="activity-card">
+            <div class="card-header">
+              <div class="thumbnail-container">
+                <div class="thumbnail">♫</div>
+                <div class="source-badge">youtube</div>
+              </div>
+              <div class="card-info">
+                <div class="user-line">
+                  <span class="username">@djkool</span>
+                  <span class="timestamp">• 3h ago</span>
+                </div>
+                <div class="track-info">
+                  <div class="track-title">"Levitating"</div>
+                  <div class="track-artist">Dua Lipa</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>45</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>12</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>8</span>
+              </div>
+            </div>
+
+            <button class="play-button">▶ Play</button>
+          </div>
+
+          <!-- Activity Card 3 -->
+          <div class="activity-card">
+            <div class="card-header">
+              <div class="thumbnail-container">
+                <div class="thumbnail">♪</div>
+                <div class="source-badge">spotify</div>
+              </div>
+              <div class="card-info">
+                <div class="user-line">
+                  <span class="username">@popfan99</span>
+                  <span class="timestamp">• 5h ago</span>
+                </div>
+                <div class="track-info">
+                  <div class="track-title">"good 4 u"</div>
+                  <div class="track-artist">Olivia Rodrigo</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="comment-box">
+              Absolute banger
+            </div>
+
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>67</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>8</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>15</span>
+              </div>
+            </div>
+
+            <button class="play-button">▶ Play</button>
+          </div>
+
+          <!-- Activity Card 4 -->
+          <div class="activity-card">
+            <div class="card-header">
+              <div class="thumbnail-container">
+                <div class="thumbnail">♫</div>
+                <div class="source-badge">youtube</div>
+              </div>
+              <div class="card-info">
+                <div class="user-line">
+                  <span class="username">@indiekid</span>
+                  <span class="timestamp">• 1d ago</span>
+                </div>
+                <div class="track-info">
+                  <div class="track-title">"Heat Waves"</div>
+                  <div class="track-artist">Glass Animals</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-icon">♥</span>
+                <span>89</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">💬</span>
+                <span>15</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-icon">↻</span>
+                <span>23</span>
+              </div>
+            </div>
+
+            <button class="play-button">▶ Play</button>
+          </div>
+        </div>
+
+        <!-- Experimental Layouts Section -->
+        <div class="layout-experiment">
+          <div class="experiment-label">EXPERIMENTAL LAYOUTS</div>
+
+          <div class="feed">
+            <!-- Experiment: Inline source after artist -->
+            <div class="activity-card">
+              <div class="card-header">
+                <div class="thumbnail-container">
+                  <div class="thumbnail">♪</div>
+                </div>
+                <div class="card-info">
+                  <div class="user-line">
+                    <span class="username">@musiclover</span>
+                    <span class="timestamp">• 2h ago</span>
+                  </div>
+                  <div class="track-info">
+                    <div class="track-title">"Blinding Lights"</div>
+                    <div class="track-artist">
+                      The Weeknd <span class="source-inline">• spotify</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="play-button">▶ Play</button>
+            </div>
+
+            <!-- Experiment: Source below artist (even more hidden) -->
+            <div class="activity-card">
+              <div class="card-header">
+                <div class="thumbnail-container">
+                  <div class="thumbnail">♫</div>
+                </div>
+                <div class="card-info">
+                  <div class="user-line">
+                    <span class="username">@djkool</span>
+                    <span class="timestamp">• 3h ago</span>
+                  </div>
+                  <div class="track-meta">
+                    <div class="track-title">"Levitating"</div>
+                    <div class="track-artist">Dua Lipa</div>
+                    <div class="source-below">youtube</div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="play-button">▶ Play</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design Notes -->
+    <div class="window" style="margin-top: 20px;">
+      <div class="title-bar">
+        <span class="title-text">Design Notes - v5.2</span>
+        <div class="window-controls">
+          <div class="window-button">_</div>
+          <div class="window-button">□</div>
+          <div class="window-button">×</div>
+        </div>
+      </div>
+
+      <div class="content" style="font-size: 12px; line-height: 1.6;">
+        <h3 style="margin-bottom: 8px; color: #000080;">Radical Subtlety Approach</h3>
+
+        <p style="margin-bottom: 12px;"><strong>Source Badge Evolution:</strong></p>
+        <ul style="margin-left: 20px; margin-bottom: 12px;">
+          <li>Positioned as tiny overlay on thumbnail corner</li>
+          <li>7px monospace font, lowercase only</li>
+          <li>60% opacity, #606060 color on dark background</li>
+          <li>Almost invisible unless you're looking for it</li>
+          <li>Experimental: Inline after artist or below artist</li>
+        </ul>
+
+        <p style="margin-bottom: 12px;"><strong>Outlined Play Button:</strong></p>
+        <ul style="margin-left: 20px; margin-bottom: 12px;">
+          <li>Cyberpunk-inspired: thin border, no fill</li>
+          <li>Matrix green (#00ff41) for retro-tech aesthetic</li>
+          <li>Hover adds subtle glow without being excessive</li>
+          <li>Active state inverts: green fill, black text</li>
+          <li>Modern-retro fusion that feels fresh</li>
+        </ul>
+
+        <p style="margin-bottom: 12px;"><strong>Layout Philosophy:</strong></p>
+        <ul style="margin-left: 20px; margin-bottom: 12px;">
+          <li>Windows 95 structure with radical minimalism</li>
+          <li>Less visual noise than v5 or v5.1</li>
+          <li>Information hierarchy through subtraction</li>
+          <li>Source badges are metadata, not primary info</li>
+        </ul>
+
+        <p style="margin-bottom: 8px;"><strong>Three Badge Approaches Shown:</strong></p>
+        <ol style="margin-left: 20px;">
+          <li><strong>Corner overlay</strong> - Main cards (most subtle)</li>
+          <li><strong>Inline after artist</strong> - Experiment 1 (bullet separator)</li>
+          <li><strong>Below artist</strong> - Experiment 2 (separate tiny line)</li>
+        </ol>
+
+        <p style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #808080; font-size: 11px; color: #606060;">
+          The goal: Make source information available but never intrusive. Users who care can find it; users who don't won't be distracted by it.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/* Windows 95 Taskbar-Style Navigation Bar */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-window);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+  padding: 4px;
+  margin: 0;
+  display: flex;
+  gap: 2px;
+  z-index: 1000;
+  font-family: var(--font-main);
+}
+
+.nav-button {
+  flex: 1;
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: none;
+}
+
+.nav-button:active,
+.nav-button-active {
+  border-top: 2px solid var(--border-sunken-light);
+  border-left: 2px solid var(--border-sunken-light);
+  border-right: 2px solid var(--border-sunken-dark);
+  border-bottom: 2px solid var(--border-sunken-dark);
+  transform: translateY(1px);
+}
+
+/* Dark mode adds glow effect */
+.theme-dark .nav-button:hover {
+  background: var(--hover-bg);
+  box-shadow: 0 0 10px var(--glow-accent);
+}
+
+.theme-dark .nav-button-active {
+  background: var(--active-bg);
+  box-shadow: inset 0 0 10px var(--glow-accent);
+}
+
+.nav-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Update SVG strokes for dark mode */
+.theme-dark .nav-icon svg {
+  filter: drop-shadow(0 0 2px rgba(0, 255, 0, 0.3));
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.theme-dark .nav-label {
+  text-shadow: 0 0 3px var(--glow-accent);
+}
+
+/* Safe area for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .nav-bar {
+    padding: 3px;
+    gap: 1px;
+  }
+
+  .nav-button {
+    padding: 6px 2px;
+    gap: 3px;
+  }
+
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .nav-label {
+    font-size: 9px;
+  }
+}

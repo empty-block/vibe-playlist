@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Activity Feed (Win95 Variation 3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #008080;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            max-width: 860px;
+            width: 100%;
+        }
+
+        .title-bar {
+            background: #000080;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 11px;
+            padding-left: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border: 1px outset #FFFFFF;
+            font-size: 8px;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        .toolbar {
+            background: #C0C0C8;
+            padding: 4px;
+            border-bottom: 1px solid #FFFFFF;
+            display: flex;
+            gap: 4px;
+        }
+
+        .toolbar-button {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .content-area {
+            display: flex;
+            gap: 2px;
+            padding: 2px;
+        }
+
+        .tracks-panel {
+            flex: 1;
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            height: 460px;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            border-bottom: 1px solid #D4D0C8;
+            cursor: pointer;
+            align-items: center;
+        }
+
+        .track-item:nth-child(odd) {
+            background: #FFFFFF;
+        }
+
+        .track-item:nth-child(even) {
+            background: #F8F8F8;
+        }
+
+        .track-item:hover {
+            background: #DFDFDF;
+        }
+
+        .track-item.selected {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .track-item.playing {
+            background: #E0FFE0;
+        }
+
+        .track-item.playing:hover {
+            background: #D0F0D0;
+        }
+
+        .track-number {
+            width: 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .track-thumb-small {
+            width: 48px;
+            height: 48px;
+            background: #C0C0C8;
+            border: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .track-details {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .track-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .track-name {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .track-source {
+            background: #C0C0C8;
+            padding: 1px 4px;
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #808080;
+        }
+
+        .track-item.selected .track-source {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .track-artist-row {
+            font-size: 11px;
+            color: #404040;
+        }
+
+        .track-item.selected .track-artist-row {
+            color: #FFFFFF;
+        }
+
+        .track-meta-row {
+            font-size: 10px;
+            color: #808080;
+            display: flex;
+            gap: 8px;
+        }
+
+        .track-item.selected .track-meta-row {
+            color: #FFFFFF;
+        }
+
+        .meta-user {
+            color: #0054A6;
+            font-weight: bold;
+        }
+
+        .track-item.selected .meta-user {
+            color: #FFFFFF;
+        }
+
+        .track-actions-col {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .play-btn {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #808080;
+            border-bottom: 2px solid #808080;
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .play-btn:active {
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #FFFFFF;
+            border-bottom: 2px solid #FFFFFF;
+        }
+
+        .track-stats {
+            display: flex;
+            gap: 8px;
+            font-size: 10px;
+            justify-content: center;
+        }
+
+        .playing-bar {
+            background: #FFFFFF;
+            border: 1px inset #808080;
+            height: 14px;
+            margin-top: 4px;
+            position: relative;
+        }
+
+        .playing-bar-fill {
+            background: #00A651;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .status-bar {
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            padding: 2px 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-panel {
+            border: 1px inset #808080;
+            padding: 1px 6px;
+            background: #FFFFFF;
+        }
+
+        @media (max-width: 768px) {
+            .track-number {
+                display: none;
+            }
+
+            .track-stats {
+                display: none;
+            }
+
+            .toolbar {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="win95-window">
+        <div class="title-bar">
+            <div class="title-bar-text">JAMZY ACTIVITY</div>
+            <div class="title-bar-controls">
+                <button>_</button>
+                <button>□</button>
+                <button>X</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button class="toolbar-button">🔄 Refresh</button>
+            <button class="toolbar-button">⚡ All</button>
+            <button class="toolbar-button">🎵 Tracks</button>
+            <button class="toolbar-button">💬 Replies</button>
+            <button class="toolbar-button">❤️ Likes</button>
+        </div>
+
+        <div class="content-area">
+            <div class="tracks-panel">
+                <!-- Track 1 - Playing -->
+                <div class="track-item playing">
+                    <div class="track-number">1</div>
+                    <div class="track-thumb-small">🎵</div>
+                    <div class="track-details">
+                        <div class="track-title-row">
+                            <span class="track-name">Blinding Lights</span>
+                            <span class="track-source">SPOTIFY</span>
+                        </div>
+                        <div class="track-artist-row">The Weeknd</div>
+                        <div class="track-meta-row">
+                            <span class="meta-user">@musiclover</span>
+                            <span>·</span>
+                            <span>2h ago</span>
+                        </div>
+                        <div class="playing-bar">
+                            <div class="playing-bar-fill" style="width: 65%;">65%</div>
+                        </div>
+                    </div>
+                    <div class="track-actions-col">
+                        <button class="play-btn">⏸ PAUSE</button>
+                        <div class="track-stats">
+                            <span>♥ 23</span>
+                            <span>💬 5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track 2 -->
+                <div class="track-item">
+                    <div class="track-number">2</div>
+                    <div class="track-thumb-small">🎵</div>
+                    <div class="track-details">
+                        <div class="track-title-row">
+                            <span class="track-name">Levitating</span>
+                            <span class="track-source">YOUTUBE</span>
+                        </div>
+                        <div class="track-artist-row">Dua Lipa</div>
+                        <div class="track-meta-row">
+                            <span class="meta-user">@djkool</span>
+                            <span>·</span>
+                            <span>3h ago</span>
+                        </div>
+                    </div>
+                    <div class="track-actions-col">
+                        <button class="play-btn">▶ PLAY</button>
+                        <div class="track-stats">
+                            <span>♥ 45</span>
+                            <span>💬 12</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track 3 -->
+                <div class="track-item">
+                    <div class="track-number">3</div>
+                    <div class="track-thumb-small">🎵</div>
+                    <div class="track-details">
+                        <div class="track-title-row">
+                            <span class="track-name">good 4 u</span>
+                            <span class="track-source">SPOTIFY</span>
+                        </div>
+                        <div class="track-artist-row">Olivia Rodrigo</div>
+                        <div class="track-meta-row">
+                            <span class="meta-user">@popfan99</span>
+                            <span>·</span>
+                            <span>5h ago</span>
+                        </div>
+                    </div>
+                    <div class="track-actions-col">
+                        <button class="play-btn">▶ PLAY</button>
+                        <div class="track-stats">
+                            <span>♥ 67</span>
+                            <span>💬 8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track 4 -->
+                <div class="track-item">
+                    <div class="track-number">4</div>
+                    <div class="track-thumb-small">🎵</div>
+                    <div class="track-details">
+                        <div class="track-title-row">
+                            <span class="track-name">Heat Waves</span>
+                            <span class="track-source">YOUTUBE</span>
+                        </div>
+                        <div class="track-artist-row">Glass Animals</div>
+                        <div class="track-meta-row">
+                            <span class="meta-user">@indiekid</span>
+                            <span>·</span>
+                            <span>1d ago</span>
+                        </div>
+                    </div>
+                    <div class="track-actions-col">
+                        <button class="play-btn">▶ PLAY</button>
+                        <div class="track-stats">
+                            <span>♥ 89</span>
+                            <span>💬 15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Track 5 -->
+                <div class="track-item">
+                    <div class="track-number">5</div>
+                    <div class="track-thumb-small">🎵</div>
+                    <div class="track-details">
+                        <div class="track-title-row">
+                            <span class="track-name">Save Your Tears</span>
+                            <span class="track-source">SPOTIFY</span>
+                        </div>
+                        <div class="track-artist-row">The Weeknd</div>
+                        <div class="track-meta-row">
+                            <span class="meta-user">@vibes24</span>
+                            <span>·</span>
+                            <span>1d ago</span>
+                        </div>
+                    </div>
+                    <div class="track-actions-col">
+                        <button class="play-btn">▶ PLAY</button>
+                        <div class="track-stats">
+                            <span>♥ 34</span>
+                            <span>💬 3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-panel">5 tracks loaded</div>
+            <div class="status-panel">Playing: Blinding Lights</div>
+        </div>
+    </div>
+</body>
+</html>

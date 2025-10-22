@@ -1,0 +1,363 @@
+/* Row Track Card - REDESIGNED */
+
+.row-card {
+  width: 100%;
+  min-height: 76px;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 16px;
+  background: transparent;
+  transition: background 150ms ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.row-card:hover {
+  background: rgba(4, 202, 244, 0.05);
+}
+
+.row-card--playing {
+  background: linear-gradient(90deg, rgba(0, 249, 42, 0.03), transparent);
+  border-left: 3px solid #00f92a;
+  padding-left: 13px;
+  box-shadow: inset 3px 0 8px rgba(0, 249, 42, 0.15);
+}
+
+.row-card--playing .row-card__thumbnail {
+  animation: playing-pulse 2s ease-in-out infinite;
+}
+
+@keyframes playing-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(0, 249, 42, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(0, 249, 42, 0.5);
+  }
+}
+
+/* Main Row */
+.row-card__main {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Album Thumbnail */
+.row-card__thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transition: all 200ms ease;
+}
+
+/* Play icon overlay on hover */
+.row-card:not(.row-card--playing):hover .row-card__thumbnail::before {
+  content: '▶';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  animation: play-reveal 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+}
+
+/* Pause icon overlay when playing and hovering */
+.row-card.row-card--playing:hover .row-card__thumbnail::before {
+  content: '⏸';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  animation: play-reveal 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 2;
+}
+
+@keyframes play-reveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.row-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.row-card__error {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg,
+    rgba(4, 202, 244, 0.1),
+    rgba(224, 16, 224, 0.1)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+/* Info Column */
+.row-card__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.row-card__title-artist {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row-card__separator {
+  margin: 0 4px;
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+.row-card__artist {
+  color: #04caf4;
+  font-weight: 600;
+}
+
+.row-card__context {
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+}
+
+.row-card__shared-by-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.row-card__username {
+  color: #e010e0;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.row-card__username:hover {
+  color: #ff1aff;
+  text-shadow: 0 0 8px rgba(224, 16, 224, 0.4);
+}
+
+.row-card__separator-dot {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+}
+
+.row-card__timestamp {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+/* Platform Badge */
+.row-card__platform {
+  font-size: 18px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Comment Row - Social buttons left, comment right */
+.row-card__comment-row {
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  align-items: center;
+}
+
+/* Social buttons - under thumbnail */
+.row-card__social-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.row-card__social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 200ms ease;
+  min-height: 28px;
+  min-width: 28px;
+  flex: 1;
+}
+
+.row-card__social-btn span:last-child {
+  display: none;
+}
+
+.row-card__social-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+.row-card__social-btn:active {
+  transform: scale(0.95);
+}
+
+/* Comment text area - flexible middle column */
+.row-card__comment-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.row-card__comment {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+  font-style: italic;
+}
+
+/* Expand column - fixed on far right */
+.row-card__expand-column {
+  flex-shrink: 0;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-card__expand-btn {
+  background: transparent;
+  border: 1px solid rgba(4, 202, 244, 0.3);
+  color: #04caf4;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  font-size: 12px;
+  width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.row-card__expand-btn:hover {
+  background: rgba(4, 202, 244, 0.1);
+  border-color: #04caf4;
+  transform: scale(1.1);
+}
+
+.row-card__expand-btn:active {
+  transform: scale(0.95);
+}
+
+.row-card__comment--expanded {
+  color: rgba(255, 255, 255, 0.8);
+  border-left: 2px solid #04caf4;
+  padding-left: 12px;
+  margin-left: -12px;
+  background: rgba(4, 202, 244, 0.02);
+  border-radius: 0 4px 4px 0;
+  padding: 8px 0 8px 12px;
+}
+
+/* Card Entrance Animation */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.row-card {
+  animation: card-enter 300ms ease-out;
+}
+
+/* Stagger delays */
+.row-card:nth-child(1) { animation-delay: 0ms; }
+.row-card:nth-child(2) { animation-delay: 40ms; }
+.row-card:nth-child(3) { animation-delay: 80ms; }
+.row-card:nth-child(4) { animation-delay: 120ms; }
+.row-card:nth-child(5) { animation-delay: 160ms; }
+
+/* Desktop - hide row cards (use table instead) */
+@media (min-width: 768px) {
+  .row-card {
+    display: none;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .row-card,
+  .row-card *,
+  .row-card__play-button,
+  .row-card__social-btn {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

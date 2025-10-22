@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICON-004: Napster-Style Toolbar Icons</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+            background: #c0c0c0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #000080 0%, #1084d0 100%);
+            color: white;
+            padding: 8px 12px;
+            margin-bottom: 30px;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.95;
+        }
+
+        .section {
+            background: white;
+            border: 2px solid;
+            border-color: #808080 #dfdfdf #dfdfdf #808080;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #000080;
+            color: #000080;
+        }
+
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #dfdfdf;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+        }
+
+        .icon-label {
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000080;
+            text-align: center;
+        }
+
+        /* Napster-style toolbar mockup */
+        .napster-toolbar {
+            background: #c0c0c0;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            padding: 8px 12px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .toolbar-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 8px;
+            border: 2px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            background: #c0c0c0;
+            cursor: pointer;
+            min-width: 60px;
+        }
+
+        .toolbar-button:hover {
+            background: #b0b0b0;
+        }
+
+        .toolbar-button:active {
+            border-color: #808080 #dfdfdf #dfdfdf #808080;
+        }
+
+        .toolbar-label {
+            font-size: 10px;
+            font-weight: bold;
+            color: #000000;
+            text-transform: uppercase;
+        }
+
+        .specs {
+            background: #fffef0;
+            border: 2px solid;
+            border-color: #808080 #dfdfdf #dfdfdf #808080;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .specs h3 {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #000080;
+        }
+
+        .specs ul {
+            list-style: none;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .specs li::before {
+            content: "• ";
+            color: #000080;
+            font-weight: bold;
+        }
+
+        /* Size variations */
+        .size-demo {
+            display: flex;
+            gap: 30px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .size-variant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .size-label {
+            font-size: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ICON-004: Napster-Style Toolbar Icons</h1>
+            <p>Simple black outlines, light pastel fills - exactly like the OG Napster toolbar</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Napster-Style Toolbar Context</div>
+            <div class="napster-toolbar">
+                <div class="toolbar-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- CHANNELS: Musical note with radio waves -->
+                        <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                              stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <!-- Radio waves -->
+                        <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <span class="toolbar-label">Channels</span>
+                </div>
+
+                <div class="toolbar-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- ACTIVITY: Flame icon -->
+                        <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                              fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="toolbar-label">Activity</span>
+                </div>
+
+                <div class="toolbar-button">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <!-- PROFILE: Simple person head -->
+                        <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                        <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                              fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="toolbar-label">Profile</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Primary Icons (32x32px)</div>
+            <div class="icons-grid">
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                            <!-- CHANNELS: Musical note with radio waves -->
+                            <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                                  stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                            <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                            <!-- Radio waves -->
+                            <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                            <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="icon-label">Channels</span>
+                </div>
+
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                            <!-- ACTIVITY: Flame icon -->
+                            <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                                  fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span class="icon-label">Activity</span>
+                </div>
+
+                <div class="icon-item">
+                    <div class="icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                            <!-- PROFILE: Simple person head -->
+                            <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                            <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                                  fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="icon-label">Profile</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Size Variations - Channels Icon</div>
+            <div class="size-demo">
+                <div class="size-variant">
+                    <svg width="16" height="16" viewBox="0 0 32 32">
+                        <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                              stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">16px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="24" height="24" viewBox="0 0 32 32">
+                        <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                              stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">24px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                              stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">32px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="48" height="48" viewBox="0 0 32 32">
+                        <path d="M14 8 L14 20 M14 8 L20 6 L20 18"
+                              stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="22" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <circle cx="18" cy="20" r="3" fill="#b8d4ff" stroke="#000" stroke-width="2"/>
+                        <path d="M23 12 Q26 12 26 9" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                        <path d="M24 14 Q28 14 28 10" stroke="#000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">48px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Size Variations - Activity Icon</div>
+            <div class="size-demo">
+                <div class="size-variant">
+                    <svg width="16" height="16" viewBox="0 0 32 32">
+                        <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                              fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="size-label">16px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="24" height="24" viewBox="0 0 32 32">
+                        <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                              fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="size-label">24px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                              fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="size-label">32px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="48" height="48" viewBox="0 0 32 32">
+                        <path d="M16 6 Q14 10 14 14 Q14 16 15 17 Q14 15 12 14 Q10 13 10 16 Q10 21 14 24 Q18 27 22 24 Q24 22 24 19 Q24 15 22 13 Q21 12 21 10 Q21 8 20 6 Q19 10 18 12 Q17 13 17 11 Z"
+                              fill="#ffb8c0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="size-label">48px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Size Variations - Profile Icon</div>
+            <div class="size-demo">
+                <div class="size-variant">
+                    <svg width="16" height="16" viewBox="0 0 32 32">
+                        <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                        <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                              fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">16px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="24" height="24" viewBox="0 0 32 32">
+                        <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                        <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                              fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">24px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                        <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                              fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">32px</span>
+                </div>
+
+                <div class="size-variant">
+                    <svg width="48" height="48" viewBox="0 0 32 32">
+                        <circle cx="16" cy="12" r="5" fill="#d4ffb8" stroke="#000" stroke-width="2"/>
+                        <path d="M8 26 Q8 20 16 20 Q24 20 24 26"
+                              fill="#d4ffb8" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="size-label">48px</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="specs">
+            <h3>Design Specifications</h3>
+            <ul>
+                <li><strong>Style:</strong> Napster toolbar aesthetic - simple black outlines with light pastel fills</li>
+                <li><strong>Base Size:</strong> 32x32px (scales to 16px, 24px, 48px)</li>
+                <li><strong>Stroke Width:</strong> 2px for main elements, 1.5px for details</li>
+                <li><strong>Colors:</strong> Light blue (#b8d4ff), light pink (#ffb8c0), light green (#d4ffb8) with black (#000) outlines</li>
+                <li><strong>Design Principle:</strong> Minimal detail, maximum clarity - exactly like original Napster toolbar icons</li>
+                <li><strong>Philosophy:</strong> Each icon uses only essential shapes; readable even at smallest sizes</li>
+            </ul>
+        </div>
+
+        <div class="specs" style="margin-top: 20px; background: #fff;">
+            <h3>Implementation Notes</h3>
+            <ul>
+                <li><strong>Channels:</strong> Double musical note (beamed eighth notes) + radio wave curves = broadcasting music</li>
+                <li><strong>Activity:</strong> Stylized flame shape = hot/trending content (matches Napster's "Hot List")</li>
+                <li><strong>Profile:</strong> Head circle + shoulder arc = user identity (cleanest possible person icon)</li>
+                <li><strong>Scalability:</strong> All icons use same 32x32 viewBox for consistent scaling</li>
+                <li><strong>Accessibility:</strong> High contrast black outlines ensure visibility on any background</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

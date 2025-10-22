@@ -1,0 +1,256 @@
+/* Channel Item - Windows 95 Style - Light Mode */
+.theme-light .channel-item,
+body:not(.theme-dark) .channel-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: #FFFFFF;
+  transition: none;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-light .channel-item.even,
+body:not(.theme-dark) .channel-item.even {
+  background: #F0F0F0;
+}
+
+.theme-light .channel-item:hover,
+body:not(.theme-dark) .channel-item:hover {
+  background: #000080 !important;
+  color: #FFFFFF;
+  border: 2px dotted #FFFFFF;
+}
+
+.theme-light .channel-item:active,
+body:not(.theme-dark) .channel-item:active {
+  background: #00007F !important;
+}
+
+.theme-light .channel-item:focus,
+body:not(.theme-dark) .channel-item:focus {
+  outline: 2px dotted #000000;
+  outline-offset: -4px;
+}
+
+/* Channel Item - Dark Mode */
+.theme-dark .channel-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border: 2px solid #00ff00;
+  background: #000000;
+  transition: all 0.2s ease;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+.theme-dark .channel-item.even {
+  background: #0a0a0a;
+}
+
+.theme-dark .channel-item:hover {
+  background: #1a1a1a !important;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.theme-dark .channel-item:active {
+  background: #0d0d0d !important;
+}
+
+.theme-dark .channel-item:focus {
+  outline: 2px dotted #00ff00;
+  outline-offset: -4px;
+}
+
+/* Channel Image - 40x40 */
+.channel-image {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #FFFFFF;
+  border-bottom: 2px solid #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* Gradient variations for channel images */
+.channel-image.gradient-1 {
+  background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+}
+
+.channel-image.gradient-2 {
+  background: linear-gradient(135deg, #A8E6CF 0%, #3D84A8 100%);
+}
+
+.channel-image.gradient-3 {
+  background: linear-gradient(135deg, #FFD93D 0%, #FF6B6B 100%);
+}
+
+.channel-image.gradient-4 {
+  background: linear-gradient(135deg, #B388EB 0%, #8093F1 100%);
+}
+
+.channel-image.gradient-5 {
+  background: linear-gradient(135deg, #FFC0CB 0%, #FF6B9D 100%);
+}
+
+.channel-image.gradient-6 {
+  background: linear-gradient(135deg, #FFE66D 0%, #FF6B6B 100%);
+}
+
+.channel-image.gradient-7 {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+}
+
+.channel-image.gradient-8 {
+  background: linear-gradient(135deg, #A8A8A8 0%, #5D5D5D 100%);
+}
+
+/* Channel Info */
+.channel-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Channel Header - Name + Badge */
+.channel-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Channel Name - Light Mode */
+.theme-light .channel-name,
+body:not(.theme-dark) .channel-name {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #000000;
+}
+
+.theme-light .channel-item:hover .channel-name,
+body:not(.theme-dark) .channel-item:hover .channel-name {
+  color: #FFFFFF;
+}
+
+/* Channel Name - Dark Mode */
+.theme-dark .channel-name {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #00ff00;
+}
+
+.theme-dark .channel-item:hover .channel-name {
+  color: #00ff00;
+}
+
+/* User Badge - Windows 95 3D Style - Light Mode */
+.theme-light .user-badge,
+body:not(.theme-dark) .user-badge {
+  background: #C0C0C8;
+  border-top: 1px solid #FFFFFF;
+  border-left: 1px solid #FFFFFF;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #000000;
+  line-height: 1.4;
+}
+
+.theme-light .channel-item:hover .user-badge,
+body:not(.theme-dark) .channel-item:hover .user-badge {
+  background: #FFFFFF;
+  color: #000080;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #FFFFFF;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+/* User Badge - Dark Mode */
+.theme-dark .user-badge {
+  background: #001100;
+  border: 1px solid #00ff00;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: #00ff00;
+  line-height: 1.4;
+}
+
+.theme-dark .channel-item:hover .user-badge {
+  background: #00ff00;
+  color: #000000;
+  border: 1px solid #00ff00;
+}
+
+/* Channel Description - Single line with ellipsis - Light Mode */
+.theme-light .channel-description,
+body:not(.theme-dark) .channel-description {
+  font-size: 11px;
+  line-height: 1.3;
+  color: #666666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-light .channel-item:hover .channel-description,
+body:not(.theme-dark) .channel-item:hover .channel-description {
+  color: #FFFFFF;
+}
+
+/* Channel Description - Dark Mode */
+.theme-dark .channel-description {
+  font-size: 11px;
+  line-height: 1.3;
+  color: #00aa00;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-dark .channel-item:hover .channel-description {
+  color: #00ff00;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .channel-item {
+    gap: 8px;
+    padding: 6px;
+  }
+
+  .channel-description {
+    font-size: 10px;
+  }
+
+  .channel-name {
+    font-size: 12px;
+  }
+
+  .user-badge {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+}

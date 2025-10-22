@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TREND-003-v6: Dark Cyberpunk Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: #008080;
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        /* Main Dashboard Container */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        /* Terminal/LCD Window Style (from v4) */
+        .window {
+            background: #1a1a1a;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3),
+                        inset 0 0 20px rgba(0, 255, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            position: relative;
+        }
+
+        /* LCD Terminal Title Bar */
+        .title-bar {
+            background: #000000;
+            border-bottom: 2px solid #00ff00;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: move;
+            flex-shrink: 0;
+        }
+
+        .title-text {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-icon {
+            font-size: 16px;
+        }
+
+        .title-subtitle {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-left: 6px;
+            font-weight: normal;
+        }
+
+        .title-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .title-btn {
+            width: 20px;
+            height: 20px;
+            background: #001100;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .title-btn:hover {
+            background: #003300;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+
+        .title-btn:active {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        /* Window Content - Terminal Background with Clean Cards Inside */
+        .window-content {
+            padding: 0;
+            background: #000000;
+            border-top: 1px solid #003300;
+            margin: 0;
+            height: 500px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Terminal-Style Scrollbar */
+        .window-content::-webkit-scrollbar {
+            width: 12px;
+            background: #000000;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: #001100;
+            border-left: 1px solid #003300;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: #003300;
+            border: 1px solid #00ff00;
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: #004400;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+
+        /* Inner Content Padding */
+        .content-inner {
+            padding: 12px;
+        }
+
+        .window.minimized .window-content {
+            display: none;
+        }
+
+        .window.minimized .status-bar {
+            display: none;
+        }
+
+        /* Clean Track Card (from v3) - DARK MODE */
+        .track-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #1a1a1a;
+            border: 2px solid #003300;
+            border-top-color: #004400;
+            border-left-color: #004400;
+            border-right-color: #002200;
+            border-bottom-color: #002200;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .track-item:hover {
+            background: #222222;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Golden Gradient Rank for Top 3 */
+        .track-rank {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff00;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .track-rank.top-3 {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 22px;
+        }
+
+        /* Emoji Thumbnail - DARK MODE */
+        .track-thumbnail {
+            width: 50px;
+            height: 50px;
+            background: #000000;
+            border: 2px solid #003300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Light Text for Titles - DARK MODE */
+        .track-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #FFFFFF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Magenta Artist Text - DARK MODE */
+        .track-artist {
+            font-size: 12px;
+            color: #E010E0;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        /* Magenta Share Counts */
+        .track-shares {
+            font-size: 14px;
+            font-weight: bold;
+            color: #E010E0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .fire-icon {
+            font-size: 16px;
+            animation: flicker 1.5s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Clean Contributor Card (from v3) - DARK MODE */
+        .contributor-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #1a1a1a;
+            border: 2px solid #003300;
+            border-top-color: #004400;
+            border-left-color: #004400;
+            border-right-color: #002200;
+            border-bottom-color: #002200;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .contributor-item:hover {
+            background: #222222;
+            border-color: #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .contributor-rank {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff00;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* Circular Avatar with Gradient Background - DARK MODE */
+        .contributor-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #04CAF4, #E010E0);
+            border: 2px solid #003300;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+
+        .contributor-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Light Text for Usernames - DARK MODE */
+        .contributor-username {
+            font-weight: bold;
+            font-size: 14px;
+            color: #FFFFFF;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .contributor-fid {
+            font-size: 11px;
+            color: #888888;
+            margin-top: 2px;
+        }
+
+        /* Neon Green Track Counts */
+        .contributor-count {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00F92A;
+            text-align: right;
+        }
+
+        .contributor-label {
+            font-size: 10px;
+            color: #888888;
+            text-align: right;
+        }
+
+        /* LCD Status Bar */
+        .status-bar {
+            background: #000000;
+            border-top: 2px solid #00ff00;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            color: #00ff00;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        /* Section Header with LCD Text */
+        .section-header {
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            background: #001100;
+            border: 1px solid #003300;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #00ff00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        /* Responsive: Mobile Stacking */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .window-content {
+                height: 400px;
+            }
+
+            .track-item, .contributor-item {
+                padding: 8px;
+            }
+
+            .track-thumbnail {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .contributor-avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+
+        <!-- WINDOW 1: Trending Tracks with Terminal Chrome + Clean Cards -->
+        <div class="window" id="window1">
+            <div class="title-bar" onmousedown="startDrag(event, 'window1')">
+                <div class="title-text">
+                    <span class="title-icon">⚡</span>
+                    <span>TRENDING TRACKS<span class="title-subtitle">- LAST 24 HOURS</span></span>
+                </div>
+                <div class="title-buttons">
+                    <button class="title-btn" onclick="minimizeWindow('window1')" title="Minimize">_</button>
+                    <button class="title-btn" onclick="maximizeWindow('window1')" title="Maximize">□</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="content-inner">
+                    <div class="section-header">
+                        <div class="section-title">HOT RIGHT NOW</div>
+                    </div>
+
+                    <!-- Track 1 -->
+                    <div class="track-item">
+                        <div class="track-rank top-3">1</div>
+                        <div class="track-thumbnail">🎸</div>
+                        <div class="track-info">
+                            <div class="track-title">Midnight Synthwave Dreams</div>
+                            <div class="track-artist">Neon Nights</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">
+                                <span class="fire-icon">🔥</span>
+                                <span>342</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 2 -->
+                    <div class="track-item">
+                        <div class="track-rank top-3">2</div>
+                        <div class="track-thumbnail">🎹</div>
+                        <div class="track-info">
+                            <div class="track-title">Electric Sunset Boulevard</div>
+                            <div class="track-artist">RetroWave Collective</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">
+                                <span class="fire-icon">🔥</span>
+                                <span>298</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 3 -->
+                    <div class="track-item">
+                        <div class="track-rank top-3">3</div>
+                        <div class="track-thumbnail">🎤</div>
+                        <div class="track-info">
+                            <div class="track-title">Cyber Love Connection</div>
+                            <div class="track-artist">Digital Hearts</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">
+                                <span class="fire-icon">🔥</span>
+                                <span>267</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Track 4 -->
+                    <div class="track-item">
+                        <div class="track-rank">4</div>
+                        <div class="track-thumbnail">🎧</div>
+                        <div class="track-info">
+                            <div class="track-title">Neon Tokyo Nights</div>
+                            <div class="track-artist">Urban Synth</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">234</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 5 -->
+                    <div class="track-item">
+                        <div class="track-rank">5</div>
+                        <div class="track-thumbnail">🎵</div>
+                        <div class="track-info">
+                            <div class="track-title">Vaporwave Paradise</div>
+                            <div class="track-artist">Aesthetic Waves</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">189</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 6 -->
+                    <div class="track-item">
+                        <div class="track-rank">6</div>
+                        <div class="track-thumbnail">🎶</div>
+                        <div class="track-info">
+                            <div class="track-title">Crystal Memories '89</div>
+                            <div class="track-artist">Time Machine</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">167</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 7 -->
+                    <div class="track-item">
+                        <div class="track-rank">7</div>
+                        <div class="track-thumbnail">🎸</div>
+                        <div class="track-info">
+                            <div class="track-title">Digital Rain Dance</div>
+                            <div class="track-artist">Pixel Dreams</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">143</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 8 -->
+                    <div class="track-item">
+                        <div class="track-rank">8</div>
+                        <div class="track-thumbnail">🎹</div>
+                        <div class="track-info">
+                            <div class="track-title">Retro Future Groove</div>
+                            <div class="track-artist">Synth Masters</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">128</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 9 -->
+                    <div class="track-item">
+                        <div class="track-rank">9</div>
+                        <div class="track-thumbnail">🎤</div>
+                        <div class="track-info">
+                            <div class="track-title">Arcade Heartbeat</div>
+                            <div class="track-artist">8-Bit Romance</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">115</div>
+                        </div>
+                    </div>
+
+                    <!-- Track 10 -->
+                    <div class="track-item">
+                        <div class="track-rank">10</div>
+                        <div class="track-thumbnail">🎧</div>
+                        <div class="track-info">
+                            <div class="track-title">Cosmic Highway Drive</div>
+                            <div class="track-artist">Space Cruiser</div>
+                        </div>
+                        <div class="track-stats">
+                            <div class="track-shares">98</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="status-bar">
+                <span>10 TRACKS LOADED</span>
+                <span>UPDATED: 2M AGO</span>
+            </div>
+        </div>
+
+        <!-- WINDOW 2: Top Contributors with Terminal Chrome + Clean Cards -->
+        <div class="window" id="window2">
+            <div class="title-bar" onmousedown="startDrag(event, 'window2')">
+                <div class="title-text">
+                    <span class="title-icon">👥</span>
+                    <span>TOP CONTRIBUTORS<span class="title-subtitle">- LAST 24 HOURS</span></span>
+                </div>
+                <div class="title-buttons">
+                    <button class="title-btn" onclick="minimizeWindow('window2')" title="Minimize">_</button>
+                    <button class="title-btn" onclick="maximizeWindow('window2')" title="Maximize">□</button>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="content-inner">
+                    <div class="section-header">
+                        <div class="section-title">POWER USERS</div>
+                    </div>
+
+                    <!-- Contributor 1 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">1</div>
+                        <div class="contributor-avatar">MV</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@musicvibe</div>
+                            <div class="contributor-fid">FID: 12847</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">47</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 2 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">2</div>
+                        <div class="contributor-avatar">SH</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@synthhunter</div>
+                            <div class="contributor-fid">FID: 8493</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">39</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 3 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">3</div>
+                        <div class="contributor-avatar">RG</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@retroguru</div>
+                            <div class="contributor-fid">FID: 15672</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">34</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 4 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">4</div>
+                        <div class="contributor-avatar">NW</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@neonwave</div>
+                            <div class="contributor-fid">FID: 23451</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">28</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 5 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">5</div>
+                        <div class="contributor-avatar">VD</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@vapordreams</div>
+                            <div class="contributor-fid">FID: 9834</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">25</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 6 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">6</div>
+                        <div class="contributor-avatar">DM</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@digitalmusic</div>
+                            <div class="contributor-fid">FID: 17892</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">22</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 7 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">7</div>
+                        <div class="contributor-avatar">EC</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@electrocity</div>
+                            <div class="contributor-fid">FID: 31245</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">19</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 8 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">8</div>
+                        <div class="contributor-avatar">PM</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@pixelmelody</div>
+                            <div class="contributor-fid">FID: 6789</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">17</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 9 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">9</div>
+                        <div class="contributor-avatar">CS</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@cybersounds</div>
+                            <div class="contributor-fid">FID: 42156</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">15</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor 10 -->
+                    <div class="contributor-item">
+                        <div class="contributor-rank">10</div>
+                        <div class="contributor-avatar">AR</div>
+                        <div class="contributor-info">
+                            <div class="contributor-username">@arcaderave</div>
+                            <div class="contributor-fid">FID: 28934</div>
+                        </div>
+                        <div>
+                            <div class="contributor-count">13</div>
+                            <div class="contributor-label">tracks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="status-bar">
+                <span>10 USERS LOADED</span>
+                <span>TOTAL: 259 TRACKS</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Window minimize/restore functionality
+        function minimizeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            window.classList.toggle('minimized');
+        }
+
+        // Window maximize functionality (toggle height)
+        function maximizeWindow(windowId) {
+            const window = document.getElementById(windowId);
+            const content = window.querySelector('.window-content');
+
+            if (content.style.height === '650px') {
+                content.style.height = '500px';
+            } else {
+                content.style.height = '650px';
+            }
+        }
+
+        // Draggable window functionality
+        let activeWindow = null;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        function startDrag(e, windowId) {
+            activeWindow = document.getElementById(windowId);
+            const rect = activeWindow.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+
+            // Make window position absolute for dragging
+            if (activeWindow.style.position !== 'absolute') {
+                activeWindow.style.position = 'absolute';
+                activeWindow.style.left = rect.left + 'px';
+                activeWindow.style.top = rect.top + 'px';
+                activeWindow.style.margin = '0';
+            }
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function drag(e) {
+            if (activeWindow) {
+                activeWindow.style.left = (e.clientX - offsetX) + 'px';
+                activeWindow.style.top = (e.clientY - offsetY) + 'px';
+            }
+        }
+
+        function stopDrag() {
+            activeWindow = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        // Click handlers for items
+        document.querySelectorAll('.track-item, .contributor-item').forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Item clicked:', this.textContent.trim());
+            });
+        });
+
+        // Smooth scroll behavior
+        document.querySelectorAll('.window-content').forEach(content => {
+            content.style.scrollBehavior = 'smooth';
+        });
+    </script>
+</body>
+</html>

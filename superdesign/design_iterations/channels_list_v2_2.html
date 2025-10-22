@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMZY - Channels (Modern List Simplified)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #008080;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .win95-window {
+            background: #C0C0C8;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-right: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .title-bar {
+            background: #000080;
+            padding: 3px 2px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: #FFFFFF;
+            font-weight: bold;
+            font-size: 11px;
+            padding-left: 4px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            background: #C0C0C8;
+            border: 1px outset #FFFFFF;
+            font-size: 8px;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        .channels-container {
+            background: #FFFFFF;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #DFDFDF;
+            border-bottom: 2px solid #DFDFDF;
+            margin: 4px;
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #D4D0C8;
+            cursor: pointer;
+        }
+
+        .channel-item:nth-child(odd) {
+            background: #FFFFFF;
+        }
+
+        .channel-item:nth-child(even) {
+            background: #F8F8F8;
+        }
+
+        .channel-item:hover {
+            background: #000080;
+            color: #FFFFFF;
+        }
+
+        .channel-image {
+            width: 48px;
+            height: 48px;
+            background: #C0C0C8;
+            border-top: 1px solid #FFFFFF;
+            border-left: 1px solid #FFFFFF;
+            border-right: 1px solid #808080;
+            border-bottom: 1px solid #808080;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .channel-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .channel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .channel-name {
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .channel-badge {
+            background: #C0C0C8;
+            border: 1px solid #808080;
+            padding: 1px 6px;
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .channel-item:hover .channel-badge {
+            background: #0000A0;
+            color: #FFFFFF;
+        }
+
+        .channel-desc {
+            font-size: 10px;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .channel-item:hover .channel-desc {
+            opacity: 1;
+        }
+
+        .search-bar {
+            background: #C0C0C8;
+            padding: 4px;
+            border-top: 1px solid #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .search-label {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .search-input {
+            flex: 1;
+            background: #FFFFFF;
+            border-top: 1px solid #808080;
+            border-left: 1px solid #808080;
+            border-right: 1px solid #DFDFDF;
+            border-bottom: 1px solid #DFDFDF;
+            padding: 3px 4px;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="win95-window">
+        <div class="title-bar">
+            <div class="title-bar-text">Channels</div>
+            <div class="title-bar-controls">
+                <button>_</button>
+                <button>□</button>
+                <button>X</button>
+            </div>
+        </div>
+
+        <div class="channels-container">
+            <div class="channel-item">
+                <div class="channel-image">♪</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Hip Hop</span>
+                        <span class="channel-badge">247 users</span>
+                    </div>
+                    <div class="channel-desc">Latest hip hop, rap, and urban beats from around the world</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♫</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Electronic</span>
+                        <span class="channel-badge">189 users</span>
+                    </div>
+                    <div class="channel-desc">EDM, techno, house, and electronic music</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♪</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Rock</span>
+                        <span class="channel-badge">312 users</span>
+                    </div>
+                    <div class="channel-desc">Classic and modern rock anthems that never get old</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♫</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Jazz</span>
+                        <span class="channel-badge">156 users</span>
+                    </div>
+                    <div class="channel-desc">Smooth jazz, bebop, and contemporary jazz selections</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♪</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Indie</span>
+                        <span class="channel-badge">203 users</span>
+                    </div>
+                    <div class="channel-desc">Independent and alternative music from emerging artists</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♫</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">R&B / Soul</span>
+                        <span class="channel-badge">178 users</span>
+                    </div>
+                    <div class="channel-desc">Rhythm and blues, soul classics and new releases</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♪</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Pop</span>
+                        <span class="channel-badge">534 users</span>
+                    </div>
+                    <div class="channel-desc">Top 40 hits and popular music from today's charts</div>
+                </div>
+            </div>
+
+            <div class="channel-item">
+                <div class="channel-image">♫</div>
+                <div class="channel-info">
+                    <div class="channel-header">
+                        <span class="channel-name">Classical</span>
+                        <span class="channel-badge">92 users</span>
+                    </div>
+                    <div class="channel-desc">Classical compositions from baroque to contemporary</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <label class="search-label">Search:</label>
+            <input type="text" class="search-input" placeholder="Find channels...">
+        </div>
+    </div>
+</body>
+</html>

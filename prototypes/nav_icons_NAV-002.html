@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAV-002: Isometric Icons - Navigation Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+            background: linear-gradient(135deg, #1a0033 0%, #0a0015 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .design-info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #c0c0c0;
+            padding: 15px 20px;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+        }
+
+        .design-info h1 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .design-info p {
+            font-size: 11px;
+            color: #000;
+            margin: 4px 0;
+        }
+
+        /* Win95 Taskbar */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 20px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Navigation Button */
+        .nav-button {
+            background: #c0c0c0;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            min-width: 100px;
+            transition: all 0.1s;
+        }
+
+        .nav-button:hover {
+            background: #d4d4d4;
+        }
+
+        .nav-button:active,
+        .nav-button.active {
+            border-top: 2px solid #000;
+            border-left: 2px solid #000;
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            box-shadow: inset -1px -1px 0 #dfdfdf, inset 1px 1px 0 #808080;
+            transform: translate(1px, 1px);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Isometric Icon Container */
+        .icon-container {
+            width: 32px;
+            height: 32px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* CD Stack Icon (CHANNELS) */
+        .cd-stack {
+            width: 28px;
+            height: 28px;
+            position: relative;
+        }
+
+        .cd {
+            position: absolute;
+            width: 24px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .cd-top {
+            background: linear-gradient(135deg, #00f92a 0%, #00c520 50%, #008a16 100%);
+            border: 1px solid #004d0a;
+            top: 0;
+            left: 2px;
+            box-shadow:
+                inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+                0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .cd-top::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 3px;
+            background: #001a05;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .cd-mid {
+            background: linear-gradient(135deg, #04caf4 0%, #0396c4 50%, #026a8a 100%);
+            border: 1px solid #013a4d;
+            top: 8px;
+            left: 2px;
+            box-shadow:
+                inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+                0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .cd-mid::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 3px;
+            background: #001a20;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .cd-bottom {
+            background: linear-gradient(135deg, #FF00FF 0%, #c000c0 50%, #800080 100%);
+            border: 1px solid #4d004d;
+            top: 16px;
+            left: 2px;
+            box-shadow:
+                inset -1px -1px 0 rgba(0, 0, 0, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+                0 2px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .cd-bottom::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 3px;
+            background: #1a0020;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Chart Icon (ACTIVITY) */
+        .chart {
+            width: 28px;
+            height: 28px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .bar {
+            width: 6px;
+            position: relative;
+        }
+
+        .bar::before,
+        .bar::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            left: 0;
+        }
+
+        /* Left side (darker) */
+        .bar::before {
+            bottom: 0;
+            height: 40%;
+            background: #026a8a;
+        }
+
+        /* Right side (lighter) */
+        .bar::after {
+            bottom: 0;
+            height: 40%;
+            background: #04caf4;
+            transform: translateX(3px) skewY(-30deg);
+            transform-origin: bottom left;
+        }
+
+        /* Top face */
+        .bar-top {
+            position: absolute;
+            width: 9px;
+            height: 3px;
+            background: #7ff4ff;
+            transform: translateY(-3px) skewY(-30deg);
+            left: 0;
+        }
+
+        .bar1 {
+            height: 12px;
+        }
+
+        .bar1::before {
+            height: 12px;
+            background: #c000c0;
+        }
+
+        .bar1::after {
+            height: 12px;
+            background: #FF00FF;
+        }
+
+        .bar1 .bar-top {
+            background: #ff7fff;
+        }
+
+        .bar2 {
+            height: 18px;
+        }
+
+        .bar2::before {
+            height: 18px;
+            background: #026a8a;
+        }
+
+        .bar2::after {
+            height: 18px;
+            background: #04caf4;
+        }
+
+        .bar2 .bar-top {
+            background: #7ff4ff;
+        }
+
+        .bar3 {
+            height: 24px;
+        }
+
+        .bar3::before {
+            height: 24px;
+            background: #008a16;
+        }
+
+        .bar3::after {
+            height: 24px;
+            background: #00f92a;
+        }
+
+        .bar3 .bar-top {
+            background: #7ffc94;
+        }
+
+        /* Person/Bust Icon (PROFILE) */
+        .person {
+            width: 28px;
+            height: 28px;
+            position: relative;
+        }
+
+        /* Head */
+        .head {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            top: 2px;
+            left: 8px;
+        }
+
+        .head-front {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #FFFF00 0%, #d4d400 50%, #a0a000 100%);
+            border-radius: 2px;
+            box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .head-side {
+            position: absolute;
+            width: 6px;
+            height: 12px;
+            background: #a0a000;
+            right: -6px;
+            top: 0;
+            transform: skewY(-30deg);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .head-top {
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            background: #ffffaa;
+            top: -3px;
+            left: 0;
+            transform: skewX(-30deg);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Body */
+        .body {
+            position: absolute;
+            width: 16px;
+            height: 12px;
+            top: 14px;
+            left: 6px;
+        }
+
+        .body-front {
+            position: absolute;
+            width: 16px;
+            height: 12px;
+            background: linear-gradient(135deg, #FF00FF 0%, #c000c0 50%, #800080 100%);
+            border-radius: 0 0 2px 2px;
+            box-shadow: inset -1px -1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .body-side {
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: #800080;
+            right: -8px;
+            top: 0;
+            transform: skewY(-30deg);
+            border-radius: 0 0 2px 0;
+        }
+
+        /* Demo Section */
+        .demo-section {
+            text-align: center;
+            margin-bottom: 120px;
+        }
+
+        .demo-section h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00f92a;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .demo-section p {
+            font-size: 14px;
+            color: #04caf4;
+            margin-bottom: 20px;
+        }
+
+        /* Pixel Grid Effect */
+        .pixel-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 249, 42, 0.03) 2px, rgba(0, 249, 42, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(4, 202, 244, 0.03) 2px, rgba(4, 202, 244, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        /* Color Reference */
+        .color-reference {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #c0c0c0;
+            padding: 15px;
+            border-top: 2px solid #fff;
+            border-left: 2px solid #fff;
+            border-right: 2px solid #000;
+            border-bottom: 2px solid #000;
+            box-shadow: inset 1px 1px 0 #dfdfdf, inset -1px -1px 0 #808080;
+        }
+
+        .color-reference h3 {
+            font-size: 11px;
+            color: #000;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .color-swatch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 0;
+        }
+
+        .swatch {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+            box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .swatch-label {
+            font-size: 10px;
+            color: #000;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="pixel-grid"></div>
+
+    <div class="design-info">
+        <h1>NAV-002: Isometric Icons</h1>
+        <p><strong>Style:</strong> Isometric Pixel Art</p>
+        <p><strong>Inspiration:</strong> 90s Game Graphics</p>
+        <p><strong>Size:</strong> ~28x28px per icon</p>
+    </div>
+
+    <div class="color-reference">
+        <h3>NEON PALETTE</h3>
+        <div class="color-swatch">
+            <div class="swatch" style="background: #00f92a;"></div>
+            <span class="swatch-label">#00f92a</span>
+        </div>
+        <div class="color-swatch">
+            <div class="swatch" style="background: #04caf4;"></div>
+            <span class="swatch-label">#04caf4</span>
+        </div>
+        <div class="color-swatch">
+            <div class="swatch" style="background: #FF00FF;"></div>
+            <span class="swatch-label">#FF00FF</span>
+        </div>
+        <div class="color-swatch">
+            <div class="swatch" style="background: #FFFF00;"></div>
+            <span class="swatch-label">#FFFF00</span>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>Isometric Navigation Icons</h2>
+        <p>Classic 90s game-style 3D perspective</p>
+    </div>
+
+    <!-- Win95 Style Taskbar -->
+    <div class="taskbar">
+        <!-- CHANNELS Button -->
+        <button class="nav-button active">
+            <div class="icon-container">
+                <div class="cd-stack">
+                    <div class="cd cd-top"></div>
+                    <div class="cd cd-mid"></div>
+                    <div class="cd cd-bottom"></div>
+                </div>
+            </div>
+            <span class="nav-label">Channels</span>
+        </button>
+
+        <!-- ACTIVITY Button -->
+        <button class="nav-button">
+            <div class="icon-container">
+                <div class="chart">
+                    <div class="bar bar1">
+                        <div class="bar-top"></div>
+                    </div>
+                    <div class="bar bar2">
+                        <div class="bar-top"></div>
+                    </div>
+                    <div class="bar bar3">
+                        <div class="bar-top"></div>
+                    </div>
+                </div>
+            </div>
+            <span class="nav-label">Activity</span>
+        </button>
+
+        <!-- PROFILE Button -->
+        <button class="nav-button">
+            <div class="icon-container">
+                <div class="person">
+                    <div class="head">
+                        <div class="head-top"></div>
+                        <div class="head-front"></div>
+                        <div class="head-side"></div>
+                    </div>
+                    <div class="body">
+                        <div class="body-front"></div>
+                        <div class="body-side"></div>
+                    </div>
+                </div>
+            </div>
+            <span class="nav-label">Profile</span>
+        </button>
+    </div>
+
+    <script>
+        // Add interaction effects
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.nav-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Add active class to clicked button
+                this.classList.add('active');
+            });
+        });
+
+        // Add subtle animation to CD stack on hover
+        document.querySelector('.cd-stack').parentElement.parentElement.addEventListener('mouseenter', function() {
+            const cds = this.querySelectorAll('.cd');
+            cds.forEach((cd, index) => {
+                cd.style.transition = 'transform 0.2s';
+                cd.style.transform = `translateY(-${index * 2}px)`;
+            });
+        });
+
+        document.querySelector('.cd-stack').parentElement.parentElement.addEventListener('mouseleave', function() {
+            const cds = this.querySelectorAll('.cd');
+            cds.forEach(cd => {
+                cd.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Add chart bar animation on hover
+        document.querySelector('.chart').parentElement.parentElement.addEventListener('mouseenter', function() {
+            const bars = this.querySelectorAll('.bar');
+            bars.forEach((bar, index) => {
+                bar.style.transition = 'transform 0.2s';
+                setTimeout(() => {
+                    bar.style.transform = 'translateY(-3px)';
+                }, index * 50);
+            });
+        });
+
+        document.querySelector('.chart').parentElement.parentElement.addEventListener('mouseleave', function() {
+            const bars = this.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Add person icon hover effect
+        document.querySelector('.person').parentElement.parentElement.addEventListener('mouseenter', function() {
+            const head = this.querySelector('.head');
+            head.style.transition = 'transform 0.2s';
+            head.style.transform = 'translateY(-2px)';
+        });
+
+        document.querySelector('.person').parentElement.parentElement.addEventListener('mouseleave', function() {
+            const head = this.querySelector('.head');
+            head.style.transform = 'translateY(0)';
+        });
+    </script>
+</body>
+</html>

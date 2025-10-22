@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jamzy - Activity Feed (Windows 95 Style)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #008080;
+            background-image:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 35px,
+                    rgba(0,0,0,.02) 35px,
+                    rgba(0,0,0,.02) 70px
+                );
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Windows 95 Window Container */
+        .window {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            box-shadow:
+                inset 1px 1px 0 #DFDFDF,
+                inset -1px -1px 0 #808080;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: linear-gradient(to right, #000080, #1084D0);
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-bar-text {
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-bar-icon {
+            width: 16px;
+            height: 16px;
+            background-color: #FF00FF;
+            border: 1px solid white;
+        }
+
+        .title-bar-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .title-bar-button {
+            width: 16px;
+            height: 14px;
+            background-color: #C0C0C8;
+            border: 1px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .title-bar-button:active {
+            border-color: #000000 #FFFFFF #FFFFFF #000000;
+        }
+
+        /* Menu Bar */
+        .menu-bar {
+            background-color: #C0C0C8;
+            border-bottom: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            padding: 2px 4px;
+            font-size: 13px;
+        }
+
+        .menu-item {
+            display: inline-block;
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        /* Window Content */
+        .window-content {
+            background-color: #C0C0C8;
+            padding: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Custom Scrollbar */
+        .window-content::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background-color: #C0C0C8;
+            border: 1px solid #808080;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background-color: #DFDFDF;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+        }
+
+        /* Activity Card - 3D Raised Panel */
+        .activity-card {
+            background-color: #FFFFFF;
+            border: 2px solid;
+            border-color: #FFFFFF #808080 #808080 #FFFFFF;
+            box-shadow:
+                inset 1px 1px 0 #DFDFDF,
+                inset -1px -1px 0 #000000;
+            margin-bottom: 16px;
+            padding: 12px;
+        }
+
+        .activity-card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Card Header */
+        .card-header {
+            font-size: 12px;
+            color: #000080;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .username {
+            font-weight: bold;
+            color: #000080;
+        }
+
+        .header-separator {
+            color: #808080;
+        }
+
+        .timestamp {
+            color: #808080;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Track Container */
+        .track-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* Track Thumbnail */
+        .track-thumbnail {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            background-color: #FF00FF;
+            border: 3px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            box-shadow:
+                inset 1px 1px 0 #DFDFDF,
+                inset -1px -1px 0 #808080;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-thumbnail::before {
+            content: "♪";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Track Info */
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: bold;
+            font-size: 14px;
+            color: #000000;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .track-artist {
+            font-size: 12px;
+            color: #000000;
+            margin-bottom: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Source Badge - Win95 Button Style */
+        .source-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            background-color: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            box-shadow:
+                inset 1px 1px 0 #DFDFDF,
+                inset -1px -1px 0 #808080;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .source-badge.spotify {
+            color: #1DB954;
+        }
+
+        .source-badge.youtube {
+            color: #FF0000;
+        }
+
+        /* Comment Section */
+        .comment-section {
+            background-color: #F0F0F0;
+            border: 2px solid;
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+            padding: 8px;
+            margin: 10px 0;
+            font-size: 12px;
+            font-style: italic;
+            color: #000000;
+        }
+
+        /* Social Actions Row */
+        .social-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Social Button - Win95 Style */
+        .social-button {
+            background-color: #C0C0C8;
+            border: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            box-shadow:
+                inset 1px 1px 0 #DFDFDF,
+                inset -1px -1px 0 #808080;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: none;
+        }
+
+        .social-button:hover {
+            background-color: #DFDFDF;
+        }
+
+        .social-button:active {
+            border-color: #000000 #FFFFFF #FFFFFF #000000;
+            box-shadow:
+                inset -1px -1px 0 #DFDFDF,
+                inset 1px 1px 0 #808080;
+            padding: 5px 7px 3px 9px;
+        }
+
+        .social-button .count {
+            font-family: 'Courier New', monospace;
+            color: #000080;
+        }
+
+        /* Play Button - Special Styling */
+        .play-button {
+            background: linear-gradient(to bottom, #1084D0, #000080);
+            color: white;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            margin-left: auto;
+        }
+
+        .play-button:hover {
+            background: linear-gradient(to bottom, #2094E0, #000090);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background-color: #C0C0C8;
+            border-top: 2px solid;
+            border-color: #FFFFFF #000000 #000000 #FFFFFF;
+            padding: 3px 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-item {
+            border: 1px solid;
+            border-color: #808080 #FFFFFF #FFFFFF #808080;
+            padding: 2px 6px;
+            background-color: #C0C0C8;
+        }
+
+        /* Responsive */
+        @media (max-width: 520px) {
+            body {
+                padding: 10px;
+            }
+
+            .track-container {
+                flex-direction: column;
+            }
+
+            .track-thumbnail {
+                width: 100%;
+                height: 120px;
+            }
+
+            .social-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .social-button {
+                justify-content: center;
+            }
+
+            .play-button {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <div class="title-bar-icon"></div>
+                Activity Feed - Recent Tracks
+            </div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" aria-label="Minimize">_</button>
+                <button class="title-bar-button" aria-label="Maximize">□</button>
+                <button class="title-bar-button" aria-label="Close">×</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="menu-bar">
+            <span class="menu-item">File</span>
+            <span class="menu-item">View</span>
+            <span class="menu-item">Filter</span>
+            <span class="menu-item">Help</span>
+        </div>
+
+        <!-- Window Content -->
+        <div class="window-content">
+            <!-- Activity Card 1 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <span class="username">@musiclover</span>
+                    <span class="header-separator">shared a track</span>
+                    <span class="header-separator">•</span>
+                    <span class="timestamp">2h ago</span>
+                </div>
+
+                <div class="track-container">
+                    <div class="track-thumbnail"></div>
+                    <div class="track-info">
+                        <div class="track-title">Blinding Lights</div>
+                        <div class="track-artist">The Weeknd</div>
+                        <span class="source-badge spotify">Spotify</span>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "This song never gets old! 🔥"
+                </div>
+
+                <div class="social-actions">
+                    <button class="social-button">
+                        ❤ <span class="count">23</span>
+                    </button>
+                    <button class="social-button">
+                        💬 <span class="count">5</span>
+                    </button>
+                    <button class="social-button">
+                        ↻ <span class="count">12</span>
+                    </button>
+                    <button class="social-button play-button">
+                        ▶ PLAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 2 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <span class="username">@djkool</span>
+                    <span class="header-separator">shared a track</span>
+                    <span class="header-separator">•</span>
+                    <span class="timestamp">3h ago</span>
+                </div>
+
+                <div class="track-container">
+                    <div class="track-thumbnail"></div>
+                    <div class="track-info">
+                        <div class="track-title">Levitating</div>
+                        <div class="track-artist">Dua Lipa</div>
+                        <span class="source-badge youtube">YouTube</span>
+                    </div>
+                </div>
+
+                <div class="social-actions">
+                    <button class="social-button">
+                        ❤ <span class="count">45</span>
+                    </button>
+                    <button class="social-button">
+                        💬 <span class="count">12</span>
+                    </button>
+                    <button class="social-button">
+                        ↻ <span class="count">8</span>
+                    </button>
+                    <button class="social-button play-button">
+                        ▶ PLAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 3 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <span class="username">@popfan99</span>
+                    <span class="header-separator">shared a track</span>
+                    <span class="header-separator">•</span>
+                    <span class="timestamp">5h ago</span>
+                </div>
+
+                <div class="track-container">
+                    <div class="track-thumbnail"></div>
+                    <div class="track-info">
+                        <div class="track-title">good 4 u</div>
+                        <div class="track-artist">Olivia Rodrigo</div>
+                        <span class="source-badge spotify">Spotify</span>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "Absolute banger"
+                </div>
+
+                <div class="social-actions">
+                    <button class="social-button">
+                        ❤ <span class="count">67</span>
+                    </button>
+                    <button class="social-button">
+                        💬 <span class="count">8</span>
+                    </button>
+                    <button class="social-button">
+                        ↻ <span class="count">15</span>
+                    </button>
+                    <button class="social-button play-button">
+                        ▶ PLAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity Card 4 -->
+            <div class="activity-card">
+                <div class="card-header">
+                    <span class="username">@indierockz</span>
+                    <span class="header-separator">shared a track</span>
+                    <span class="header-separator">•</span>
+                    <span class="timestamp">7h ago</span>
+                </div>
+
+                <div class="track-container">
+                    <div class="track-thumbnail"></div>
+                    <div class="track-info">
+                        <div class="track-title">Heat Waves</div>
+                        <div class="track-artist">Glass Animals</div>
+                        <span class="source-badge youtube">YouTube</span>
+                    </div>
+                </div>
+
+                <div class="comment-section">
+                    "Summer vibes all year round ☀️"
+                </div>
+
+                <div class="social-actions">
+                    <button class="social-button">
+                        ❤ <span class="count">89</span>
+                    </button>
+                    <button class="social-button">
+                        💬 <span class="count">15</span>
+                    </button>
+                    <button class="social-button">
+                        ↻ <span class="count">24</span>
+                    </button>
+                    <button class="social-button play-button">
+                        ▶ PLAY
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="status-item">4 tracks</span>
+            <span class="status-item">Last updated: 2:34 PM</span>
+        </div>
+    </div>
+
+    <script>
+        // Add click feedback to buttons
+        document.querySelectorAll('.social-button, .title-bar-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                console.log('Button clicked:', this.textContent.trim());
+
+                // Visual feedback for play button
+                if (this.classList.contains('play-button')) {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '⏸ PLAYING';
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 1500);
+                }
+            });
+        });
+
+        // Menu item hover effects
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Menu clicked:', this.textContent);
+            });
+        });
+
+        // Window control buttons
+        document.querySelectorAll('.title-bar-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const label = this.getAttribute('aria-label');
+
+                if (label === 'Close') {
+                    if (confirm('Close Activity Feed?')) {
+                        console.log('Window would close');
+                    }
+                } else {
+                    console.log(`${label} clicked`);
+                }
+            });
+        });
+
+        console.log('Jamzy Activity Feed v1.0 - Windows 95 Edition');
+        console.log('Layout preserved from current implementation');
+    </script>
+</body>
+</html>
