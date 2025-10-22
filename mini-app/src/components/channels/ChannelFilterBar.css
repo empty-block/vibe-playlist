@@ -1,0 +1,421 @@
+/* ============================================
+   CHANNEL FILTER BAR - RETRO WINDOWS 98 STYLE
+   ============================================ */
+
+.channel-filter-bar-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ============================================
+   RETRO FILTER BUTTONS (Windows 98 Style)
+   ============================================ */
+
+.filter-dropdown-wrapper {
+  position: relative;
+}
+
+.filter-toggle-btn {
+  padding: 6px 12px;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.filter-toggle-btn:hover {
+  background: #dfdfdf;
+}
+
+.filter-toggle-btn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  padding: 7px 11px 5px 13px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.filter-toggle-btn--active {
+  background: #000080;
+  border-color: #000050 #1084d0 #1084d0 #000050;
+  color: #ffffff;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.filter-toggle-btn--active:hover {
+  background: #0000a0;
+}
+
+.filter-badge {
+  background: #ff0000;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 8px;
+  margin-left: 4px;
+  border: 1px solid #cc0000;
+  min-width: 16px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chevron {
+  font-size: 8px;
+  opacity: 0.8;
+}
+
+/* ============================================
+   SHUFFLE BUTTON (Retro Style)
+   ============================================ */
+
+.shuffle-btn {
+  padding: 6px 12px;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border-radius: 0;
+  min-height: 32px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shuffle-btn:hover {
+  background: #dfdfdf;
+}
+
+.shuffle-btn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  padding: 7px 11px 5px 13px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.shuffle-btn--active {
+  background: #ff8c00;
+  border-color: #cc7000 #ffaa44 #ffaa44 #cc7000;
+  color: #000000;
+  font-weight: 700;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.shuffle-btn--active:hover {
+  background: #ffa520;
+}
+
+/* ============================================
+   DROPDOWN MENU (Windows 98 Style)
+   ============================================ */
+
+.filter-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  min-width: 180px;
+  max-width: 250px;
+  z-index: 100;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-bottom: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #000080;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #ffffff;
+}
+
+.clear-btn {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #000000;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border-radius: 0;
+}
+
+.clear-btn:hover {
+  background: #dfdfdf;
+}
+
+.clear-btn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  padding: 3px 5px 1px 7px;
+}
+
+.dropdown-options {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px;
+  background: #c0c0c0;
+}
+
+/* Windows 98 Scrollbar */
+.dropdown-options::-webkit-scrollbar {
+  width: 16px;
+}
+
+.dropdown-options::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  border-left: 1px solid #808080;
+}
+
+.dropdown-options::-webkit-scrollbar-thumb {
+  background: #dfdfdf;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+.dropdown-options::-webkit-scrollbar-button {
+  height: 16px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+/* ============================================
+   CHECKBOX OPTIONS (Windows 98 Style)
+   ============================================ */
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  background: #c0c0c0;
+}
+
+.checkbox-option:hover {
+  background: #ffffff;
+}
+
+.checkbox-option input[type='checkbox'] {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-option input[type='checkbox']:checked {
+  background: #ffffff;
+}
+
+.checkbox-option input[type='checkbox']:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.checkbox-option input[type='checkbox']:hover {
+  background: #f0f0f0;
+}
+
+.checkbox-option span {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #000000;
+  text-transform: capitalize;
+}
+
+/* ============================================
+   RADIO OPTIONS (Windows 98 Style)
+   ============================================ */
+
+.dropdown-options--radio {
+  padding: 4px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  background: #c0c0c0;
+}
+
+.radio-option:hover {
+  background: #ffffff;
+}
+
+.radio-option input[type='radio'] {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.radio-option input[type='radio']:checked {
+  background: #ffffff;
+}
+
+.radio-option input[type='radio']:checked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  background: #000000;
+  border-radius: 50%;
+}
+
+.radio-option input[type='radio']:hover {
+  background: #f0f0f0;
+}
+
+.radio-option span {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #000000;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+  .channel-filter-bar-container {
+    gap: 6px;
+  }
+
+  .filter-toggle-btn,
+  .shuffle-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+    min-height: 30px;
+  }
+
+  .filter-toggle-btn:active,
+  .shuffle-btn:active {
+    padding: 6px 9px 4px 11px;
+  }
+
+  .chevron {
+    font-size: 8px;
+  }
+
+  .filter-dropdown-menu {
+    min-width: 160px;
+    max-width: 220px;
+  }
+
+  .dropdown-header {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+
+  .checkbox-option,
+  .radio-option {
+    padding: 3px 5px;
+  }
+
+  .checkbox-option span,
+  .radio-option span {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .filter-toggle-btn,
+  .shuffle-btn {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-height: 28px;
+  }
+
+  .filter-toggle-btn:active,
+  .shuffle-btn:active {
+    padding: 5px 7px 3px 9px;
+  }
+
+  .filter-dropdown-menu {
+    min-width: 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-toggle-btn,
+  .shuffle-btn,
+  .checkbox-option,
+  .radio-option,
+  .clear-btn {
+    transition: none;
+  }
+}

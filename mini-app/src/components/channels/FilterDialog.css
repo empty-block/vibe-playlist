@@ -1,0 +1,380 @@
+/* ============================================
+   FILTER DIALOG - WINDOWS 98 MODAL STYLE
+   ============================================ */
+
+.filter-dialog-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.filter-dialog-window {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 450px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   TITLE BAR (Windows 98 Style)
+   ============================================ */
+
+.filter-dialog-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  border-bottom: 1px solid #000000;
+  min-height: 24px;
+}
+
+.filter-dialog-title {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #ffffff;
+}
+
+.filter-dialog-close-btn {
+  width: 16px;
+  height: 16px;
+  background: #c0c0c0;
+  border: 1px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  color: #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  border-radius: 0;
+  transition: background 0.1s ease;
+}
+
+.filter-dialog-close-btn:hover {
+  background: #dfdfdf;
+}
+
+.filter-dialog-close-btn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  background: #c0c0c0;
+}
+
+/* ============================================
+   CONTENT AREA
+   ============================================ */
+
+.filter-dialog-content {
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+  background: #c0c0c0;
+}
+
+/* Windows 98 Scrollbar */
+.filter-dialog-content::-webkit-scrollbar {
+  width: 16px;
+}
+
+.filter-dialog-content::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  border-left: 1px solid #808080;
+}
+
+.filter-dialog-content::-webkit-scrollbar-thumb {
+  background: #dfdfdf;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+.filter-dialog-content::-webkit-scrollbar-button {
+  height: 16px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+/* ============================================
+   FILTER SECTIONS
+   ============================================ */
+
+.filter-section {
+  margin-bottom: 16px;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 8px;
+  background: #c0c0c0;
+}
+
+.filter-section:last-child {
+  margin-bottom: 0;
+}
+
+.filter-section-header {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #000000;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #808080;
+}
+
+.filter-section-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-section-options--checkboxes {
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+/* ============================================
+   RADIO OPTIONS
+   ============================================ */
+
+.filter-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  background: #c0c0c0;
+  border: 1px solid transparent;
+}
+
+.filter-radio-option:hover {
+  background: #ffffff;
+}
+
+.filter-radio-option input[type='radio'] {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.filter-radio-option input[type='radio']:checked {
+  background: #ffffff;
+}
+
+.filter-radio-option input[type='radio']:checked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  background: #000000;
+  border-radius: 50%;
+}
+
+.filter-radio-option input[type='radio']:hover {
+  background: #f0f0f0;
+}
+
+.filter-radio-option span {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #000000;
+}
+
+/* ============================================
+   CHECKBOX OPTIONS
+   ============================================ */
+
+.filter-checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  background: #c0c0c0;
+  border: 1px solid transparent;
+}
+
+.filter-checkbox-option:hover {
+  background: #ffffff;
+}
+
+.filter-checkbox-option input[type='checkbox'] {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  position: relative;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.filter-checkbox-option input[type='checkbox']:checked {
+  background: #ffffff;
+}
+
+.filter-checkbox-option input[type='checkbox']:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.filter-checkbox-option input[type='checkbox']:hover {
+  background: #f0f0f0;
+}
+
+.filter-checkbox-option span {
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: #000000;
+  text-transform: capitalize;
+}
+
+/* ============================================
+   FOOTER BUTTONS
+   ============================================ */
+
+.filter-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #c0c0c0;
+  border-top: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+}
+
+.filter-clear-all-btn,
+.filter-apply-btn {
+  padding: 4px 12px;
+  font-family: var(--font-display, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  border-radius: 0;
+  min-height: 24px;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+}
+
+.filter-clear-all-btn:hover,
+.filter-apply-btn:hover {
+  background: #dfdfdf;
+}
+
+.filter-clear-all-btn:active,
+.filter-apply-btn:active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  padding: 5px 11px 3px 13px;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.filter-apply-btn {
+  background: #000080;
+  border-color: #000050 #1084d0 #1084d0 #000050;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.filter-apply-btn:hover {
+  background: #0000a0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+  .filter-dialog-backdrop {
+    padding: 8px;
+  }
+
+  .filter-dialog-window {
+    max-width: 100%;
+  }
+
+  .filter-dialog-content {
+    padding: 8px;
+  }
+
+  .filter-section {
+    padding: 6px;
+    margin-bottom: 12px;
+  }
+
+  .filter-section-header {
+    font-size: 10px;
+  }
+
+  .filter-radio-option,
+  .filter-checkbox-option {
+    padding: 3px 5px;
+  }
+
+  .filter-radio-option span,
+  .filter-checkbox-option span {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-dialog-close-btn,
+  .filter-radio-option,
+  .filter-checkbox-option,
+  .filter-clear-all-btn,
+  .filter-apply-btn {
+    transition: none;
+  }
+}

@@ -121,6 +121,10 @@ export async function fetchChannelFeed(
     limit?: number;
     cursor?: string;
     musicOnly?: boolean;
+    sort?: string;
+    minLikes?: number;
+    musicSources?: string[];
+    genres?: string[];
   }
 ): Promise<ApiThreadsResponse> {
   const queryParams = new URLSearchParams();
@@ -129,6 +133,22 @@ export async function fetchChannelFeed(
   if (params?.cursor) queryParams.set('cursor', params.cursor);
   // Default to showing only posts with music
   queryParams.set('musicOnly', String(params?.musicOnly ?? true));
+
+  // Add sort option (defaults to 'recent' on backend)
+  if (params?.sort) queryParams.set('sort', params.sort);
+
+  // Add quality filter
+  if (params?.minLikes) queryParams.set('minLikes', params.minLikes.toString());
+
+  // Add music sources filter (comma-separated)
+  if (params?.musicSources && params.musicSources.length > 0) {
+    queryParams.set('musicSources', params.musicSources.join(','));
+  }
+
+  // Add genres filter (comma-separated)
+  if (params?.genres && params.genres.length > 0) {
+    queryParams.set('genres', params.genres.join(','));
+  }
 
   const query = queryParams.toString();
   const endpoint = `/api/channels/${channelId}/feed${query ? `?${query}` : ''}`;
