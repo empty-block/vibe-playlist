@@ -4,27 +4,13 @@ import { ThreadCard } from '../components/common/TrackCard/NEW';
 import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
-import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import { Thread } from '../data/mockThreads';
 import { sortThreads, SortType } from '../utils/threadSorting';
 import { fetchThreads } from '../services/api';
 import { transformApiThread } from '../types/api';
 import anime from 'animejs';
 import './threads.css';
-
-// Track action handlers
-const playTrack = (track: Track) => {
-  setCurrentTrack(track);
-  setIsPlaying(true);
-};
-
-const likeTrack = (track: Track) => {
-  console.log('Like track:', track.title);
-};
-
-const replyToTrack = (track: Track) => {
-  console.log('Reply to track:', track.title);
-};
 
 const ThreadsPage: Component = () => {
   const navigate = useNavigate();
@@ -44,6 +30,28 @@ const ThreadsPage: Component = () => {
   const sortedThreads = createMemo(() => {
     return sortThreads(threads(), sortBy());
   });
+
+  // Convert threads to Track array for playlist context
+  const getThreadTracks = (): Track[] => {
+    return sortedThreads()
+      .filter(thread => thread.track)
+      .map(thread => thread.track!);
+  };
+
+  // Track action handlers
+  const playTrack = (track: Track) => {
+    const threadTracks = getThreadTracks();
+    const feedId = `threads-${sortBy()}`;
+    playTrackFromFeed(track, threadTracks, feedId);
+  };
+
+  const likeTrack = (track: Track) => {
+    console.log('Like track:', track.title);
+  };
+
+  const replyToTrack = (track: Track) => {
+    console.log('Reply to track:', track.title);
+  };
 
   // Filter change handler with animation
   const handleFilterChange = (newFilter: SortType) => {

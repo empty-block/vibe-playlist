@@ -238,3 +238,22 @@ export const playPreviousTrack = () => {
     setIsPlaying(true);
   }
 };
+
+/**
+ * Play a track from a feed (channel, trending, profile, etc.)
+ * This function properly sets up the playlist context so skip prev/next work correctly
+ */
+export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: string) => {
+  console.log(`Setting up playlist context for feed: ${feedId} with ${feedTracks.length} tracks`);
+
+  // Update the playlist tracks store with this feed's tracks
+  setPlaylistTracks(feedId, feedTracks);
+
+  // Set the current playlist IDs
+  setCurrentPlaylistId(feedId);
+  setPlayingPlaylistId(feedId);
+
+  // Play the track
+  setCurrentTrack(track);
+  setIsPlaying(true);
+};

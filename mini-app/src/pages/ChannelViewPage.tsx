@@ -4,7 +4,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import AddTrackModal from '../components/library/AddTrackModal';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import './channelViewPage.css';
 
@@ -23,12 +23,6 @@ const formatTimeAgo = (timestamp: string) => {
   return `${Math.floor(diffDays / 30)}m ago`;
 };
 
-// Play track function
-const playTrack = (track: Track) => {
-  setCurrentTrack(track);
-  setIsPlaying(true);
-};
-
 const ChannelViewPage: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -37,6 +31,42 @@ const ChannelViewPage: Component = () => {
   // Fetch channel details and feed from API
   const [channelData] = createResource(channelId, fetchChannelDetails);
   const [feedData] = createResource(channelId, (id) => fetchChannelFeed(id, { limit: 50 }));
+
+  // Convert feed data to Track array for playlist context
+  const getFeedTracks = (): Track[] => {
+    if (!feedData()?.threads) return [];
+
+    return feedData()!.threads
+      .filter(thread => thread.music && thread.music[0])
+      .map(thread => {
+        const music = thread.music[0];
+        return {
+          id: music.id,
+          title: music.title,
+          artist: music.artist,
+          thumbnail: music.thumbnail,
+          source: music.platform as TrackSource,
+          sourceId: music.platformId,
+          url: music.url,
+          addedBy: thread.author.username,
+          userFid: thread.author.fid,
+          userAvatar: thread.author.pfpUrl,
+          timestamp: thread.timestamp,
+          comment: thread.text,
+          likes: thread.stats.likes,
+          replies: thread.stats.replies,
+          recasts: thread.stats.recasts,
+          duration: '', // Not provided in feed data
+        } as Track;
+      });
+  };
+
+  // Play track function with proper playlist context
+  const playTrack = (track: Track) => {
+    const feedTracks = getFeedTracks();
+    const feedId = `channel-${channelId()}`;
+    playTrackFromFeed(track, feedTracks, feedId);
+  };
 
   // Modal state
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);

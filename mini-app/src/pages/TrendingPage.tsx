@@ -2,7 +2,7 @@ import { Component, createSignal, For, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
-import { setCurrentTrack, setIsPlaying } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import { formatRelativeTime } from '../utils/time';
 import './trendingPage.css';
 
@@ -24,18 +24,51 @@ const TrendingPage: Component = () => {
     return updated ? formatRelativeTime(updated.toISOString()) : 'just now';
   };
 
-  // Play track function
-  const playTrack = (track: any) => {
-    setCurrentTrack({
+  // Convert trending tracks to Track array for playlist context
+  const getTrendingTracks = (): Track[] => {
+    return tracks().map(track => ({
       id: track.id,
       title: track.title,
       artist: track.artist,
       thumbnail: track.thumbnail,
-      source: track.platform,
+      source: track.platform as TrackSource,
+      sourceId: track.platformId,
       url: track.url,
-      sourceId: track.platformId
-    });
-    setIsPlaying(true);
+      addedBy: track.sharedBy?.username || 'Unknown',
+      userFid: track.sharedBy?.fid || '',
+      userAvatar: track.sharedBy?.pfpUrl || '',
+      timestamp: track.timestamp || new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0,
+      duration: '',
+    } as Track));
+  };
+
+  // Play track function with proper playlist context
+  const playTrack = (track: any) => {
+    const trackObj: Track = {
+      id: track.id,
+      title: track.title,
+      artist: track.artist,
+      thumbnail: track.thumbnail,
+      source: track.platform as TrackSource,
+      sourceId: track.platformId,
+      url: track.url,
+      addedBy: track.sharedBy?.username || 'Unknown',
+      userFid: track.sharedBy?.fid || '',
+      userAvatar: track.sharedBy?.pfpUrl || '',
+      timestamp: track.timestamp || new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0,
+      duration: '',
+    };
+
+    const feedTracks = getTrendingTracks();
+    playTrackFromFeed(trackObj, feedTracks, 'trending');
   };
 
   // Event handlers

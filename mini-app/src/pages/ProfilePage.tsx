@@ -3,7 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { currentUser } from '../stores/authStore';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import {
   profileUser,
   activity,
@@ -92,10 +92,38 @@ const ProfilePage: Component = () => {
     return activity().filter(a => a.cast.music && a.cast.music.length > 0);
   });
 
-  // Track actions
+  // Convert filtered activity to Track array for playlist context
+  const getProfileTracks = (): Track[] => {
+    return filteredContent()
+      .filter(a => a.cast.music && a.cast.music[0])
+      .map(a => {
+        const music = a.cast.music[0];
+        return {
+          id: music.id,
+          title: music.title,
+          artist: music.artist,
+          thumbnail: music.thumbnail,
+          source: music.platform as TrackSource,
+          sourceId: music.platformId,
+          url: music.url,
+          addedBy: a.cast.author.username,
+          userFid: a.cast.author.fid,
+          userAvatar: a.cast.author.pfpUrl,
+          timestamp: a.cast.timestamp,
+          comment: a.cast.text,
+          likes: a.cast.stats.likes,
+          replies: a.cast.stats.replies,
+          recasts: a.cast.stats.recasts,
+          duration: '',
+        } as Track;
+      });
+  };
+
+  // Track actions with proper playlist context
   const playTrack = (track: Track) => {
-    setCurrentTrack(track);
-    setIsPlaying(true);
+    const profileTracks = getProfileTracks();
+    const feedId = `profile-${userFid()}-${currentFilter()}`;
+    playTrackFromFeed(track, profileTracks, feedId);
   };
 
   // Time ago formatter

@@ -5,24 +5,10 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
-import { setCurrentTrack, setIsPlaying, Track } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed } from '../stores/playerStore';
 import { fetchThread } from '../services/api';
 import { transformApiThreadDetail } from '../types/api';
 import './threadView.css';
-
-// Placeholder functions for track actions
-const playTrack = (track: Track) => {
-  setCurrentTrack(track);
-  setIsPlaying(true);
-};
-
-const likeTrack = (track: Track) => {
-  console.log('Like track:', track.title);
-};
-
-const replyToTrack = (track: Track) => {
-  console.log('Reply to track:', track.title);
-};
 
 const ThreadViewPage: Component = () => {
   const params = useParams();
@@ -42,6 +28,45 @@ const ThreadViewPage: Component = () => {
 
   // Like state (would come from API in production)
   const [isLiked, setIsLiked] = createSignal(false);
+
+  // Convert thread + replies to Track array for playlist context
+  const getThreadTracks = (): Track[] => {
+    const currentThread = thread();
+    if (!currentThread) return [];
+
+    const tracks: Track[] = [];
+
+    // Add root track
+    if (currentThread.track) {
+      tracks.push(currentThread.track);
+    }
+
+    // Add reply tracks
+    if (currentThread.replies) {
+      currentThread.replies.forEach(reply => {
+        if (reply.track) {
+          tracks.push(reply.track);
+        }
+      });
+    }
+
+    return tracks;
+  };
+
+  // Track action handlers
+  const playTrack = (track: Track) => {
+    const threadTracks = getThreadTracks();
+    const feedId = `thread-${params.id}`;
+    playTrackFromFeed(track, threadTracks, feedId);
+  };
+
+  const likeTrack = (track: Track) => {
+    console.log('Like track:', track.title);
+  };
+
+  const replyToTrack = (track: Track) => {
+    console.log('Reply to track:', track.title);
+  };
 
   // Like handler
   const handleLike = async () => {
