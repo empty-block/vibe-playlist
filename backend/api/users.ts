@@ -2,7 +2,12 @@ import { Hono } from 'hono'
 import {
   getSupabaseClient,
   encodeCursor,
-  decodeCursor
+  decodeCursor,
+  fetchStats,
+  fetchAuthors,
+  fetchReplyCounts,
+  formatAuthor,
+  formatMusic
 } from '../lib/api-utils'
 import { addRateLimitHeaders } from '../lib/rate-limit'
 
@@ -33,13 +38,16 @@ app.get('/:fid', async (c) => {
       }, 404)
     }
 
-    // Fetch activity stats grouped by edge type
+    // Fetch activity stats - only count interactions where cast has music
     const { data: statsData } = await supabase
       .from('interaction_edges')
-      .select('edge_type')
+      .select(`
+        edge_type,
+        cast_id
+      `)
       .eq('source_id', fid)
 
-    // Count stats by type
+    // Filter to only edges where the cast has music, then count by type
     const stats = {
       tracksShared: 0,
       tracksLiked: 0,
@@ -47,22 +55,38 @@ app.get('/:fid', async (c) => {
       tracksRecasted: 0
     }
 
-    statsData?.forEach(edge => {
-      switch (edge.edge_type) {
-        case 'AUTHORED':
-          stats.tracksShared++
-          break
-        case 'LIKED':
-          stats.tracksLiked++
-          break
-        case 'REPLIED':
-          stats.tracksReplied++
-          break
-        case 'RECASTED':
-          stats.tracksRecasted++
-          break
-      }
-    })
+    if (statsData && statsData.length > 0) {
+      // Get unique cast IDs
+      const castIds = [...new Set(statsData.map(e => e.cast_id))]
+
+      // Find which casts have music - query cast_music_edges
+      const { data: castsWithMusic } = await supabase
+        .from('cast_music_edges')
+        .select('cast_id')
+        .in('cast_id', castIds)
+
+      const castIdsWithMusic = new Set(castsWithMusic?.map(c => c.cast_id) || [])
+
+      // Count only edges where cast has music
+      statsData.forEach(edge => {
+        if (castIdsWithMusic.has(edge.cast_id)) {
+          switch (edge.edge_type) {
+            case 'AUTHORED':
+              stats.tracksShared++
+              break
+            case 'LIKED':
+              stats.tracksLiked++
+              break
+            case 'REPLIED':
+              stats.tracksReplied++
+              break
+            case 'RECASTED':
+              stats.tracksRecasted++
+              break
+          }
+        }
+      })
+    }
 
     addRateLimitHeaders(c)
     return c.json({
@@ -229,28 +253,51 @@ app.get('/:fid/activity', async (c) => {
     const castAuthorFids = Array.from(new Set(casts?.map(c => c.author_fid) || []))
     const authorMap = await fetchAuthors(supabase, castAuthorFids)
 
-    // Fetch music for all casts
-    const { data: music } = await supabase
+    // Fetch music for all casts by joining cast_music_edges with music_library
+    // First get the edges
+    const { data: musicEdges } = await supabase
       .from('cast_music_edges')
-      .select(`
-        cast_id,
-        music_library!inner (
-          platform,
-          platform_id,
-          artist,
-          title,
-          url,
-          thumbnail_url
-        )
-      `)
+      .select('cast_id, music_platform_name, music_platform_id, embed_index')
       .in('cast_id', castIds)
+      .order('cast_id')
+      .order('embed_index')
 
     const musicMap = new Map<string, any[]>()
-    music?.forEach(m => {
-      const castMusic = musicMap.get(m.cast_id) || []
-      castMusic.push(m.music_library)
-      musicMap.set(m.cast_id, castMusic)
-    })
+
+    if (musicEdges && musicEdges.length > 0) {
+      // Get unique platform combinations
+      const platformPairs = Array.from(new Set(
+        musicEdges.map(e => `${e.music_platform_name}|||${e.music_platform_id}`)
+      )).map(pair => {
+        const [platform, id] = pair.split('|||')
+        return { platform_name: platform, platform_id: id }
+      })
+
+      // Fetch music details for these platforms
+      // Since Supabase doesn't support OR filters easily, we'll fetch and filter in memory
+      const { data: musicLibrary } = await supabase
+        .from('music_library')
+        .select('platform_name, platform_id, artist, title, url, thumbnail_url')
+
+      // Create lookup map
+      const musicLibraryMap = new Map<string, any>()
+      musicLibrary?.forEach(m => {
+        const key = `${m.platform_name}:${m.platform_id}`
+        musicLibraryMap.set(key, m)
+      })
+
+      // Build music map by cast_id
+      musicEdges.forEach(edge => {
+        const key = `${edge.music_platform_name}:${edge.music_platform_id}`
+        const musicDetails = musicLibraryMap.get(key)
+
+        if (musicDetails) {
+          const castMusic = musicMap.get(edge.cast_id) || []
+          castMusic.push(formatMusic(musicDetails))
+          musicMap.set(edge.cast_id, castMusic)
+        }
+      })
+    }
 
     // Fetch stats for all casts
     const statsMap = await fetchStats(supabase, castIds)

@@ -6,21 +6,21 @@ import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying } from '../stores/playerStore';
 import {
   profileUser,
-  threads,
+  activity,
   isLoading,
   error,
   nextCursor,
   loadUserProfile,
-  loadMoreThreads
+  loadMoreActivity
 } from '../stores/profileStore';
 import './profilePage.css';
 
-type FilterType = 'threads' | 'replies' | 'all';
+type FilterType = 'all' | 'shared' | 'likes' | 'replies';
 
 const ProfilePage: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const [currentFilter, setCurrentFilter] = createSignal<FilterType>('threads');
+  const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
 
   // Get FID from route params or use current user's FID
   const userFid = () => params.fid || currentUser().fid;
@@ -45,30 +45,51 @@ const ProfilePage: Component = () => {
     return currentUser(); // Fallback while loading
   });
 
-  // Separate threads and replies from API data
-  const userThreads = createMemo(() =>
-    threads().filter(t => t.music && t.music.length > 0 && !t.text.startsWith('@'))
+  // Separate activity by type
+  const sharedTracks = createMemo(() =>
+    activity().filter(a =>
+      a.type === 'AUTHORED' &&
+      a.cast.music &&
+      a.cast.music.length > 0 &&
+      !a.cast.text.startsWith('@')
+    )
   );
 
-  const userReplies = createMemo(() =>
-    threads().filter(t => t.music && t.music.length > 0 && t.text.startsWith('@'))
+  const likedTracks = createMemo(() =>
+    activity().filter(a =>
+      a.type === 'LIKED' &&
+      a.cast.music &&
+      a.cast.music.length > 0
+    )
+  );
+
+  const repliedTracks = createMemo(() =>
+    activity().filter(a =>
+      a.type === 'AUTHORED' &&
+      a.cast.music &&
+      a.cast.music.length > 0 &&
+      a.cast.text.startsWith('@')
+    )
   );
 
   // Filtered content based on current filter
   const filteredContent = createMemo(() => {
     const filter = currentFilter();
 
-    if (filter === 'threads') {
-      return userThreads();
+    if (filter === 'shared') {
+      return sharedTracks();
+    }
+
+    if (filter === 'likes') {
+      return likedTracks();
     }
 
     if (filter === 'replies') {
-      return userReplies();
+      return repliedTracks();
     }
 
-    // 'all' - combine threads and replies sorted by timestamp
-    return [...userThreads(), ...userReplies()]
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    // 'all' - all activity sorted by timestamp
+    return activity().filter(a => a.cast.music && a.cast.music.length > 0);
   });
 
   // Track actions
@@ -94,23 +115,33 @@ const ProfilePage: Component = () => {
 
   const getEmptyMessage = (filter: FilterType) => {
     switch (filter) {
-      case 'threads':
-        return "You haven't started any conversations yet. Share a track to create your first thread!";
+      case 'shared':
+        return "You haven't shared any tracks yet. Share a track to create your first post!";
+      case 'likes':
+        return "You haven't liked any tracks yet. Like tracks to save them here!";
       case 'replies':
         return "You haven't replied to any threads yet. Join the conversation by adding your tracks!";
       case 'all':
-        return "Start exploring! Share tracks or reply to threads to build your profile.";
+        return "Start exploring! Share tracks, like music, or reply to threads to build your profile.";
     }
   };
 
+  // Compute counts (only items with music that will be displayed)
+  const allCount = createMemo(() => activity().filter(a => a.cast.music && a.cast.music.length > 0).length);
+  const sharedCount = createMemo(() => sharedTracks().length);
+  const likesCount = createMemo(() => likedTracks().length);
+  const repliesCount = createMemo(() => repliedTracks().length);
+
   const getFilterLabel = (filter: FilterType) => {
     switch (filter) {
-      case 'threads':
-        return `📤 Threads (${userThreads().length})`;
-      case 'replies':
-        return `💬 Replies (${userReplies().length})`;
       case 'all':
-        return `📋 All (${userThreads().length + userReplies().length})`;
+        return `📋 All (${allCount()})`;
+      case 'shared':
+        return `📤 Shared (${sharedCount()})`;
+      case 'likes':
+        return `♥ Likes (${likesCount()})`;
+      case 'replies':
+        return `💬 Replies (${repliesCount()})`;
     }
   };
 
@@ -156,10 +187,13 @@ const ProfilePage: Component = () => {
                 <Show when={profileUser()} fallback={
                   <>
                     <div class="stat-inline">
-                      <span class="number">{userThreads().length}</span> threads
+                      <span class="number">{sharedTracks().length}</span> shared
                     </div>
                     <div class="stat-inline">
-                      <span class="number">{userReplies().length}</span> replies
+                      <span class="number">{likedTracks().length}</span> liked
+                    </div>
+                    <div class="stat-inline">
+                      <span class="number">{repliedTracks().length}</span> replies
                     </div>
                   </>
                 }>
@@ -180,10 +214,22 @@ const ProfilePage: Component = () => {
         {/* Feed Filter Buttons */}
         <div class="feed-filter">
           <button
-            class={`filter-button ${currentFilter() === 'threads' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('threads')}
+            class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('all')}
           >
-            {getFilterLabel('threads')}
+            {getFilterLabel('all')}
+          </button>
+          <button
+            class={`filter-button ${currentFilter() === 'shared' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('shared')}
+          >
+            {getFilterLabel('shared')}
+          </button>
+          <button
+            class={`filter-button ${currentFilter() === 'likes' ? 'active' : ''}`}
+            onClick={() => setCurrentFilter('likes')}
+          >
+            {getFilterLabel('likes')}
           </button>
           <button
             class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
@@ -191,19 +237,15 @@ const ProfilePage: Component = () => {
           >
             {getFilterLabel('replies')}
           </button>
-          <button
-            class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
-            onClick={() => setCurrentFilter('all')}
-          >
-            {getFilterLabel('all')}
-          </button>
         </div>
 
         {/* Track Feed */}
         <div class="track-feed">
           <div class="feed-header">
             📤 Showing: <span class="feed-type">
-              {currentFilter() === 'threads' ? 'Threads' : currentFilter() === 'replies' ? 'Replies' : 'All Tracks'}
+              {currentFilter() === 'all' ? 'All Activity' :
+               currentFilter() === 'shared' ? 'Shared Tracks' :
+               currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
             </span> (<span class="feed-count">{filteredContent().length}</span>)
           </div>
 
@@ -216,17 +258,17 @@ const ProfilePage: Component = () => {
 
           <Show when={filteredContent().length > 0}>
             <For each={filteredContent()}>
-              {(thread) => {
-                const track = thread.music && thread.music[0] ? thread.music[0] : null;
+              {(activityItem) => {
+                const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
 
                 return (
                   <Show when={track}>
                     <TrackCard
-                      author={thread.author}
+                      author={activityItem.cast.author}
                       track={track!}
-                      text={thread.text}
-                      timestamp={thread.timestamp}
-                      stats={thread.stats}
+                      text={activityItem.cast.text}
+                      timestamp={activityItem.cast.timestamp}
+                      stats={activityItem.cast.stats}
                       onPlay={(trackData) => {
                         setCurrentTrack(trackData);
                         setIsPlaying(true);
@@ -247,7 +289,7 @@ const ProfilePage: Component = () => {
             <div style="text-align: center; padding: 20px;">
               <button
                 class="filter-button"
-                onClick={() => loadMoreThreads()}
+                onClick={() => loadMoreActivity()}
                 disabled={isLoading()}
               >
                 {isLoading() ? 'Loading...' : 'Load More'}

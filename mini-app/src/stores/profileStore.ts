@@ -2,20 +2,22 @@ import { createSignal, createRoot } from 'solid-js';
 import {
   fetchUserProfile,
   fetchUserThreads,
+  fetchUserActivity,
   ApiUserProfile,
-  ApiUserThread
+  ApiUserThread,
+  ApiActivity
 } from '../utils/api';
 
 const createProfileStore = () => {
   const [profileUser, setProfileUser] = createSignal<ApiUserProfile | null>(null);
-  const [threads, setThreads] = createSignal<ApiUserThread[]>([]);
+  const [activity, setActivity] = createSignal<ApiActivity[]>([]);
   const [isLoading, setIsLoading] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
   const [nextCursor, setNextCursor] = createSignal<string | undefined>(undefined);
   const [currentFid, setCurrentFid] = createSignal<string | null>(null);
 
   /**
-   * Load user profile and initial threads
+   * Load user profile and initial activity
    */
   const loadUserProfile = async (fid: string) => {
     if (isLoading()) return;
@@ -23,7 +25,7 @@ const createProfileStore = () => {
     // Reset state when loading a different user
     if (currentFid() !== fid) {
       setProfileUser(null);
-      setThreads([]);
+      setActivity([]);
       setNextCursor(undefined);
       setCurrentFid(fid);
     }
@@ -32,14 +34,28 @@ const createProfileStore = () => {
     setError(null);
 
     try {
-      // Fetch profile and threads in parallel
-      const [profileResponse, threadsResponse] = await Promise.all([
+      // Fetch profile, threads (for AUTHORED), and activity (for LIKED/RECASTED) in parallel
+      const [profileResponse, threadsResponse, activityResponse] = await Promise.all([
         fetchUserProfile(fid),
-        fetchUserThreads(fid)
+        fetchUserThreads(fid),
+        fetchUserActivity(fid)
       ]);
 
+      // Convert threads to activity format with AUTHORED type
+      const authoredActivity: ApiActivity[] = threadsResponse.threads.map(thread => ({
+        type: 'AUTHORED' as const,
+        user: thread.author,
+        cast: thread,
+        timestamp: thread.timestamp
+      }));
+
+      // Combine authored and interaction activity, sort by timestamp
+      const combinedActivity = [...authoredActivity, ...activityResponse.activity]
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
       setProfileUser(profileResponse);
-      setThreads(threadsResponse.threads);
+      setActivity(combinedActivity);
+      // Note: Using threads nextCursor for now, ideally we'd need to handle both cursors
       setNextCursor(threadsResponse.nextCursor);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load user profile';
@@ -51,9 +67,9 @@ const createProfileStore = () => {
   };
 
   /**
-   * Load more threads (pagination)
+   * Load more activity (pagination)
    */
-  const loadMoreThreads = async () => {
+  const loadMoreActivity = async () => {
     const fid = currentFid();
     const cursor = nextCursor();
 
@@ -63,15 +79,31 @@ const createProfileStore = () => {
     setError(null);
 
     try {
-      const threadsResponse = await fetchUserThreads(fid, cursor);
+      // Fetch more threads and activity in parallel
+      const [threadsResponse, activityResponse] = await Promise.all([
+        fetchUserThreads(fid, cursor),
+        fetchUserActivity(fid, cursor)
+      ]);
 
-      // Append new threads to existing ones
-      setThreads(prev => [...prev, ...threadsResponse.threads]);
+      // Convert threads to activity format with AUTHORED type
+      const authoredActivity: ApiActivity[] = threadsResponse.threads.map(thread => ({
+        type: 'AUTHORED' as const,
+        user: thread.author,
+        cast: thread,
+        timestamp: thread.timestamp
+      }));
+
+      // Combine authored and interaction activity, sort by timestamp
+      const newActivity = [...authoredActivity, ...activityResponse.activity]
+        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+      // Append new activity to existing ones
+      setActivity(prev => [...prev, ...newActivity]);
       setNextCursor(threadsResponse.nextCursor);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load more threads';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load more activity';
       setError(errorMessage);
-      console.error('Load more threads error:', err);
+      console.error('Load more activity error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +114,7 @@ const createProfileStore = () => {
    */
   const reset = () => {
     setProfileUser(null);
-    setThreads([]);
+    setActivity([]);
     setNextCursor(undefined);
     setError(null);
     setCurrentFid(null);
@@ -90,13 +122,13 @@ const createProfileStore = () => {
 
   return {
     profileUser,
-    threads,
+    activity,
     isLoading,
     error,
     nextCursor,
     currentFid,
     loadUserProfile,
-    loadMoreThreads,
+    loadMoreActivity,
     reset
   };
 };
@@ -104,12 +136,12 @@ const createProfileStore = () => {
 // Create singleton store
 export const {
   profileUser,
-  threads,
+  activity,
   isLoading,
   error,
   nextCursor,
   currentFid,
   loadUserProfile,
-  loadMoreThreads,
+  loadMoreActivity,
   reset
 } = createRoot(createProfileStore);

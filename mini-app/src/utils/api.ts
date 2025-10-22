@@ -234,3 +234,23 @@ export async function fetchUserThreads(fid: string, cursor?: string, limit: numb
 
   return response.json();
 }
+
+/**
+ * Fetch user activity (all interactions: authored, liked, recasted)
+ */
+export async function fetchUserActivity(fid: string, cursor?: string, limit: number = 50): Promise<ApiActivityResponse> {
+  const url = new URL(`${getApiUrl()}/api/users/${fid}/activity`);
+
+  url.searchParams.set('limit', limit.toString());
+  if (cursor) {
+    url.searchParams.set('cursor', cursor);
+  }
+
+  const response = await fetch(url.toString());
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user activity: ${response.statusText}`);
+  }
+
+  return response.json();
+}
