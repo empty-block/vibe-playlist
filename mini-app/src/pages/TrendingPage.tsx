@@ -1,6 +1,7 @@
 import { Component, createSignal, For, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
+import RetroWindow from '../components/common/RetroWindow';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
 import { setCurrentTrack, setIsPlaying } from '../stores/playerStore';
 import { formatRelativeTime } from '../utils/time';
@@ -50,110 +51,89 @@ const TrendingPage: Component = () => {
 
   return (
     <div class="trending-page">
-      <div class="dashboard">
-        {/* Window 1: Trending Tracks */}
-        <div
-          class="window"
-          classList={{ minimized: window1Minimized() }}
+      <div class="page-window-container">
+        {/* Trending Tracks Window */}
+        <RetroWindow
+          title="TRENDING TRACKS - Last 24 Hours"
+          icon={<div class="title-icon">⚡</div>}
+          variant="3d"
+          showMinimize={true}
+          showMaximize={true}
+          onMinimize={() => setWindow1Minimized(!window1Minimized())}
+          onMaximize={() => setWindow1Maximized(!window1Maximized())}
+          contentPadding="0"
+          footer={
+            <div class="status-bar">
+              <span class="status-bar-section">{tracks().length} tracks</span>
+              <span class="status-bar-section">Updated: {updatedTimeAgo()}</span>
+            </div>
+          }
         >
-          <div class="title-bar">
-            <div class="title-text">
-              <div class="title-icon">⚡</div>
-              <span>
-                TRENDING TRACKS
-                <span class="title-subtitle">- Last 24 Hours</span>
-              </span>
+          <div class="window-content-inner" classList={{ minimized: window1Minimized() }}>
+            <div class="section-header">
+              <div class="section-title">Hot Right Now</div>
             </div>
-            <div class="title-buttons">
-              <button
-                class="title-btn"
-                onClick={() => setWindow1Minimized(!window1Minimized())}
-                title="Minimize"
-              >
-                _
-              </button>
-              <button
-                class="title-btn"
-                onClick={() => setWindow1Maximized(!window1Maximized())}
-                title="Maximize"
-              >
-                □
-              </button>
-            </div>
-          </div>
 
-          <div class="window-content">
-            <div class="content-inner">
-              <div class="section-header">
-                <div class="section-title">Hot Right Now</div>
+            {isLoading() && tracks().length === 0 ? (
+              <div class="loading-state">
+                Loading trending tracks...
               </div>
-
-              {isLoading() && tracks().length === 0 ? (
-                <div style="padding: 20px; text-align: center; color: #666;">
-                  Loading trending tracks...
-                </div>
-              ) : error() ? (
-                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
-                  Error: {error()}
-                </div>
-              ) : tracks().length === 0 ? (
-                <div style="padding: 20px; text-align: center; color: #666;">
-                  No trending tracks yet
-                </div>
-              ) : (
-                <For each={tracks()}>
-                  {(track) => (
+            ) : error() ? (
+              <div class="error-state">
+                Error: {error()}
+              </div>
+            ) : tracks().length === 0 ? (
+              <div class="empty-state">
+                No trending tracks yet
+              </div>
+            ) : (
+              <For each={tracks()}>
+                {(track) => (
+                  <div
+                    class="track-item"
+                    onClick={() => handleTrackClick(track)}
+                  >
                     <div
-                      class="track-item"
-                      onClick={() => handleTrackClick(track)}
+                      class="track-rank"
+                      classList={{ 'top-3': track.rank <= 3 }}
                     >
-                      <div
-                        class="track-rank"
-                        classList={{ 'top-3': track.rank <= 3 }}
-                      >
-                        {track.rank}
-                      </div>
-                      <div class="track-thumbnail">
-                        {track.thumbnail ? (
-                          <img src={track.thumbnail} alt={track.title} style="width: 40px; height: 40px; object-fit: cover; border-radius: 2px;" />
-                        ) : (
-                          '🎵'
-                        )}
-                      </div>
-                      <div class="track-info">
-                        <div class="track-title">{track.title}</div>
-                        <div class="track-artist">{track.artist}</div>
-                        {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
-                          <div class="track-submitted">
-                            Shared by {(track as any).submittedBy.map((user: any, idx: number) => (
-                              <>
-                                <span
-                                  class="submitted-username"
-                                  onClick={(e) => handleUsernameClick(user.fid, e)}
-                                >
-                                  @{user.username}
-                                </span>
-                                {idx < (track as any).submittedBy.length - 1 && ', '}
-                              </>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div class="track-stats">
-                        {track.rank <= 3 && <span class="fire-icon">🔥</span>}
-                      </div>
+                      {track.rank}
                     </div>
-                  )}
-                </For>
-              )}
-            </div>
+                    <div class="track-thumbnail">
+                      {track.thumbnail ? (
+                        <img src={track.thumbnail} alt={track.title} />
+                      ) : (
+                        '🎵'
+                      )}
+                    </div>
+                    <div class="track-info">
+                      <div class="track-title">{track.title}</div>
+                      <div class="track-artist">{track.artist}</div>
+                      {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
+                        <div class="track-submitted">
+                          Shared by {(track as any).submittedBy.map((user: any, idx: number) => (
+                            <>
+                              <span
+                                class="submitted-username"
+                                onClick={(e) => handleUsernameClick(user.fid, e)}
+                              >
+                                @{user.username}
+                              </span>
+                              {idx < (track as any).submittedBy.length - 1 && ', '}
+                            </>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div class="track-stats">
+                      {track.rank <= 3 && <span class="fire-icon">🔥</span>}
+                    </div>
+                  </div>
+                )}
+              </For>
+            )}
           </div>
-
-          <div class="status-bar">
-            <span class="status-bar-section">{tracks().length} tracks</span>
-            <span class="status-bar-section">Updated: {updatedTimeAgo()}</span>
-          </div>
-        </div>
+        </RetroWindow>
       </div>
 
       {/* Bottom Navigation */}

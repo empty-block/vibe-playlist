@@ -1,10 +1,5 @@
-/* Window sizing (RetroWindow component handles chrome) */
-.retro-window {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  height: calc(100vh - 100px);
-}
+/* Channel List Component Styles */
+/* Window sizing handled by page-window-container in window-layout.css */
 
 /* Title icon styling */
 .title-icon {
@@ -170,16 +165,6 @@ body:not(.theme-dark) .search-input {
 
 /* Responsive */
 @media (max-width: 640px) {
-  .retro-window {
-    max-width: 100%;
-    height: calc(100vh - 85px) !important;
-    margin: 0 8px;
-  }
-
-  .title-bar {
-    font-size: 12px;
-  }
-
   .channels-container {
     padding: 4px;
   }

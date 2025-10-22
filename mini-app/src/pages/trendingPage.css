@@ -1,97 +1,15 @@
-/* Trending Page - Win95 Aesthetic */
+/* Trending Page - Content Styles Only */
+/* Window chrome handled by RetroWindow component + window-layout.css */
 
 /* Page Container - Background inherited from body */
 .trending-page {
   min-height: 100vh;
-  height: 100vh;
-  padding: 16px;
   padding-bottom: 80px; /* Space for mobile navigation */
   display: flex;
   flex-direction: column;
 }
 
-/* Main Dashboard Container */
-.dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  flex: 1;
-  height: 100%;
-}
-
-/* Classic Win95 Window Style - Light Mode */
-.theme-light .window,
-body:not(.theme-dark) .window {
-  background: #C0C0C8;
-  border: 2px solid;
-  border-color: #FFFFFF #000000 #000000 #FFFFFF;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-}
-
-/* Classic Win95 Window Style - Dark Mode */
-.theme-dark .window {
-  background: #000000;
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: relative;
-}
-
-/* Win95 Title Bar - Light Mode */
-.theme-light .title-bar,
-body:not(.theme-dark) .title-bar {
-  background: linear-gradient(90deg, #000080, #1084D0);
-  padding: 3px 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: move;
-  flex-shrink: 0;
-}
-
-/* Win95 Title Bar - Dark Mode */
-.theme-dark .title-bar {
-  background: #000000;
-  border-bottom: 2px solid #00ff00;
-  padding: 3px 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: move;
-  flex-shrink: 0;
-}
-
-/* Title Text - Light Mode */
-.theme-light .title-text,
-body:not(.theme-dark) .title-text {
-  color: #FFFFFF;
-  font-weight: bold;
-  font-size: 12px;
-  letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Title Text - Dark Mode */
-.theme-dark .title-text {
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 12px;
-  letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
+/* Title icon styling */
 .title-icon {
   width: 16px;
   height: 16px;
@@ -103,121 +21,13 @@ body:not(.theme-dark) .title-text {
   font-size: 10px;
 }
 
-.title-subtitle {
-  font-size: 10px;
-  opacity: 0.9;
-  margin-left: 4px;
-  font-weight: normal;
-}
-
-.title-buttons {
-  display: flex;
-  gap: 2px;
-}
-
-.title-btn {
-  width: 16px;
-  height: 14px;
-  background: #C0C0C8;
-  border: 1px solid;
-  border-color: #FFFFFF #000000 #000000 #FFFFFF;
-  font-size: 9px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
-
-.title-btn:active {
-  border-color: #000000 #FFFFFF #FFFFFF #000000;
-}
-
-/* Window Content with Win95 Borders & Scrolling - Light Mode */
-.theme-light .window-content,
-body:not(.theme-dark) .window-content {
-  padding: 0;
-  background: #FFFFFF;
-  border: 2px solid;
-  border-color: #808080 #FFFFFF #FFFFFF #808080;
-  margin: 4px;
-  flex: 1;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Window Content - Dark Mode */
-.theme-dark .window-content {
-  padding: 0;
-  background: #000000;
-  border: 2px solid #00ff00;
-  margin: 4px;
-  flex: 1;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  position: relative;
-}
-
-/* Win95 Scrollbar Styling */
-.window-content::-webkit-scrollbar {
-  width: 16px;
-  background: #C0C0C8;
-}
-
-.window-content::-webkit-scrollbar-track {
-  background: #C0C0C8;
-  border-left: 1px solid #FFFFFF;
-  border-right: 1px solid #000000;
-}
-
-.window-content::-webkit-scrollbar-thumb {
-  background: #C0C0C8;
-  border: 2px solid;
-  border-color: #FFFFFF #000000 #000000 #FFFFFF;
-  min-height: 20px;
-}
-
-.window-content::-webkit-scrollbar-thumb:hover {
-  background: #DFDFDF;
-}
-
-.window-content::-webkit-scrollbar-thumb:active {
-  border-color: #000000 #FFFFFF #FFFFFF #000000;
-}
-
-.window-content::-webkit-scrollbar-button {
-  height: 16px;
-  background: #C0C0C8;
-  border: 2px solid;
-  border-color: #FFFFFF #000000 #000000 #FFFFFF;
-  display: block;
-}
-
-.window-content::-webkit-scrollbar-button:vertical:decrement {
-  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 5l-4 4h8z" fill="%23000"/></svg>') center no-repeat;
-}
-
-.window-content::-webkit-scrollbar-button:vertical:increment {
-  background: #C0C0C8 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 11l-4-4h8z" fill="%23000"/></svg>') center no-repeat;
-}
-
-.window-content::-webkit-scrollbar-button:active {
-  border-color: #000000 #FFFFFF #FFFFFF #000000;
-}
-
-/* Inner Content Padding */
-.content-inner {
+/* Window Content Inner Wrapper */
+.window-content-inner {
   padding: 12px;
 }
 
 /* Minimized Window State */
-.window.minimized .window-content {
-  display: none;
-}
-
-.window.minimized .status-bar {
+.window-content-inner.minimized {
   display: none;
 }
 
@@ -259,6 +69,19 @@ body:not(.theme-dark) .section-title {
   color: #00ff00;
   text-transform: uppercase;
   letter-spacing: 2px;
+}
+
+/* Loading, Error, Empty States */
+.loading-state,
+.error-state,
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+.error-state {
+  color: #ff6b6b;
 }
 
 /* Clean Track Card - Light Mode */
@@ -330,6 +153,13 @@ body:not(.theme-dark) .track-item:hover {
   justify-content: center;
   font-size: 24px;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.track-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .track-info {
@@ -391,16 +221,6 @@ body:not(.theme-dark) .track-item:hover {
   gap: 2px;
 }
 
-/* Magenta Share Counts */
-.track-shares {
-  font-size: 14px;
-  font-weight: bold;
-  color: #E010E0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
 /* Fire Icon Animation */
 .fire-icon {
   font-size: 16px;
@@ -416,120 +236,7 @@ body:not(.theme-dark) .track-item:hover {
   }
 }
 
-/* Clean Contributor Card - Light Mode */
-.theme-light .contributor-item,
-body:not(.theme-dark) .contributor-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #F0F0F0;
-  border: 2px solid #C0C0C0;
-  border-top-color: #FFFFFF;
-  border-left-color: #FFFFFF;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.theme-light .contributor-item:hover,
-body:not(.theme-dark) .contributor-item:hover {
-  background: #E8E8E8;
-}
-
-/* Clean Contributor Card - Dark Mode */
-.theme-dark .contributor-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #1a1a1a;
-  border: 2px solid #00ff00;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.theme-dark .contributor-item:hover {
-  background: #222222;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-}
-
-.contributor-rank {
-  font-size: 18px;
-  font-weight: bold;
-  color: #000080;
-  min-width: 32px;
-  text-align: center;
-}
-
-/* Circular Avatar with Gradient Background */
-.contributor-avatar {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #04CAF4, #E010E0);
-  border: 2px solid #000000;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #FFFFFF;
-  font-weight: bold;
-}
-
-.contributor-info {
-  flex: 1;
-  min-width: 0;
-}
-
-/* Normal Colored Text for Usernames */
-.contributor-username {
-  font-weight: bold;
-  font-size: 14px;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.contributor-fid {
-  font-size: 11px;
-  color: #666666;
-  margin-top: 2px;
-}
-
-/* Neon Green Track Counts */
-.contributor-count {
-  font-size: 16px;
-  font-weight: bold;
-  color: #00F92A;
-  text-align: right;
-}
-
-.contributor-label {
-  font-size: 10px;
-  color: #666666;
-  text-align: right;
-}
-
-/* Win95 Status Bar - Light Mode */
-.theme-light .status-bar,
-body:not(.theme-dark) .status-bar {
-  background: #C0C0C8;
-  border-top: 2px solid;
-  border-color: #FFFFFF #000000 #000000 #FFFFFF;
-  padding: 3px 6px;
-  font-size: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
-
+/* Status Bar Sections - Light Mode */
 .theme-light .status-bar-section,
 body:not(.theme-dark) .status-bar-section {
   border: 1px solid;
@@ -537,46 +244,23 @@ body:not(.theme-dark) .status-bar-section {
   padding: 2px 6px;
   background: #C0C0C8;
   color: #000000;
-}
-
-/* Win95 Status Bar - Dark Mode */
-.theme-dark .status-bar {
-  background: #000000;
-  border-top: 2px solid #00ff00;
-  padding: 3px 6px;
   font-size: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
 }
 
+/* Status Bar Sections - Dark Mode */
 .theme-dark .status-bar-section {
   border: 1px solid #00ff00;
   padding: 2px 6px;
   background: #000000;
   color: #00ff00;
+  font-size: 10px;
 }
 
-/* Responsive: Mobile Stacking */
+/* Responsive: Mobile Adjustments */
 @media (max-width: 768px) {
-  .trending-page {
+  .track-item {
     padding: 8px;
-    padding-bottom: 80px;
-  }
-
-  .dashboard {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .window-content {
-    height: 400px;
-  }
-
-  .track-item,
-  .contributor-item {
-    padding: 8px;
+    gap: 10px;
   }
 
   .track-thumbnail {
@@ -585,9 +269,46 @@ body:not(.theme-dark) .status-bar-section {
     font-size: 20px;
   }
 
-  .contributor-avatar {
-    width: 38px;
-    height: 38px;
+  .track-rank {
+    font-size: 18px;
+    min-width: 28px;
+  }
+
+  .track-rank.top-3 {
+    font-size: 20px;
+  }
+
+  .track-title {
+    font-size: 13px;
+  }
+
+  .track-artist {
+    font-size: 11px;
+  }
+
+  .track-submitted {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .window-content-inner {
+    padding: 8px;
+  }
+
+  .track-item {
+    padding: 6px;
+    gap: 8px;
+  }
+
+  .track-thumbnail {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+
+  .track-rank {
     font-size: 16px;
+    min-width: 24px;
   }
 }

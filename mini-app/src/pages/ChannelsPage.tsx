@@ -59,11 +59,13 @@ const ChannelsPage: Component = () => {
         </Show>
 
         <Show when={!channelsData.loading && !channelsData.error}>
-          {/* Channel list */}
-          <ChannelList
-            channels={channels()}
-            onChannelClick={handleChannelClick}
-          />
+          <div class="page-window-container">
+            {/* Channel list */}
+            <ChannelList
+              channels={channels()}
+              onChannelClick={handleChannelClick}
+            />
+          </div>
         </Show>
       </main>
 

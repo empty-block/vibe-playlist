@@ -1,5 +1,8 @@
 /* Channel View Page - Windows 95 CD-005 Design */
 
+/* Channel View Page - Content Styles Only */
+/* Window chrome and sizing handled by RetroWindow + window-layout.css */
+
 /* Base Layout - Background inherited from body */
 .channel-view-page {
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
@@ -17,19 +20,6 @@ body:not(.theme-dark) .channel-view-page {
 /* Dark Mode Text Color */
 .theme-dark .channel-view-page {
   color: #FFFFFF;
-}
-
-/* Container */
-.channel-view-container {
-  max-width: 720px;
-  margin: 10px auto;
-  width: calc(100% - 20px);
-  height: calc(100vh - 100px); /* Account for margins and mobile nav */
-}
-
-/* Window sizing (RetroWindow component handles chrome) */
-.channel-view-page .retro-window {
-  height: 100%;
 }
 
 .title-icon {
@@ -714,12 +704,6 @@ body:not(.theme-dark) .stat-box:hover {
 @media (max-width: 600px) {
   .channel-view-page {
     padding-bottom: 70px;
-  }
-
-  .channel-view-container {
-    margin: 5px;
-    width: calc(100% - 10px);
-    height: calc(100vh - 85px);
   }
 
   .channel-view-page .channel-header {

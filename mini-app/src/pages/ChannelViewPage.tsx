@@ -121,7 +121,7 @@ const ChannelViewPage: Component = () => {
 
   return (
     <div class="channel-view-page">
-      <div class="channel-view-container">
+      <div class="page-window-container">
         <RetroWindow
           title={`${channelData()?.name || 'Channel'} - Channel Library`}
           icon={<span class="title-icon">📁</span>}
