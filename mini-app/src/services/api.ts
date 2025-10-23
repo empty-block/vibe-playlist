@@ -156,4 +156,47 @@ export async function fetchChannelFeed(
   return apiFetch<ApiThreadsResponse>(endpoint);
 }
 
+/**
+ * Fetch home feed (threads from all channels combined)
+ */
+export async function fetchHomeFeed(
+  params?: {
+    limit?: number;
+    cursor?: string;
+    musicOnly?: boolean;
+    sort?: string;
+    minLikes?: number;
+    musicSources?: string[];
+    genres?: string[];
+  }
+): Promise<ApiThreadsResponse> {
+  const queryParams = new URLSearchParams();
+
+  if (params?.limit) queryParams.set('limit', params.limit.toString());
+  if (params?.cursor) queryParams.set('cursor', params.cursor);
+  // Default to showing only posts with music
+  queryParams.set('musicOnly', String(params?.musicOnly ?? true));
+
+  // Add sort option (defaults to 'recent' on backend)
+  if (params?.sort) queryParams.set('sort', params.sort);
+
+  // Add quality filter (defaults to 3 on backend for home feed)
+  if (params?.minLikes !== undefined) queryParams.set('minLikes', params.minLikes.toString());
+
+  // Add music sources filter (comma-separated)
+  if (params?.musicSources && params.musicSources.length > 0) {
+    queryParams.set('musicSources', params.musicSources.join(','));
+  }
+
+  // Add genres filter (comma-separated)
+  if (params?.genres && params.genres.length > 0) {
+    queryParams.set('genres', params.genres.join(','));
+  }
+
+  const query = queryParams.toString();
+  const endpoint = `/api/channels/home/feed${query ? `?${query}` : ''}`;
+
+  return apiFetch<ApiThreadsResponse>(endpoint);
+}
+
 export { ApiError };

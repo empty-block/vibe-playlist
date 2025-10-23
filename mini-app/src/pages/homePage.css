@@ -1,0 +1,260 @@
+/* Home Page - Windows 95 CD-005 Design */
+/* Reuses most styles from channelViewPage.css */
+/* Only contains home-specific overrides */
+
+.home-page {
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  line-height: 1.4;
+  min-height: 100vh;
+  padding-bottom: 80px; /* Space for mobile nav */
+}
+
+/* Light Mode Text Color */
+.theme-light .home-page,
+body:not(.theme-dark) .home-page {
+  color: #000;
+}
+
+/* Dark Mode Text Color */
+.theme-dark .home-page {
+  color: #FFFFFF;
+}
+
+/* Home Header - Simpler than channel header */
+.home-header {
+  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%);
+  padding: 20px 16px;
+  border-bottom: 4px solid #000000;
+}
+
+.home-header-content {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.home-icon-large {
+  font-size: 48px;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.home-header-text {
+  flex: 1;
+}
+
+.home-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  margin-bottom: 4px;
+}
+
+.home-description {
+  font-size: 13px;
+  color: #e0e0e0;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode header */
+.theme-dark .home-header {
+  background: linear-gradient(135deg, #000000 0%, #001a1a 100%);
+  border-bottom: 2px solid #00ff00;
+}
+
+.theme-dark .home-title {
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.theme-dark .home-description {
+  color: #00ff00;
+  opacity: 0.8;
+}
+
+/* Channel view content - reuse from ChannelViewPage */
+.channel-view-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.feed-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Loading State */
+.loading-state {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #808080;
+}
+
+/* Error State */
+.error-state {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #ff0000;
+  background: #ffe0e0;
+  border: 2px solid #ff0000;
+  margin: 8px;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin: 8px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: #808080;
+  margin-bottom: 8px;
+}
+
+.empty-state p strong {
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Dark mode overrides */
+.theme-dark .error-state {
+  background: #1a0000;
+  border-color: #ff0000;
+  color: #ff6666;
+}
+
+.theme-dark .empty-state {
+  background: #000000;
+  border: 2px solid #00ff00;
+}
+
+.theme-dark .empty-state p {
+  color: #00ff00;
+}
+
+.theme-dark .loading-state {
+  color: #00ff00;
+}
+
+/* Status Bar */
+.status-bar {
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-top: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 11px;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.status-bar-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  color: #00ff00;
+  line-height: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.theme-dark .status-bar {
+  background: #000000;
+  border-top: 2px solid #00ff00;
+  color: #00ff00;
+}
+
+.theme-dark .status-indicator {
+  color: #00ff00;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .home-page {
+    padding-bottom: 70px;
+  }
+
+  .home-header {
+    padding: 16px 12px;
+  }
+
+  .home-icon-large {
+    font-size: 40px;
+  }
+
+  .home-title {
+    font-size: 20px;
+  }
+
+  .home-description {
+    font-size: 12px;
+  }
+
+  .feed-section {
+    padding: 6px;
+  }
+
+  .status-bar {
+    gap: 8px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+
+  .status-bar-section {
+    gap: 3px;
+  }
+}
+
+/* Ultra-mobile (very small phones) */
+@media (max-width: 360px) {
+  .home-header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .home-icon-large {
+    font-size: 36px;
+  }
+
+  .home-title {
+    font-size: 18px;
+  }
+
+  .home-description {
+    font-size: 11px;
+  }
+
+  .status-bar {
+    gap: 6px;
+  }
+}

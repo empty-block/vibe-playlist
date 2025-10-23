@@ -58,6 +58,158 @@ app.get('/', async (c) => {
 })
 
 /**
+ * GET /api/channels/home/feed
+ * Get paginated feed of threads from ALL channels combined
+ * Used for the Home tab
+ * NOTE: This MUST come before /:channelId routes to avoid route conflicts
+ */
+app.get('/home/feed', async (c) => {
+  try {
+    const limit = Math.min(parseInt(c.req.query('limit') || '50'), 100)
+    const cursor = c.req.query('cursor')
+    const forceSync = c.req.query('forceSync') === 'true'
+    const skipSync = c.req.query('skipSync') === 'true'
+
+    const supabase = getSupabaseClient()
+
+    // Trigger background sync for all channels (non-blocking)
+    // This ensures fresh data across all channels for home feed
+    if (!skipSync) {
+      const syncEngine = getSyncEngine()
+      // Get list of channels to sync
+      const { data: channels } = await supabase
+        .rpc('get_channels_list', { include_archived: false })
+
+      if (channels && channels.length > 0) {
+        // Sync top channels in background
+        channels.slice(0, 5).forEach((ch: any) => {
+          syncEngine.syncChannel(ch.channel_id, {
+            limit: 25,
+            forceFullSync: forceSync
+          }).catch(err => {
+            console.error(`[Home API] Background sync failed for ${ch.channel_id}:`, err)
+          })
+        })
+      }
+    }
+
+    // Parse cursor
+    let cursorTimestamp = null
+    let cursorId = null
+    if (cursor) {
+      const cursorData = decodeCursor(cursor)
+      if (cursorData) {
+        cursorTimestamp = cursorData.created_at
+        cursorId = cursorData.id
+      }
+    }
+
+    // Parse musicOnly filter
+    const musicOnly = c.req.query('musicOnly') === 'true'
+
+    // Parse sort option (defaults to 'recent')
+    const sort = (c.req.query('sort') || 'recent') as ChannelFeedSortOption
+
+    // Parse quality filter (min likes) - default to 3 for home feed
+    const minLikes = parseInt(c.req.query('minLikes') || '0')
+
+    // Parse music sources filter (comma-separated)
+    const musicSourcesParam = c.req.query('musicSources')
+    const musicSources = musicSourcesParam
+      ? musicSourcesParam.split(',').filter(Boolean) as MusicPlatform[]
+      : null
+
+    // Parse genres filter (comma-separated)
+    const genresParam = c.req.query('genres')
+    const genres = genresParam
+      ? genresParam.split(',').filter(Boolean)
+      : null
+
+    // Log the parameters being sent to database
+    console.log('[Home API] Calling get_home_feed with:', {
+      limit_count: limit + 1,
+      sort_by: sort,
+      min_likes: minLikes,
+      p_music_sources: musicSources,
+      p_genres: genres
+    });
+
+    // Fetch home feed using postgres function
+    const { data: threads, error: threadsError } = await supabase
+      .rpc('get_home_feed', {
+        limit_count: limit + 1,  // Fetch one extra to check hasMore
+        cursor_timestamp: cursorTimestamp,
+        cursor_id: cursorId,
+        music_only: musicOnly,
+        sort_by: sort,
+        min_likes: minLikes,
+        p_music_sources: musicSources,
+        p_genres: genres
+      })
+
+    console.log('[Home API] Database returned:', {
+      threadCount: threads?.length || 0,
+      firstThreadHash: threads?.[0]?.cast_hash,
+      firstThreadLikes: threads?.[0]?.likes_count
+    });
+
+    if (threadsError) {
+      console.error('Error fetching home feed:', threadsError)
+      return c.json({
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Failed to fetch home feed'
+        }
+      }, 500)
+    }
+
+    const hasMore = threads.length > limit
+    const threadsToReturn = threads.slice(0, limit)
+
+    // Format threads (same as /api/threads)
+    const formattedThreads = threadsToReturn.map((thread: any) => ({
+      castHash: thread.cast_hash,
+      text: thread.cast_text,
+      author: {
+        fid: thread.author_fid,
+        username: thread.author_username,
+        displayName: thread.author_display_name,
+        pfpUrl: thread.author_avatar_url
+      },
+      timestamp: thread.created_at,
+      music: thread.music || [],
+      stats: {
+        replies: parseInt(thread.replies_count),
+        likes: parseInt(thread.likes_count),
+        recasts: parseInt(thread.recasts_count)
+      }
+    }))
+
+    let nextCursor: string | undefined
+    if (hasMore && threadsToReturn.length > 0) {
+      const lastThread = threadsToReturn[threadsToReturn.length - 1]
+      nextCursor = encodeCursor({
+        created_at: lastThread.created_at,
+        id: lastThread.cast_hash
+      })
+    }
+
+    return c.json({
+      threads: formattedThreads,
+      nextCursor
+    })
+  } catch (error) {
+    console.error('Get home feed error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error'
+      }
+    }, 500)
+  }
+})
+
+/**
  * GET /api/channels/:channelId
  * Get detailed information about a specific channel
  */

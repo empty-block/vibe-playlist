@@ -1,5 +1,6 @@
 import { Router, Route } from '@solidjs/router';
 import { Component, Show, JSX } from 'solid-js';
+import HomePage from './pages/HomePage';
 import ThreadsPage from './pages/ThreadsPage';
 import ThreadViewPage from './pages/ThreadViewPage';
 import ChannelViewPage from './pages/ChannelViewPage';
@@ -31,7 +32,8 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 const App: Component = () => {
   return (
     <Router root={RootLayout}>
-      <Route path="/" component={ChannelsPage} />
+      <Route path="/" component={HomePage} />
+      <Route path="/home" component={HomePage} />
       <Route path="/channels" component={ChannelsPage} />
       <Route path="/channels/:id" component={ChannelViewPage} />
       <Route path="/activity" component={ActivityPage} />
