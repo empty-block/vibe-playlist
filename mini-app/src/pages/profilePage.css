@@ -258,7 +258,7 @@ body:not(.theme-dark) .filter-button:active {
 /* Feed Header - Light Mode */
 .theme-light .feed-header,
 body:not(.theme-dark) .feed-header {
-  background: #ffffff;
+  background: #dfdfdf;
   padding: 8px 12px;
   border: 2px solid;
   border-color: #ffffff #808080 #808080 #ffffff;
@@ -385,7 +385,7 @@ body:not(.theme-dark) .track-content {
   gap: 12px;
   padding: 12px;
   align-items: center;
-  background: #ffffff;
+  background: #F0F0F0;
 }
 
 /* Track Content - Dark Mode */
@@ -394,7 +394,7 @@ body:not(.theme-dark) .track-content {
   gap: 12px;
   padding: 12px;
   align-items: center;
-  background: #000000;
+  background: #151515;
 }
 
 .thumbnail {
@@ -532,7 +532,7 @@ body:not(.theme-dark) .stats-row {
   padding: 8px 12px;
   display: flex;
   gap: 12px;
-  background: #ffffff;
+  background: #dfdfdf;
 }
 
 /* Stats Row - Dark Mode */
@@ -540,7 +540,7 @@ body:not(.theme-dark) .stats-row {
   padding: 8px 12px;
   display: flex;
   gap: 12px;
-  background: #000000;
+  background: #0a0a0a;
 }
 
 /* Stat Box - Light Mode */

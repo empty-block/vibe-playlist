@@ -572,7 +572,7 @@ body:not(.theme-dark) .track-content {
   gap: 10px;
   padding: 10px;
   align-items: center;
-  background: #ffffff;
+  background: #F0F0F0;
 }
 
 /* Track Content - Dark Mode */
@@ -581,7 +581,7 @@ body:not(.theme-dark) .track-content {
   gap: 10px;
   padding: 10px;
   align-items: center;
-  background: #0a0a0a;
+  background: #151515;
 }
 
 .thumbnail {
@@ -716,7 +716,7 @@ body:not(.theme-dark) .channel-view-page .track-item .track-info .track-meta {
 /* Comment Box - Light Mode */
 .theme-light .comment-box,
 body:not(.theme-dark) .comment-box {
-  background: #ffffff;
+  background: #F0F0F0;
   padding: 8px 10px;
   font-size: 12px;
   font-style: italic;
@@ -728,7 +728,7 @@ body:not(.theme-dark) .comment-box {
 
 /* Comment Box - Dark Mode */
 .theme-dark .comment-box {
-  background: #000000;
+  background: #151515;
   padding: 8px 10px;
   font-size: 12px;
   font-style: italic;
