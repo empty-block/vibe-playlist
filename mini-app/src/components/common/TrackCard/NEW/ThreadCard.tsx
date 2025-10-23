@@ -86,7 +86,7 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
 
   return (
     <article
-      class={`terminal-activity-block terminal-activity-block--thread ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''}`}
+      class={`terminal-track-card terminal-activity-block terminal-activity-block--thread ${isTrackPlaying() ? 'terminal-activity-block--playing' : ''}`}
       onClick={handleCardClick}
       role="article"
       aria-label={`Thread by ${props.creatorUsername}: ${props.threadText}`}

@@ -58,10 +58,10 @@ body:not(.theme-dark) .activity-page .retro-window {
   height: calc(100vh - 100px);
 }
 
-/* Title Bar - Light Mode (keep blue gradient) */
+/* Title Bar - Light Mode (neon blue gradient) */
 .theme-light .activity-page .title-bar,
 body:not(.theme-dark) .activity-page .title-bar {
-  background: linear-gradient(to right, #000080, #1084D0);
+  background: linear-gradient(to right, #3b00fd, #04caf4);
   padding: 3px 4px;
   display: flex;
   justify-content: space-between;
