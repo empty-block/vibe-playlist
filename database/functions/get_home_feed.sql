@@ -24,6 +24,8 @@ RETURNS TABLE(
   author_username TEXT,
   author_display_name TEXT,
   author_avatar_url TEXT,
+  channel_id TEXT,
+  channel_name TEXT,
   music JSONB,
   likes_count BIGINT,
   recasts_count BIGINT,
@@ -50,8 +52,10 @@ BEGIN
       cn.node_id,
       cn.cast_text,
       cn.created_at,
-      cn.author_fid
+      cn.author_fid,
+      cn.channel
     FROM cast_nodes cn
+    INNER JOIN channels ch ON cn.channel = ch.id  -- ONLY from curated channels
     WHERE cn.parent_cast_hash IS NULL  -- Only root threads
       AND cn.channel IS NOT NULL  -- Must be in a channel
       AND (cursor_timestamp IS NULL OR cn.created_at < cursor_timestamp)
@@ -112,6 +116,7 @@ BEGIN
       t.cast_text,
       t.created_at,
       t.author_fid,
+      t.channel,
       COALESCE(ts.likes, 0) as likes_count,
       COALESCE(ts.recasts, 0) as recasts_count,
       COALESCE(tr.reply_count, 0) as replies_count,
@@ -136,6 +141,8 @@ BEGIN
     COALESCE(u.fname, 'unknown')::TEXT as author_username,
     COALESCE(u.display_name, 'Unknown User')::TEXT as author_display_name,
     u.avatar_url::TEXT as author_avatar_url,
+    tws.channel::TEXT as channel_id,
+    COALESCE(ch.name, tws.channel)::TEXT as channel_name,
     COALESCE(tm.music_data, '[]'::jsonb) as music,
     tws.likes_count,
     tws.recasts_count,
@@ -143,6 +150,7 @@ BEGIN
   FROM threads_with_stats tws
   LEFT JOIN user_nodes u ON tws.author_fid = u.node_id
   LEFT JOIN thread_music tm ON tws.node_id = tm.cast_id
+  LEFT JOIN channels ch ON tws.channel = ch.id
   ORDER BY
     CASE
       WHEN sort_by = 'recent' THEN tws.created_at

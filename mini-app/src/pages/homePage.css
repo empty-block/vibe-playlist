@@ -151,6 +151,43 @@ body:not(.theme-dark) .home-page {
   color: #00ff00;
 }
 
+/* User text - username and channel inline */
+.user-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.channel-info {
+  font-size: 11px;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.channel-link {
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.theme-light .channel-link,
+body:not(.theme-dark) .channel-link {
+  color: #ffffff;
+}
+
+.theme-dark .channel-link {
+  color: #00ff00;
+}
+
+.channel-link:hover {
+  opacity: 0.8;
+}
+
 /* Status Bar */
 .status-bar {
   padding: 4px 8px;

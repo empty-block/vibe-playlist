@@ -104,8 +104,8 @@ app.get('/home/feed', async (c) => {
       }
     }
 
-    // Parse musicOnly filter
-    const musicOnly = c.req.query('musicOnly') === 'true'
+    // Parse musicOnly filter - default to TRUE for home feed (this is a music app!)
+    const musicOnly = c.req.query('musicOnly') !== 'false' // Default true unless explicitly false
 
     // Parse sort option (defaults to 'recent')
     const sort = (c.req.query('sort') || 'recent') as ChannelFeedSortOption
@@ -166,7 +166,7 @@ app.get('/home/feed', async (c) => {
     const hasMore = threads.length > limit
     const threadsToReturn = threads.slice(0, limit)
 
-    // Format threads (same as /api/threads)
+    // Format threads (same as /api/threads but with channelId and channelName)
     const formattedThreads = threadsToReturn.map((thread: any) => ({
       castHash: thread.cast_hash,
       text: thread.cast_text,
@@ -177,6 +177,8 @@ app.get('/home/feed', async (c) => {
         pfpUrl: thread.author_avatar_url
       },
       timestamp: thread.created_at,
+      channelId: thread.channel_id,
+      channelName: thread.channel_name,
       music: thread.music || [],
       stats: {
         replies: parseInt(thread.replies_count),

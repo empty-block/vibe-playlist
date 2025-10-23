@@ -1,4 +1,5 @@
 import { Component, Show } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 
 interface TrackCardProps {
@@ -18,6 +19,8 @@ interface TrackCardProps {
   };
   text?: string;
   timestamp: string;
+  channelId?: string;
+  channelName?: string;
   stats: {
     likes: number;
     replies: number;
@@ -43,12 +46,20 @@ const formatTimeAgo = (timestamp: string) => {
 };
 
 const TrackCard: Component<TrackCardProps> = (props) => {
+  const navigate = useNavigate();
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
   const handleUsernameClick = (e: MouseEvent) => {
     if (props.onUsernameClick) {
       props.onUsernameClick(props.author.fid, e);
+    }
+  };
+
+  const handleChannelClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (props.channelId) {
+      navigate(`/channels/${props.channelId}`);
     }
   };
 
@@ -68,13 +79,26 @@ const TrackCard: Component<TrackCardProps> = (props) => {
               class="user-avatar"
             />
           </Show>
-          <span
-            class="username"
-            onClick={handleUsernameClick}
-            style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
-          >
-            {props.author.username}
-          </span>
+          <div class="user-text">
+            <span
+              class="username"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+            >
+              {props.author.username}
+            </span>
+            <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
+              <span class="channel-info">
+                shared in{' '}
+                <span
+                  class="channel-link"
+                  onClick={handleChannelClick}
+                >
+                  {props.channelId}
+                </span>
+              </span>
+            </Show>
+          </div>
         </div>
         <span class="timestamp">{formatTimeAgo(props.timestamp)}</span>
       </div>
