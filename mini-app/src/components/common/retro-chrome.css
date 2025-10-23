@@ -58,10 +58,10 @@
   user-select: none;
 }
 
-/* Light mode: Classic Win95 blue gradient */
+/* Light mode: Neon blue gradient */
 .theme-light .retro-titlebar,
 body:not(.theme-dark) .retro-titlebar {
-  background: linear-gradient(90deg, #000080, #1084D0);
+  background: linear-gradient(90deg, #3b00fd, #04caf4);
   color: #FFFFFF;
 }
 
@@ -224,7 +224,8 @@ body:not(.theme-dark) .retro-titlebar {
 }
 
 .theme-dark .retro-window__footer {
-  background: rgba(0, 0, 0, 0.3);
+  background: #000000;
+  color: var(--text-lcd);
 }
 
 /* ============================================

@@ -339,14 +339,15 @@
   padding-top: 8px;
 }
 
-.track-title-line {
+/* Scoped to terminal track cards only - prevents leaking to other pages */
+.terminal-track-card .track-title-line {
   display: flex;
   align-items: baseline;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.track-title {
+.terminal-track-card .track-title {
   color: var(--terminal-white);
   font-size: 13px;
   font-weight: 700;
@@ -355,7 +356,7 @@
   text-overflow: ellipsis;
 }
 
-.track-source {
+.terminal-track-card .track-source {
   color: var(--terminal-dim);
   font-size: 9px;
   font-weight: 400;

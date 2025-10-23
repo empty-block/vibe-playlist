@@ -20,7 +20,7 @@
 }
 
 .player-titlebar {
-  background: linear-gradient(90deg, #000080, #1084D0);
+  background: linear-gradient(90deg, #3b00fd, #04caf4);
   color: #FFFFFF;
   font-size: 11px;
   font-weight: bold;
@@ -452,7 +452,7 @@
 .player-control-play {
   width: 56px;
   background: var(--accent-secondary);
-  color: #000080;
+  color: var(--neon-blue);
 }
 
 /* Dark mode control button effects */

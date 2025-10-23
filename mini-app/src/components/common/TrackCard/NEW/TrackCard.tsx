@@ -53,7 +53,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
   };
 
   return (
-    <div class="activity-card">
+    <div class="terminal-track-card activity-card">
       {/* Navy header bar */}
       <div class="activity-header">
         <div class="user-info">

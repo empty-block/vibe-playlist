@@ -20,7 +20,7 @@ body:not(.theme-dark) .channel-item.even {
 
 .theme-light .channel-item:hover,
 body:not(.theme-dark) .channel-item:hover {
-  background: #000080 !important;
+  background: var(--neon-blue) !important;
   color: #FFFFFF;
   border: 2px dotted #FFFFFF;
 }
@@ -179,7 +179,7 @@ body:not(.theme-dark) .user-badge {
 .theme-light .channel-item:hover .user-badge,
 body:not(.theme-dark) .channel-item:hover .user-badge {
   background: #FFFFFF;
-  color: #000080;
+  color: var(--neon-blue);
   border-top: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #FFFFFF;

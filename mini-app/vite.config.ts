@@ -7,7 +7,7 @@ export default defineConfig(() => {
     server: {
       host: 'localhost',
       port: 3002,
-      hmr: false,
+      hmr: true,
     },
     build: {
       target: 'esnext'
