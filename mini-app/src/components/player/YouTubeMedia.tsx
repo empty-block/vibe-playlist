@@ -223,13 +223,26 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       };
       
       const videoId = getVideoId(track.sourceId);
-      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
-      
+      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId, 'Should autoplay:', isPlaying());
+
       try {
         player.loadVideoById({
           videoId: videoId,
           startSeconds: 0
         });
+
+        // If we're supposed to be playing, start playback after load
+        if (isPlaying()) {
+          // Give the video a moment to load, then play
+          setTimeout(() => {
+            try {
+              player.playVideo();
+              console.log('Auto-playing YouTube video');
+            } catch (e) {
+              console.error('Error auto-playing:', e);
+            }
+          }, 500);
+        }
       } catch (error) {
         console.error('Error loading video:', error);
       }

@@ -1,31 +1,25 @@
 import { render } from 'solid-js/web';
-import { onMount } from 'solid-js';
 import sdk from '@farcaster/miniapp-sdk';
 import App from './App';
 import './styles/theme.css';
 import './styles/window-layout.css';
 
+// Initialize Farcaster SDK IMMEDIATELY
+// Must be called before rendering to hide splash screen
+(async () => {
+  try {
+    // Signal that the app is ready (hides splash screen)
+    // This MUST be called as early as possible
+    await sdk.actions.ready();
+    console.log('Farcaster SDK ready called');
+  } catch (error) {
+    console.log('Not in Farcaster context or SDK ready failed:', error);
+    // App will still work for local development
+  }
+})();
+
 const root = document.getElementById('root');
 
 if (root) {
-  render(() => {
-    // Initialize Farcaster SDK after component mounts
-    onMount(async () => {
-      try {
-        // Check if we're in a Farcaster context
-        if (sdk.context) {
-          console.log('Farcaster SDK initialized:', sdk.context);
-        }
-
-        // Signal that the app is ready (hides splash screen)
-        await sdk.ready();
-        console.log('Mini app ready');
-      } catch (error) {
-        console.error('Failed to initialize Farcaster SDK:', error);
-        // App will still work for local development
-      }
-    });
-
-    return <App />;
-  }, root);
+  render(() => <App />, root);
 }

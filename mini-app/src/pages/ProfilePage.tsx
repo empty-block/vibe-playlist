@@ -24,7 +24,7 @@ const ProfilePage: Component = () => {
   const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
 
   // Get FID from route params or use current user's FID
-  const userFid = () => params.fid || currentUser().fid;
+  const userFid = () => params.fid || currentUser()?.fid || '';
 
   // Load profile data on mount
   onMount(() => {
@@ -43,7 +43,15 @@ const ProfilePage: Component = () => {
         bio: undefined // Will add later when we have bio in DB
       };
     }
-    return currentUser(); // Fallback while loading
+    // Fallback to current user while loading
+    const curr = currentUser();
+    return curr || {
+      fid: '',
+      username: 'unknown',
+      displayName: 'Loading...',
+      avatar: null,
+      bio: undefined
+    };
   });
 
   // Separate activity by type
