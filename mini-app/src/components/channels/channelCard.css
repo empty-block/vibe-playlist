@@ -18,10 +18,10 @@
 /* Hover state - clean glow, no blur */
 .channel-card:hover {
   background: rgba(0, 0, 0, 0.5);
-  border-color: var(--neon-magenta-bright, #ff1aff);
+  border-color: var(--neon-magenta-bright);
   box-shadow:
-    0 0 8px rgba(224, 16, 224, 0.4),
-    inset 0 0 0 1px rgba(255, 26, 255, 0.1);
+    0 0 8px rgba(249, 6, 214, 0.4), /* Neon pink glow */
+    inset 0 0 0 1px rgba(249, 6, 214, 0.1);
   transform: translateX(2px) translateZ(0);
 }
 
@@ -29,8 +29,8 @@
 .channel-card:active {
   transform: translateX(4px) translateZ(0);
   box-shadow:
-    0 0 12px rgba(224, 16, 224, 0.5),
-    inset 0 0 0 1px rgba(255, 26, 255, 0.2);
+    0 0 12px rgba(249, 6, 214, 0.5), /* Neon pink glow */
+    inset 0 0 0 1px rgba(249, 6, 214, 0.2);
 }
 
 /* Focus state for accessibility */
@@ -78,13 +78,13 @@
 }
 
 .channel-card:hover .channel-name {
-  color: var(--light-text, #ffffff);
-  text-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
+  color: var(--light-text);
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.4); /* Cyan glow */
 }
 
 .channel-card:hover .channel-hash {
   opacity: 1;
-  text-shadow: 0 0 6px rgba(224, 16, 224, 0.4);
+  text-shadow: 0 0 6px rgba(249, 6, 214, 0.4); /* Neon pink glow */
 }
 
 /* Body section - description */
@@ -107,7 +107,7 @@
 
 .channel-card:hover .channel-description {
   opacity: 1;
-  color: var(--light-text, #ffffff);
+  color: var(--light-text);
 }
 
 /* Responsive adjustments */

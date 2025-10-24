@@ -37,7 +37,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px 6px;
-  background: linear-gradient(90deg, #000080, #1084d0);
+  background: linear-gradient(90deg, #3b00fd, #04caf4);
   border-bottom: 1px solid #000000;
   min-height: 24px;
 }
@@ -322,14 +322,15 @@
 }
 
 .filter-apply-btn {
-  background: #000080;
-  border-color: #000050 #1084d0 #1084d0 #000050;
+  background: var(--neon-blue);
+  border-color: #000050 var(--neon-cyan) var(--neon-cyan) #000050;
   color: #ffffff;
   font-weight: 700;
 }
 
 .filter-apply-btn:hover {
-  background: #0000a0;
+  background: var(--neon-blue);
+  filter: brightness(1.1);
 }
 
 /* ============================================

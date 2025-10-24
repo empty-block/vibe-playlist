@@ -1,0 +1,16 @@
+name = "jamzy-miniapp"
+compatibility_date = "2024-10-24"
+
+# Cloudflare Pages configuration
+pages_build_output_dir = "dist"
+
+# Build configuration happens in package.json
+# Command: cd mini-app && bun run build
+
+# Environment variables for production
+# Set via Cloudflare Dashboard or wrangler CLI:
+# - VITE_API_URL (points to jamzy-backend Worker URL)
+
+[env.production]
+# Production environment variables
+# Example: VITE_API_URL = "https://jamzy-backend.workers.dev"

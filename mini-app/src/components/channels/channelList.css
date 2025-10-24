@@ -6,7 +6,7 @@
   width: 16px;
   height: 16px;
   background: #FFFFFF;
-  border: 1px solid #000080;
+  border: 1px solid var(--neon-blue);
 }
 
 /* Channels Container - Scrollable - Light Mode */

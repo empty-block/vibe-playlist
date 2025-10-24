@@ -24,6 +24,26 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
   // Render SVG icons based on section
   const getIcon = (sectionId: string) => {
     switch (sectionId) {
+      case 'home':
+        return (
+          <svg width="24" height="24" viewBox="0 0 28 28" fill="none" style="image-rendering: pixelated;">
+            <path
+              d="M4 12L14 3L24 12V23C24 23.5523 23.5523 24 23 24H5C4.44772 24 4 23.5523 4 23V12Z"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M10 24V15H18V24"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        );
       case 'channels':
         return (
           <svg width="24" height="24" viewBox="0 0 24 24" style="image-rendering: pixelated;">
