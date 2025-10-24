@@ -97,7 +97,7 @@ vibes-playlist/
 └── docs/                 # All documentation and guides
 ```
 
-### Quick Start - Frontend
+### Quick Start - Local Development
 ```bash
 # Clone the repo
 git clone https://github.com/your-org/vibes-playlist.git
@@ -108,10 +108,13 @@ bun install
 
 # Set up environment
 cp .env.example .env
-# Add your Spotify Client ID to .env
+# Add your Spotify Client ID and other secrets to .env
 
-# Start development server
-bun run dev
+# Start development server (mini-app + backend)
+bun run dev:miniapp
+
+# Or start components separately
+bun run dev:server    # Backend only
 ```
 
 ### Quick Start - Python Data Processing
@@ -128,6 +131,92 @@ export DUNE_API_KEY="your-dune-api-key"
 cd data/pipelines
 python -m flow
 ```
+
+## 🚀 Deployment to Cloudflare
+
+Jamzy is deployed to Cloudflare's edge infrastructure for global performance and reliability.
+
+### Quick Deploy
+
+Use the convenient deployment scripts in the project root:
+
+```bash
+# Deploy backend only
+bun run deploy:backend
+
+# Deploy mini-app only
+bun run deploy:miniapp
+
+# Deploy both at once
+bun run deploy
+```
+
+### Branch Deployment Strategy
+
+**Important:** Backend and frontend deployments work differently:
+
+#### Backend (Cloudflare Workers)
+- **Always updates production** - there are no separate branch deployments
+- Every `bun run deploy:backend` immediately updates the live API
+- URL: `https://jamzy-backend.ncmaddrey.workers.dev`
+- **Recommendation**: Only deploy backend from `main` branch after thorough testing
+
+#### Frontend (Cloudflare Pages)
+- **Branch-specific URLs** - each branch gets its own preview deployment
+- Branch URL format: `https://[branch-name].jamzy-miniapp.pages.dev`
+- Production URL: `https://jamzy-miniapp.pages.dev`
+- **Recommendation**: Test on branch deployments, then promote to production
+
+### Recommended Workflow
+
+1. **Development**: Work on a feature branch
+   ```bash
+   git checkout -b my-feature-branch
+   # Make changes...
+   ```
+
+2. **Test Locally**: Use local dev server
+   ```bash
+   bun run dev:miniapp
+   ```
+
+3. **Deploy Frontend for Testing**: Deploy mini-app to get branch preview URL
+   ```bash
+   bun run deploy:miniapp
+   # Visit https://my-feature-branch.jamzy-miniapp.pages.dev
+   ```
+
+4. **Merge to Main**: After testing, merge your branch
+   ```bash
+   git checkout main
+   git merge my-feature-branch
+   ```
+
+5. **Deploy Production**: Deploy both backend and frontend from `main`
+   ```bash
+   bun run deploy
+   ```
+
+6. **Promote to Production**: Go to Cloudflare Dashboard → Pages → jamzy-miniapp
+   - Find your deployment
+   - Click "..." → "Promote to production"
+   - Now live at `https://jamzy-miniapp.pages.dev`
+
+### Current Deployments
+
+- **Backend API**: [https://jamzy-backend.ncmaddrey.workers.dev](https://jamzy-backend.ncmaddrey.workers.dev)
+- **Mini-App (Production)**: [https://jamzy-miniapp.pages.dev](https://jamzy-miniapp.pages.dev)
+
+### Detailed Documentation
+
+For complete deployment instructions including:
+- Setting environment secrets
+- Cron trigger configuration
+- Monitoring and debugging
+- Custom domain setup
+- Rollback procedures
+
+See **[docs/CLOUDFLARE-DEPLOYMENT.md](./docs/CLOUDFLARE-DEPLOYMENT.md)**
 
 ### Technical Architecture
 **Frontend Stack:**

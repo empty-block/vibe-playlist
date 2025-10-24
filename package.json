@@ -21,7 +21,10 @@
     "data:run": "cd data/pipelines && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist POLARS_SKIP_CPU_CHECK=1 arch -arm64 ../../venv/bin/python -m flow",
     "data:import": "cd data/pipelines/data_importer && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
     "data:parser": "cd data/pipelines/cast_music_parser && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
-    "data:graph": "cd data/pipelines/graph_analysis && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow"
+    "data:graph": "cd data/pipelines/graph_analysis && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
+    "deploy": "./deploy-all.sh",
+    "deploy:backend": "./deploy-backend.sh",
+    "deploy:miniapp": "./deploy-miniapp.sh"
   },
   "devDependencies": {
     "@rollup/rollup-darwin-x64": "^4.52.5",
