@@ -332,7 +332,13 @@ const ProfilePage: Component = () => {
                             stats={activityItem.cast.stats}
                             onPlay={(trackData) => {
                               setCurrentTrack(trackData);
-                              setIsPlaying(true);
+
+                              // For YouTube tracks in WebView, don't autoplay
+                              if (trackData.source !== 'youtube') {
+                                setIsPlaying(true);
+                              } else {
+                                setIsPlaying(false);
+                              }
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();
