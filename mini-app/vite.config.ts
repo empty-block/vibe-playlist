@@ -13,7 +13,10 @@ export default defineConfig(() => {
       target: 'esnext'
     },
     define: {
-      // Default to local backend, can override with VITE_API_URL env var
+      // API URL configuration
+      // Local dev: defaults to http://localhost:4201
+      // Production: set VITE_API_URL to your Cloudflare Workers URL
+      // Example: VITE_API_URL=https://jamzy-backend.workers.dev bun run build
       'import.meta.env.VITE_API_URL': JSON.stringify(
         process.env.VITE_API_URL || 'http://localhost:4201'
       )
