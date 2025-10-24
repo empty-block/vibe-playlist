@@ -5,13 +5,16 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
  * Eliminates duplication across API files
  */
 export function getSupabaseClient(): SupabaseClient {
-  const supabaseUrl = process.env.SUPABASE_ENV === 'local'
+  // Default to production if SUPABASE_ENV isn't set (for Cloudflare Workers)
+  const isLocal = process.env.SUPABASE_ENV === 'local'
+
+  const supabaseUrl = isLocal
     ? process.env.SUPABASE_LOCAL_URL!
     : process.env.SUPABASE_URL!
 
-  const supabaseKey = process.env.SUPABASE_ENV === 'local'
+  const supabaseKey = isLocal
     ? process.env.SUPABASE_LOCAL_KEY!
-    : process.env.SUPABASE_KEY!
+    : (process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)!
 
   return createClient(supabaseUrl, supabaseKey)
 }

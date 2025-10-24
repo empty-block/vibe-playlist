@@ -3,9 +3,12 @@
  * Fetches OpenGraph metadata from music URLs
  *
  * Used for Tier 1 (fast) metadata extraction before AI normalization
+ *
+ * Note: Uses native fetch for Cloudflare Workers compatibility
  */
 
-import ogs from 'open-graph-scraper'
+// Removed open-graph-scraper dependency for Cloudflare Workers compatibility
+// Using native fetch + HTML parsing instead
 
 export interface OpenGraphMetadata {
   og_title: string | null
@@ -15,6 +18,33 @@ export interface OpenGraphMetadata {
   og_metadata: Record<string, any>
   success: boolean
   error?: string
+}
+
+/**
+ * Parse meta tags from HTML string
+ */
+function parseMetaTags(html: string): Record<string, string> {
+  const meta: Record<string, string> = {}
+
+  // Extract meta tags using regex (simple but effective for our needs)
+  const metaRegex = /<meta\s+(?:[^>]*?\s+)?(?:property|name)=["']([^"']+)["']\s+content=["']([^"']+)["']|<meta\s+(?:[^>]*?\s+)?content=["']([^"']+)["']\s+(?:property|name)=["']([^"']+)["']/gi
+
+  let match
+  while ((match = metaRegex.exec(html)) !== null) {
+    const key = match[1] || match[4]
+    const value = match[2] || match[3]
+    if (key && value) {
+      meta[key] = value
+    }
+  }
+
+  // Also extract title tag
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i)
+  if (titleMatch) {
+    meta['title'] = titleMatch[1]
+  }
+
+  return meta
 }
 
 /**
@@ -38,94 +68,66 @@ export async function fetchOpenGraph(
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const { result, error } = await ogs({
-        url,
-        timeout,
-        retry: {
-          limit: 1,
-          statusCodes: [408, 413, 429, 500, 502, 503, 504]
+      // Fetch HTML with native fetch (Cloudflare Workers compatible)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+      const response = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
         },
-        fetchOptions: {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
-          }
-        }
+        signal: controller.signal
       })
 
-      if (error) {
-        throw new Error(`OpenGraph fetch error: ${JSON.stringify(error)}`)
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
 
-      if (!result) {
-        throw new Error('No result from OpenGraph scraper')
-      }
+      const html = await response.text()
+      const meta = parseMetaTags(html)
 
       // Extract relevant fields
-      const og_title = result.ogTitle || result.dcTitle || result.twitterTitle || null
-      const og_description = result.ogDescription || result.dcDescription || result.twitterDescription || null
-      const og_image_url =
-        result.ogImage?.[0]?.url ||
-        result.twitterImage?.[0]?.url ||
-        result.ogImage?.url ||
-        null
+      const og_title = meta['og:title'] || meta['twitter:title'] || meta['dc:title'] || meta['title'] || null
+      const og_description = meta['og:description'] || meta['twitter:description'] || meta['dc:description'] || meta['description'] || null
+      const og_image_url = meta['og:image'] || meta['twitter:image'] || null
 
       // Try to extract artist from various fields
       let og_artist: string | null = null
 
-      // Check for music-specific OG tags (works for some platforms)
-      if (result.musicSong?.length > 0) {
-        og_artist = result.musicMusician?.[0]?.name || null
+      // Check for music-specific OG tags
+      const musicMusician = meta['music:musician'] || meta['music:musician:name']
+      if (musicMusician && !musicMusician.startsWith('http')) {
+        og_artist = musicMusician
       }
 
       // Spotify-specific: Check for artist in description
-      if (!og_artist && result.ogDescription) {
-        console.log(`[OpenGraph] Spotify description found: "${result.ogDescription}"`)
+      if (!og_artist && og_description) {
+        console.log(`[OpenGraph] Spotify description found: "${og_description}"`)
         // Spotify format: "Artist1, Artist2 · Track Name · Song · 2025"
-        // Artist names come BEFORE the first "·"
-        const parts = result.ogDescription.split('·').map(p => p.trim())
+        const parts = og_description.split('·').map(p => p.trim())
         console.log(`[OpenGraph] Split into ${parts.length} parts:`, parts)
         if (parts.length >= 2) {
-          // First part should be artist(s)
           const potentialArtist = parts[0]
-
-          // Verify this looks like an artist (not a sentence or long text)
-          // Artists are usually short, comma-separated names
           if (potentialArtist && potentialArtist.length < 100 && !potentialArtist.includes('Listen to')) {
             og_artist = potentialArtist
             console.log(`[OpenGraph] Extracted Spotify artist: "${og_artist}"`)
           }
         }
-      } else if (!og_artist) {
-        console.log(`[OpenGraph] No ogDescription found for artist extraction`)
       }
 
-      // Try parsing from title (e.g., "Song Name - Artist Name" or "Artist Name - Song Name")
+      // Try parsing from title
       if (!og_artist && og_title) {
         const match = og_title.match(/(.+?)\s*[-–—]\s*(.+)/)
         if (match) {
-          // For Spotify, the format is usually "Track - Artist" or just the track name
           og_artist = match[2].trim()
         }
       }
 
-      // Check musicMusician field (array or string) - but skip if it's a URL
-      if (!og_artist && result.musicMusician) {
-        let musicianValue = null
-        if (Array.isArray(result.musicMusician)) {
-          musicianValue = result.musicMusician[0]?.name || result.musicMusician[0] || null
-        } else if (typeof result.musicMusician === 'string') {
-          musicianValue = result.musicMusician
-        }
-
-        // Only use musicMusician if it's not a URL
-        if (musicianValue && !musicianValue.startsWith('http')) {
-          og_artist = musicianValue
-        }
-      }
-
-      // Last resort: check twitter creator or site name
+      // Last resort: check twitter creator
       if (!og_artist) {
-        og_artist = result.twitterCreator || null
+        og_artist = meta['twitter:creator'] || null
       }
 
       return {
@@ -134,16 +136,16 @@ export async function fetchOpenGraph(
         og_description,
         og_image_url,
         og_metadata: {
-          description: result.ogDescription || result.dcDescription || null,
-          site_name: result.ogSiteName || null,
-          type: result.ogType || null,
-          url: result.ogUrl || url,
+          description: og_description,
+          site_name: meta['og:site_name'] || null,
+          type: meta['og:type'] || null,
+          url: meta['og:url'] || url,
           music: {
-            duration: result.musicDuration || null,
-            album: result.musicAlbum || null,
-            release_date: result.musicReleaseDate || null
+            duration: meta['music:duration'] ? parseInt(meta['music:duration']) : null,
+            album: meta['music:album'] || null,
+            release_date: meta['music:release_date'] || null
           },
-          raw: result // Keep full response for debugging
+          raw: meta
         },
         success: true
       }
