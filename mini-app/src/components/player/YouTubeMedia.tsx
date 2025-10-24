@@ -233,47 +233,20 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       };
       
       const videoId = getVideoId(track.sourceId);
-      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId, 'Should autoplay:', isPlaying());
+      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
 
       try {
-        const shouldAutoplay = isPlaying();
-        console.log('Loading video with autoplay:', shouldAutoplay);
-
-        // Load video and immediately try to play if isPlaying is true
+        // Load video in paused state - user must manually tap play
+        // This is due to WebView autoplay restrictions in Farcaster
         player.loadVideoById({
           videoId: videoId,
           startSeconds: 0
         });
 
-        // If we're supposed to be playing, start playback after load
-        if (shouldAutoplay) {
-          // Try multiple times with increasing delays to handle different load speeds
-          const attemptPlay = (attempt: number = 1) => {
-            setTimeout(() => {
-              try {
-                const state = player.getPlayerState();
-                console.log(`Autoplay attempt ${attempt}, player state:`, state);
-
-                if (state === window.YT.PlayerState.CUED || state === window.YT.PlayerState.BUFFERING) {
-                  player.playVideo().then(() => {
-                    console.log('Autoplay successful');
-                  }).catch((err: any) => {
-                    console.error('Autoplay failed:', err);
-                    // If autoplay fails, user must interact with player
-                    // This is expected in some mobile environments
-                  });
-                } else if (attempt < 3 && state !== window.YT.PlayerState.PLAYING) {
-                  // Try again
-                  attemptPlay(attempt + 1);
-                }
-              } catch (e) {
-                console.error('Error in autoplay attempt:', e);
-              }
-            }, attempt * 300); // 300ms, 600ms, 900ms
-          };
-
-          attemptPlay();
-        }
+        // Set playing state to false - user must manually start playback
+        // Our controls will sync when user taps play (via onPlayerStateChange)
+        setIsPlaying(false);
+        console.log('YouTube video loaded in paused state - user must tap play to start');
       } catch (error) {
         console.error('Error loading video:', error);
       }
