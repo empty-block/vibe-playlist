@@ -1,6 +1,7 @@
 // API Client for Jamzy Backend
 
 import type { ApiThreadsResponse, ApiThreadDetailResponse } from '../types/api';
+import { farcasterFetch } from '../stores/farcasterStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4201';
 
@@ -15,7 +16,8 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> 
   const url = `${API_BASE_URL}${endpoint}`;
 
   try {
-    const response = await fetch(url, {
+    // Use Farcaster authenticated fetch if available, otherwise fall back to regular fetch
+    const response = await farcasterFetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
