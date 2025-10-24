@@ -75,7 +75,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           iv_load_policy: 3,
           autohide: 0,
           origin: window.location.origin,
-          enablejsapi: 1
+          enablejsapi: 1,
+          playsinline: 1 // Required for iOS WebViews
         },
         events: {
           onReady: onPlayerReady,

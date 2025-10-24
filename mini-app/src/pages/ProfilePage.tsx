@@ -182,11 +182,17 @@ const ProfilePage: Component = () => {
     }
   };
 
+  // Reactive title for the window
+  const windowTitle = () => {
+    const u = user();
+    return `${u.displayName || 'Loading...'} (@${u.username || '...'})`;
+  };
+
   return (
     <div class="profile-page">
       <div class="page-window-container">
         <RetroWindow
-          title={`${user().displayName} (@${user().username})`}
+          title={windowTitle()}
           icon={<div class="title-icon">👤</div>}
           variant="3d"
           showMinimize={true}
