@@ -95,6 +95,105 @@ body:not(.theme-dark) .profile-header {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Share Track Button - Light Mode */
+.theme-light .share-track-button,
+body:not(.theme-dark) .share-track-button {
+  background: linear-gradient(180deg, #FFFFFF 0%, #DFDFDF 100%);
+  border: 2px solid;
+  border-color: #FFFFFF #808080 #808080 #FFFFFF;
+  color: #000000;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 12px;
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.1s ease;
+}
+
+.theme-light .share-track-button:hover,
+body:not(.theme-dark) .share-track-button:hover {
+  background: linear-gradient(180deg, #DFDFDF 0%, #FFFFFF 100%);
+  transform: translateY(1px);
+}
+
+.theme-light .share-track-button:active,
+body:not(.theme-dark) .share-track-button:active {
+  border-color: #808080 #FFFFFF #FFFFFF #808080;
+  background: #C0C0C8;
+}
+
+/* Share Track Button - Dark Mode */
+.theme-dark .share-track-button {
+  background: #000000;
+  border: 2px solid #00ff00;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 6px 14px;
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+}
+
+.theme-dark .share-track-button:hover {
+  background: #00ff00;
+  color: #000000;
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.6);
+  transform: translateY(-1px);
+}
+
+.theme-dark .share-track-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+}
+
+.share-track-button .button-icon {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.theme-dark .share-track-button .button-bracket {
+  opacity: 0.7;
+}
+
+/* Error Toast */
+.submit-error-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff0000;
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .profile-avatar {

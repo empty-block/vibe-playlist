@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
+import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import {
@@ -14,6 +15,7 @@ import {
   loadUserProfile,
   loadMoreActivity
 } from '../stores/profileStore';
+import { createThread } from '../services/api';
 import './profilePage.css';
 
 type FilterType = 'all' | 'shared' | 'likes' | 'replies';
@@ -22,6 +24,9 @@ const ProfilePage: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [submitError, setSubmitError] = createSignal<string | null>(null);
 
   // Get FID from route params or use current user's FID
   const userFid = () => params.fid || currentUser().fid;
@@ -125,6 +130,40 @@ const ProfilePage: Component = () => {
     const profileTracks = getProfileTracks();
     const feedId = `profile-${userFid()}-${currentFilter()}`;
     playTrackFromFeed(track, profileTracks, feedId);
+  };
+
+  // Handle opening the add track modal
+  const handleShareTrack = () => {
+    setSubmitError(null);
+    setShowAddTrackModal(true);
+  };
+
+  // Handle track submission
+  const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Create thread with the track
+      const response = await createThread({
+        text: data.comment || 'Check out this track! 🎵',
+        userId: currentUser().fid,
+        trackUrls: [data.songUrl]
+      });
+
+      console.log('Track shared successfully:', response);
+
+      // Close modal
+      setShowAddTrackModal(false);
+
+      // Reload profile to show new post
+      loadUserProfile(userFid());
+    } catch (error) {
+      console.error('Error sharing track:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to share track');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Time ago formatter
@@ -256,6 +295,20 @@ const ProfilePage: Component = () => {
                     </Show>
                   </div>
                 </div>
+
+                {/* Share Track Button - Only show on current user's profile */}
+                <Show when={userFid() === currentUser().fid}>
+                  <button
+                    class="share-track-button"
+                    onClick={handleShareTrack}
+                    title="Share a track"
+                  >
+                    <span class="button-bracket">[</span>
+                    <span class="button-icon">+</span>
+                    <span class="button-text">SHARE TRACK</span>
+                    <span class="button-bracket">]</span>
+                  </button>
+                </Show>
               </div>
 
               {/* Feed Filter Buttons */}
@@ -351,6 +404,21 @@ const ProfilePage: Component = () => {
 
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
+
+      {/* Add Track Modal */}
+      <AddTrackModal
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleTrackSubmit}
+        title="Share Track to Feed"
+      />
+
+      {/* Error Display (if any) */}
+      <Show when={submitError()}>
+        <div class="submit-error-toast">
+          {submitError()}
+        </div>
+      </Show>
     </div>
   );
 };
