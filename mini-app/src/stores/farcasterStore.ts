@@ -23,13 +23,17 @@ export const [farcasterError, setFarcasterError] = createSignal<string | null>(n
 
 /**
  * Check if we're running in a Farcaster context
+ * Uses the official SDK method to detect Mini App environment
  */
-const isInFarcasterContext = (): boolean => {
+const isInFarcasterContext = async (): Promise<boolean> => {
   try {
-    // The SDK will be available but context might throw errors outside Farcaster
-    return sdk && sdk.context !== undefined && sdk.context !== null;
+    // Use the official SDK method to check if we're in a Mini App
+    const isMiniApp = await sdk.isInMiniApp();
+    console.log('SDK isInMiniApp check:', isMiniApp);
+    return isMiniApp;
   } catch (error) {
-    // If accessing context throws an error, we're not in Farcaster
+    // If the check fails, we're not in Farcaster
+    console.log('isInMiniApp check failed:', error);
     return false;
   }
 };
@@ -43,9 +47,11 @@ export const initializeFarcaster = async () => {
   setFarcasterError(null);
 
   try {
-    // Check if we're in a Farcaster context
-    if (!isInFarcasterContext()) {
-      console.log('Not in Farcaster context - running in standalone mode');
+    // Check if we're in a Farcaster context using the SDK's official method
+    const isInMiniApp = await isInFarcasterContext();
+
+    if (!isInMiniApp) {
+      console.log('Not in Farcaster Mini App - running in standalone mode');
       // For local development, we can still work without Farcaster context
       setFarcasterAuth({
         isAuthenticated: false,
@@ -59,7 +65,8 @@ export const initializeFarcaster = async () => {
       return;
     }
 
-    console.log('Farcaster context detected');
+    console.log('Farcaster Mini App context detected!');
+    console.log('SDK context:', sdk.context);
 
     // Get the authentication token using Quick Auth
     const token = await sdk.quickAuth.getToken();
@@ -114,7 +121,8 @@ export const initializeFarcaster = async () => {
  */
 export const refreshFarcasterToken = async (): Promise<string | null> => {
   try {
-    if (!isInFarcasterContext()) {
+    const isInMiniApp = await isInFarcasterContext();
+    if (!isInMiniApp) {
       console.log('Not in Farcaster context - cannot refresh token');
       return null;
     }
@@ -142,8 +150,11 @@ export const farcasterFetch = async (
   options?: RequestInit
 ): Promise<Response> => {
   try {
+    // Check if we're in a Farcaster context
+    const isInMiniApp = await isInFarcasterContext();
+
     // If we're not in a Farcaster context, fall back to regular fetch
-    if (!isInFarcasterContext()) {
+    if (!isInMiniApp) {
       return fetch(url, options);
     }
 

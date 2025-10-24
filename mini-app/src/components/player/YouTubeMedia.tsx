@@ -171,24 +171,33 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
   
   const togglePlay = () => {
-    console.log('togglePlay called:', { 
-      hasPlayer: !!player, 
-      playerReady: playerReady(), 
-      isPlaying: isPlaying() 
+    console.log('togglePlay called:', {
+      hasPlayer: !!player,
+      playerReady: playerReady(),
+      isPlaying: isPlaying(),
+      playerState: player ? player.getPlayerState() : 'no player'
     });
-    
+
     if (!player || !playerReady()) {
       console.log('Player not ready or not available');
       return;
     }
-    
+
     try {
+      const state = player.getPlayerState();
+      console.log('Current player state:', state);
+
       if (isPlaying()) {
-        console.log('Pausing video');
+        console.log('Pausing video via pauseVideo()');
         player.pauseVideo();
       } else {
-        console.log('Playing video');
-        player.playVideo();
+        console.log('Playing video via playVideo()');
+        // Try to play
+        player.playVideo().then(() => {
+          console.log('playVideo() promise resolved');
+        }).catch((err: any) => {
+          console.error('playVideo() promise rejected:', err);
+        });
       }
     } catch (error) {
       console.error('Error toggling play:', error);
@@ -226,22 +235,43 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId, 'Should autoplay:', isPlaying());
 
       try {
+        const shouldAutoplay = isPlaying();
+        console.log('Loading video with autoplay:', shouldAutoplay);
+
+        // Load video and immediately try to play if isPlaying is true
         player.loadVideoById({
           videoId: videoId,
           startSeconds: 0
         });
 
         // If we're supposed to be playing, start playback after load
-        if (isPlaying()) {
-          // Give the video a moment to load, then play
-          setTimeout(() => {
-            try {
-              player.playVideo();
-              console.log('Auto-playing YouTube video');
-            } catch (e) {
-              console.error('Error auto-playing:', e);
-            }
-          }, 500);
+        if (shouldAutoplay) {
+          // Try multiple times with increasing delays to handle different load speeds
+          const attemptPlay = (attempt: number = 1) => {
+            setTimeout(() => {
+              try {
+                const state = player.getPlayerState();
+                console.log(`Autoplay attempt ${attempt}, player state:`, state);
+
+                if (state === window.YT.PlayerState.CUED || state === window.YT.PlayerState.BUFFERING) {
+                  player.playVideo().then(() => {
+                    console.log('Autoplay successful');
+                  }).catch((err: any) => {
+                    console.error('Autoplay failed:', err);
+                    // If autoplay fails, user must interact with player
+                    // This is expected in some mobile environments
+                  });
+                } else if (attempt < 3 && state !== window.YT.PlayerState.PLAYING) {
+                  // Try again
+                  attemptPlay(attempt + 1);
+                }
+              } catch (e) {
+                console.error('Error in autoplay attempt:', e);
+              }
+            }, attempt * 300); // 300ms, 600ms, 900ms
+          };
+
+          attemptPlay();
         }
       } catch (error) {
         console.error('Error loading video:', error);
