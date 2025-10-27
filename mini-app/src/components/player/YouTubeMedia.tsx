@@ -6,6 +6,7 @@ interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPlaybackStarted?: (hasStarted: boolean) => void;
 }
 
 declare global {
@@ -21,6 +22,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [userHasInteracted, setUserHasInteracted] = createSignal(false);
+  const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
   // Always use compact size for bottom bar
 
@@ -169,6 +171,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       setIsPlaying(true);
       // Mark that user has interacted (either via YouTube controls or app controls)
       setUserHasInteracted(true);
+      // Mark that playback has started at least once
+      setHasStartedPlayback(true);
+      if (props.onPlaybackStarted) {
+        props.onPlaybackStarted(true);
+      }
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
@@ -257,9 +264,13 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         // Check Farcaster context using SDK detection
         const farcasterCheck = isInFarcasterSync();
 
-        // Reset interaction flag for each new track in Farcaster
+        // Reset interaction and playback flags for each new track in Farcaster
         if (farcasterCheck === true) {
           setUserHasInteracted(false);
+          setHasStartedPlayback(false);
+          if (props.onPlaybackStarted) {
+            props.onPlaybackStarted(false);
+          }
         }
 
         // ALWAYS cue video first (doesn't autoplay)
