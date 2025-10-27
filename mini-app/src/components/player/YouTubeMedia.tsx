@@ -1,5 +1,6 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
+import { farcasterAuth } from '../../stores/farcasterStore';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
@@ -236,17 +237,37 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
 
       try {
-        // Load video in paused state - user must manually tap play
-        // This is due to WebView autoplay restrictions in Farcaster
-        player.loadVideoById({
-          videoId: videoId,
-          startSeconds: 0
-        });
+        // Check if we're in Farcaster context
+        const isInFarcaster = farcasterAuth().isAuthenticated;
 
-        // Set playing state to false - user must manually start playback
-        // Our controls will sync when user taps play (via onPlayerStateChange)
-        setIsPlaying(false);
-        console.log('YouTube video loaded in paused state - user must tap play to start');
+        if (isInFarcaster) {
+          // In Farcaster WebView: Load video in paused state
+          // User must manually tap play due to WebView autoplay restrictions
+          player.loadVideoById({
+            videoId: videoId,
+            startSeconds: 0
+          });
+
+          // Set playing state to false - user must manually start playback
+          setIsPlaying(false);
+          console.log('Farcaster WebView: Video loaded in paused state - user must tap play');
+        } else {
+          // In regular web browser: Autoplay is allowed
+          player.loadVideoById({
+            videoId: videoId,
+            startSeconds: 0
+          });
+
+          // Attempt autoplay for web browsers
+          player.playVideo().then(() => {
+            console.log('Web browser: Autoplay started successfully');
+            setIsPlaying(true);
+          }).catch((err: any) => {
+            // Autoplay blocked by browser policy
+            console.log('Web browser: Autoplay blocked, user must tap play:', err);
+            setIsPlaying(false);
+          });
+        }
       } catch (error) {
         console.error('Error loading video:', error);
       }
