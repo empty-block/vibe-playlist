@@ -100,6 +100,14 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     setPlayerReady(true);
     props.onPlayerReady(true);
 
+    // Set Permissions-Policy on the YouTube iframe to prevent warnings
+    const iframe = playerContainer?.querySelector('iframe');
+    if (iframe) {
+      // Explicitly deny permissions we don't need to silence browser warnings
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      console.log('Set Permissions-Policy on YouTube iframe');
+    }
+
     // Provide toggle and seek functions to parent
     props.onTogglePlay(() => togglePlay());
     if (props.onSeek) {
@@ -206,12 +214,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         player.pauseVideo();
       } else {
         console.log('Playing video via playVideo()');
-        // Try to play
-        player.playVideo().then(() => {
-          console.log('playVideo() promise resolved');
-        }).catch((err: any) => {
-          console.error('playVideo() promise rejected:', err);
-        });
+        // playVideo() is a void function, not a Promise
+        player.playVideo();
       }
     } catch (error) {
       console.error('Error toggling play:', error);
@@ -274,12 +278,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         // Web browser: Autoplay allowed if isPlaying is true
         if (farcasterCheck === false && isPlaying()) {
           console.log('✅ WEB BROWSER: Attempting autoplay...');
-          player.playVideo().then(() => {
-            console.log('✅ WEB BROWSER: Autoplay successful');
-          }).catch((err: any) => {
-            console.warn('⚠️  WEB BROWSER: Autoplay blocked by browser:', err);
-            setIsPlaying(false);
-          });
+          // playVideo() is a void function, not a Promise
+          player.playVideo();
         } else {
           console.log('Video cued in paused state');
         }
