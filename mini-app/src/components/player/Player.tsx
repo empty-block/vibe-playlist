@@ -136,7 +136,7 @@ const Player: Component<PlayerProps> = (props) => {
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
-            'player-audio-container--hidden': !isPlaying()
+            'player-audio-container--hidden': !isPlaying() && !(currentTrack()?.source === 'youtube' && isInFarcasterSync() === true)
           }}>
             <div class="player-audio-embed" classList={{
               'player-video-embed': currentTrack()?.source === 'youtube'
