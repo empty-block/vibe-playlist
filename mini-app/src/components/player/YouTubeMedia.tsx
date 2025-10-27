@@ -185,6 +185,15 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       return;
     }
 
+    // CRITICAL: Check Farcaster context before ANY playVideo() call
+    const farcasterCheck = isInFarcasterSync();
+    if (farcasterCheck === true && !isPlaying()) {
+      // In Farcaster, if trying to play, BLOCK IT
+      console.error('🚫🚫🚫 BLOCKED: Cannot call playVideo() in Farcaster (policy violation)');
+      console.error('User must manually click the play button on the YouTube player itself');
+      return;
+    }
+
     try {
       const state = player.getPlayerState();
       console.log('Current player state:', state);
