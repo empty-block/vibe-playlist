@@ -185,12 +185,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       return;
     }
 
-    // CRITICAL: Check Farcaster context before ANY playVideo() call
+    // CRITICAL: In Farcaster, NEVER call playVideo() - user must click YouTube player
     const farcasterCheck = isInFarcasterSync();
-    if (farcasterCheck === true && !isPlaying()) {
-      // In Farcaster, if trying to play, BLOCK IT
-      console.error('🚫🚫🚫 BLOCKED: Cannot call playVideo() in Farcaster (policy violation)');
-      console.error('User must manually click the play button on the YouTube player itself');
+    if (farcasterCheck === true) {
+      console.error('🚫🚫🚫 BLOCKED: togglePlay() disabled in Farcaster');
+      console.error('User must click the YouTube player controls directly');
       return;
     }
 
@@ -255,14 +254,15 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           startSeconds: 0
         });
 
-        // Farcaster: NEVER call playVideo() at all
+        // Farcaster: NEVER call playVideo() - user controls via YouTube embed
         if (farcasterCheck === true) {
           setIsPlaying(false);
-          console.log('🚫 FARCASTER: Video cued only - NO playVideo() call (violation prevention)');
+          console.log('🚫 FARCASTER: Video cued - User MUST click YouTube player controls');
+          console.log('🚫 App play button is HIDDEN in Farcaster');
           return;
         }
 
-        // Web browser: Only autoplay if playerStore says to (isPlaying already true)
+        // Web browser: Autoplay allowed if isPlaying is true
         if (farcasterCheck === false && isPlaying()) {
           console.log('✅ WEB BROWSER: Attempting autoplay...');
           player.playVideo().then(() => {
