@@ -1,6 +1,7 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
+import { isInFarcasterSync } from './farcasterStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
@@ -204,7 +205,14 @@ export const playNextTrack = () => {
   if (nextTrack) {
     console.log('Playing next track:', nextTrack.title);
     setCurrentTrack(nextTrack);
-    setIsPlaying(true);
+
+    // For YouTube tracks in WebView, don't autoplay
+    if (nextTrack.source !== 'youtube') {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+      console.log('YouTube track loaded - user must manually tap play button');
+    }
   }
 };
 
@@ -235,7 +243,14 @@ export const playPreviousTrack = () => {
   if (previousTrack) {
     console.log('Playing previous track:', previousTrack.title);
     setCurrentTrack(previousTrack);
-    setIsPlaying(true);
+
+    // For YouTube tracks in WebView, don't autoplay
+    if (previousTrack.source !== 'youtube') {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+      console.log('YouTube track loaded - user must manually tap play button');
+    }
   }
 };
 
@@ -255,5 +270,21 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 
   // Play the track
   setCurrentTrack(track);
-  setIsPlaying(true);
+
+  // Check if we're in Farcaster context using SDK detection
+  const farcasterCheck = isInFarcasterSync();
+
+  // CRITICAL: In Farcaster WebView, NEVER autoplay to avoid policy violations
+  if (farcasterCheck === true) {
+    setIsPlaying(false);
+    console.log('🚫 FARCASTER DETECTED: Track loaded PAUSED - user must manually tap play (autoplay violation prevention)');
+  } else if (farcasterCheck === false) {
+    // Confirmed NOT in Farcaster - autoplay allowed
+    setIsPlaying(true);
+    console.log('✅ WEB BROWSER: Autoplaying track');
+  } else {
+    // Detection not complete yet - be safe, don't autoplay
+    setIsPlaying(false);
+    console.log('⚠️  Farcaster detection pending - loading PAUSED to be safe');
+  }
 };

@@ -1,10 +1,12 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPlaybackStarted?: (hasStarted: boolean) => void;
 }
 
 declare global {
@@ -19,6 +21,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let playerContainer: HTMLDivElement | undefined;
   let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
+  const [userHasInteracted, setUserHasInteracted] = createSignal(false);
+  const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
   // Always use compact size for bottom bar
 
@@ -75,7 +79,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           iv_load_policy: 3,
           autohide: 0,
           origin: window.location.origin,
-          enablejsapi: 1
+          enablejsapi: 1,
+          playsinline: 1 // Required for iOS WebViews
         },
         events: {
           onReady: onPlayerReady,
@@ -96,6 +101,17 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   const onPlayerReady = (event: any) => {
     setPlayerReady(true);
     props.onPlayerReady(true);
+
+    // Set Permissions-Policy on the YouTube iframe to prevent warnings
+    const iframe = playerContainer?.querySelector('iframe');
+    if (iframe) {
+      // Explicitly permit what YouTube needs and deny what it doesn't
+      iframe.setAttribute('allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; ' +
+        'geolocation \'none\'; microphone \'none\'; camera \'none\''
+      );
+      console.log('Set Permissions-Policy on YouTube iframe');
+    }
 
     // Provide toggle and seek functions to parent
     props.onTogglePlay(() => togglePlay());
@@ -153,6 +169,13 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
+      // Mark that user has interacted (either via YouTube controls or app controls)
+      setUserHasInteracted(true);
+      // Mark that playback has started at least once
+      setHasStartedPlayback(true);
+      if (props.onPlaybackStarted) {
+        props.onPlaybackStarted(true);
+      }
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
@@ -171,23 +194,35 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
   
   const togglePlay = () => {
-    console.log('togglePlay called:', { 
-      hasPlayer: !!player, 
-      playerReady: playerReady(), 
-      isPlaying: isPlaying() 
+    console.log('togglePlay called:', {
+      hasPlayer: !!player,
+      playerReady: playerReady(),
+      isPlaying: isPlaying(),
+      playerState: player ? player.getPlayerState() : 'no player',
+      userHasInteracted: userHasInteracted()
     });
-    
+
     if (!player || !playerReady()) {
       console.log('Player not ready or not available');
       return;
     }
-    
+
     try {
+      const state = player.getPlayerState();
+      console.log('Current player state:', state);
+
       if (isPlaying()) {
-        console.log('Pausing video');
+        console.log('Pausing video via pauseVideo()');
         player.pauseVideo();
       } else {
-        console.log('Playing video');
+        console.log('Playing video via playVideo()');
+        // User clicking our play button IS a valid user interaction
+        // Mark interaction before playing to prevent any race conditions
+        const farcasterCheck = isInFarcasterSync();
+        if (farcasterCheck === true) {
+          setUserHasInteracted(true);
+        }
+        // playVideo() is a void function, not a Promise
         player.playVideo();
       }
     } catch (error) {
@@ -224,12 +259,42 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       
       const videoId = getVideoId(track.sourceId);
       console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
-      
+
       try {
-        player.loadVideoById({
+        // Check Farcaster context using SDK detection
+        const farcasterCheck = isInFarcasterSync();
+
+        // Reset interaction and playback flags for each new track in Farcaster
+        if (farcasterCheck === true) {
+          setUserHasInteracted(false);
+          setHasStartedPlayback(false);
+          if (props.onPlaybackStarted) {
+            props.onPlaybackStarted(false);
+          }
+        }
+
+        // ALWAYS cue video first (doesn't autoplay)
+        player.cueVideoById({
           videoId: videoId,
           startSeconds: 0
         });
+
+        // Farcaster: NEVER call playVideo() on initial load - user must click YouTube controls first
+        if (farcasterCheck === true) {
+          setIsPlaying(false);
+          console.log('🚫 FARCASTER: Video cued - User must click YouTube controls first');
+          console.log('After first interaction, app controls will work normally');
+          return;
+        }
+
+        // Web browser: Autoplay allowed if isPlaying is true
+        if (farcasterCheck === false && isPlaying()) {
+          console.log('✅ WEB BROWSER: Attempting autoplay...');
+          // playVideo() is a void function, not a Promise
+          player.playVideo();
+        } else {
+          console.log('Video cued in paused state');
+        }
       } catch (error) {
         console.error('Error loading video:', error);
       }

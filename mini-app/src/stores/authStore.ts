@@ -1,27 +1,41 @@
-import { createSignal } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
+import { farcasterAuth } from './farcasterStore';
 
-// Current user state (mock for now - would come from Farcaster in real app)
-export const [currentUser, setCurrentUser] = createSignal({
-  fid: '326181',
-  username: 'hendrix_69',
-  avatar: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
-  displayName: 'Jimi'
+// Current user state - now derived from Farcaster auth
+export const [currentUser, setCurrentUser] = createSignal<{
+  fid: string;
+  username: string;
+  avatar: string | null;
+  displayName: string;
+} | null>(null);
+
+// General authentication state - derived from Farcaster
+export const [isAuthenticated, setIsAuthenticated] = createSignal(false);
+
+// Sync currentUser with Farcaster auth state
+createEffect(() => {
+  const auth = farcasterAuth();
+
+  if (auth.isAuthenticated && auth.fid) {
+    setCurrentUser({
+      fid: auth.fid,
+      username: auth.username || 'Unknown',
+      avatar: auth.pfpUrl,
+      displayName: auth.displayName || auth.username || 'User',
+    });
+    setIsAuthenticated(true);
+  } else {
+    // For local development without Farcaster context, use mock data
+    setCurrentUser({
+      fid: '326181',
+      username: 'hendrix_69',
+      avatar: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
+      displayName: 'Jimi (Dev Mode)'
+    });
+    setIsAuthenticated(true);
+  }
 });
-
-// General authentication state (mock - for demo purposes)
-// In real app this would check Farcaster authentication
-// DEFAULT TO TRUE FOR DEVELOPMENT
-export const [isAuthenticated, setIsAuthenticated] = createSignal(
-  localStorage.getItem('demo_authenticated') !== 'false' // Default to true unless explicitly set to false
-);
-
-// Demo function to toggle authentication for testing
-export const toggleDemoAuth = () => {
-  const newState = !isAuthenticated();
-  setIsAuthenticated(newState);
-  localStorage.setItem('demo_authenticated', newState.toString());
-};
 
 // Spotify authentication state
 export const [isSpotifyAuthenticated, setIsSpotifyAuthenticated] = createSignal(false);

@@ -58,7 +58,7 @@ export function parseMusicUrl(url: string): ParsedMusicUrl | null {
       }
       // music.youtube.com: https://music.youtube.com/watch?v=dQw4w9WgXcQ
       else if (hostname.includes('music.youtube.com')) {
-        videoId = searchParams.get('v') || pathname.match(/\/watch\/([^/?]+)/)?.[1]
+        videoId = searchParams.get('v') || pathname.match(/\/watch\/([^/?]+)/)?.[1] || null
       }
 
       if (videoId) {

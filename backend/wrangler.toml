@@ -5,10 +5,10 @@ compatibility_date = "2024-10-24"
 # Node.js compatibility for imports and APIs
 compatibility_flags = ["nodejs_compat"]
 
-# Cron Triggers for AI Worker
+# Cron Triggers
 [triggers]
 crons = [
-  "*/1 * * * *"  # Run AI worker every 1 minute
+  "*/1 * * * *"  # Run AI worker and channel sync every 1 minute
 ]
 
 # Environment Variables

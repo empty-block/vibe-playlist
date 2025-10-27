@@ -16,6 +16,7 @@ import {
   playPreviousTrack,
   playerError
 } from '../../stores/playerStore';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
 import RetroTitleBar from '../common/RetroTitleBar';
 import './player.css';
@@ -27,6 +28,7 @@ interface PlayerProps {
   currentTime?: () => number;
   duration?: () => number;
   onSeek?: (time: number) => void;
+  hasStartedPlayback?: () => boolean;
 }
 
 const Player: Component<PlayerProps> = (props) => {
@@ -135,7 +137,7 @@ const Player: Component<PlayerProps> = (props) => {
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
-            'player-audio-container--hidden': !isPlaying()
+            'player-audio-container--hidden': !isPlaying() && !(currentTrack()?.source === 'youtube' && isInFarcasterSync() === true && !(props.hasStartedPlayback && props.hasStartedPlayback()))
           }}>
             <div class="player-audio-embed" classList={{
               'player-video-embed': currentTrack()?.source === 'youtube'

@@ -37,6 +37,8 @@
   "dependencies": {
     "@anthropic-ai/claude-code": "^2.0.0",
     "@anthropic-ai/sdk": "^0.67.0",
+    "@farcaster/miniapp-sdk": "^0.2.1",
+    "@farcaster/quick-auth": "^0.0.8",
     "@neynar/nodejs-sdk": "^3.34.0",
     "@solidjs/router": "^0.15.3",
     "@supabase/supabase-js": "^2.57.4",

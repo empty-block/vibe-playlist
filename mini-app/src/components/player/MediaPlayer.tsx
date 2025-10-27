@@ -13,6 +13,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [togglePlayFn, setTogglePlayFn] = createSignal<(() => void) | null>(null);
   const [seekFn, setSeekFn] = createSignal<((time: number) => void) | null>(null);
+  const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
   const handlePlayerReady = (ready: boolean) => {
     setPlayerReady(ready);
@@ -24,6 +25,10 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
 
   const handleSeekSetup = (seekFunc: (time: number) => void) => {
     setSeekFn(() => seekFunc);
+  };
+
+  const handlePlaybackStarted = (hasStarted: boolean) => {
+    setHasStartedPlayback(hasStarted);
   };
 
   const onTogglePlay = () => {
@@ -51,6 +56,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
+            onPlaybackStarted={handlePlaybackStarted}
           />
         );
       case 'spotify':
@@ -89,6 +95,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         onTogglePlay={onTogglePlay}
         playerReady={playerReady}
         onSeek={onSeek}
+        hasStartedPlayback={hasStartedPlayback}
       />
     </Show>
   );

@@ -65,7 +65,7 @@ export function extractMusicMetadataFromUrl(url: string): MusicMetadata | null {
     platform_id: platformId,
     artist: mockData.artist,
     title: mockData.title,
-    album: mockData.album,
+    album: 'album' in mockData ? mockData.album : undefined,
     duration: mockData.duration,
     thumbnail_url: mockData.thumbnail_url,
     url
