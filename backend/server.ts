@@ -11,6 +11,7 @@ import usersApp from './api/users'
 import activityApp from './api/activity'
 import channelsApp from './api/channels'
 import syncApp from './api/sync'
+import authApp from './api/auth'
 import { getWorker } from './lib/ai-worker'
 import { processBatch } from './lib/ai-queue-processor'
 
@@ -86,6 +87,9 @@ app.get('/api/health', (c) => {
     service: 'jamzy-backend-api'
   })
 })
+
+// Mount auth routes
+app.route('/api/auth', authApp)
 
 // Mount mini-app thread routes
 app.route('/api/threads', threadsApp)

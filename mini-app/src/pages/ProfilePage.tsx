@@ -24,7 +24,7 @@ const ProfilePage: Component = () => {
   const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
 
   // Get FID from route params or use current user's FID
-  const userFid = () => params.fid || currentUser().fid;
+  const userFid = () => params.fid || currentUser()?.fid || '';
 
   // Load profile data on mount
   onMount(() => {
@@ -43,7 +43,15 @@ const ProfilePage: Component = () => {
         bio: undefined // Will add later when we have bio in DB
       };
     }
-    return currentUser(); // Fallback while loading
+    // Fallback to current user while loading
+    const curr = currentUser();
+    return curr || {
+      fid: '',
+      username: 'unknown',
+      displayName: 'Loading...',
+      avatar: null,
+      bio: undefined
+    };
   });
 
   // Separate activity by type
@@ -174,11 +182,17 @@ const ProfilePage: Component = () => {
     }
   };
 
+  // Reactive title for the window
+  const windowTitle = () => {
+    const u = user();
+    return `${u.displayName || 'Loading...'} (@${u.username || '...'})`;
+  };
+
   return (
     <div class="profile-page">
       <div class="page-window-container">
         <RetroWindow
-          title={`${user().displayName} (@${user().username})`}
+          title={windowTitle()}
           icon={<div class="title-icon">👤</div>}
           variant="3d"
           showMinimize={true}
@@ -318,7 +332,13 @@ const ProfilePage: Component = () => {
                             stats={activityItem.cast.stats}
                             onPlay={(trackData) => {
                               setCurrentTrack(trackData);
-                              setIsPlaying(true);
+
+                              // For YouTube tracks in WebView, don't autoplay
+                              if (trackData.source !== 'youtube') {
+                                setIsPlaying(true);
+                              } else {
+                                setIsPlaying(false);
+                              }
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();

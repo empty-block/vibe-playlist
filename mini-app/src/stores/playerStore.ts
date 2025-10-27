@@ -204,7 +204,14 @@ export const playNextTrack = () => {
   if (nextTrack) {
     console.log('Playing next track:', nextTrack.title);
     setCurrentTrack(nextTrack);
-    setIsPlaying(true);
+
+    // For YouTube tracks in WebView, don't autoplay
+    if (nextTrack.source !== 'youtube') {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+      console.log('YouTube track loaded - user must manually tap play button');
+    }
   }
 };
 
@@ -235,7 +242,14 @@ export const playPreviousTrack = () => {
   if (previousTrack) {
     console.log('Playing previous track:', previousTrack.title);
     setCurrentTrack(previousTrack);
-    setIsPlaying(true);
+
+    // For YouTube tracks in WebView, don't autoplay
+    if (previousTrack.source !== 'youtube') {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+      console.log('YouTube track loaded - user must manually tap play button');
+    }
   }
 };
 
@@ -255,5 +269,13 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 
   // Play the track
   setCurrentTrack(track);
-  setIsPlaying(true);
+
+  // For YouTube tracks in WebView, don't autoplay - user must manually tap play
+  // due to WebView autoplay restrictions in Farcaster
+  if (track.source !== 'youtube') {
+    setIsPlaying(true);
+  } else {
+    setIsPlaying(false);
+    console.log('YouTube track loaded - user must manually tap play button');
+  }
 };

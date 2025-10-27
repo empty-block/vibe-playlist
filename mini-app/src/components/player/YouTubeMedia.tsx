@@ -75,7 +75,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           iv_load_policy: 3,
           autohide: 0,
           origin: window.location.origin,
-          enablejsapi: 1
+          enablejsapi: 1,
+          playsinline: 1 // Required for iOS WebViews
         },
         events: {
           onReady: onPlayerReady,
@@ -171,24 +172,33 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   });
   
   const togglePlay = () => {
-    console.log('togglePlay called:', { 
-      hasPlayer: !!player, 
-      playerReady: playerReady(), 
-      isPlaying: isPlaying() 
+    console.log('togglePlay called:', {
+      hasPlayer: !!player,
+      playerReady: playerReady(),
+      isPlaying: isPlaying(),
+      playerState: player ? player.getPlayerState() : 'no player'
     });
-    
+
     if (!player || !playerReady()) {
       console.log('Player not ready or not available');
       return;
     }
-    
+
     try {
+      const state = player.getPlayerState();
+      console.log('Current player state:', state);
+
       if (isPlaying()) {
-        console.log('Pausing video');
+        console.log('Pausing video via pauseVideo()');
         player.pauseVideo();
       } else {
-        console.log('Playing video');
-        player.playVideo();
+        console.log('Playing video via playVideo()');
+        // Try to play
+        player.playVideo().then(() => {
+          console.log('playVideo() promise resolved');
+        }).catch((err: any) => {
+          console.error('playVideo() promise rejected:', err);
+        });
       }
     } catch (error) {
       console.error('Error toggling play:', error);
@@ -224,12 +234,19 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       
       const videoId = getVideoId(track.sourceId);
       console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
-      
+
       try {
+        // Load video in paused state - user must manually tap play
+        // This is due to WebView autoplay restrictions in Farcaster
         player.loadVideoById({
           videoId: videoId,
           startSeconds: 0
         });
+
+        // Set playing state to false - user must manually start playback
+        // Our controls will sync when user taps play (via onPlayerStateChange)
+        setIsPlaying(false);
+        console.log('YouTube video loaded in paused state - user must tap play to start');
       } catch (error) {
         console.error('Error loading video:', error);
       }
