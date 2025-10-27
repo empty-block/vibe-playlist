@@ -1,6 +1,7 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
+import { farcasterAuth } from './farcasterStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
@@ -270,12 +271,17 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // For YouTube tracks in WebView, don't autoplay - user must manually tap play
-  // due to WebView autoplay restrictions in Farcaster
-  if (track.source !== 'youtube') {
-    setIsPlaying(true);
-  } else {
+  // Check if we're in Farcaster context
+  const isInFarcaster = farcasterAuth().isAuthenticated;
+
+  // IMPORTANT: In Farcaster WebView, NEVER autoplay ANY track
+  // User must ALWAYS manually click the play button due to WebView restrictions
+  if (isInFarcaster) {
     setIsPlaying(false);
-    console.log('YouTube track loaded - user must manually tap play button');
+    console.log('🚫 Farcaster WebView: Track loaded in paused state - user MUST manually tap play button to avoid autoplay violations');
+  } else {
+    // In regular web browser, autoplay is allowed
+    setIsPlaying(true);
+    console.log('✅ Web browser: Autoplaying track');
   }
 };

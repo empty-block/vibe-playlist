@@ -240,33 +240,30 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         // Check if we're in Farcaster context
         const isInFarcaster = farcasterAuth().isAuthenticated;
 
+        // ALWAYS load video in cued/paused state first
+        player.cueVideoById({
+          videoId: videoId,
+          startSeconds: 0
+        });
+
+        // In Farcaster: NEVER attempt autoplay
         if (isInFarcaster) {
-          // In Farcaster WebView: Load video in paused state
-          // User must manually tap play due to WebView autoplay restrictions
-          player.loadVideoById({
-            videoId: videoId,
-            startSeconds: 0
-          });
-
-          // Set playing state to false - user must manually start playback
           setIsPlaying(false);
-          console.log('Farcaster WebView: Video loaded in paused state - user must tap play');
+          console.log('🚫 Farcaster WebView: Video cued - NO autoplay attempt (WebView violation prevention)');
         } else {
-          // In regular web browser: Autoplay is allowed
-          player.loadVideoById({
-            videoId: videoId,
-            startSeconds: 0
-          });
-
-          // Attempt autoplay for web browsers
-          player.playVideo().then(() => {
-            console.log('Web browser: Autoplay started successfully');
-            setIsPlaying(true);
-          }).catch((err: any) => {
-            // Autoplay blocked by browser policy
-            console.log('Web browser: Autoplay blocked, user must tap play:', err);
-            setIsPlaying(false);
-          });
+          // In web browser: Only autoplay if isPlaying is already true (from playerStore)
+          // This respects the autoplay decision made in playTrackFromFeed
+          if (isPlaying()) {
+            console.log('✅ Web browser: Attempting autoplay...');
+            player.playVideo().then(() => {
+              console.log('✅ Web browser: Autoplay successful');
+            }).catch((err: any) => {
+              console.log('⚠️  Web browser: Autoplay blocked by browser policy:', err);
+              setIsPlaying(false);
+            });
+          } else {
+            console.log('Web browser: Video cued in paused state');
+          }
         }
       } catch (error) {
         console.error('Error loading video:', error);
