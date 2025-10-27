@@ -103,8 +103,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     // Set Permissions-Policy on the YouTube iframe to prevent warnings
     const iframe = playerContainer?.querySelector('iframe');
     if (iframe) {
-      // Explicitly deny permissions we don't need to silence browser warnings
-      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      // Explicitly permit what YouTube needs and deny what it doesn't
+      iframe.setAttribute('allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; ' +
+        'geolocation \'none\'; microphone \'none\'; camera \'none\''
+      );
       console.log('Set Permissions-Policy on YouTube iframe');
     }
 
