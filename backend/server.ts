@@ -48,11 +48,11 @@ app.use('/*', cors({
 
     // Local dev: allow all origins
     if (process.env.NODE_ENV !== 'production') {
-      return origin || true
+      return origin || '*'
     }
 
     // Production: check against whitelist
-    if (!origin) return false
+    if (!origin) return null
 
     for (const allowed of allowedOrigins) {
       if (allowed.includes('*')) {
@@ -66,7 +66,7 @@ app.use('/*', cors({
 
     // Log rejected origins for debugging
     console.warn('[CORS] Rejected origin:', origin)
-    return false
+    return null
   },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
