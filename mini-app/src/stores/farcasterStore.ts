@@ -21,19 +21,30 @@ export const [farcasterAuth, setFarcasterAuth] = createSignal<{
 export const [farcasterLoading, setFarcasterLoading] = createSignal(false);
 export const [farcasterError, setFarcasterError] = createSignal<string | null>(null);
 
+// Cache the Mini App detection result to avoid repeated async checks
+let cachedMiniAppStatus: boolean | null = null;
+
 /**
  * Check if we're running in a Farcaster context
  * Uses the official SDK method to detect Mini App environment
+ * Result is cached after first check for performance
  */
 const isInFarcasterContext = async (): Promise<boolean> => {
+  // Return cached result if available
+  if (cachedMiniAppStatus !== null) {
+    return cachedMiniAppStatus;
+  }
+
   try {
     // Use the official SDK method to check if we're in a Mini App
     const isMiniApp = await sdk.isInMiniApp();
     console.log('SDK isInMiniApp check:', isMiniApp);
+    cachedMiniAppStatus = isMiniApp;
     return isMiniApp;
   } catch (error) {
     // If the check fails, we're not in Farcaster
     console.log('isInMiniApp check failed:', error);
+    cachedMiniAppStatus = false;
     return false;
   }
 };
@@ -144,25 +155,43 @@ export const refreshFarcasterToken = async (): Promise<string | null> => {
 /**
  * Make an authenticated fetch request using Quick Auth
  * This automatically includes the Bearer token in the Authorization header
+ *
+ * IMPORTANT: For now, we're using regular fetch even in Farcaster context
+ * because sdk.quickAuth.fetch() may have CORS/proxy issues in the WebView.
+ * We'll add auth headers manually when backend auth is needed.
  */
 export const farcasterFetch = async (
   url: string,
   options?: RequestInit
 ): Promise<Response> => {
   try {
-    // Check if we're in a Farcaster context
+    // For now, always use regular fetch to avoid SDK fetch issues
+    // The API endpoints don't require auth yet
+    return fetch(url, options);
+
+    /* TODO: Re-enable when backend auth is implemented
+    // Check if we're in a Farcaster context (cached check)
     const isInMiniApp = await isInFarcasterContext();
 
-    // If we're not in a Farcaster context, fall back to regular fetch
+    // If we're not in a Farcaster context, use regular fetch
     if (!isInMiniApp) {
       return fetch(url, options);
     }
 
-    // Use Quick Auth fetch which automatically adds the token
-    return await sdk.quickAuth.fetch(url, options);
+    // Get token and add to headers manually (more reliable than SDK fetch)
+    const token = await sdk.quickAuth.getToken();
+    if (token) {
+      const headers = new Headers(options?.headers);
+      headers.set('Authorization', `Bearer ${token}`);
+      return fetch(url, { ...options, headers });
+    }
+
+    // No token, use regular fetch
+    return fetch(url, options);
+    */
   } catch (error) {
-    // If Quick Auth fails, fall back to regular fetch
-    console.log('Using regular fetch (not in Farcaster context)');
+    // If anything fails, fall back to regular fetch
+    console.log('farcasterFetch error, using regular fetch:', error);
     return fetch(url, options);
   }
 };
