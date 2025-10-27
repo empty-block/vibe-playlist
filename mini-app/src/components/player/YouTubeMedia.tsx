@@ -200,14 +200,6 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       return;
     }
 
-    // CRITICAL: In Farcaster, block INITIAL autoplay until user has interacted with YouTube directly
-    const farcasterCheck = isInFarcasterSync();
-    if (farcasterCheck === true && !userHasInteracted()) {
-      console.error('🚫 BLOCKED: First play must be via YouTube controls (autoplay policy)');
-      console.error('User must click YouTube player controls to start playback initially');
-      return;
-    }
-
     try {
       const state = player.getPlayerState();
       console.log('Current player state:', state);
@@ -217,6 +209,12 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         player.pauseVideo();
       } else {
         console.log('Playing video via playVideo()');
+        // User clicking our play button IS a valid user interaction
+        // Mark interaction before playing to prevent any race conditions
+        const farcasterCheck = isInFarcasterSync();
+        if (farcasterCheck === true) {
+          setUserHasInteracted(true);
+        }
         // playVideo() is a void function, not a Promise
         player.playVideo();
       }
