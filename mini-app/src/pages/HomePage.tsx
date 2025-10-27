@@ -227,7 +227,23 @@ const HomePage: Component = () => {
                 <div class="loading-state">Loading home feed...</div>
               ) : feedData.error ? (
                 <div class="error-state">
-                  Failed to load feed. Please try again.
+                  <div class="error-icon">⚠️</div>
+                  <p><strong>Failed to load feed</strong></p>
+                  <p class="error-details">
+                    {feedData.error instanceof Error ? feedData.error.message : 'Unknown error occurred'}
+                  </p>
+                  <button
+                    class="retry-button"
+                    onClick={() => {
+                      console.log('[HomePage] User clicked retry');
+                      feedData.refetch();
+                    }}
+                  >
+                    🔄 Try Again
+                  </button>
+                  <p class="error-help">
+                    Check your connection or refresh the page
+                  </p>
                 </div>
               ) : !displayedFeed().threads || displayedFeed().threads.length === 0 ? (
                 <div class="empty-state">

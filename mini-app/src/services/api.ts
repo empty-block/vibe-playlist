@@ -4,6 +4,17 @@ import type { ApiThreadsResponse, ApiThreadDetailResponse } from '../types/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4201';
 
+// Startup logging - helps debug production issues
+console.log('[API] Using API_BASE_URL:', API_BASE_URL);
+
+// Warn if localhost in production (misconfigured build)
+if (typeof window !== 'undefined' && API_BASE_URL.includes('localhost') && window.location.hostname !== 'localhost') {
+  console.error('❌ [API] MISCONFIGURED: Using localhost API in production!');
+  console.error('[API] The app was built without VITE_API_URL set.');
+  console.error('[API] Expected:', 'https://jamzy-backend.ncmaddrey.workers.dev');
+  console.error('[API] Got:', API_BASE_URL);
+}
+
 class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -11,35 +22,56 @@ class ApiError extends Error {
   }
 }
 
-async function apiFetch<T>(endpoint: string, options?: RequestInit): Promise<T> {
+async function apiFetch<T>(endpoint: string, options?: RequestInit, retries = 2): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-    });
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      // Log API calls (helps debug production issues)
+      const method = options?.method || 'GET';
+      const retryInfo = attempt > 0 ? ` (retry ${attempt}/${retries})` : '';
+      console.log(`[API] ${method} ${url}${retryInfo}`);
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
-      throw new ApiError(
-        response.status,
-        errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
-      );
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options?.headers,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
+        throw new ApiError(
+          response.status,
+          errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      // Don't retry 4xx client errors (bad request, not found, etc.)
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+        console.error(`[API] Client error ${error.status}:`, error.message);
+        throw error;
+      }
+
+      // Retry on network errors or 5xx server errors
+      if (attempt < retries) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // Exponential backoff, max 5s
+        console.warn(`[API] Request failed, retrying in ${delay}ms...`, error instanceof Error ? error.message : error);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+
+      // Final failure after all retries
+      console.error(`[API] Request failed after ${retries + 1} attempts:`, error);
+      throw error instanceof ApiError ? error : new ApiError(0, error instanceof Error ? error.message : 'Network request failed');
     }
-
-    return await response.json();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-
-    // Network or other errors
-    throw new ApiError(0, error instanceof Error ? error.message : 'Network request failed');
   }
+
+  // Should never reach here
+  throw new ApiError(0, 'Request failed');
 }
 
 /**

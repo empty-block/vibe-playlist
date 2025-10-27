@@ -36,11 +36,42 @@ app.use('/*', async (c, next) => {
   await next()
 })
 
-// Middleware
+// CORS Middleware - Security-first with local dev support
 app.use('/*', cors({
-  origin: '*',
+  origin: (origin) => {
+    // Allowed production domains
+    const allowedOrigins = [
+      'https://jamzy-miniapp.pages.dev',
+      'https://*.jamzy-miniapp.pages.dev',  // Preview deployments
+    ]
+
+    // Local dev: allow all origins
+    if (process.env.NODE_ENV !== 'production') {
+      return origin || true
+    }
+
+    // Production: check against whitelist
+    if (!origin) return false
+
+    for (const allowed of allowedOrigins) {
+      if (allowed.includes('*')) {
+        // Handle wildcard subdomains
+        const regex = new RegExp('^' + allowed.replace('*', '.*') + '$')
+        if (regex.test(origin)) return origin
+      } else if (allowed === origin) {
+        return origin
+      }
+    }
+
+    // Log rejected origins for debugging
+    console.warn('[CORS] Rejected origin:', origin)
+    return false
+  },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type']
+  allowHeaders: ['Content-Type', 'Authorization'],
+  exposeHeaders: ['Content-Length'],
+  maxAge: 86400,  // 24 hours
+  credentials: false,
 }))
 
 // Legacy API handlers (existing functionality)
@@ -209,19 +240,33 @@ export default {
     // Inject Cloudflare env into process.env for compatibility
     Object.assign(process.env, env)
 
-    console.log('[Cron] AI Worker triggered at:', new Date().toISOString())
+    console.log('[Cron] Triggered at:', new Date().toISOString())
 
     try {
+      // Run AI Worker (music metadata processing)
       const batchSize = parseInt(env.AI_WORKER_BATCH_SIZE || '20')
-      const result = await processBatch({ batchSize })
+      const aiResult = await processBatch({ batchSize })
 
       console.log(
-        `[Cron] Batch complete: ${result.successful} successful, ${result.failed} failed, ` +
-        `${result.totalProcessed} total processed`
+        `[Cron] AI Worker: ${aiResult.successful} successful, ${aiResult.failed} failed, ` +
+        `${aiResult.totalProcessed} total processed`
       )
 
-      if (result.errors.length > 0) {
-        console.error('[Cron] Batch had errors:', result.errors)
+      if (aiResult.errors.length > 0) {
+        console.error('[Cron] AI Worker errors:', aiResult.errors)
+      }
+
+      // Run Channel Sync (sync all 9 channels)
+      const { syncAllChannels } = await import('./lib/channel-sync-worker')
+      const syncResult = await syncAllChannels()
+
+      console.log(
+        `[Cron] Channel Sync: ${syncResult.channelsSynced} channels synced, ` +
+        `${syncResult.totalNewCasts} new casts`
+      )
+
+      if (syncResult.errors.length > 0) {
+        console.error('[Cron] Channel sync errors:', syncResult.errors)
       }
     } catch (error: any) {
       console.error('[Cron] Scheduled task failed:', error.message)
