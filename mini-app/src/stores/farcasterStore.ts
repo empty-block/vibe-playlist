@@ -21,13 +21,13 @@ export const [farcasterAuth, setFarcasterAuth] = createSignal<{
 export const [farcasterLoading, setFarcasterLoading] = createSignal(false);
 export const [farcasterError, setFarcasterError] = createSignal<string | null>(null);
 
-// Cache the Mini App detection result to avoid repeated async checks
+// Cache the Mini App detection result - SDK caches internally too
 let cachedMiniAppStatus: boolean | null = null;
 
 /**
  * Check if we're running in a Farcaster context
- * Uses the official SDK method to detect Mini App environment
- * Result is cached after first check for performance
+ * Uses the official SDK method: sdk.isInMiniApp()
+ * The SDK caches the result internally after first check
  */
 const isInFarcasterContext = async (): Promise<boolean> => {
   // Return cached result if available
@@ -36,17 +36,24 @@ const isInFarcasterContext = async (): Promise<boolean> => {
   }
 
   try {
-    // Use the official SDK method to check if we're in a Mini App
+    // Use official SDK detection (100ms timeout by default)
     const isMiniApp = await sdk.isInMiniApp();
-    console.log('SDK isInMiniApp check:', isMiniApp);
+    console.log('[Farcaster Detection] isInMiniApp:', isMiniApp);
     cachedMiniAppStatus = isMiniApp;
     return isMiniApp;
   } catch (error) {
-    // If the check fails, we're not in Farcaster
-    console.log('isInMiniApp check failed:', error);
+    console.log('[Farcaster Detection] Check failed:', error);
     cachedMiniAppStatus = false;
     return false;
   }
+};
+
+/**
+ * Synchronous check for Farcaster context (uses cached value)
+ * IMPORTANT: Returns null if check hasn't completed yet
+ */
+export const isInFarcasterSync = (): boolean | null => {
+  return cachedMiniAppStatus;
 };
 
 /**
@@ -212,14 +219,10 @@ export const signOutFarcaster = () => {
 };
 
 // Auto-initialize when the store is imported
-// This will be called after the SDK is ready
+// This MUST complete before tracks can be played
 if (typeof window !== 'undefined') {
-  // Wait a bit for SDK to initialize, then try to init Farcaster
-  // This will gracefully fail if not in Farcaster context
-  setTimeout(() => {
-    initializeFarcaster().catch(() => {
-      // Silently handle initialization failure for non-Farcaster environments
-      console.log('Farcaster initialization skipped (not in Farcaster context)');
-    });
-  }, 100);
+  // Initialize immediately - SDK detection is fast (100ms default timeout)
+  initializeFarcaster().catch(() => {
+    console.log('[Farcaster] Initialization skipped (not in Farcaster context)');
+  });
 }

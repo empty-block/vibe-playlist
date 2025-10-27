@@ -1,7 +1,7 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
-import { farcasterAuth } from './farcasterStore';
+import { isInFarcasterSync } from './farcasterStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
@@ -271,17 +271,20 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // Check if we're in Farcaster context
-  const isInFarcaster = farcasterAuth().isAuthenticated;
+  // Check if we're in Farcaster context using SDK detection
+  const farcasterCheck = isInFarcasterSync();
 
-  // IMPORTANT: In Farcaster WebView, NEVER autoplay ANY track
-  // User must ALWAYS manually click the play button due to WebView restrictions
-  if (isInFarcaster) {
+  // CRITICAL: In Farcaster WebView, NEVER autoplay to avoid policy violations
+  if (farcasterCheck === true) {
     setIsPlaying(false);
-    console.log('🚫 Farcaster WebView: Track loaded in paused state - user MUST manually tap play button to avoid autoplay violations');
-  } else {
-    // In regular web browser, autoplay is allowed
+    console.log('🚫 FARCASTER DETECTED: Track loaded PAUSED - user must manually tap play (autoplay violation prevention)');
+  } else if (farcasterCheck === false) {
+    // Confirmed NOT in Farcaster - autoplay allowed
     setIsPlaying(true);
-    console.log('✅ Web browser: Autoplaying track');
+    console.log('✅ WEB BROWSER: Autoplaying track');
+  } else {
+    // Detection not complete yet - be safe, don't autoplay
+    setIsPlaying(false);
+    console.log('⚠️  Farcaster detection pending - loading PAUSED to be safe');
   }
 };

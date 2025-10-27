@@ -1,6 +1,6 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
-import { farcasterAuth } from '../../stores/farcasterStore';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
@@ -237,33 +237,33 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
 
       try {
-        // Check if we're in Farcaster context
-        const isInFarcaster = farcasterAuth().isAuthenticated;
+        // Check Farcaster context using SDK detection
+        const farcasterCheck = isInFarcasterSync();
 
-        // ALWAYS load video in cued/paused state first
+        // ALWAYS cue video first (doesn't autoplay)
         player.cueVideoById({
           videoId: videoId,
           startSeconds: 0
         });
 
-        // In Farcaster: NEVER attempt autoplay
-        if (isInFarcaster) {
+        // Farcaster: NEVER call playVideo() at all
+        if (farcasterCheck === true) {
           setIsPlaying(false);
-          console.log('🚫 Farcaster WebView: Video cued - NO autoplay attempt (WebView violation prevention)');
+          console.log('🚫 FARCASTER: Video cued only - NO playVideo() call (violation prevention)');
+          return;
+        }
+
+        // Web browser: Only autoplay if playerStore says to (isPlaying already true)
+        if (farcasterCheck === false && isPlaying()) {
+          console.log('✅ WEB BROWSER: Attempting autoplay...');
+          player.playVideo().then(() => {
+            console.log('✅ WEB BROWSER: Autoplay successful');
+          }).catch((err: any) => {
+            console.warn('⚠️  WEB BROWSER: Autoplay blocked by browser:', err);
+            setIsPlaying(false);
+          });
         } else {
-          // In web browser: Only autoplay if isPlaying is already true (from playerStore)
-          // This respects the autoplay decision made in playTrackFromFeed
-          if (isPlaying()) {
-            console.log('✅ Web browser: Attempting autoplay...');
-            player.playVideo().then(() => {
-              console.log('✅ Web browser: Autoplay successful');
-            }).catch((err: any) => {
-              console.log('⚠️  Web browser: Autoplay blocked by browser policy:', err);
-              setIsPlaying(false);
-            });
-          } else {
-            console.log('Web browser: Video cued in paused state');
-          }
+          console.log('Video cued in paused state');
         }
       } catch (error) {
         console.error('Error loading video:', error);
