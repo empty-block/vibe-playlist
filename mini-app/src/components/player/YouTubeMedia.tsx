@@ -20,6 +20,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let playerContainer: HTMLDivElement | undefined;
   let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
+  const [userHasInteracted, setUserHasInteracted] = createSignal(false);
 
   // Always use compact size for bottom bar
 
@@ -155,6 +156,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
+      // Mark that user has interacted (either via YouTube controls or app controls)
+      setUserHasInteracted(true);
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
@@ -177,7 +180,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       hasPlayer: !!player,
       playerReady: playerReady(),
       isPlaying: isPlaying(),
-      playerState: player ? player.getPlayerState() : 'no player'
+      playerState: player ? player.getPlayerState() : 'no player',
+      userHasInteracted: userHasInteracted()
     });
 
     if (!player || !playerReady()) {
@@ -185,11 +189,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       return;
     }
 
-    // CRITICAL: In Farcaster, NEVER call playVideo() - user must click YouTube player
+    // CRITICAL: In Farcaster, block INITIAL autoplay until user has interacted with YouTube directly
     const farcasterCheck = isInFarcasterSync();
-    if (farcasterCheck === true) {
-      console.error('🚫🚫🚫 BLOCKED: togglePlay() disabled in Farcaster');
-      console.error('User must click the YouTube player controls directly');
+    if (farcasterCheck === true && !userHasInteracted()) {
+      console.error('🚫 BLOCKED: First play must be via YouTube controls (autoplay policy)');
+      console.error('User must click YouTube player controls to start playback initially');
       return;
     }
 
@@ -248,17 +252,22 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         // Check Farcaster context using SDK detection
         const farcasterCheck = isInFarcasterSync();
 
+        // Reset interaction flag for each new track in Farcaster
+        if (farcasterCheck === true) {
+          setUserHasInteracted(false);
+        }
+
         // ALWAYS cue video first (doesn't autoplay)
         player.cueVideoById({
           videoId: videoId,
           startSeconds: 0
         });
 
-        // Farcaster: NEVER call playVideo() - user controls via YouTube embed
+        // Farcaster: NEVER call playVideo() on initial load - user must click YouTube controls first
         if (farcasterCheck === true) {
           setIsPlaying(false);
-          console.log('🚫 FARCASTER: Video cued - User MUST click YouTube player controls');
-          console.log('🚫 App play button is HIDDEN in Farcaster');
+          console.log('🚫 FARCASTER: Video cued - User must click YouTube controls first');
+          console.log('After first interaction, app controls will work normally');
           return;
         }
 

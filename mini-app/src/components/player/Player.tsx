@@ -182,22 +182,15 @@ const Player: Component<PlayerProps> = (props) => {
 
             {/* Playback Controls - integrated into track info panel */}
             <div class="player-controls">
-              <Show when={isInFarcasterSync() !== true}>
-                <button
-                  ref={playButtonRef!}
-                  onClick={props.onTogglePlay}
-                  class="player-control player-control--play"
-                  disabled={!props.playerReady()}
-                  title={isPlaying() ? 'Pause' : 'Play'}
-                >
-                  {isPlaying() ? '⏸' : '▶'}
-                </button>
-              </Show>
-              <Show when={isInFarcasterSync() === true}>
-                <div class="player-control player-control--disabled" title="Use YouTube player controls">
-                  ▶
-                </div>
-              </Show>
+              <button
+                ref={playButtonRef!}
+                onClick={props.onTogglePlay}
+                class="player-control player-control--play"
+                disabled={!props.playerReady()}
+                title={isPlaying() ? 'Pause' : 'Play'}
+              >
+                {isPlaying() ? '⏸' : '▶'}
+              </button>
               <button
                 ref={prevButtonRef!}
                 onClick={handleSkipPrevious}
