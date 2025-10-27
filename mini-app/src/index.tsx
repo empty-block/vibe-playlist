@@ -4,22 +4,21 @@ import App from './App';
 import './styles/theme.css';
 import './styles/window-layout.css';
 
-// Initialize Farcaster SDK IMMEDIATELY
-// Must be called before rendering to hide splash screen
-(async () => {
-  try {
-    // Signal that the app is ready (hides splash screen)
-    // This MUST be called as early as possible
-    await sdk.actions.ready();
-    console.log('Farcaster SDK ready called');
-  } catch (error) {
-    console.log('Not in Farcaster context or SDK ready failed:', error);
-    // App will still work for local development
-  }
-})();
-
+// Initialize Farcaster SDK and render app
+// The ready() call must happen before render to hide splash screen
 const root = document.getElementById('root');
 
 if (root) {
-  render(() => <App />, root);
+  // Call ready() and then render
+  // This is done synchronously to ensure ready() is called ASAP
+  sdk.actions.ready()
+    .then(() => {
+      console.log('Farcaster SDK ready called');
+      render(() => <App />, root);
+    })
+    .catch((error) => {
+      console.log('Not in Farcaster context or SDK ready failed:', error);
+      // Still render the app for local development
+      render(() => <App />, root);
+    });
 }
