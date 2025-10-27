@@ -22,9 +22,9 @@ function shuffleArray<T>(array: T[]): T[] {
 const HomePage: Component = () => {
   const navigate = useNavigate();
 
-  // Filter and sort state - quality filter defaults to 3 (3+ likes)
+  // Filter and sort state
   const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
-  const [qualityFilter, setQualityFilter] = createSignal<number>(3); // Default to 3+ likes for curated home feed
+  const [qualityFilter, setQualityFilter] = createSignal<number>(0); // Default to show all posts
   const [musicSources, setMusicSources] = createSignal<MusicPlatform[]>([]);
   const [genres, setGenres] = createSignal<string[]>([]);
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0);
@@ -197,7 +197,7 @@ const HomePage: Component = () => {
                 <div class="home-header-text">
                   <div class="home-title">Your Home Feed</div>
                   <div class="home-description">
-                    Tracks from all channels • Quality filtered (3+ ♥)
+                    Tracks from all channels
                   </div>
                 </div>
               </div>
