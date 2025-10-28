@@ -6,6 +6,35 @@
     <title>🎧 JAMZY Mini</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // Don't load SDK automatically - load it only when needed
+        window.loadSpotifySDK = function() {
+            if (window.spotifySDKLoading || window.Spotify) {
+                return Promise.resolve();
+            }
+
+            window.spotifySDKLoading = true;
+            console.log('Loading Spotify SDK on demand...');
+
+            return new Promise((resolve, reject) => {
+                // Define callback before loading
+                window.onSpotifyWebPlaybackSDKReady = function() {
+                    console.log('Spotify SDK ready');
+                    window.spotifySDKReady = true;
+                    window.dispatchEvent(new Event('spotify-sdk-ready'));
+                    resolve();
+                };
+
+                const script = document.createElement('script');
+                script.src = 'https://sdk.scdn.co/spotify-player.js';
+                script.async = true;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        };
+
+        console.log('Spotify SDK will be loaded on demand');
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+New:wght@400;700&family=Impact:wght@400&display=swap" rel="stylesheet">
     <style>

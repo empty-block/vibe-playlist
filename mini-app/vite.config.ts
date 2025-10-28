@@ -14,11 +14,13 @@ export default defineConfig(() => {
     },
     define: {
       // API URL configuration
-      // Local dev: defaults to http://localhost:4201
-      // Production: set VITE_API_URL to your Cloudflare Workers URL
-      // Example: VITE_API_URL=https://jamzy-backend.workers.dev bun run build
+      // Production: uses Cloudflare Worker
+      // Local dev: uses localhost
       'import.meta.env.VITE_API_URL': JSON.stringify(
-        process.env.VITE_API_URL || 'http://localhost:4201'
+        process.env.VITE_API_URL ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://jamzy-backend.ncmaddrey.workers.dev'
+          : 'http://localhost:4201')
       )
     }
   };
