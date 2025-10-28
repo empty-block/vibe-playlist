@@ -21,7 +21,10 @@ export default defineConfig(() => {
         (process.env.NODE_ENV === 'production'
           ? 'https://jamzy-backend.ncmaddrey.workers.dev'
           : 'http://localhost:4201')
-      )
+      ),
+      // Spotify configuration
+      'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || ''),
+      'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev')
     }
   };
 });

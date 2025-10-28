@@ -303,6 +303,15 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     const ready = playerReady();
     const device = deviceId();
 
+    // If track switched to non-Spotify source, pause the player
+    if (track && track.source !== 'spotify' && player && ready) {
+      console.log('[Browser SDK] Track switched to non-Spotify source, pausing player');
+      player.pause().catch((err: any) =>
+        console.error('Failed to pause Spotify SDK player:', err)
+      );
+      return;
+    }
+
     if (track && track.source === 'spotify' && track.sourceId && ready && device) {
       playTrackSDK(track.sourceId, device);
     }
@@ -377,6 +386,19 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       deviceName: hasDevice,
       connecting,
     });
+
+    // If track switched to non-Spotify source, stop Spotify playback
+    if (track && track.source !== 'spotify') {
+      console.log('[Auto-play Effect] 🛑 Track switched to non-Spotify source, pausing Spotify');
+      stopPlaybackPolling();
+      // Pause Spotify playback using Connect API
+      if (connectReady()) {
+        togglePlaybackOnConnect(false).catch(err =>
+          console.error('Failed to pause Spotify on track switch:', err)
+        );
+      }
+      return;
+    }
 
     // Only auto-play if we have a connected device AND not currently connecting
     // This prevents double-play on first track while enabling auto-play for subsequent tracks
