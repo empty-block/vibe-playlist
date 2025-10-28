@@ -48,6 +48,70 @@ function parseMetaTags(html: string): Record<string, string> {
 }
 
 /**
+ * Fetch metadata from Odesli API (song.link)
+ * Used as fallback for Apple Music URLs
+ */
+async function fetchFromOdesli(url: string): Promise<OpenGraphMetadata | null> {
+  try {
+    const odesliUrl = `https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(url)}`
+
+    console.log(`[OpenGraph] Fetching from Odesli API: ${url}`)
+
+    const response = await fetch(odesliUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
+      }
+    })
+
+    if (!response.ok) {
+      console.warn(`[OpenGraph] Odesli API returned ${response.status}`)
+      return null
+    }
+
+    const data = await response.json()
+
+    // Extract metadata from Odesli response
+    const entityId = data.entityUniqueId
+    const entity = data.entitiesByUniqueId?.[entityId]
+
+    if (!entity) {
+      console.warn(`[OpenGraph] No entity found in Odesli response`)
+      return null
+    }
+
+    const og_title = entity.title || null
+    const og_artist = entity.artistName || null
+    const og_image_url = entity.thumbnailUrl || null
+    const og_description = og_artist && og_title ? `${og_artist} - ${og_title}` : null
+
+    console.log(`[OpenGraph] Odesli extracted: title="${og_title}", artist="${og_artist}"`)
+
+    return {
+      og_title,
+      og_artist,
+      og_description,
+      og_image_url,
+      og_metadata: {
+        description: og_description,
+        site_name: 'Odesli',
+        type: 'music.song',
+        url,
+        music: {
+          duration: null,
+          album: null,
+          release_date: null
+        },
+        raw: data
+      },
+      success: true
+    }
+  } catch (error: any) {
+    console.error(`[OpenGraph] Odesli fetch failed:`, error.message)
+    return null
+  }
+}
+
+/**
  * Fetch OpenGraph metadata from a URL
  *
  * @param url - Music URL to fetch metadata from
@@ -63,6 +127,20 @@ export async function fetchOpenGraph(
 ): Promise<OpenGraphMetadata> {
   const timeout = options?.timeout || 10000 // 10 seconds default
   const maxRetries = options?.retries || 2
+
+  // APPLE MUSIC FALLBACK: Use Odesli API for Apple Music URLs
+  // Apple Music blocks/rate-limits OpenGraph scraping
+  if (url.includes('music.apple.com')) {
+    console.log(`[OpenGraph] Detected Apple Music URL, using Odesli API`)
+    const odesliResult = await fetchFromOdesli(url)
+
+    if (odesliResult) {
+      return odesliResult
+    }
+
+    console.warn(`[OpenGraph] Odesli fallback failed, attempting direct fetch`)
+    // Continue to regular OpenGraph fetch as last resort
+  }
 
   let lastError: Error | undefined
 
