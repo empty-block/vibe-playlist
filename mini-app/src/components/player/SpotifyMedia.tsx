@@ -1,9 +1,14 @@
-import { Component, Show, createSignal, createEffect, onMount, onCleanup } from 'solid-js';
+import { Component, Show, createSignal, createEffect, onMount, onCleanup, untrack } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying, setCurrentTime, setDuration, setIsSeekable, playNextTrack, handleTrackError } from '../../stores/playerStore';
 import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { spotifyAccessToken, isSpotifyAuthenticated } from '../../stores/authStore';
 import SpotifyLoginPrompt from './SpotifyLoginPrompt';
 import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice } from '../../services/spotifyConnect';
+
+// Persistent Spotify Connect state (survives component remounts)
+// This is necessary because SpotifyMedia remounts on every track change
+const [persistentDeviceName, setPersistentDeviceName] = createSignal<string>('');
+const [persistentConnectReady, setPersistentConnectReady] = createSignal(false);
 
 interface SpotifyMediaProps {
   onPlayerReady: (ready: boolean) => void;
@@ -27,12 +32,17 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [deviceId, setDeviceId] = createSignal<string>('');
   const [sdkFailed, setSdkFailed] = createSignal(false);
 
-  // Farcaster Spotify Connect state
-  const [connectReady, setConnectReady] = createSignal(false);
+  // Farcaster Spotify Connect state (local to this component instance)
   const [waitingForDevice, setWaitingForDevice] = createSignal(false);
-  const [deviceName, setDeviceName] = createSignal<string>('');
   const [connectionFailed, setConnectionFailed] = createSignal(false);
+  const [isConnecting, setIsConnecting] = createSignal(false); // Prevent auto-play during initial connection
   let pollingInterval: number | undefined;
+
+  // Use persistent signals for state that needs to survive remounts
+  const connectReady = persistentConnectReady;
+  const setConnectReady = setPersistentConnectReady;
+  const deviceName = persistentDeviceName;
+  const setDeviceName = setPersistentDeviceName;
 
   const openInSpotify = async () => {
     const track = currentTrack();
@@ -49,6 +59,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     if (isInFarcasterSync()) {
       console.log('Starting playback via Spotify Connect API...');
 
+      // Set connecting flag to prevent auto-play effect from triggering
+      setIsConnecting(true);
+
       // Reset failure state but keep connectReady/deviceName if device was previously active
       setConnectionFailed(false);
       setWaitingForDevice(false);
@@ -62,9 +75,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         setConnectReady(true);
         // Keep existing deviceName or set a default if not present
         if (!deviceName()) {
+          console.log('[openInSpotify] Setting deviceName to "Spotify"');
           setDeviceName('Spotify');
+        } else {
+          console.log('[openInSpotify] deviceName already set:', deviceName());
         }
         startPlaybackPolling();
+        setIsConnecting(false); // Connection complete
         return;
       }
 
@@ -81,7 +98,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       if (result.success) {
         console.log('Device is now active - retrying playback');
-        setDeviceName(result.deviceName || 'Spotify');
+        const newDeviceName = result.deviceName || 'Spotify';
+        console.log('[openInSpotify] Setting deviceName after detection:', newDeviceName);
+        setDeviceName(newDeviceName);
 
         // Try to start playback now that device is active
         const retrySuccess = await playTrackOnConnect(track.sourceId);
@@ -92,15 +111,18 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
+          setIsConnecting(false); // Connection complete
         } else {
           console.error('Playback failed even after device detected');
           setWaitingForDevice(false);
           setConnectionFailed(true);
+          setIsConnecting(false); // Connection failed
         }
       } else {
         console.log('Device detection timed out');
         setWaitingForDevice(false);
         setConnectionFailed(true);
+        setIsConnecting(false); // Connection failed
       }
 
       return;
@@ -336,18 +358,37 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
   };
 
-  // Play track when ready (Farcaster only)
-  // Note: In Farcaster, user must click "Play on Spotify" button to start playback
-  // This effect handles play/pause toggle after initial playback has started
+  // Auto-play track changes when device is already connected (Farcaster only)
+  // This effect only watches trackId changes, not play/pause state
   createEffect(() => {
-    if (!isInFarcasterSync()) return;
-    if (!connectReady()) return; // Only after playback has been initiated
+    if (!isInFarcasterSync()) {
+      console.log('[Auto-play Effect] Not in Farcaster, skipping');
+      return;
+    }
 
     const track = currentTrack();
-    const playing = isPlaying();
+    const hasDevice = deviceName(); // Device already connected from previous track
+    const connecting = isConnecting(); // Skip during initial connection
 
-    if (track && track.source === 'spotify' && track.sourceId && playing) {
-      playTrackConnect(track.sourceId);
+    console.log('[Auto-play Effect] Triggered with:', {
+      trackId: track?.sourceId,
+      trackSource: track?.source,
+      hasDevice: !!hasDevice,
+      deviceName: hasDevice,
+      connecting,
+    });
+
+    // Only auto-play if we have a connected device AND not currently connecting
+    // This prevents double-play on first track while enabling auto-play for subsequent tracks
+    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting) {
+      console.log('[Auto-play Effect] ✅ All conditions met - auto-playing:', track.sourceId);
+
+      // Use untrack to avoid re-triggering on isPlaying changes
+      untrack(() => {
+        playTrackConnect(track.sourceId);
+      });
+    } else {
+      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play');
     }
   });
 
