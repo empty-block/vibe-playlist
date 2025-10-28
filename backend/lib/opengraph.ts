@@ -195,7 +195,41 @@ export async function fetchOpenGraph(
         }
       }
 
-      // Try parsing from title
+      // YouTube-specific: Extract artist from description
+      // Format: "Provided to YouTube by [Distributor]...Artist Name · Track Name..."
+      if (!og_artist && og_description && og_description.includes('YouTube')) {
+        console.log(`[OpenGraph] YouTube description found: "${og_description.substring(0, 100)}..."`)
+        // Look for pattern: "Artist · Track" or "Artist Name\nTrack Name"
+        const artistMatch = og_description.match(/\n([^\n·]+?)\s*[·\n]\s*[^\n]+/)
+        if (artistMatch && artistMatch[1]) {
+          const potentialArtist = artistMatch[1].trim()
+          // Filter out common non-artist text
+          if (potentialArtist &&
+              potentialArtist.length < 100 &&
+              !potentialArtist.includes('Provided to') &&
+              !potentialArtist.includes('Released on') &&
+              !potentialArtist.includes('Auto-generated')) {
+            og_artist = potentialArtist
+            console.log(`[OpenGraph] Extracted YouTube artist: "${og_artist}"`)
+          }
+        }
+      }
+
+      // Spotify-specific: Extract artist from title if it contains " | Spotify"
+      // Format: "Track Name - Type by Artist | Spotify" or "Track Name by Artist | Spotify"
+      if (!og_artist && og_title && og_title.includes(' | Spotify')) {
+        console.log(`[OpenGraph] Spotify title found: "${og_title}"`)
+        // Remove " | Spotify" suffix
+        const titleWithoutPlatform = og_title.replace(/ \| Spotify$/i, '')
+        // Try to extract artist from "by Artist" pattern
+        const byMatch = titleWithoutPlatform.match(/\bby\s+([^-|]+?)(?:\s*[-|]|$)/)
+        if (byMatch && byMatch[1]) {
+          og_artist = byMatch[1].trim()
+          console.log(`[OpenGraph] Extracted Spotify artist from title: "${og_artist}"`)
+        }
+      }
+
+      // Try parsing from title (general case)
       if (!og_artist && og_title) {
         const match = og_title.match(/(.+?)\s*[-–—]\s*(.+)/)
         if (match) {
@@ -203,9 +237,11 @@ export async function fetchOpenGraph(
         }
       }
 
-      // Last resort: check twitter creator
-      if (!og_artist) {
-        og_artist = meta['twitter:creator'] || null
+      // Platform name validation - reject invalid artist names
+      const INVALID_ARTISTS = ['YouTube', 'Spotify', 'SoundCloud', 'Apple Music', '@youtube', '@spotify', '@soundcloud']
+      if (og_artist && INVALID_ARTISTS.some(invalid => og_artist?.toLowerCase().includes(invalid.toLowerCase()))) {
+        console.log(`[OpenGraph] Rejecting invalid artist name: "${og_artist}"`)
+        og_artist = null
       }
 
       return {
