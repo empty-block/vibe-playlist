@@ -54,6 +54,13 @@ VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:3001
 3. Add your redirect URI (must match `.env` exactly)
 4. Required scopes: `streaming`, `user-read-email`, `user-read-private`, `user-read-playback-state`, `user-modify-playback-state`, `user-read-currently-playing`
 
+⚠️ **IMPORTANT**: When deploying to new Cloudflare branches/aliases:
+- Each unique deployment URL needs to be added to Spotify's allowed redirect URIs
+- Example: If deploying to `dev.jamzy-miniapp.pages.dev`, add `https://dev.jamzy-miniapp.pages.dev` to Spotify dashboard
+- The `.env` file's `VITE_SPOTIFY_REDIRECT_URI` must match exactly
+- The `mini-app/vite.config.ts` must include Spotify env vars in the `define` section
+- The `deploy-miniapp.sh` script must load `.env` variables before building
+
 ## 🏗 Architecture Overview
 
 ### Component Organization
@@ -225,6 +232,39 @@ JAMZY uses **two different Spotify playback strategies** depending on the enviro
 - **Solution**: Use CSS `hidden` class instead of conditional mounting
 - **Code Location**: `Layout.tsx` - always mount both players, toggle visibility with CSS
 
+**Illegal Redirect URI Error**
+- **Issue**: "Illegal redirect_uri" or "Missing required parameter: client_id" when logging in with Spotify
+- **Symptom**: Spotify authorization fails immediately after clicking login
+- **Root Causes**:
+  1. New deployment URL not added to Spotify dashboard
+  2. Environment variables not loaded during build
+  3. Vite config missing Spotify env var definitions
+- **Solution**:
+  1. Add deployment URL to [Spotify Dashboard](https://developer.spotify.com/dashboard) → Settings → Redirect URIs
+  2. Update `.env` file with correct `VITE_SPOTIFY_REDIRECT_URI`
+  3. Ensure `mini-app/vite.config.ts` includes Spotify vars in `define` section:
+     ```typescript
+     define: {
+       'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || ''),
+       'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev')
+     }
+     ```
+  4. Verify `deploy-miniapp.sh` loads `.env` before building:
+     ```bash
+     if [ -f ../.env ]; then
+       export $(cat ../.env | grep -v '^#' | xargs)
+     fi
+     ```
+- **Code Location**: `mini-app/vite.config.ts`, `deploy-miniapp.sh`, `.env`
+- **Common Mistake**: Deploying to new branch without updating redirect URI everywhere
+
+**Spotify Keeps Playing When Switching to YouTube**
+- **Issue**: Spotify playback continues when switching to YouTube track
+- **Symptom**: Both Spotify and YouTube audio playing simultaneously
+- **Root Cause**: SpotifyMedia component doesn't pause on track source change
+- **Solution**: Added reactive effect to pause Spotify when `currentTrack().source !== 'spotify'`
+- **Code Location**: `mini-app/src/components/player/SpotifyMedia.tsx:381-392` (Farcaster mode), `:306-313` (Browser mode)
+
 ### Common Issues & Solutions
 
 | Issue | Symptom | Solution |
@@ -240,6 +280,8 @@ JAMZY uses **two different Spotify playback strategies** depending on the enviro
 | Track plays twice | Audio restarts | Remove reactive effects that trigger on `isPlaying()` |
 | Mini app OAuth blocked | Login popup fails | Use popup + postMessage flow, not redirect |
 | Spotify Premium error | SDK fails in browser | User needs Premium for browser, or use mini app (no Premium needed) |
+| Illegal redirect_uri | Spotify login fails | Add deployment URL to Spotify dashboard, update .env, check vite.config.ts |
+| Both players playing | Audio overlap | Check SpotifyMedia pause logic on track source change |
 
 ### Testing Scenarios
 
