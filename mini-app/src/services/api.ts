@@ -108,6 +108,7 @@ export async function createThread(data: {
   text: string;
   userId: string;
   trackUrls?: string[];
+  farcasterToken?: string;
 }): Promise<any> {
   return apiFetch('/api/threads', {
     method: 'POST',

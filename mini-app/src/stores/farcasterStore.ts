@@ -95,16 +95,42 @@ export const initializeFarcaster = async () => {
     console.log('Context user:', context?.user);
 
     // Each property is ALSO a Promise/async getter - must await individually
-    const fidPromise = context?.user?.fid;
-    const usernamePromise = context?.user?.username;
-    const displayNamePromise = context?.user?.displayName;
-    const pfpUrlPromise = context?.user?.pfpUrl;
+    let fid: string | null = null;
+    let username: string | null = null;
+    let displayName: string | null = null;
+    let pfpUrl: string | null = null;
 
-    // Await each property and convert to string
-    const fid = fidPromise ? String(await fidPromise) : null;
-    const username = usernamePromise ? String(await usernamePromise) : null;
-    const displayName = displayNamePromise ? String(await displayNamePromise) : null;
-    const pfpUrl = pfpUrlPromise ? String(await pfpUrlPromise) : null;
+    try {
+      const fidValue = await context?.user?.fid;
+      fid = fidValue != null ? String(fidValue) : null;
+      console.log('Got fid:', fid);
+    } catch (err) {
+      console.error('Error getting fid:', err);
+    }
+
+    try {
+      const usernameValue = await context?.user?.username;
+      username = usernameValue != null ? String(usernameValue) : null;
+      console.log('Got username:', username);
+    } catch (err) {
+      console.error('Error getting username:', err);
+    }
+
+    try {
+      const displayNameValue = await context?.user?.displayName;
+      displayName = displayNameValue != null ? String(displayNameValue) : null;
+      console.log('Got displayName:', displayName);
+    } catch (err) {
+      console.error('Error getting displayName:', err);
+    }
+
+    try {
+      const pfpUrlValue = await context?.user?.pfpUrl;
+      pfpUrl = pfpUrlValue != null ? String(pfpUrlValue) : null;
+      console.log('Got pfpUrl:', pfpUrl ? 'Yes' : 'No');
+    } catch (err) {
+      console.error('Error getting pfpUrl:', err);
+    }
 
     console.log('Extracted Farcaster user info:', {
       fid,

@@ -18,20 +18,25 @@ createEffect(() => {
   const auth = farcasterAuth();
 
   if (auth.isAuthenticated && auth.fid) {
+    // Use username as displayName if displayName is null
+    const effectiveDisplayName = auth.displayName || auth.username || 'User';
+    const effectiveUsername = auth.username || 'unknown';
+
     setCurrentUser({
       fid: auth.fid,
-      username: auth.username || 'Unknown',
+      username: effectiveUsername,
       avatar: auth.pfpUrl,
-      displayName: auth.displayName || auth.username || 'User',
+      displayName: effectiveDisplayName,
     });
     setIsAuthenticated(true);
   } else {
     // For local development without Farcaster context, use mock data
+    // Using a different FID (dwr.eth = FID 3) to distinguish from real auth
     setCurrentUser({
-      fid: '326181',
-      username: 'hendrix_69',
-      avatar: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
-      displayName: 'Jimi (Dev Mode)'
+      fid: '3',
+      username: 'dwr',
+      avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
+      displayName: 'Dan Romero (Dev Mode)'
     });
     setIsAuthenticated(true);
   }

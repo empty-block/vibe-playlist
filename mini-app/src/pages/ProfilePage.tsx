@@ -15,7 +15,6 @@ import {
   loadUserProfile,
   loadMoreActivity
 } from '../stores/profileStore';
-import { createThread } from '../services/api';
 import './profilePage.css';
 
 type FilterType = 'all' | 'shared' | 'likes' | 'replies';
@@ -62,7 +61,7 @@ const ProfilePage: Component = () => {
       return {
         fid: profile.user.fid,
         username: profile.user.username,
-        displayName: profile.user.displayName,
+        displayName: profile.user.displayName || profile.user.username || 'User',
         avatar: profile.user.avatar,
         bio: undefined // Will add later when we have bio in DB
       };
@@ -165,7 +164,7 @@ const ProfilePage: Component = () => {
     setShowAddTrackModal(true);
   };
 
-  // Handle track submission
+  // Handle track submission using native Farcaster composer
   const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
     const user = currentUser();
     if (!user) {
@@ -177,23 +176,40 @@ const ProfilePage: Component = () => {
     setSubmitError(null);
 
     try {
-      // Create thread with the track
-      const response = await createThread({
+      // Import SDK dynamically
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+
+      // Open native Farcaster composer with pre-filled data
+      const result = await sdk.actions.composeCast({
         text: data.comment || 'Check out this track! 🎵',
-        userId: user.fid,
-        trackUrls: [data.songUrl]
+        embeds: [data.songUrl],
+        channelKey: 'music' // Post to music channel (jamzy channel coming soon!)
       });
 
-      console.log('Track shared successfully:', response);
+      console.log('[ProfilePage] Compose cast result:', result);
 
-      // Close modal
-      setShowAddTrackModal(false);
+      if (result?.cast) {
+        // User posted the cast successfully
+        console.log('[ProfilePage] Cast posted with hash:', result.cast.hash);
 
-      // Reload profile to show new post
-      loadUserProfile(userFid());
+        // TODO: Optionally send cast hash to backend to store in DB
+        // This would let us track which casts came from our app
+
+        // Close modal
+        setShowAddTrackModal(false);
+
+        // Reload profile to show new post (may take a moment to sync)
+        setTimeout(() => {
+          loadUserProfile(userFid());
+        }, 2000);
+      } else {
+        // User cancelled the cast
+        console.log('[ProfilePage] User cancelled the cast');
+        setSubmitError('Cast was cancelled');
+      }
     } catch (error) {
-      console.error('Error sharing track:', error);
-      setSubmitError(error instanceof Error ? error.message : 'Failed to share track');
+      console.error('[ProfilePage] Error opening composer:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to open cast composer');
     } finally {
       setIsSubmitting(false);
     }
