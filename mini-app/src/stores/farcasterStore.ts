@@ -90,11 +90,12 @@ export const initializeFarcaster = async () => {
     const token = await sdk.quickAuth.getToken();
     console.log('Got Quick Auth token:', token ? 'Yes' : 'No');
 
-    // Extract FID from context
-    const fid = sdk.context?.user?.fid?.toString() || null;
-    const username = sdk.context?.user?.username || null;
-    const displayName = sdk.context?.user?.displayName || null;
-    const pfpUrl = sdk.context?.user?.pfpUrl || null;
+    // Extract FID from context - MUST await the context Promise!
+    const context = await sdk.context;
+    const fid = context?.user?.fid?.toString() || null;
+    const username = context?.user?.username || null;
+    const displayName = context?.user?.displayName || null;
+    const pfpUrl = context?.user?.pfpUrl || null;
 
     console.log('Farcaster user info:', {
       fid,

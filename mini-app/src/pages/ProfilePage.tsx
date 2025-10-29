@@ -294,7 +294,7 @@ const ProfilePage: Component = () => {
               <div class="profile-header">
                 <Show when={user().avatar} fallback={
                   <div class="profile-avatar-fallback">
-                    {user().displayName.charAt(0).toUpperCase()}
+                    {(user().displayName || 'U').charAt(0).toUpperCase()}
                   </div>
                 }>
                   <img
