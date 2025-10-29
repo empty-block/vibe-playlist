@@ -89,16 +89,22 @@ export const initializeFarcaster = async () => {
     const token = await sdk.quickAuth.getToken();
     console.log('Got Quick Auth token:', token ? 'Yes' : 'No');
 
-    // Extract FID from context - MUST await the context Promise!
+    // Extract FID from context - MUST await the context Promise AND each property!
     const context = await sdk.context;
     console.log('Awaited context:', context);
     console.log('Context user:', context?.user);
 
-    // Extract values and force to strings to avoid Promise objects
-    const fid = context?.user?.fid ? String(context.user.fid) : null;
-    const username = context?.user?.username ? String(context.user.username) : null;
-    const displayName = context?.user?.displayName ? String(context.user.displayName) : null;
-    const pfpUrl = context?.user?.pfpUrl ? String(context.user.pfpUrl) : null;
+    // Each property is ALSO a Promise/async getter - must await individually
+    const fidPromise = context?.user?.fid;
+    const usernamePromise = context?.user?.username;
+    const displayNamePromise = context?.user?.displayName;
+    const pfpUrlPromise = context?.user?.pfpUrl;
+
+    // Await each property and convert to string
+    const fid = fidPromise ? String(await fidPromise) : null;
+    const username = usernamePromise ? String(await usernamePromise) : null;
+    const displayName = displayNamePromise ? String(await displayNamePromise) : null;
+    const pfpUrl = pfpUrlPromise ? String(await pfpUrlPromise) : null;
 
     console.log('Extracted Farcaster user info:', {
       fid,
