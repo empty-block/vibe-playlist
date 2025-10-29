@@ -7,10 +7,20 @@
 
 import Anthropic from '@anthropic-ai/sdk'
 
-// Initialize Anthropic client
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY
-})
+// Lazy initialization for Cloudflare Workers compatibility
+// The client is created on first use, after env variables are injected
+let anthropic: Anthropic | null = null
+
+function getAnthropic(): Anthropic {
+  if (!anthropic) {
+    const apiKey = process.env.ANTHROPIC_API_KEY
+    if (!apiKey) {
+      throw new Error('ANTHROPIC_API_KEY is not set in environment variables')
+    }
+    anthropic = new Anthropic({ apiKey })
+  }
+  return anthropic
+}
 
 // Curated genre taxonomy (28 genres)
 const VALID_GENRES = [
@@ -73,8 +83,9 @@ export async function extractMusicMetadata(
     // Build the extraction prompt
     const prompt = buildExtractionPrompt(contexts)
 
-    // Call Claude API
-    const response = await anthropic.messages.create({
+    // Call Claude API (using lazy initialization)
+    const client = getAnthropic()
+    const response = await client.messages.create({
       model,
       max_tokens: maxTokens,
       temperature,

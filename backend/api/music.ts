@@ -54,9 +54,13 @@ app.get('/trending', async (c) => {
         timeframeDays = 1
         velocityDays = 1
         break
+      case '2d':
+        timeframeDays = 2
+        velocityDays = 1  // Use 1 day for velocity to strongly favor recent engagement
+        break
       case '7d':
         timeframeDays = 7
-        velocityDays = 3
+        velocityDays = 1
         break
       case '30d':
         timeframeDays = 30
@@ -67,7 +71,7 @@ app.get('/trending', async (c) => {
         velocityDays = 30
         break
       default:
-        timeframeDays = 1
+        timeframeDays = 2
         velocityDays = 1
     }
 

@@ -6,6 +6,12 @@ set -e
 
 echo "🏗️  Building mini-app with production API URL..."
 cd mini-app
+
+# Load environment variables from .env file
+if [ -f ../.env ]; then
+  export $(cat ../.env | grep -v '^#' | xargs)
+fi
+
 VITE_API_URL=https://jamzy-backend.ncmaddrey.workers.dev bun --bun vite build
 
 echo ""

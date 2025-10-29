@@ -186,10 +186,24 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     }
   };
 
-  // Cleanup interval on unmount
+  // Cleanup interval and player on unmount
   onCleanup(() => {
+    console.log('YouTubeMedia cleanup - destroying player');
+
+    // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
+    }
+
+    // Destroy YouTube player to prevent memory leaks and API errors
+    if (player) {
+      try {
+        player.destroy();
+        console.log('YouTube player destroyed successfully');
+      } catch (error) {
+        console.warn('Error destroying YouTube player:', error);
+      }
+      player = null;
     }
   });
   

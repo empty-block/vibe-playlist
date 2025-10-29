@@ -19,6 +19,7 @@ import {
 import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
 import RetroTitleBar from '../common/RetroTitleBar';
+import { skipToNextOnConnect, skipToPreviousOnConnect } from '../../services/spotifyConnect';
 import './player.css';
 
 interface PlayerProps {
@@ -48,13 +49,39 @@ const Player: Component<PlayerProps> = (props) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSkipPrevious = () => {
+  const handleSkipPrevious = async () => {
     console.log('Skip to previous track');
+
+    // If in Farcaster with Spotify, use Connect API
+    const track = currentTrack();
+    if (isInFarcasterSync() && track?.source === 'spotify') {
+      console.log('Using Spotify Connect API for skip previous');
+      const success = await skipToPreviousOnConnect();
+      if (!success) {
+        console.error('Spotify Connect skip previous failed');
+      }
+      return;
+    }
+
+    // Otherwise use normal skip logic
     playPreviousTrack();
   };
 
-  const handleSkipNext = () => {
+  const handleSkipNext = async () => {
     console.log('Skip to next track');
+
+    // If in Farcaster with Spotify, use Connect API
+    const track = currentTrack();
+    if (isInFarcasterSync() && track?.source === 'spotify') {
+      console.log('Using Spotify Connect API for skip next');
+      const success = await skipToNextOnConnect();
+      if (!success) {
+        console.error('Spotify Connect skip next failed');
+      }
+      return;
+    }
+
+    // Otherwise use normal skip logic
     playNextTrack();
   };
 
@@ -137,7 +164,7 @@ const Player: Component<PlayerProps> = (props) => {
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
-            'player-audio-container--hidden': !isPlaying() && !(currentTrack()?.source === 'youtube' && isInFarcasterSync() === true && !(props.hasStartedPlayback && props.hasStartedPlayback()))
+            'player-audio-container--hidden': !isPlaying() && !(currentTrack()?.source === 'youtube' && isInFarcasterSync() === true && !(props.hasStartedPlayback && props.hasStartedPlayback())) && currentTrack()?.source !== 'spotify'
           }}>
             <div class="player-audio-embed" classList={{
               'player-video-embed': currentTrack()?.source === 'youtube'

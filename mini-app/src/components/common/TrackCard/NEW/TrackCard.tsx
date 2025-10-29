@@ -1,6 +1,7 @@
 import { Component, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
+import { stripUrls } from '../../../../utils/textUtils';
 
 interface TrackCardProps {
   author: {
@@ -134,7 +135,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
       {/* Comment if present */}
       <Show when={props.text && props.text.trim()}>
         <div class="comment-box">
-          {props.text}
+          {stripUrls(props.text)}
         </div>
       </Show>
 

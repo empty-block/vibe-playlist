@@ -1,4 +1,4 @@
-import { Component, createSignal, createMemo, For, Show, onMount } from 'solid-js';
+import { Component, createSignal, createMemo, createEffect, For, Show, onMount } from 'solid-js';
 import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
@@ -31,9 +31,28 @@ const ProfilePage: Component = () => {
   // Get FID from route params or use current user's FID
   const userFid = () => params.fid || currentUser()?.fid || '';
 
-  // Load profile data on mount
+  // Load profile data on mount, but only if we have a valid FID
   onMount(() => {
-    loadUserProfile(userFid());
+    const fid = userFid();
+    if (fid) {
+      loadUserProfile(fid);
+    } else {
+      console.log('[ProfilePage] Waiting for currentUser FID to be available...');
+      // Set error to show loading state or message
+      // We'll use a createEffect to watch for when currentUser becomes available
+    }
+  });
+
+  // Watch for when currentUser becomes available (for /profile route without FID)
+  createEffect(() => {
+    const fid = userFid();
+    const profile = profileUser();
+
+    // If we don't have a FID param but now have a currentUser, load the profile
+    if (!params.fid && fid && !profile && !isLoading()) {
+      console.log('[ProfilePage] currentUser FID now available, loading profile:', fid);
+      loadUserProfile(fid);
+    }
   });
 
   // Get user display info

@@ -39,7 +39,16 @@ createEffect(() => {
 
 // Spotify authentication state
 export const [isSpotifyAuthenticated, setIsSpotifyAuthenticated] = createSignal(false);
-export const [spotifyAccessToken, setSpotifyAccessToken] = createSignal<string | null>(null);
+
+// Wrap setSpotifyAccessToken to add logging
+const [_spotifyAccessToken, _setSpotifyAccessToken] = createSignal<string | null>(null);
+export const spotifyAccessToken = _spotifyAccessToken;
+export const setSpotifyAccessToken = (token: string | null) => {
+  console.log('setSpotifyAccessToken called with:', token ? `token (${token.substring(0, 20)}...)` : 'null');
+  console.trace('Token setter call stack');
+  _setSpotifyAccessToken(token);
+};
+
 export const [spotifyUser, setSpotifyUser] = createSignal<any>(null);
 export const [spotifyAuthLoading, setSpotifyAuthLoading] = createSignal(false);
 
@@ -72,14 +81,30 @@ export const initiateSpotifyAuth = async () => {
   // Clean up any stale auth data before starting new auth flow
   localStorage.removeItem('spotify_auth_initiated');
   localStorage.removeItem('spotify_code_verifier');
-  
+
   const authURL = await getSpotifyAuthURL();
-  
+
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
-  
-  // Redirect to Spotify authorization
-  window.location.href = authURL;
+
+  // Open in popup window for iframe compatibility
+  // Popup will send auth code back via postMessage
+  const width = 600;
+  const height = 700;
+  const left = window.screen.width / 2 - width / 2;
+  const top = window.screen.height / 2 - height / 2;
+
+  const popup = window.open(
+    authURL,
+    'spotify-auth',
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+
+  if (!popup) {
+    console.error('Failed to open popup - may be blocked');
+    // Fallback to redirect if popup is blocked
+    window.location.href = authURL;
+  }
 };
 
 // Exchange authorization code for access token using PKCE

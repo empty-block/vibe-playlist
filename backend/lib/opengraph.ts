@@ -48,6 +48,125 @@ function parseMetaTags(html: string): Record<string, string> {
 }
 
 /**
+ * Fetch metadata from Odesli API (song.link)
+ * Used as fallback for Apple Music URLs
+ */
+async function fetchFromOdesli(url: string): Promise<OpenGraphMetadata | null> {
+  try {
+    const odesliUrl = `https://api.song.link/v1-alpha.1/links?url=${encodeURIComponent(url)}`
+
+    console.log(`[OpenGraph] Fetching from Odesli API: ${url}`)
+
+    const response = await fetch(odesliUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
+      }
+    })
+
+    if (!response.ok) {
+      console.warn(`[OpenGraph] Odesli API returned ${response.status}`)
+      return null
+    }
+
+    const data = await response.json()
+
+    // Extract metadata from Odesli response
+    const entityId = data.entityUniqueId
+    const entity = data.entitiesByUniqueId?.[entityId]
+
+    if (!entity) {
+      console.warn(`[OpenGraph] No entity found in Odesli response`)
+      return null
+    }
+
+    const og_title = entity.title || null
+    const og_artist = entity.artistName || null
+    const og_image_url = entity.thumbnailUrl || null
+    const og_description = og_artist && og_title ? `${og_artist} - ${og_title}` : null
+
+    console.log(`[OpenGraph] Odesli extracted: title="${og_title}", artist="${og_artist}"`)
+
+    return {
+      og_title,
+      og_artist,
+      og_description,
+      og_image_url,
+      og_metadata: {
+        description: og_description,
+        site_name: 'Odesli',
+        type: 'music.song',
+        url,
+        music: {
+          duration: null,
+          album: null,
+          release_date: null
+        },
+        raw: data
+      },
+      success: true
+    }
+  } catch (error: any) {
+    console.error(`[OpenGraph] Odesli fetch failed:`, error.message)
+    return null
+  }
+}
+
+/**
+ * Fetch metadata from YouTube oEmbed API
+ * Used for YouTube URLs because YouTube blocks Cloudflare Workers
+ */
+async function fetchFromYouTubeOembed(url: string): Promise<OpenGraphMetadata | null> {
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
+
+    console.log(`[OpenGraph] Fetching from YouTube oEmbed API: ${url}`)
+
+    const response = await fetch(oembedUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
+      }
+    })
+
+    if (!response.ok) {
+      console.warn(`[OpenGraph] YouTube oEmbed API returned ${response.status}`)
+      return null
+    }
+
+    const data = await response.json()
+
+    const og_title = data.title || null
+    const og_artist = data.author_name || null
+    const og_image_url = data.thumbnail_url || null
+    const og_description = og_artist && og_title ? `${og_title} by ${og_artist}` : og_title
+
+    console.log(`[OpenGraph] YouTube oEmbed extracted: title="${og_title}", artist="${og_artist}"`)
+
+    return {
+      og_title,
+      og_artist,
+      og_description,
+      og_image_url,
+      og_metadata: {
+        description: og_description,
+        site_name: 'YouTube',
+        type: 'video.other',
+        url,
+        music: {
+          duration: null,
+          album: null,
+          release_date: null
+        },
+        raw: data
+      },
+      success: true
+    }
+  } catch (error: any) {
+    console.error(`[OpenGraph] YouTube oEmbed fetch failed:`, error.message)
+    return null
+  }
+}
+
+/**
  * Fetch OpenGraph metadata from a URL
  *
  * @param url - Music URL to fetch metadata from
@@ -63,6 +182,33 @@ export async function fetchOpenGraph(
 ): Promise<OpenGraphMetadata> {
   const timeout = options?.timeout || 10000 // 10 seconds default
   const maxRetries = options?.retries || 2
+
+  // YOUTUBE: Use oEmbed API because YouTube blocks Cloudflare Workers
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    console.log(`[OpenGraph] Detected YouTube URL, using oEmbed API`)
+    const youtubeResult = await fetchFromYouTubeOembed(url)
+
+    if (youtubeResult) {
+      return youtubeResult
+    }
+
+    console.warn(`[OpenGraph] YouTube oEmbed failed, attempting direct fetch`)
+    // Continue to regular OpenGraph fetch as last resort
+  }
+
+  // APPLE MUSIC FALLBACK: Use Odesli API for Apple Music URLs
+  // Apple Music blocks/rate-limits OpenGraph scraping
+  if (url.includes('music.apple.com')) {
+    console.log(`[OpenGraph] Detected Apple Music URL, using Odesli API`)
+    const odesliResult = await fetchFromOdesli(url)
+
+    if (odesliResult) {
+      return odesliResult
+    }
+
+    console.warn(`[OpenGraph] Odesli fallback failed, attempting direct fetch`)
+    // Continue to regular OpenGraph fetch as last resort
+  }
 
   let lastError: Error | undefined
 
@@ -117,7 +263,41 @@ export async function fetchOpenGraph(
         }
       }
 
-      // Try parsing from title
+      // YouTube-specific: Extract artist from description
+      // Format: "Provided to YouTube by [Distributor]...Artist Name · Track Name..."
+      if (!og_artist && og_description && og_description.includes('YouTube')) {
+        console.log(`[OpenGraph] YouTube description found: "${og_description.substring(0, 100)}..."`)
+        // Look for pattern: "Artist · Track" or "Artist Name\nTrack Name"
+        const artistMatch = og_description.match(/\n([^\n·]+?)\s*[·\n]\s*[^\n]+/)
+        if (artistMatch && artistMatch[1]) {
+          const potentialArtist = artistMatch[1].trim()
+          // Filter out common non-artist text
+          if (potentialArtist &&
+              potentialArtist.length < 100 &&
+              !potentialArtist.includes('Provided to') &&
+              !potentialArtist.includes('Released on') &&
+              !potentialArtist.includes('Auto-generated')) {
+            og_artist = potentialArtist
+            console.log(`[OpenGraph] Extracted YouTube artist: "${og_artist}"`)
+          }
+        }
+      }
+
+      // Spotify-specific: Extract artist from title if it contains " | Spotify"
+      // Format: "Track Name - Type by Artist | Spotify" or "Track Name by Artist | Spotify"
+      if (!og_artist && og_title && og_title.includes(' | Spotify')) {
+        console.log(`[OpenGraph] Spotify title found: "${og_title}"`)
+        // Remove " | Spotify" suffix
+        const titleWithoutPlatform = og_title.replace(/ \| Spotify$/i, '')
+        // Try to extract artist from "by Artist" pattern
+        const byMatch = titleWithoutPlatform.match(/\bby\s+([^-|]+?)(?:\s*[-|]|$)/)
+        if (byMatch && byMatch[1]) {
+          og_artist = byMatch[1].trim()
+          console.log(`[OpenGraph] Extracted Spotify artist from title: "${og_artist}"`)
+        }
+      }
+
+      // Try parsing from title (general case)
       if (!og_artist && og_title) {
         const match = og_title.match(/(.+?)\s*[-–—]\s*(.+)/)
         if (match) {
@@ -125,9 +305,11 @@ export async function fetchOpenGraph(
         }
       }
 
-      // Last resort: check twitter creator
-      if (!og_artist) {
-        og_artist = meta['twitter:creator'] || null
+      // Platform name validation - reject invalid artist names
+      const INVALID_ARTISTS = ['YouTube', 'Spotify', 'SoundCloud', 'Apple Music', '@youtube', '@spotify', '@soundcloud']
+      if (og_artist && INVALID_ARTISTS.some(invalid => og_artist?.toLowerCase().includes(invalid.toLowerCase()))) {
+        console.log(`[OpenGraph] Rejecting invalid artist name: "${og_artist}"`)
+        og_artist = null
       }
 
       return {

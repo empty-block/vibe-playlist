@@ -121,7 +121,7 @@ export interface ApiTrendingUsersResponse {
 export async function fetchTrendingTracks(limit: number = 10): Promise<ApiTrendingTracksResponse> {
   const url = new URL(`${getApiUrl()}/api/music/trending`);
   url.searchParams.set('limit', limit.toString());
-  url.searchParams.set('timeframe', '1d');
+  url.searchParams.set('timeframe', '2d');
 
   const response = await fetch(url.toString());
 
