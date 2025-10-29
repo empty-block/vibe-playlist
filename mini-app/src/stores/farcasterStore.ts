@@ -84,7 +84,6 @@ export const initializeFarcaster = async () => {
     }
 
     console.log('Farcaster Mini App context detected!');
-    console.log('SDK context:', sdk.context);
 
     // Get the authentication token using Quick Auth
     const token = await sdk.quickAuth.getToken();
@@ -92,16 +91,25 @@ export const initializeFarcaster = async () => {
 
     // Extract FID from context - MUST await the context Promise!
     const context = await sdk.context;
-    const fid = context?.user?.fid?.toString() || null;
-    const username = context?.user?.username || null;
-    const displayName = context?.user?.displayName || null;
-    const pfpUrl = context?.user?.pfpUrl || null;
+    console.log('Awaited context:', context);
+    console.log('Context user:', context?.user);
 
-    console.log('Farcaster user info:', {
+    // Extract values and force to strings to avoid Promise objects
+    const fid = context?.user?.fid ? String(context.user.fid) : null;
+    const username = context?.user?.username ? String(context.user.username) : null;
+    const displayName = context?.user?.displayName ? String(context.user.displayName) : null;
+    const pfpUrl = context?.user?.pfpUrl ? String(context.user.pfpUrl) : null;
+
+    console.log('Extracted Farcaster user info:', {
       fid,
       username,
       displayName,
       pfpUrl: pfpUrl ? 'Yes' : 'No',
+      types: {
+        fid: typeof fid,
+        username: typeof username,
+        displayName: typeof displayName,
+      }
     });
 
     setFarcasterAuth({
