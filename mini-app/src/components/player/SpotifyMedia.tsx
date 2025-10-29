@@ -14,6 +14,7 @@ interface SpotifyMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPause?: (pauseFn: () => void) => void;
 }
 
 declare global {
@@ -237,6 +238,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       if (props.onSeek) {
         props.onSeek((time: number) => seekSDK(time));
       }
+      if (props.onPause) {
+        props.onPause(() => pauseSpotify());
+      }
     });
 
     player.connect();
@@ -262,6 +266,35 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     } catch (error) {
       console.error('Error seeking:', error);
     }
+  };
+
+  const pauseSpotify = async () => {
+    console.log('[SpotifyMedia] Pause requested');
+
+    // Browser SDK mode
+    if (!isInFarcasterSync() && player && playerReady()) {
+      console.log('[SpotifyMedia] Pausing Browser SDK player');
+      try {
+        await player.pause();
+      } catch (err) {
+        console.error('Failed to pause Spotify SDK player:', err);
+      }
+      return;
+    }
+
+    // Farcaster Connect mode
+    if (isInFarcasterSync() && connectReady()) {
+      console.log('[SpotifyMedia] Pausing Spotify Connect');
+      stopPlaybackPolling();
+      try {
+        await togglePlaybackOnConnect(false);
+      } catch (err) {
+        console.error('Failed to pause Spotify on Connect:', err);
+      }
+      return;
+    }
+
+    console.log('[SpotifyMedia] No active player to pause');
   };
 
   const playTrackSDK = async (trackId: string, deviceIdValue: string) => {
@@ -452,6 +485,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       props.onSeek(async (time: number) => {
         await seekOnConnect(time * 1000);
       });
+    }
+
+    // Wire up pause if provided
+    if (props.onPause) {
+      props.onPause(() => pauseSpotify());
     }
 
     onCleanup(() => {

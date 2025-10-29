@@ -1,4 +1,4 @@
-import { Component, createSignal, Show } from 'solid-js';
+import { Component, createSignal, Show, createEffect } from 'solid-js';
 import { currentTrack } from '../../stores/playerStore';
 import Player from './Player';
 import YouTubeMedia from './YouTubeMedia';
@@ -9,11 +9,19 @@ interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
 }
 
+type MediaSource = 'youtube' | 'spotify' | 'soundcloud' | null;
+
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [togglePlayFn, setTogglePlayFn] = createSignal<(() => void) | null>(null);
   const [seekFn, setSeekFn] = createSignal<((time: number) => void) | null>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
+
+  // Track previous source and pause functions for cross-player coordination
+  const [previousSource, setPreviousSource] = createSignal<MediaSource>(null);
+  const [youtubePauseFn, setYoutubePauseFn] = createSignal<(() => void) | null>(null);
+  const [spotifyPauseFn, setSpotifyPauseFn] = createSignal<(() => void) | null>(null);
+  const [soundcloudPauseFn, setSoundcloudPauseFn] = createSignal<(() => void) | null>(null);
 
   const handlePlayerReady = (ready: boolean) => {
     setPlayerReady(ready);
@@ -30,6 +38,51 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const handlePlaybackStarted = (hasStarted: boolean) => {
     setHasStartedPlayback(hasStarted);
   };
+
+  // Centralized pause coordination - pauses previous player when source changes
+  createEffect(() => {
+    const track = currentTrack();
+    const currentSource = track?.source as MediaSource;
+
+    console.log('[MediaPlayer] Source tracking:', {
+      previousSource: previousSource(),
+      currentSource,
+      trackTitle: track?.title
+    });
+
+    // Only pause if we have a previous source and it's different from current
+    if (previousSource() && previousSource() !== currentSource) {
+      console.log(`[MediaPlayer] Source changed from ${previousSource()} to ${currentSource} - pausing previous player`);
+
+      // Pause the previous player
+      switch (previousSource()) {
+        case 'youtube':
+          const ytPause = youtubePauseFn();
+          if (ytPause) {
+            console.log('[MediaPlayer] Calling YouTube pause function');
+            ytPause();
+          }
+          break;
+        case 'spotify':
+          const spotifyPause = spotifyPauseFn();
+          if (spotifyPause) {
+            console.log('[MediaPlayer] Calling Spotify pause function');
+            spotifyPause();
+          }
+          break;
+        case 'soundcloud':
+          const scPause = soundcloudPauseFn();
+          if (scPause) {
+            console.log('[MediaPlayer] Calling SoundCloud pause function');
+            scPause();
+          }
+          break;
+      }
+    }
+
+    // Update previous source
+    setPreviousSource(currentSource);
+  });
 
   const onTogglePlay = () => {
     const toggleFn = togglePlayFn();
@@ -57,6 +110,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
             onPlaybackStarted={handlePlaybackStarted}
+            onPause={(pauseFn) => setYoutubePauseFn(() => pauseFn)}
           />
         );
       case 'spotify':
@@ -65,6 +119,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
+            onPause={(pauseFn) => setSpotifyPauseFn(() => pauseFn)}
           />
         );
       case 'soundcloud':
@@ -73,6 +128,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
+            onPause={(pauseFn) => setSoundcloudPauseFn(() => pauseFn)}
           />
         );
       default:

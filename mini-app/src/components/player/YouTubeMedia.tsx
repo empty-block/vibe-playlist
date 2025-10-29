@@ -7,6 +7,7 @@ interface YouTubeMediaProps {
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
   onPlaybackStarted?: (hasStarted: boolean) => void;
+  onPause?: (pauseFn: () => void) => void;
 }
 
 declare global {
@@ -118,6 +119,9 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     if (props.onSeek) {
       props.onSeek((time: number) => seekToPosition(time));
     }
+    if (props.onPause) {
+      props.onPause(() => pauseYouTube());
+    }
 
     // Enable seeking for YouTube
     setIsSeekable(true);
@@ -207,6 +211,22 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     }
   });
   
+  const pauseYouTube = () => {
+    console.log('[YouTubeMedia] Pause requested');
+
+    if (!player || !playerReady()) {
+      console.log('[YouTubeMedia] No active player to pause');
+      return;
+    }
+
+    try {
+      console.log('[YouTubeMedia] Pausing YouTube video');
+      player.pauseVideo();
+    } catch (error) {
+      console.error('Error pausing YouTube video:', error);
+    }
+  };
+
   const togglePlay = () => {
     console.log('togglePlay called:', {
       hasPlayer: !!player,
