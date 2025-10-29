@@ -112,6 +112,61 @@ async function fetchFromOdesli(url: string): Promise<OpenGraphMetadata | null> {
 }
 
 /**
+ * Fetch metadata from YouTube oEmbed API
+ * Used for YouTube URLs because YouTube blocks Cloudflare Workers
+ */
+async function fetchFromYouTubeOembed(url: string): Promise<OpenGraphMetadata | null> {
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`
+
+    console.log(`[OpenGraph] Fetching from YouTube oEmbed API: ${url}`)
+
+    const response = await fetch(oembedUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Jamzy/1.0; +https://jamzy.app)'
+      }
+    })
+
+    if (!response.ok) {
+      console.warn(`[OpenGraph] YouTube oEmbed API returned ${response.status}`)
+      return null
+    }
+
+    const data = await response.json()
+
+    const og_title = data.title || null
+    const og_artist = data.author_name || null
+    const og_image_url = data.thumbnail_url || null
+    const og_description = og_artist && og_title ? `${og_title} by ${og_artist}` : og_title
+
+    console.log(`[OpenGraph] YouTube oEmbed extracted: title="${og_title}", artist="${og_artist}"`)
+
+    return {
+      og_title,
+      og_artist,
+      og_description,
+      og_image_url,
+      og_metadata: {
+        description: og_description,
+        site_name: 'YouTube',
+        type: 'video.other',
+        url,
+        music: {
+          duration: null,
+          album: null,
+          release_date: null
+        },
+        raw: data
+      },
+      success: true
+    }
+  } catch (error: any) {
+    console.error(`[OpenGraph] YouTube oEmbed fetch failed:`, error.message)
+    return null
+  }
+}
+
+/**
  * Fetch OpenGraph metadata from a URL
  *
  * @param url - Music URL to fetch metadata from
@@ -127,6 +182,19 @@ export async function fetchOpenGraph(
 ): Promise<OpenGraphMetadata> {
   const timeout = options?.timeout || 10000 // 10 seconds default
   const maxRetries = options?.retries || 2
+
+  // YOUTUBE: Use oEmbed API because YouTube blocks Cloudflare Workers
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    console.log(`[OpenGraph] Detected YouTube URL, using oEmbed API`)
+    const youtubeResult = await fetchFromYouTubeOembed(url)
+
+    if (youtubeResult) {
+      return youtubeResult
+    }
+
+    console.warn(`[OpenGraph] YouTube oEmbed failed, attempting direct fetch`)
+    // Continue to regular OpenGraph fetch as last resort
+  }
 
   // APPLE MUSIC FALLBACK: Use Odesli API for Apple Music URLs
   // Apple Music blocks/rate-limits OpenGraph scraping
