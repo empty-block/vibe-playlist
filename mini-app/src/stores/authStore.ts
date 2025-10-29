@@ -1,7 +1,6 @@
 import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 import { farcasterAuth } from './farcasterStore';
-import sdk from '@farcaster/miniapp-sdk';
 
 // Current user state - now derived from Farcaster auth
 export const [currentUser, setCurrentUser] = createSignal<{
