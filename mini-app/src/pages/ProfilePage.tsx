@@ -148,6 +148,12 @@ const ProfilePage: Component = () => {
 
   // Handle track submission
   const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    const user = currentUser();
+    if (!user) {
+      setSubmitError('User not authenticated');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -155,7 +161,7 @@ const ProfilePage: Component = () => {
       // Create thread with the track
       const response = await createThread({
         text: data.comment || 'Check out this track! 🎵',
-        userId: currentUser().fid,
+        userId: user.fid,
         trackUrls: [data.songUrl]
       });
 
@@ -311,7 +317,7 @@ const ProfilePage: Component = () => {
                 </div>
 
                 {/* Share Track Button - Only show on current user's profile */}
-                <Show when={userFid() === currentUser().fid}>
+                <Show when={currentUser() && userFid() === currentUser()?.fid}>
                   <button
                     class="share-track-button"
                     onClick={handleShareTrack}
