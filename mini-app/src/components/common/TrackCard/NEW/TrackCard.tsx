@@ -27,6 +27,7 @@ interface TrackCardProps {
     replies: number;
     recasts: number;
   };
+  castHash?: string; // For opening cast in Farcaster to like/recast
   onPlay: (track: any) => void;
   onUsernameClick?: (fid: string, e: MouseEvent) => void;
 }
@@ -61,6 +62,26 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     e.stopPropagation();
     if (props.channelId) {
       navigate(`/channels/${props.channelId}`);
+    }
+  };
+
+  // Open cast in Farcaster client for like/recast
+  const handleLikeClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    if (!props.castHash) {
+      console.log('[TrackCard] No castHash available');
+      return;
+    }
+
+    try {
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      // viewCast takes an object with hash property
+      console.log('[TrackCard] Opening cast with hash:', props.castHash);
+      await sdk.actions.viewCast({
+        hash: props.castHash
+      });
+    } catch (error) {
+      console.error('[TrackCard] Failed to open cast:', error);
     }
   };
 
@@ -141,7 +162,12 @@ const TrackCard: Component<TrackCardProps> = (props) => {
 
       {/* Stats row */}
       <div class="stats-row">
-        <div class="stat-box">
+        <div
+          class="stat-box clickable"
+          onClick={handleLikeClick}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'Open in Farcaster to like' : ''}
+        >
           <span>♥</span>
           <span class="count">{props.stats.likes || 0}</span>
         </div>
@@ -149,7 +175,12 @@ const TrackCard: Component<TrackCardProps> = (props) => {
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
         </div>
-        <div class="stat-box">
+        <div
+          class="stat-box clickable"
+          onClick={handleLikeClick}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'Open in Farcaster to recast' : ''}
+        >
           <span>🔄</span>
           <span class="count">{props.stats.recasts || 0}</span>
         </div>

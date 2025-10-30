@@ -66,11 +66,10 @@ const ProfilePage: Component = () => {
         bio: undefined // Will add later when we have bio in DB
       };
     }
-    // Fallback to current user while loading
-    const curr = currentUser();
-    return curr || {
+    // Show loading state while profile is being fetched
+    return {
       fid: '',
-      username: 'unknown',
+      username: 'loading',
       displayName: 'Loading...',
       avatar: null,
       bio: undefined
@@ -424,6 +423,7 @@ const ProfilePage: Component = () => {
                             text={activityItem.cast.text}
                             timestamp={activityItem.cast.timestamp}
                             stats={activityItem.cast.stats}
+                            castHash={activityItem.cast.castHash}
                             onPlay={(trackData) => {
                               setCurrentTrack(trackData);
 
