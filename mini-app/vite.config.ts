@@ -20,7 +20,7 @@ export default defineConfig(() => {
         process.env.VITE_API_URL ||
         (process.env.NODE_ENV === 'production'
           ? 'https://jamzy-backend.ncmaddrey.workers.dev'
-          : 'http://localhost:4201')
+          : 'http://localhost:3000')
       ),
       // Spotify configuration
       'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || ''),

@@ -3,7 +3,7 @@
 import type { ApiThreadsResponse, ApiThreadDetailResponse } from '../types/api';
 import { farcasterFetch } from '../stores/farcasterStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4201';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Startup logging - helps debug production issues
 console.log('[API] Using API_BASE_URL:', API_BASE_URL);
