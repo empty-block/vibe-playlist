@@ -439,8 +439,17 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       console.log('[Auto-play Effect] ✅ All conditions met - auto-playing:', track.sourceId);
 
       // Use untrack to avoid re-triggering on isPlaying changes
-      untrack(() => {
-        playTrackConnect(track.sourceId);
+      untrack(async () => {
+        const success = await playTrackOnConnect(track.sourceId);
+        if (success) {
+          console.log('Track started on Spotify Connect - starting polling');
+          setConnectReady(true);
+          startPlaybackPolling();
+        } else {
+          // Device might have gone inactive - fallback to openInSpotify flow
+          console.warn('playTrackConnect failed - falling back to openInSpotify');
+          await openInSpotify();
+        }
       });
     } else {
       console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play');
