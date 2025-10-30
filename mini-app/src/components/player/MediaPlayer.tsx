@@ -4,12 +4,14 @@ import Player from './Player';
 import YouTubeMedia from './YouTubeMedia';
 import SpotifyMedia from './SpotifyMedia';
 import SoundCloudMedia from './SoundCloudMedia';
+import SonglinkMedia from './SonglinkMedia';
+import AppleMusicMedia from './AppleMusicMedia';
 
 interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
 }
 
-type MediaSource = 'youtube' | 'spotify' | 'soundcloud' | null;
+type MediaSource = 'youtube' | 'spotify' | 'soundcloud' | 'songlink' | 'apple_music' | null;
 
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
@@ -129,6 +131,26 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
             onPause={(pauseFn) => setSoundcloudPauseFn(() => pauseFn)}
+          />
+        );
+      case 'songlink':
+        return (
+          <SonglinkMedia
+            onPlayerReady={handlePlayerReady}
+            onTogglePlay={handleTogglePlaySetup}
+            onSeek={handleSeekSetup}
+            onPlaybackStarted={handlePlaybackStarted}
+            onPause={(pauseFn) => {}} // No-op pause since it resolves to another player
+          />
+        );
+      case 'apple_music':
+        return (
+          <AppleMusicMedia
+            onPlayerReady={handlePlayerReady}
+            onTogglePlay={handleTogglePlaySetup}
+            onSeek={handleSeekSetup}
+            onPlaybackStarted={handlePlaybackStarted}
+            onPause={(pauseFn) => {}} // No-op pause since it resolves to another player
           />
         );
       default:

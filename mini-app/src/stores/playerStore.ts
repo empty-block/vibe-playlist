@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
 
-export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
+export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music';
 
 export interface Reply {
   id: string;
@@ -37,6 +37,9 @@ export interface Track {
   // Filter-specific flags for ProfilePage
   isLiked?: boolean;
   isConversation?: boolean;
+  // Track original source if resolved from songlink/apple_music
+  originalSource?: TrackSource;
+  url?: string; // Original URL for resolution
 }
 
 export interface Playlist {

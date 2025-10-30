@@ -205,6 +205,12 @@ const Player: Component<PlayerProps> = (props) => {
               <div class="player-track-subtitle">{currentTrack()?.artist}</div>
               <div class="player-track-meta">
                 <span class="player-shared-by">shared by @{currentTrack()?.addedBy}</span>
+                {/* Show Songlink attribution when track was resolved from song.link or Apple Music */}
+                <Show when={currentTrack()?.originalSource === 'songlink' || currentTrack()?.originalSource === 'apple_music'}>
+                  <span class="player-songlink-attribution" style="margin-left: 8px; opacity: 0.6; font-size: 0.85em;">
+                    • via Songlink
+                  </span>
+                </Show>
               </div>
             </div>
 

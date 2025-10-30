@@ -12,6 +12,7 @@ import activityApp from './api/activity'
 import channelsApp from './api/channels'
 import syncApp from './api/sync'
 import authApp from './api/auth'
+import { resolveUrl } from './api/odesli'
 import { getWorker } from './lib/ai-worker'
 import { processBatch } from './lib/ai-queue-processor'
 
@@ -117,6 +118,9 @@ app.route('/api/users', usersApp)
 
 // Mount activity routes
 app.route('/api/activity', activityApp)
+
+// Mount Odesli API proxy
+app.get('/api/odesli/resolve', resolveUrl)
 
 // Legacy library routes (existing web app)
 app.all('/api/library/aggregations', async (c) => {
