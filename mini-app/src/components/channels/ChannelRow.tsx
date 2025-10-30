@@ -7,6 +7,7 @@ export interface ChannelRowProps {
   topic: string;
   messageCount: number;
   colorHex?: string;
+  iconUrl?: string;
   isEven?: boolean;
   onClick: () => void;
 }
@@ -59,8 +60,16 @@ const ChannelRow: Component<ChannelRowProps> = (props) => {
       onKeyDown={handleKeyDown}
     >
       {/* Channel Image - 40x40 */}
-      <div class={`channel-image ${getGradientClass()}`}>
-        {getChannelEmoji()}
+      <div class={`channel-image ${props.iconUrl ? 'has-image' : getGradientClass()}`}>
+        {props.iconUrl ? (
+          <img
+            src={props.iconUrl}
+            alt={`${props.name} icon`}
+            class="channel-icon-img"
+          />
+        ) : (
+          getChannelEmoji()
+        )}
       </div>
 
       {/* Channel Info */}

@@ -23,6 +23,7 @@ const ChannelsPage: Component = () => {
       topic: ch.description || '',
       messageCount: ch.stats?.threadCount || 0,
       colorHex: ch.colorHex,
+      iconUrl: ch.iconUrl,
       threadId: ch.id // Using channel ID as threadId for now
     }));
   });
