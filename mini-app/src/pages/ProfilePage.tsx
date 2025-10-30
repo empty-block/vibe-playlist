@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
+import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import {
@@ -22,6 +23,9 @@ const ProfilePage: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [currentFilter, setCurrentFilter] = createSignal<FilterType>('all');
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [submitError, setSubmitError] = createSignal<string | null>(null);
 
   // Get FID from route params or use current user's FID
   const userFid = () => params.fid || currentUser()?.fid || '';
@@ -57,16 +61,15 @@ const ProfilePage: Component = () => {
       return {
         fid: profile.user.fid,
         username: profile.user.username,
-        displayName: profile.user.displayName,
+        displayName: profile.user.displayName || profile.user.username || 'User',
         avatar: profile.user.avatar,
         bio: undefined // Will add later when we have bio in DB
       };
     }
-    // Fallback to current user while loading
-    const curr = currentUser();
-    return curr || {
+    // Show loading state while profile is being fetched
+    return {
       fid: '',
-      username: 'unknown',
+      username: 'loading',
       displayName: 'Loading...',
       avatar: null,
       bio: undefined
@@ -152,6 +155,63 @@ const ProfilePage: Component = () => {
     const profileTracks = getProfileTracks();
     const feedId = `profile-${userFid()}-${currentFilter()}`;
     playTrackFromFeed(track, profileTracks, feedId);
+  };
+
+  // Handle opening the add track modal
+  const handleShareTrack = () => {
+    setSubmitError(null);
+    setShowAddTrackModal(true);
+  };
+
+  // Handle track submission using native Farcaster composer
+  const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    const user = currentUser();
+    if (!user) {
+      setSubmitError('User not authenticated');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Import SDK dynamically
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+
+      // Open native Farcaster composer with pre-filled data
+      const result = await sdk.actions.composeCast({
+        text: data.comment || 'Check out this track! 🎵',
+        embeds: [data.songUrl],
+        channelKey: 'music' // Post to music channel (jamzy channel coming soon!)
+      });
+
+      console.log('[ProfilePage] Compose cast result:', result);
+
+      if (result?.cast) {
+        // User posted the cast successfully
+        console.log('[ProfilePage] Cast posted with hash:', result.cast.hash);
+
+        // TODO: Optionally send cast hash to backend to store in DB
+        // This would let us track which casts came from our app
+
+        // Close modal
+        setShowAddTrackModal(false);
+
+        // Reload profile to show new post (may take a moment to sync)
+        setTimeout(() => {
+          loadUserProfile(userFid());
+        }, 2000);
+      } else {
+        // User cancelled the cast
+        console.log('[ProfilePage] User cancelled the cast');
+        setSubmitError('Cast was cancelled');
+      }
+    } catch (error) {
+      console.error('[ProfilePage] Error opening composer:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to open cast composer');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Time ago formatter
@@ -249,7 +309,7 @@ const ProfilePage: Component = () => {
               <div class="profile-header">
                 <Show when={user().avatar} fallback={
                   <div class="profile-avatar-fallback">
-                    {user().displayName.charAt(0).toUpperCase()}
+                    {(user().displayName || 'U').charAt(0).toUpperCase()}
                   </div>
                 }>
                   <img
@@ -289,6 +349,20 @@ const ProfilePage: Component = () => {
                     </Show>
                   </div>
                 </div>
+
+                {/* Share Track Button - Only show on current user's profile */}
+                <Show when={currentUser() && userFid() === currentUser()?.fid}>
+                  <button
+                    class="share-track-button"
+                    onClick={handleShareTrack}
+                    title="Share a track"
+                  >
+                    <span class="button-bracket">[</span>
+                    <span class="button-icon">+</span>
+                    <span class="button-text">SHARE TRACK</span>
+                    <span class="button-bracket">]</span>
+                  </button>
+                </Show>
               </div>
 
               {/* Feed Filter Buttons */}
@@ -349,6 +423,7 @@ const ProfilePage: Component = () => {
                             text={activityItem.cast.text}
                             timestamp={activityItem.cast.timestamp}
                             stats={activityItem.cast.stats}
+                            castHash={activityItem.cast.castHash}
                             onPlay={(trackData) => {
                               setCurrentTrack(trackData);
 
@@ -390,6 +465,21 @@ const ProfilePage: Component = () => {
 
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
+
+      {/* Add Track Modal */}
+      <AddTrackModal
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleTrackSubmit}
+        title="Share Track to Feed"
+      />
+
+      {/* Error Display (if any) */}
+      <Show when={submitError()}>
+        <div class="submit-error-toast">
+          {submitError()}
+        </div>
+      </Show>
     </div>
   );
 };

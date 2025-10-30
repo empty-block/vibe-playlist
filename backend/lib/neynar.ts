@@ -173,6 +173,64 @@ export class NeynarService {
   }
 
   /**
+   * Publish a cast to Farcaster
+   *
+   * @param params - Cast parameters
+   * @param params.signerUuid - The UUID of the signer (user authorization)
+   * @param params.text - The text content of the cast
+   * @param params.channelId - Optional channel to post to (e.g., 'jamzy', 'hip-hop')
+   * @param params.embeds - Optional array of URLs to embed (e.g., music links)
+   * @param params.parent - Optional parent cast hash for replies
+   * @returns Cast response with hash and other metadata
+   */
+  async publishCast(params: {
+    signerUuid: string
+    text: string
+    channelId?: string
+    embeds?: string[]
+    parent?: string
+  }): Promise<{
+    hash: string
+    author: { fid: number; username: string }
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      // Prepare cast request body
+      const castBody: any = {
+        signer_uuid: params.signerUuid,
+        text: params.text
+      }
+
+      // Add channel if specified
+      if (params.channelId) {
+        castBody.channel_id = params.channelId
+      }
+
+      // Add embeds if specified (music URLs, etc.)
+      if (params.embeds && params.embeds.length > 0) {
+        castBody.embeds = params.embeds.map((url) => ({ url }))
+      }
+
+      // Add parent for replies
+      if (params.parent) {
+        castBody.parent = params.parent
+      }
+
+      // Publish cast via Neynar API
+      const response = await this.client.publishCast(castBody as any)
+
+      return {
+        hash: response.hash,
+        author: {
+          fid: response.author.fid,
+          username: response.author.username
+        }
+      }
+    })
+  }
+
+  /**
    * Fetch reactions (likes and recasts) for a specific cast
    *
    * @param castHash - The cast hash identifier

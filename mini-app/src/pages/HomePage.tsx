@@ -283,6 +283,7 @@ const HomePage: Component = () => {
                         replies: thread.stats.replies,
                         recasts: thread.stats.recasts
                       }}
+                      castHash={thread.castHash}
                       onPlay={() => handleTrackPlay(thread)}
                       onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
                     />

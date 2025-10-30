@@ -84,23 +84,64 @@ export const initializeFarcaster = async () => {
     }
 
     console.log('Farcaster Mini App context detected!');
-    console.log('SDK context:', sdk.context);
 
     // Get the authentication token using Quick Auth
     const token = await sdk.quickAuth.getToken();
     console.log('Got Quick Auth token:', token ? 'Yes' : 'No');
 
-    // Extract FID from context
-    const fid = sdk.context?.user?.fid?.toString() || null;
-    const username = sdk.context?.user?.username || null;
-    const displayName = sdk.context?.user?.displayName || null;
-    const pfpUrl = sdk.context?.user?.pfpUrl || null;
+    // Extract FID from context - MUST await the context Promise AND each property!
+    const context = await sdk.context;
+    console.log('Awaited context:', context);
+    console.log('Context user:', context?.user);
 
-    console.log('Farcaster user info:', {
+    // Each property is ALSO a Promise/async getter - must await individually
+    let fid: string | null = null;
+    let username: string | null = null;
+    let displayName: string | null = null;
+    let pfpUrl: string | null = null;
+
+    try {
+      const fidValue = await context?.user?.fid;
+      fid = fidValue != null ? String(fidValue) : null;
+      console.log('Got fid:', fid);
+    } catch (err) {
+      console.error('Error getting fid:', err);
+    }
+
+    try {
+      const usernameValue = await context?.user?.username;
+      username = usernameValue != null ? String(usernameValue) : null;
+      console.log('Got username:', username);
+    } catch (err) {
+      console.error('Error getting username:', err);
+    }
+
+    try {
+      const displayNameValue = await context?.user?.displayName;
+      displayName = displayNameValue != null ? String(displayNameValue) : null;
+      console.log('Got displayName:', displayName);
+    } catch (err) {
+      console.error('Error getting displayName:', err);
+    }
+
+    try {
+      const pfpUrlValue = await context?.user?.pfpUrl;
+      pfpUrl = pfpUrlValue != null ? String(pfpUrlValue) : null;
+      console.log('Got pfpUrl:', pfpUrl ? 'Yes' : 'No');
+    } catch (err) {
+      console.error('Error getting pfpUrl:', err);
+    }
+
+    console.log('Extracted Farcaster user info:', {
       fid,
       username,
       displayName,
       pfpUrl: pfpUrl ? 'Yes' : 'No',
+      types: {
+        fid: typeof fid,
+        username: typeof username,
+        displayName: typeof displayName,
+      }
     });
 
     setFarcasterAuth({
