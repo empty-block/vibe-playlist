@@ -266,15 +266,15 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   
   createEffect(() => {
     const track = currentTrack();
-    console.log('YouTubeMedia createEffect triggered:', { 
-      track: track?.title, 
+    console.log('[YouTubeMedia] createEffect triggered:', {
+      track: track?.title,
       source: track?.source,
       sourceId: track?.sourceId,
-      fullTrack: track,
-      playerReady: playerReady(), 
-      hasPlayer: !!player 
+      playerReady: playerReady(),
+      hasPlayer: !!player,
+      userHasInteracted: userHasInteracted()
     });
-    
+
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
       // Extract YouTube video ID from URL if sourceId is a full URL
       const getVideoId = (url: string) => {
@@ -283,54 +283,35 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
           /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
         ];
-        
+
         for (const pattern of patterns) {
           const match = url.match(pattern);
           if (match) return match[1];
         }
         return url; // Return as-is if no pattern matches
       };
-      
+
       const videoId = getVideoId(track.sourceId);
-      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
+      console.log('[YouTubeMedia] Loading YouTube video:', track.title, 'videoId:', videoId);
 
       try {
-        // Check Farcaster context using SDK detection
-        const farcasterCheck = isInFarcasterSync();
-
-        // Reset interaction and playback flags for each new track in Farcaster
-        if (farcasterCheck === true) {
-          setUserHasInteracted(false);
-          setHasStartedPlayback(false);
-          if (props.onPlaybackStarted) {
-            props.onPlaybackStarted(false);
-          }
+        // Reset playback flags for new track
+        setHasStartedPlayback(false);
+        if (props.onPlaybackStarted) {
+          props.onPlaybackStarted(false);
         }
 
-        // ALWAYS cue video first (doesn't autoplay)
+        // Always cue video without autoplay - user must click play button
+        console.log('[YouTubeMedia] Cuing video (two-click pattern):', videoId);
         player.cueVideoById({
           videoId: videoId,
           startSeconds: 0
         });
 
-        // Farcaster: NEVER call playVideo() on initial load - user must click YouTube controls first
-        if (farcasterCheck === true) {
-          setIsPlaying(false);
-          console.log('🚫 FARCASTER: Video cued - User must click YouTube controls first');
-          console.log('After first interaction, app controls will work normally');
-          return;
-        }
-
-        // Web browser: Autoplay allowed if isPlaying is true
-        if (farcasterCheck === false && isPlaying()) {
-          console.log('✅ WEB BROWSER: Attempting autoplay...');
-          // playVideo() is a void function, not a Promise
-          player.playVideo();
-        } else {
-          console.log('Video cued in paused state');
-        }
+        // Set playing to false so play button is shown
+        setIsPlaying(false);
       } catch (error) {
-        console.error('Error loading video:', error);
+        console.error('[YouTubeMedia] Error loading video:', error);
       }
     }
   });

@@ -206,12 +206,13 @@ export const playNextTrack = () => {
     console.log('Playing next track:', nextTrack.title);
     setCurrentTrack(nextTrack);
 
-    // For YouTube tracks in WebView, don't autoplay
-    if (nextTrack.source !== 'youtube') {
-      setIsPlaying(true);
-    } else {
+    // For YouTube: require manual play button click (two-click pattern)
+    // For other sources: autoplay works fine
+    if (nextTrack.source === 'youtube') {
       setIsPlaying(false);
-      console.log('YouTube track loaded - user must manually tap play button');
+      console.log('YouTube track loaded - user must click play button');
+    } else {
+      setIsPlaying(true);
     }
   }
 };
@@ -244,12 +245,13 @@ export const playPreviousTrack = () => {
     console.log('Playing previous track:', previousTrack.title);
     setCurrentTrack(previousTrack);
 
-    // For YouTube tracks in WebView, don't autoplay
-    if (previousTrack.source !== 'youtube') {
-      setIsPlaying(true);
-    } else {
+    // For YouTube: require manual play button click (two-click pattern)
+    // For other sources: autoplay works fine
+    if (previousTrack.source === 'youtube') {
       setIsPlaying(false);
-      console.log('YouTube track loaded - user must manually tap play button');
+      console.log('YouTube track loaded - user must click play button');
+    } else {
+      setIsPlaying(true);
     }
   }
 };
@@ -271,20 +273,13 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // Check if we're in Farcaster context using SDK detection
-  const farcasterCheck = isInFarcasterSync();
-
-  // CRITICAL: In Farcaster WebView, NEVER autoplay to avoid policy violations
-  if (farcasterCheck === true) {
+  // For YouTube: require manual play button click (two-click pattern)
+  // For other sources: autoplay works fine
+  if (track.source === 'youtube') {
     setIsPlaying(false);
-    console.log('🚫 FARCASTER DETECTED: Track loaded PAUSED - user must manually tap play (autoplay violation prevention)');
-  } else if (farcasterCheck === false) {
-    // Confirmed NOT in Farcaster - autoplay allowed
-    setIsPlaying(true);
-    console.log('✅ WEB BROWSER: Autoplaying track');
+    console.log('YouTube track loaded from feed - user must click play button');
   } else {
-    // Detection not complete yet - be safe, don't autoplay
-    setIsPlaying(false);
-    console.log('⚠️  Farcaster detection pending - loading PAUSED to be safe');
+    setIsPlaying(true);
+    console.log('Non-YouTube track loaded from feed - autoplaying');
   }
 };
