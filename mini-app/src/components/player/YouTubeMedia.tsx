@@ -271,8 +271,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       source: track?.source,
       sourceId: track?.sourceId,
       playerReady: playerReady(),
-      hasPlayer: !!player,
-      userHasInteracted: userHasInteracted()
+      hasPlayer: !!player
     });
 
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
