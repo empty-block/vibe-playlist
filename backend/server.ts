@@ -272,8 +272,33 @@ export default {
       if (syncResult.errors.length > 0) {
         console.error('[Cron] Channel sync errors:', syncResult.errors)
       }
+
+      // Run Likes Sync (every 5 minutes)
+      // Check if current minute is divisible by 5
+      const currentMinute = new Date().getMinutes()
+      console.log(`[Cron] Checking likes sync: minute=${currentMinute}, divisible by 5: ${currentMinute % 5 === 0}`)
+
+      if (currentMinute % 5 === 0) {
+        console.log('[Cron] Starting likes sync...')
+        try {
+          const { syncRecentCastReactions } = await import('./lib/likes-sync-worker')
+          const likesResult = await syncRecentCastReactions()
+
+          console.log(
+            `[Cron] Likes Sync: ${likesResult.castsChecked} casts checked, ` +
+            `${likesResult.castsChanged} changed, ${likesResult.reactionsAdded} reactions added, ` +
+            `${likesResult.apiCalls} API calls, ${likesResult.duration}ms`
+          )
+
+          if (likesResult.errors.length > 0) {
+            console.error('[Cron] Likes sync errors:', likesResult.errors)
+          }
+        } catch (likesError: any) {
+          console.error('[Cron] LIKES SYNC FAILED:', likesError.message, likesError.stack)
+        }
+      }
     } catch (error: any) {
-      console.error('[Cron] Scheduled task failed:', error.message)
+      console.error('[Cron] Scheduled task failed:', error.message, error.stack)
     }
   }
 }
