@@ -15,6 +15,7 @@ import {
   loadUserProfile,
   loadMoreActivity
 } from '../stores/profileStore';
+import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import './profilePage.css';
 
 type FilterType = 'all' | 'shared' | 'likes' | 'replies';
@@ -26,6 +27,9 @@ const ProfilePage: Component = () => {
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
   const [isSubmitting, setIsSubmitting] = createSignal(false);
   const [submitError, setSubmitError] = createSignal<string | null>(null);
+
+  // Sentinel element for infinite scroll
+  let sentinelRef: HTMLDivElement | undefined;
 
   // Get FID from route params or use current user's FID
   const userFid = () => params.fid || currentUser()?.fid || '';
@@ -242,6 +246,15 @@ const ProfilePage: Component = () => {
     }
   };
 
+  // Setup infinite scroll
+  const hasMore = createMemo(() => !!nextCursor());
+  useInfiniteScroll(
+    () => sentinelRef,
+    hasMore,
+    isLoading,
+    () => loadMoreActivity()
+  );
+
   // Compute counts (only items with music that will be displayed)
   const allCount = createMemo(() => activity().filter(a => a.cast.music && a.cast.music.length > 0).length);
   const sharedCount = createMemo(() => sharedTracks().length);
@@ -445,16 +458,21 @@ const ProfilePage: Component = () => {
                   </For>
                 </Show>
 
-                {/* Load More Button */}
-                <Show when={nextCursor()}>
-                  <div style="text-align: center; padding: 20px;">
-                    <button
-                      class="filter-button"
-                      onClick={() => loadMoreActivity()}
-                      disabled={isLoading()}
-                    >
-                      {isLoading() ? 'Loading...' : 'Load More'}
-                    </button>
+                {/* Sentinel element for infinite scroll */}
+                <div ref={sentinelRef} style={{ height: '1px' }} />
+
+                {/* Loading indicator when fetching more */}
+                <Show when={isLoading()}>
+                  <div class="loading-more">
+                    <div class="loading-spinner">⟳</div>
+                    <span>Loading more activity...</span>
+                  </div>
+                </Show>
+
+                {/* End of feed message */}
+                <Show when={!nextCursor() && activity().length > 0}>
+                  <div class="end-of-feed">
+                    <span>🎵 You've reached the end 🎵</span>
                   </div>
                 </Show>
               </div>

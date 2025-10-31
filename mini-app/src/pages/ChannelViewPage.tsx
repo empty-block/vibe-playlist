@@ -7,6 +7,7 @@ import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
+import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './channelViewPage.css';
 
@@ -54,6 +55,17 @@ const ChannelViewPage: Component = () => {
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0); // Increment to trigger new shuffle
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false); // Filter dialog state
 
+  // Pagination state
+  const [threads, setThreads] = createSignal<any[]>([]);
+  const [cursor, setCursor] = createSignal<string | undefined>(undefined);
+  const [hasMore, setHasMore] = createSignal(true);
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [error, setError] = createSignal<Error | null>(null);
+  const [initialLoad, setInitialLoad] = createSignal(true);
+
+  // Sentinel element for infinite scroll
+  const [sentinelRef, setSentinelRef] = createSignal<HTMLDivElement | undefined>(undefined);
+
   // Available filter options (these would ideally come from the API)
   const availablePlatforms: MusicPlatform[] = ['spotify', 'youtube', 'apple_music', 'soundcloud', 'songlink', 'audius'];
   const availableGenres = ['hip-hop', 'electronic', 'rock', 'jazz', 'classical', 'metal', 'indie', 'folk', 'r&b', 'pop'];
@@ -66,68 +78,129 @@ const ChannelViewPage: Component = () => {
       setShuffleSeed(prev => prev + 1);
     }
     setActiveSort(newSort);
+    // Reset feed when sort changes
+    loadFeed(true);
   };
 
-  // Fetch feed with filters - recreate resource when filters change
-  const [feedData] = createResource(
-    () => ({
-      channelId: channelId(),
-      sort: activeSort(),
-      minLikes: qualityFilter(),
-      musicSources: musicSources(),
-      genres: genres()
-    }),
-    async (params) => {
-      console.log('[ChannelViewPage] Fetching feed with params:', params);
+  // Load feed data (initial or pagination)
+  const loadFeed = async (reset: boolean = false) => {
+    if (isLoading()) return;
 
-      // Convert 'shuffle' to 'recent' for backend (shuffle happens client-side)
-      const backendSort = params.sort === 'shuffle' ? 'recent' : params.sort;
+    setIsLoading(true);
+    setError(null);
 
-      return fetchChannelFeed(params.channelId, {
+    try {
+      const currentCursor = reset ? undefined : cursor();
+      const backendSort = activeSort() === 'shuffle' ? 'recent' : activeSort();
+
+      console.log('[ChannelViewPage] Fetching feed with params:', {
+        channelId: channelId(),
         limit: 50,
+        cursor: currentCursor,
         sort: backendSort,
-        minLikes: params.minLikes > 0 ? params.minLikes : undefined,
-        musicSources: params.musicSources.length > 0 ? params.musicSources : undefined,
-        genres: params.genres.length > 0 ? params.genres : undefined
+        minLikes: qualityFilter(),
+        musicSources: musicSources(),
+        genres: genres()
       });
+
+      const result = await fetchChannelFeed(channelId(), {
+        limit: 50,
+        cursor: currentCursor,
+        sort: backendSort,
+        minLikes: qualityFilter() > 0 ? qualityFilter() : undefined,
+        musicSources: musicSources().length > 0 ? musicSources() : undefined,
+        genres: genres().length > 0 ? genres() : undefined
+      });
+
+      console.log('[ChannelViewPage] Received feed data:', {
+        threadCount: result.threads?.length || 0,
+        hasNextCursor: !!result.nextCursor,
+        reset
+      });
+
+      if (reset) {
+        setThreads(result.threads || []);
+      } else {
+        setThreads(prev => [...prev, ...(result.threads || [])]);
+      }
+
+      setCursor(result.nextCursor);
+      setHasMore(!!result.nextCursor);
+      setInitialLoad(false);
+    } catch (err) {
+      console.error('[ChannelViewPage] Error loading feed:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load feed'));
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // Load more when scrolling
+  const loadMore = () => {
+    if (!hasMore() || isLoading()) return;
+    loadFeed(false);
+  };
+
+  // Initial load when channel changes
+  createEffect((prevChannelId) => {
+    const currentChannelId = channelId();
+
+    // Only load if channel actually changed (or initial mount)
+    if (prevChannelId !== currentChannelId) {
+      loadFeed(true);
+    }
+
+    return currentChannelId;
+  });
+
+  // Reset feed when filters change (not sort, that's handled in handleSortChange)
+  createEffect((prev) => {
+    const current = {
+      quality: qualityFilter(),
+      sources: musicSources().join(','),
+      genres: genres().join(',')
+    };
+
+    // Skip initial run and only reload if filters actually changed
+    if (prev && (
+      prev.quality !== current.quality ||
+      prev.sources !== current.sources ||
+      prev.genres !== current.genres
+    )) {
+      loadFeed(true);
+    }
+
+    return current;
+  }, { quality: 0, sources: '', genres: '' });
+
+  // Setup infinite scroll
+  useInfiniteScroll(
+    sentinelRef,
+    hasMore,
+    isLoading,
+    loadMore
   );
 
-  // Apply shuffle to feed data when shuffle sort is active
-  const displayedFeed = createMemo(() => {
-    const data = feedData();
-    if (!data || !data.threads) {
-      console.log('[ChannelViewPage] No feed data yet');
-      return data;
-    }
+  // Apply shuffle to displayed threads
+  const displayedThreads = createMemo(() => {
+    const currentThreads = threads();
 
-    console.log('[ChannelViewPage] Feed data received:', {
-      threadCount: data.threads.length,
-      firstThreadHash: data.threads[0]?.castHash,
-      firstThreadLikes: data.threads[0]?.stats.likes,
-      activeSort: activeSort()
-    });
-
-    // If shuffle is active, randomize the feed order
-    // shuffleSeed ensures we get a new order each time shuffle is clicked
+    // Apply shuffle if active
     if (activeSort() === 'shuffle') {
-      // Access shuffleSeed to make this reactive
       const seed = shuffleSeed();
       console.log('[ChannelViewPage] Shuffling with seed:', seed);
-      return {
-        ...data,
-        threads: shuffleArray(data.threads)
-      };
+      return shuffleArray(currentThreads);
     }
 
-    return data;
+    return currentThreads;
   });
 
   // Convert feed data to Track array for playlist context
   const getFeedTracks = (): Track[] => {
-    if (!displayedFeed()?.threads) return [];
+    const currentThreads = displayedThreads();
+    if (!currentThreads || currentThreads.length === 0) return [];
 
-    return displayedFeed()!.threads
+    return currentThreads
       .filter(thread => thread.music && thread.music[0])
       .map(thread => {
         const music = thread.music[0];
@@ -172,8 +245,9 @@ const ChannelViewPage: Component = () => {
 
   // Play all tracks
   const handlePlayAll = () => {
-    if (displayedFeed()?.threads && displayedFeed()!.threads.length > 0) {
-      const firstTrack = displayedFeed()!.threads[0];
+    const currentThreads = displayedThreads();
+    if (currentThreads && currentThreads.length > 0) {
+      const firstTrack = currentThreads[0];
       if (firstTrack.music && firstTrack.music[0]) {
         playTrack({
           id: firstTrack.music[0].id,
@@ -231,25 +305,25 @@ const ChannelViewPage: Component = () => {
                 <span>Online</span>
               </div>
               <div class="status-item">
-                <span>{displayedFeed()?.threads?.length || 0} tracks loaded</span>
+                <span>{displayedThreads().length || 0} tracks loaded</span>
               </div>
             </div>
           }
         >
           <div class="content">
-            <Show when={channelData.loading || feedData.loading}>
+            <Show when={channelData.loading || (isLoading() && threads().length === 0)}>
               <div style={{ padding: '2rem', 'text-align': 'center', color: '#000080' }}>
                 <div>Loading channel...</div>
               </div>
             </Show>
 
-            <Show when={channelData.error || feedData.error}>
+            <Show when={channelData.error || error()}>
               <div style={{ padding: '2rem', 'text-align': 'center', color: '#ff0000' }}>
                 <div>Error loading channel</div>
               </div>
             </Show>
 
-            <Show when={!channelData.loading && !feedData.loading && channelData() && displayedFeed()}>
+            <Show when={!channelData.loading && channelData() && !error()}>
               {/* Channel Header Card */}
               <div class="channel-header">
                 <div class="channel-main">
@@ -267,7 +341,7 @@ const ChannelViewPage: Component = () => {
                     </div>
                     <div class="channel-stats">
                       <div class="stat-item">
-                        <span class="number">{displayedFeed()!.threads?.length || 0}</span> tracks
+                        <span class="number">{displayedThreads().length || 0}</span> tracks
                       </div>
                       <div class="stat-item">
                         <span class="number">{channelData()!.stats?.memberCount || 0}</span> members
@@ -310,8 +384,8 @@ const ChannelViewPage: Component = () => {
                   <span>Channel Tracks</span>
                 </div>
 
-                <Show when={displayedFeed()!.threads && displayedFeed()!.threads.length > 0}>
-                  <For each={displayedFeed()!.threads}>
+                <Show when={displayedThreads().length > 0}>
+                  <For each={displayedThreads()}>
                     {(thread) => {
                       const track = thread.music && thread.music[0] ? thread.music[0] : null;
 
@@ -330,9 +404,27 @@ const ChannelViewPage: Component = () => {
                       );
                     }}
                   </For>
+
+                  {/* Sentinel element for infinite scroll */}
+                  <div ref={setSentinelRef} style={{ height: '1px' }} />
+
+                  {/* Loading indicator when fetching more */}
+                  <Show when={isLoading()}>
+                    <div class="loading-more">
+                      <div class="loading-spinner">⟳</div>
+                      <span>Loading more tracks...</span>
+                    </div>
+                  </Show>
+
+                  {/* End of feed message */}
+                  <Show when={!hasMore() && threads().length > 0}>
+                    <div class="end-of-feed">
+                      <span>🎵 You've reached the end 🎵</span>
+                    </div>
+                  </Show>
                 </Show>
 
-                <Show when={!displayedFeed()!.threads || displayedFeed()!.threads.length === 0}>
+                <Show when={threads().length === 0 && !isLoading()}>
                   <div class="empty-state">
                     <div class="icon">💿</div>
                     <div class="message">

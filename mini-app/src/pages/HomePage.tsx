@@ -1,4 +1,4 @@
-import { Component, createSignal, For, createResource, createMemo } from 'solid-js';
+import { Component, createSignal, For, createResource, createMemo, createEffect, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
@@ -6,6 +6,7 @@ import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import { Track, playTrackFromFeed } from '../stores/playerStore';
 import { fetchHomeFeed } from '../services/api';
+import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './homePage.css';
 
@@ -30,6 +31,17 @@ const HomePage: Component = () => {
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0);
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
 
+  // Pagination state
+  const [threads, setThreads] = createSignal<any[]>([]);
+  const [cursor, setCursor] = createSignal<string | undefined>(undefined);
+  const [hasMore, setHasMore] = createSignal(true);
+  const [isLoading, setIsLoading] = createSignal(false);
+  const [error, setError] = createSignal<Error | null>(null);
+  const [initialLoad, setInitialLoad] = createSignal(true);
+
+  // Sentinel element for infinite scroll
+  const [sentinelRef, setSentinelRef] = createSignal<HTMLDivElement | undefined>(undefined);
+
   // Available filter options
   const availablePlatforms: MusicPlatform[] = ['spotify', 'youtube', 'apple_music', 'soundcloud', 'songlink', 'audius'];
   const availableGenres = ['hip-hop', 'electronic', 'rock', 'jazz', 'classical', 'metal', 'indie', 'folk', 'r&b', 'pop'];
@@ -40,64 +52,113 @@ const HomePage: Component = () => {
       setShuffleSeed(prev => prev + 1);
     }
     setActiveSort(newSort);
+    // Reset feed when filters change
+    loadFeed(true);
   };
 
-  // Fetch home feed with filters
-  const [feedData] = createResource(
-    () => ({
-      sort: activeSort(),
-      minLikes: qualityFilter(),
-      musicSources: musicSources(),
-      genres: genres()
-    }),
-    async (params) => {
-      // Convert 'shuffle' to 'recent' for backend (shuffle happens client-side)
-      const backendSort = params.sort === 'shuffle' ? 'recent' : params.sort;
+  // Load feed data (initial or pagination)
+  const loadFeed = async (reset: boolean = false) => {
+    if (isLoading()) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const currentCursor = reset ? undefined : cursor();
+      const backendSort = activeSort() === 'shuffle' ? 'recent' : activeSort();
 
       console.log('[HomePage] Fetching home feed with params:', {
         limit: 50,
+        cursor: currentCursor,
         sort: backendSort,
-        minLikes: params.minLikes,
-        musicSources: params.musicSources,
-        genres: params.genres
+        minLikes: qualityFilter(),
+        musicSources: musicSources(),
+        genres: genres()
       });
 
       const result = await fetchHomeFeed({
         limit: 50,
+        cursor: currentCursor,
         sort: backendSort,
-        minLikes: params.minLikes > 0 ? params.minLikes : undefined,
-        musicSources: params.musicSources.length > 0 ? params.musicSources : undefined,
-        genres: params.genres.length > 0 ? params.genres : undefined
+        minLikes: qualityFilter() > 0 ? qualityFilter() : undefined,
+        musicSources: musicSources().length > 0 ? musicSources() : undefined,
+        genres: genres().length > 0 ? genres() : undefined
       });
 
       console.log('[HomePage] Received home feed data:', {
         threadCount: result.threads?.length || 0,
         hasNextCursor: !!result.nextCursor,
-        firstThread: result.threads?.[0]
+        reset
       });
 
-      return result;
+      if (reset) {
+        setThreads(result.threads || []);
+      } else {
+        setThreads(prev => [...prev, ...(result.threads || [])]);
+      }
+
+      setCursor(result.nextCursor);
+      setHasMore(!!result.nextCursor);
+      setInitialLoad(false);
+    } catch (err) {
+      console.error('[HomePage] Error loading feed:', err);
+      setError(err instanceof Error ? err : new Error('Failed to load feed'));
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  // Load more when scrolling
+  const loadMore = () => {
+    if (!hasMore() || isLoading()) return;
+    loadFeed(false);
+  };
+
+  // Initial load - only once on mount
+  onMount(() => {
+    loadFeed(true);
+  });
+
+  // Reset feed when filters change (not sort, that's handled in handleSortChange)
+  createEffect((prev) => {
+    const current = {
+      quality: qualityFilter(),
+      sources: musicSources().join(','),
+      genres: genres().join(',')
+    };
+
+    // Skip initial run and only reload if filters actually changed
+    if (prev && (
+      prev.quality !== current.quality ||
+      prev.sources !== current.sources ||
+      prev.genres !== current.genres
+    )) {
+      loadFeed(true);
+    }
+
+    return current;
+  }, { quality: 0, sources: '', genres: '' });
+
+  // Setup infinite scroll
+  useInfiniteScroll(
+    sentinelRef,
+    hasMore,
+    isLoading,
+    loadMore
   );
 
   // Apply shuffle to feed data when shuffle sort is active
-  const displayedFeed = createMemo(() => {
-    const data = feedData();
-    if (!data || !data.threads) {
-      return { threads: [] };
-    }
+  const displayedThreads = createMemo(() => {
+    const currentThreads = threads();
 
     // Apply shuffle if active
     if (activeSort() === 'shuffle') {
       // Include shuffleSeed in dependency to trigger new shuffle
       const _ = shuffleSeed();
-      return {
-        threads: shuffleArray(data.threads),
-        nextCursor: data.nextCursor
-      };
+      return shuffleArray(currentThreads);
     }
 
-    return data;
+    return currentThreads;
   });
 
   // Convert API thread to Track object for player
@@ -127,10 +188,10 @@ const HomePage: Component = () => {
 
   // Get all tracks for playlist context
   const getAllTracks = (): Track[] => {
-    const feed = displayedFeed();
-    if (!feed || !feed.threads) return [];
+    const currentThreads = displayedThreads();
+    if (!currentThreads || currentThreads.length === 0) return [];
 
-    return feed.threads
+    return currentThreads
       .map((thread: any) => convertToTrack(thread))
       .filter((track): track is Track => track !== null);
   };
@@ -181,7 +242,7 @@ const HomePage: Component = () => {
                 <span>Live</span>
               </span>
               <span class="status-bar-section">
-                {displayedFeed().threads?.length || 0} tracks{qualityFilterText()}
+                {displayedThreads().length || 0} tracks{qualityFilterText()}
               </span>
               <span class="status-bar-section">
                 All Channels • {activeSort() === 'shuffle' ? 'Shuffled' : activeSort()}
@@ -223,20 +284,20 @@ const HomePage: Component = () => {
 
             {/* Feed Section */}
             <div class="feed-section">
-              {feedData.loading && !displayedFeed().threads?.length ? (
+              {isLoading() && threads().length === 0 ? (
                 <div class="loading-state">Loading home feed...</div>
-              ) : feedData.error ? (
+              ) : error() ? (
                 <div class="error-state">
                   <div class="error-icon">⚠️</div>
                   <p><strong>Failed to load feed</strong></p>
                   <p class="error-details">
-                    {feedData.error instanceof Error ? feedData.error.message : 'Unknown error occurred'}
+                    {error()?.message || 'Unknown error occurred'}
                   </p>
                   <button
                     class="retry-button"
                     onClick={() => {
                       console.log('[HomePage] User clicked retry');
-                      feedData.refetch();
+                      loadFeed(true);
                     }}
                   >
                     🔄 Try Again
@@ -245,7 +306,7 @@ const HomePage: Component = () => {
                     Check your connection or refresh the page
                   </p>
                 </div>
-              ) : !displayedFeed().threads || displayedFeed().threads.length === 0 ? (
+              ) : threads().length === 0 && !isLoading() ? (
                 <div class="empty-state">
                   <div class="empty-icon">🏠</div>
                   <p><strong>No tracks in your home feed yet.</strong></p>
@@ -253,42 +314,62 @@ const HomePage: Component = () => {
                   <p>Try adjusting your quality filter or visit specific channels.</p>
                 </div>
               ) : (
-                <For each={displayedFeed().threads}>
-                  {(thread: any) => (
-                    <TrackCard
-                      author={{
-                        username: thread.author.username,
-                        displayName: thread.author.displayName,
-                        pfpUrl: thread.author.pfpUrl,
-                        fid: thread.author.fid
-                      }}
-                      track={
-                        thread.music?.[0]
-                          ? {
-                              title: thread.music[0].title,
-                              artist: thread.music[0].artist,
-                              thumbnail: thread.music[0].thumbnail,
-                              platform: thread.music[0].platform,
-                              platformId: thread.music[0].platformId,
-                              url: thread.music[0].url
-                            }
-                          : null
-                      }
-                      text={thread.text}
-                      timestamp={thread.timestamp}
-                      channelId={thread.channelId}
-                      channelName={thread.channelName}
-                      stats={{
-                        likes: thread.stats.likes,
-                        replies: thread.stats.replies,
-                        recasts: thread.stats.recasts
-                      }}
-                      castHash={thread.castHash}
-                      onPlay={() => handleTrackPlay(thread)}
-                      onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
-                    />
+                <>
+                  <For each={displayedThreads()}>
+                    {(thread: any) => (
+                      <TrackCard
+                        author={{
+                          username: thread.author.username,
+                          displayName: thread.author.displayName,
+                          pfpUrl: thread.author.pfpUrl,
+                          fid: thread.author.fid
+                        }}
+                        track={
+                          thread.music?.[0]
+                            ? {
+                                title: thread.music[0].title,
+                                artist: thread.music[0].artist,
+                                thumbnail: thread.music[0].thumbnail,
+                                platform: thread.music[0].platform,
+                                platformId: thread.music[0].platformId,
+                                url: thread.music[0].url
+                              }
+                            : null
+                        }
+                        text={thread.text}
+                        timestamp={thread.timestamp}
+                        channelId={thread.channelId}
+                        channelName={thread.channelName}
+                        stats={{
+                          likes: thread.stats.likes,
+                          replies: thread.stats.replies,
+                          recasts: thread.stats.recasts
+                        }}
+                        castHash={thread.castHash}
+                        onPlay={() => handleTrackPlay(thread)}
+                        onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
+                      />
+                    )}
+                  </For>
+
+                  {/* Sentinel element for infinite scroll */}
+                  <div ref={setSentinelRef} style={{ height: '1px' }} />
+
+                  {/* Loading indicator when fetching more */}
+                  {isLoading() && (
+                    <div class="loading-more">
+                      <div class="loading-spinner">⟳</div>
+                      <span>Loading more tracks...</span>
+                    </div>
                   )}
-                </For>
+
+                  {/* End of feed message */}
+                  {!hasMore() && threads().length > 0 && (
+                    <div class="end-of-feed">
+                      <span>🎵 You've reached the end 🎵</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>
