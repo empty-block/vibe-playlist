@@ -48,19 +48,31 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const setDeviceName = setPersistentDeviceName;
 
   const openInSpotify = async () => {
+    console.log('🔘 openInSpotify CALLED');
+    setDebugMessage('🔘 Function called');
+
     const track = currentTrack();
-    if (!track?.sourceId) return;
+    if (!track?.sourceId) {
+      setDebugMessage('❌ No track/sourceId');
+      return;
+    }
+
+    setDebugMessage('✅ Track found: ' + track.sourceId.substring(0, 10));
 
     // Verify authentication before using Connect API
     if (!isSpotifyAuthenticated()) {
       console.error('Cannot start playback - user not authenticated');
+      setDebugMessage('❌ Not authenticated');
       handleTrackError('Please login to Spotify first', false);
       return;
     }
 
+    setDebugMessage('✅ Authenticated');
+
     // In Farcaster mobile, use hybrid approach: try deep link + Connect API
     if (isInFarcasterSync()) {
       console.log('Attempting to connect to Spotify...');
+      setDebugMessage('📱 In Farcaster mode');
 
       // Set connecting state
       setIsConnecting(true);
@@ -68,7 +80,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       setWaitingForDevice(false);
 
       // Step 1: Check for existing active devices first
+      setDebugMessage('Checking for devices...');
       const devices = await getAvailableDevices();
+      setDebugMessage(`Found ${devices.length} device(s)`);
       const activeDevice = devices.find((d: any) => d.is_active);
 
       if (activeDevice) {
@@ -661,6 +675,12 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                       fallback={
                         /* Default state - show Play on Spotify button */
                         <>
+                          {/* Debug message */}
+                          <Show when={debugMessage()}>
+                            <div class="mb-2 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
+                              DEBUG: {debugMessage()}
+                            </div>
+                          </Show>
                           <button
                             onClick={openInSpotify}
                             class="bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-sm transition-colors flex items-center gap-2"
