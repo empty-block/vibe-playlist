@@ -2,9 +2,6 @@
 
 /* Base Terminal Header */
 .terminal-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
   background: var(--terminal-bg);
   font-family: var(--font-terminal);
   font-size: 12px;

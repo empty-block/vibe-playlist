@@ -231,8 +231,26 @@ const HomePage: Component = () => {
     <div class="home-page">
       <div class="page-window-container">
         <RetroWindow
-          title="HOME FEED"
-          icon={<div class="title-icon">🏠</div>}
+          title="Home Feed"
+          icon={
+            <svg width="16" height="16" viewBox="0 0 28 28" fill="none" style="image-rendering: pixelated;">
+              <path
+                d="M4 12L14 3L24 12V23C24 23.5523 23.5523 24 23 24H5C4.44772 24 4 23.5523 4 23V12Z"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M10 24V15H18V24"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          }
           variant="3d"
           contentPadding="0"
           showThemeToggle={true}
@@ -252,39 +270,28 @@ const HomePage: Component = () => {
           }
         >
           <div class="channel-view-content">
-            {/* Home Header */}
-            <div class="home-header">
-              <div class="home-header-content">
-                <div class="home-icon-large">🏠</div>
-                <div class="home-header-text">
-                  <div class="home-title">Your Home Feed</div>
-                  <div class="home-description">
-                    Tracks from all channels
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Filter Bar */}
-            <div class="action-bar">
-              <ChannelFilterBar
-                activeSort={activeSort()}
-                onSortChange={handleSortChange}
-                qualityFilter={qualityFilter()}
-                onQualityFilterChange={setQualityFilter}
-                musicSources={musicSources()}
-                onMusicSourcesChange={setMusicSources}
-                genres={genres()}
-                onGenresChange={setGenres}
-                availablePlatforms={availablePlatforms}
-                availableGenres={availableGenres}
-                activeFilterCount={activeFilterCount()}
-                filterDialogOpen={filterDialogOpen()}
-                onFilterDialogOpenChange={setFilterDialogOpen}
-              />
-            </div>
-
-            {/* Feed Section */}
+            {/* Feed Section - includes filter bar so it scrolls with content */}
             <div class="feed-section">
+              {/* Filter Bar */}
+              <div class="action-bar">
+                <ChannelFilterBar
+                  activeSort={activeSort()}
+                  onSortChange={handleSortChange}
+                  qualityFilter={qualityFilter()}
+                  onQualityFilterChange={setQualityFilter}
+                  musicSources={musicSources()}
+                  onMusicSourcesChange={setMusicSources}
+                  genres={genres()}
+                  onGenresChange={setGenres}
+                  availablePlatforms={availablePlatforms}
+                  availableGenres={availableGenres}
+                  activeFilterCount={activeFilterCount()}
+                  filterDialogOpen={filterDialogOpen()}
+                  onFilterDialogOpenChange={setFilterDialogOpen}
+                />
+              </div>
+
+
               {isLoading() && threads().length === 0 ? (
                 <div class="loading-state">Loading home feed...</div>
               ) : error() ? (

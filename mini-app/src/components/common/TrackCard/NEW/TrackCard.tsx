@@ -182,7 +182,18 @@ const TrackCard: Component<TrackCardProps> = (props) => {
           <span class="count">{props.stats.recasts || 0}</span>
         </div>
         <div class="music-source">
-          via {props.track.platform === 'YouTube' ? 'YouTube' : 'Spotify'}
+          via {(() => {
+            const platform = props.track.platform.toLowerCase();
+            if (platform === 'youtube' || platform === 'youtube_music') return 'YouTube';
+            if (platform === 'spotify') return 'Spotify';
+            if (platform === 'soundcloud') return 'SoundCloud';
+            if (platform === 'apple_music') return 'Apple Music';
+            if (platform === 'audius') return 'Audius';
+            if (platform === 'bandcamp') return 'Bandcamp';
+            if (platform === 'tidal') return 'Tidal';
+            // Capitalize first letter for unknown platforms
+            return platform.charAt(0).toUpperCase() + platform.slice(1);
+          })()}
         </div>
       </div>
     </div>
