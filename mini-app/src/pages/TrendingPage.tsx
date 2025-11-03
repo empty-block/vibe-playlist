@@ -87,7 +87,7 @@ const TrendingPage: Component = () => {
       <div class="page-window-container">
         {/* Trending Tracks Window */}
         <RetroWindow
-          title="TRENDING TRACKS - Last 24 Hours"
+          title="Trending Tracks - Last 24 Hours"
           icon={<div class="title-icon">⚡</div>}
           variant="3d"
           showMinimize={true}
