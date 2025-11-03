@@ -4,6 +4,7 @@ import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { spotifyAccessToken, isSpotifyAuthenticated } from '../../stores/authStore';
 import SpotifyLoginPrompt from './SpotifyLoginPrompt';
 import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice } from '../../services/spotifyConnect';
+import sdk from '@farcaster/miniapp-sdk';
 
 // Persistent Spotify Connect state (survives component remounts)
 // This is necessary because SpotifyMedia remounts on every track change
@@ -56,74 +57,50 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    // In Farcaster, use hybrid device detection flow
+    // In Farcaster mobile, use deep link to open Spotify app
     if (isInFarcasterSync()) {
-      console.log('Starting playback via Spotify Connect API...');
+      console.log('Opening track in Spotify mobile app via deep link...');
 
-      // Set connecting flag to prevent auto-play effect from triggering
+      // Set connecting state
       setIsConnecting(true);
-
-      // Reset failure state but keep connectReady/deviceName if device was previously active
       setConnectionFailed(false);
       setWaitingForDevice(false);
 
-      // Try Connect API first (will work if device already active)
-      const success = await playTrackOnConnect(track.sourceId);
+      try {
+        // Use spotify: URI scheme to open native app
+        const spotifyUri = `spotify:track:${track.sourceId}`;
+        console.log('Opening Spotify URI:', spotifyUri);
 
-      if (success) {
-        console.log('Playback started via API - device already active');
-        setIsPlaying(true);
-        setConnectReady(true);
-        // Keep existing deviceName or set a default if not present
-        if (!deviceName()) {
-          console.log('[openInSpotify] Setting deviceName to "Spotify"');
-          setDeviceName('Spotify');
-        } else {
-          console.log('[openInSpotify] deviceName already set:', deviceName());
-        }
-        startPlaybackPolling();
-        setIsConnecting(false); // Connection complete
-        return;
-      }
+        // Use Farcaster SDK for proper deep linking on mobile
+        await sdk.actions.openUrl(spotifyUri);
 
-      // No active device - open Spotify link and wait for device
-      console.log('No active device - opening Spotify and waiting...');
-      const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
-      window.open(spotifyUrl, '_blank');
+        console.log('Spotify app opened, waiting for playback to start...');
+        setWaitingForDevice(true);
 
-      // Show waiting UI
-      setWaitingForDevice(true);
+        // Wait for device to become active (Spotify app should auto-play)
+        // Give it more time since user needs to interact with Spotify
+        const result = await waitForActiveDevice(15, 2000); // 15 attempts, 30 seconds total
 
-      // Wait for device to become active (max 20 seconds)
-      const result = await waitForActiveDevice();
-
-      if (result.success) {
-        console.log('Device is now active - retrying playback');
-        const newDeviceName = result.deviceName || 'Spotify';
-        console.log('[openInSpotify] Setting deviceName after detection:', newDeviceName);
-        setDeviceName(newDeviceName);
-
-        // Try to start playback now that device is active
-        const retrySuccess = await playTrackOnConnect(track.sourceId);
-
-        if (retrySuccess) {
-          console.log('Playback started successfully after device detection');
+        if (result.success) {
+          console.log('Spotify device detected:', result.deviceName);
+          setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
-          setIsConnecting(false); // Connection complete
+          setIsConnecting(false);
         } else {
-          console.error('Playback failed even after device detected');
+          console.log('Device detection timed out - showing manual control message');
           setWaitingForDevice(false);
           setConnectionFailed(true);
-          setIsConnecting(false); // Connection failed
+          setIsConnecting(false);
+          // Don't treat as error - user might be controlling manually
         }
-      } else {
-        console.log('Device detection timed out');
+      } catch (error) {
+        console.error('Error opening Spotify app:', error);
         setWaitingForDevice(false);
         setConnectionFailed(true);
-        setIsConnecting(false); // Connection failed
+        setIsConnecting(false);
       }
 
       return;
@@ -594,16 +571,16 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                             Play on Spotify
                           </button>
                           <div class="text-xs text-white/60">
-                            Opens in Spotify app or web player
+                            Opens in your Spotify mobile app
                           </div>
                         </>
                       }
                     >
                       {/* Failed state with retry */}
                       <div class="flex flex-col items-center gap-2">
-                        <div class="text-yellow-400 text-xs font-semibold">ℹ️ Manual Playback Required</div>
-                        <div class="text-white/70 text-xs">Play the track in your Spotify app,</div>
-                        <div class="text-white/70 text-xs">then return here for controls</div>
+                        <div class="text-green-400 text-xs font-semibold">✓ Track Opened in Spotify</div>
+                        <div class="text-white/70 text-xs">Controls will sync automatically</div>
+                        <div class="text-white/70 text-xs">or return here to retry</div>
                         <button
                           onClick={openInSpotify}
                           class="mt-2 bg-white/20 hover:bg-white/30 text-white font-bold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center gap-1"
