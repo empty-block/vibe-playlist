@@ -57,29 +57,49 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    // In Farcaster mobile, use deep link to open Spotify app
+    // In Farcaster mobile, use hybrid approach: try deep link + Connect API
     if (isInFarcasterSync()) {
-      console.log('Opening track in Spotify mobile app via deep link...');
+      console.log('Attempting to connect to Spotify...');
 
       // Set connecting state
       setIsConnecting(true);
       setConnectionFailed(false);
       setWaitingForDevice(false);
 
+      // Step 1: Check for existing active devices first
+      const devices = await getAvailableDevices();
+      const activeDevice = devices.find((d: any) => d.is_active);
+
+      if (activeDevice) {
+        // Device already active - just play the track
+        console.log('Found active device:', activeDevice.name);
+        const success = await playTrackOnConnect(track.sourceId);
+        if (success) {
+          setDeviceName(activeDevice.name);
+          setIsPlaying(true);
+          setConnectReady(true);
+          startPlaybackPolling();
+          setIsConnecting(false);
+          return;
+        }
+      }
+
+      // Step 2: No active device - try to open Spotify
+      console.log('No active device found. Opening Spotify...');
+      setWaitingForDevice(true);
+
       try {
-        // Use spotify: URI scheme to open native app
-        const spotifyUri = `spotify:track:${track.sourceId}`;
-        console.log('Opening Spotify URI:', spotifyUri);
+        // Use HTTPS URL instead of spotify: URI (better WebView compatibility)
+        const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
+        console.log('Opening Spotify URL:', spotifyUrl);
 
-        // Use Farcaster SDK for proper deep linking on mobile
-        await sdk.actions.openUrl(spotifyUri);
+        // Try to open Spotify via Farcaster SDK
+        await sdk.actions.openUrl(spotifyUrl);
 
-        console.log('Spotify app opened, waiting for playback to start...');
-        setWaitingForDevice(true);
+        console.log('Waiting for Spotify device to become active...');
 
-        // Wait for device to become active (Spotify app should auto-play)
-        // Give it more time since user needs to interact with Spotify
-        const result = await waitForActiveDevice(15, 2000); // 15 attempts, 30 seconds total
+        // Wait for device to become active (reduced to 10 seconds)
+        const result = await waitForActiveDevice(5, 2000); // 5 attempts, 10 seconds total
 
         if (result.success) {
           console.log('Spotify device detected:', result.deviceName);
@@ -90,14 +110,14 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           startPlaybackPolling();
           setIsConnecting(false);
         } else {
-          console.log('Device detection timed out - showing manual control message');
+          console.log('Device detection timed out - showing manual instructions');
           setWaitingForDevice(false);
           setConnectionFailed(true);
           setIsConnecting(false);
-          // Don't treat as error - user might be controlling manually
+          // Don't treat as error - show instructions for manual sync
         }
       } catch (error) {
-        console.error('Error opening Spotify app:', error);
+        console.error('Error opening Spotify:', error);
         setWaitingForDevice(false);
         setConnectionFailed(true);
         setIsConnecting(false);
@@ -109,6 +129,40 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     // Fallback for browser mode: open in Spotify app/web
     const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
     window.open(spotifyUrl, '_blank');
+  };
+
+  // Manual sync function for when user opens Spotify themselves
+  const manualSyncSpotify = async () => {
+    const track = currentTrack();
+    if (!track?.sourceId) return;
+
+    console.log('Manual sync requested...');
+    setConnectionFailed(false);
+    setWaitingForDevice(true);
+
+    // Check for active devices
+    const devices = await getAvailableDevices();
+    const activeDevice = devices.find((d: any) => d.is_active);
+
+    if (activeDevice) {
+      console.log('Found active device:', activeDevice.name);
+      const success = await playTrackOnConnect(track.sourceId);
+      if (success) {
+        setDeviceName(activeDevice.name);
+        setIsPlaying(true);
+        setConnectReady(true);
+        setWaitingForDevice(false);
+        startPlaybackPolling();
+        setIsConnecting(false);
+      } else {
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+      }
+    } else {
+      console.log('No active device found during manual sync');
+      setWaitingForDevice(false);
+      setConnectionFailed(true);
+    }
   };
 
   // Load SDK when authenticated (browser only)
@@ -576,17 +630,26 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                         </>
                       }
                     >
-                      {/* Failed state with retry */}
-                      <div class="flex flex-col items-center gap-2">
-                        <div class="text-green-400 text-xs font-semibold">✓ Track Opened in Spotify</div>
-                        <div class="text-white/70 text-xs">Controls will sync automatically</div>
-                        <div class="text-white/70 text-xs">or return here to retry</div>
+                      {/* Failed state with manual sync instructions */}
+                      <div class="flex flex-col items-center gap-2 px-4">
+                        <div class="text-white text-xs font-semibold">📱 Open Spotify & Play</div>
+                        <div class="text-white/70 text-[11px] text-center leading-tight">
+                          1. Open your Spotify app<br/>
+                          2. Start playing any track<br/>
+                          3. Tap the button below
+                        </div>
+                        <button
+                          onClick={manualSyncSpotify}
+                          class="mt-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-xs transition-colors flex items-center gap-1.5"
+                        >
+                          <i class="fab fa-spotify"></i>
+                          I'm Playing in Spotify
+                        </button>
                         <button
                           onClick={openInSpotify}
-                          class="mt-2 bg-white/20 hover:bg-white/30 text-white font-bold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center gap-1"
+                          class="bg-white/10 hover:bg-white/20 text-white/70 font-medium py-1 px-3 rounded-full text-[10px] transition-colors"
                         >
-                          <i class="fas fa-redo"></i>
-                          Try Again
+                          Try opening Spotify again
                         </button>
                       </div>
                     </Show>
