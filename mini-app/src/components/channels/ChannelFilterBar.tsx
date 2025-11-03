@@ -1,6 +1,7 @@
 import { Component, Show } from 'solid-js';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../../shared/types/channels';
 import { FilterDialog } from './FilterDialog';
+import { SortDropdown } from './SortDropdown';
 import './ChannelFilterBar.css';
 
 interface ChannelFilterBarProps {
@@ -46,6 +47,12 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         🔀 Shuffle
       </button>
 
+      {/* Sort Dropdown */}
+      <SortDropdown
+        activeSort={props.activeSort}
+        onSortChange={props.onSortChange}
+      />
+
       {/* Filter Button with Badge */}
       <button
         class={`filter-toggle-btn ${
@@ -53,6 +60,7 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         }`}
         onClick={() => props.onFilterDialogOpenChange(true)}
       >
+        <span class="filter-icon">🔍</span>
         Filter
         <Show when={activeFilterCount() > 0}>
           <span class="filter-badge">{activeFilterCount()}</span>
