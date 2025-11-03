@@ -37,14 +37,16 @@ const formatTimeAgo = (timestamp: string) => {
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffHours < 1) return 'now';
+  if (diffMinutes < 1) return 'now';
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-  return `${Math.floor(diffDays / 30)}m ago`;
+  return `${Math.floor(diffDays / 30)}mo ago`;
 };
 
 const TrackCard: Component<TrackCardProps> = (props) => {
@@ -110,14 +112,9 @@ const TrackCard: Component<TrackCardProps> = (props) => {
               {props.author.username}
             </span>
             <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
+              <span class="channel-separator">•</span>
               <span class="channel-info">
-                shared in{' '}
-                <span
-                  class="channel-link"
-                  onClick={handleChannelClick}
-                >
-                  {props.channelId}
-                </span>
+                shared in <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
               </span>
             </Show>
           </div>
@@ -135,10 +132,9 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         <div class="track-info">
           <div class="track-title">{props.track.title}</div>
           <div class="track-artist">{props.track.artist}</div>
-          <div class="track-meta">via {props.track.platform}</div>
         </div>
         <button
-          class="play-button"
+          class="open-button"
           onClick={() => props.onPlay({
             id: props.track.id,
             title: props.track.title,
@@ -148,8 +144,9 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             url: props.track.url,
             sourceId: props.track.platformId
           })}
+          title="Open track in player"
         >
-          {isTrackPlaying() ? '⏸' : '▶'}
+          ↓
         </button>
       </div>
 
@@ -183,6 +180,9 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         >
           <span>🔄</span>
           <span class="count">{props.stats.recasts || 0}</span>
+        </div>
+        <div class="music-source">
+          via {props.track.platform === 'YouTube' ? 'YouTube' : 'Spotify'}
         </div>
       </div>
     </div>

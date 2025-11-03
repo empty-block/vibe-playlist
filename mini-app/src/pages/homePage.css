@@ -160,29 +160,54 @@ body:not(.theme-dark) .home-page {
   flex-wrap: nowrap;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
-.channel-info {
-  font-size: 11px;
-  opacity: 0.85;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
+.username {
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--neon-magenta);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
 }
 
-.channel-link {
+.channel-separator {
+  opacity: 0.7;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* Track card channel info - more specific to override channelRow.css */
+.activity-card .channel-info,
+.terminal-track-card .channel-info {
+  font-size: 12px;
+  opacity: 0.9;
+  display: inline !important;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  flex-direction: initial !important;
+  flex: initial !important;
+}
+
+.activity-card .channel-link,
+.terminal-track-card .channel-link {
   cursor: pointer;
   text-decoration: underline;
   font-weight: bold;
+  color: var(--neon-cyan);
+  display: inline !important;
+  white-space: nowrap !important;
 }
 
 .theme-light .channel-link,
 body:not(.theme-dark) .channel-link {
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .theme-dark .channel-link {
-  color: #ffffff;
+  color: var(--neon-cyan);
 }
 
 .channel-link:hover {

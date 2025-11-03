@@ -500,16 +500,16 @@ body:not(.theme-dark) .activity-header {
 }
 
 .user-avatar {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 2px solid #ffffff;
   object-fit: cover;
 }
 
 .user-avatar-fallback {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 2px solid #ffffff;
   background: var(--neon-cyan);
@@ -517,7 +517,7 @@ body:not(.theme-dark) .activity-header {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .user-text {
@@ -527,34 +527,54 @@ body:not(.theme-dark) .activity-header {
   flex-wrap: nowrap;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .username {
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
+  color: var(--neon-magenta);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
 }
 
-.channel-info {
-  font-size: 11px;
-  opacity: 0.85;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
+.channel-separator {
+  opacity: 0.7;
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
-.channel-link {
+/* Track card channel info - more specific to override channelRow.css */
+.activity-card .channel-info,
+.terminal-track-card .channel-info {
+  font-size: 12px;
+  opacity: 0.9;
+  display: inline !important;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  flex-direction: initial !important;
+  flex: initial !important;
+}
+
+.activity-card .channel-link,
+.terminal-track-card .channel-link {
   cursor: pointer;
   text-decoration: underline;
   font-weight: bold;
+  color: var(--neon-cyan);
+  display: inline !important;
+  white-space: nowrap !important;
 }
 
 .theme-light .channel-link,
 body:not(.theme-dark) .channel-link {
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .theme-dark .channel-link {
-  color: #ffffff;
+  color: var(--neon-cyan);
 }
 
 .channel-link:hover {
@@ -586,16 +606,17 @@ body:not(.theme-dark) .track-content {
 }
 
 .thumbnail {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
   background: #000000;
   border: 2px solid #000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 24px;
   overflow: hidden;
+  position: relative;
 }
 
 .thumbnail img {
@@ -610,108 +631,101 @@ body:not(.theme-dark) .track-content {
 }
 
 /* Track title - theme-aware with proper scoping */
-.channel-view-page .track-item .track-info .track-title {
+.channel-view-page .track-item .track-info .track-title,
+.activity-card .track-info .track-title {
   font-weight: bold;
-  font-size: 13px;
-  margin-bottom: 3px;
+  font-size: 15px;
+  margin-bottom: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.3;
 }
 
 /* Track title - Light Mode */
 .theme-light .channel-view-page .track-item .track-info .track-title,
-body:not(.theme-dark) .channel-view-page .track-item .track-info .track-title {
+body:not(.theme-dark) .channel-view-page .track-item .track-info .track-title,
+.theme-light .activity-card .track-info .track-title,
+body:not(.theme-dark) .activity-card .track-info .track-title {
   color: #000000;
 }
 
 /* Track title - Dark Mode */
-.theme-dark .channel-view-page .track-item .track-info .track-title {
+.theme-dark .channel-view-page .track-item .track-info .track-title,
+.theme-dark .activity-card .track-info .track-title {
   color: #ffffff;
 }
 
 /* Track artist - theme-aware with proper scoping */
-.channel-view-page .track-item .track-info .track-artist {
-  font-size: 12px;
+.channel-view-page .track-item .track-info .track-artist,
+.activity-card .track-info .track-artist {
+  font-size: 14px;
   font-weight: bold;
-  margin-bottom: 3px;
+  margin-bottom: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.3;
 }
 
 /* Track artist - Light Mode */
 .theme-light .channel-view-page .track-item .track-info .track-artist,
-body:not(.theme-dark) .channel-view-page .track-item .track-info .track-artist {
+body:not(.theme-dark) .channel-view-page .track-item .track-info .track-artist,
+.theme-light .activity-card .track-info .track-artist,
+body:not(.theme-dark) .activity-card .track-info .track-artist {
   color: #e010e0; /* Magenta */
 }
 
 /* Track artist - Dark Mode */
-.theme-dark .channel-view-page .track-item .track-info .track-artist {
+.theme-dark .channel-view-page .track-item .track-info .track-artist,
+.theme-dark .activity-card .track-info .track-artist {
   color: var(--accent-tertiary); /* Neon magenta */
 }
 
-/* Track meta - theme-aware */
+/* Track meta - removed since we moved it to badge */
 .channel-view-page .track-item .track-info .track-meta {
-  font-size: 10px;
+  display: none;
 }
 
-.theme-light .channel-view-page .track-item .track-info .track-meta,
-body:not(.theme-dark) .channel-view-page .track-item .track-info .track-meta {
-  color: #666;
+.activity-card .track-info .track-meta {
+  display: none;
 }
 
-.theme-dark .channel-view-page .track-item .track-info .track-meta {
-  color: #888;
-}
-
-/* Bright green play button */
-.play-button {
+/* Open button (replaces play button since tracks don't autoplay) */
+.open-button {
   width: 48px;
   height: 48px;
   flex-shrink: 0;
-  background: #00ff00;
+  background: var(--neon-cyan);
   border: 2px solid #000000;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 24px;
   color: #000000;
+  font-weight: bold;
   transition: all 0.2s ease;
 }
 
-.play-button:hover {
-  background: var(--neon-green);
-  filter: brightness(0.9);
-  transform: scale(1.05);
+.theme-dark .open-button {
+  background: var(--neon-cyan);
+  border: 2px solid var(--neon-cyan);
+  color: #000000;
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
-.play-button:active {
-  transform: scale(0.95);
+.open-button:hover {
+  background: var(--neon-blue);
+  transform: translateY(2px);
 }
 
-/* Glow animation for play button */
-@keyframes playGlow {
-  0% {
-    box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.2);
-  }
-  50% {
-    box-shadow:
-      inset 0 0 12px rgba(0, 255, 0, 0.3),
-      0 0 12px rgba(0, 255, 0, 0.2);
-  }
-  100% {
-    box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.2);
-  }
+.theme-dark .open-button:hover {
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.5);
 }
 
-.play-button {
-  animation: playGlow 2s ease-in-out infinite;
-}
-
-.play-button:hover {
-  animation: none;
+.open-button:active {
+  transform: translateY(4px);
 }
 
 /* Comment Box - Light Mode */
@@ -719,8 +733,8 @@ body:not(.theme-dark) .channel-view-page .track-item .track-info .track-meta {
 body:not(.theme-dark) .comment-box {
   background: #F0F0F0;
   padding: 8px 10px;
-  font-size: 12px;
-  font-style: italic;
+  font-size: 13px;
+  font-style: normal;
   line-height: 1.5;
   border-top: 1px solid #999;
   border-bottom: 1px solid #999;
@@ -731,8 +745,8 @@ body:not(.theme-dark) .comment-box {
 .theme-dark .comment-box {
   background: #151515;
   padding: 8px 10px;
-  font-size: 12px;
-  font-style: italic;
+  font-size: 13px;
+  font-style: normal;
   line-height: 1.5;
   border-top: 1px solid #00ff00;
   border-bottom: 1px solid #00ff00;
@@ -745,6 +759,7 @@ body:not(.theme-dark) .stats-row {
   padding: 6px 10px;
   display: flex;
   gap: 10px;
+  align-items: center;
   background: #dfdfdf;
 }
 
@@ -753,6 +768,7 @@ body:not(.theme-dark) .stats-row {
   padding: 6px 10px;
   display: flex;
   gap: 10px;
+  align-items: center;
   background: #0a0a0a;
 }
 
@@ -800,6 +816,25 @@ body:not(.theme-dark) .stat-box:hover {
 .stat-box .count {
   font-weight: bold;
   font-family: 'Courier New', monospace;
+}
+
+/* Music Source - Light Mode */
+.theme-light .music-source,
+body:not(.theme-dark) .music-source {
+  margin-left: auto;
+  font-size: 11px;
+  color: #666666;
+  font-style: normal;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+}
+
+/* Music Source - Dark Mode */
+.theme-dark .music-source {
+  margin-left: auto;
+  font-size: 11px;
+  color: #999999;
+  font-style: normal;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
 
 /* Status Bar */
@@ -996,28 +1031,42 @@ body:not(.theme-dark) .status-bar {
   }
 
   .thumbnail {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
 
-  .play-button {
+  .open-button {
     width: 44px;
     height: 44px;
-    font-size: 16px;
+    font-size: 20px;
     border-width: 2px;
   }
 
   .track-title {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .track-artist {
-    font-size: 11px;
+    font-size: 13px;
   }
 
-  .track-meta {
-    font-size: 9px;
+  .user-avatar,
+  .user-avatar-fallback {
+    width: 28px;
+    height: 28px;
+  }
+
+  .user-avatar-fallback {
+    font-size: 12px;
+  }
+
+  .username {
+    font-size: 13px;
+  }
+
+  .channel-info {
+    font-size: 11px;
   }
 
   .comment-box {
@@ -1071,14 +1120,40 @@ body:not(.theme-dark) .status-bar {
   }
 
   .thumbnail {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
   }
 
-  .play-button {
+  .open-button {
     width: 40px;
     height: 40px;
-    font-size: 14px;
+    font-size: 18px;
+  }
+
+  .track-title {
+    font-size: 13px;
+  }
+
+  .track-artist {
+    font-size: 12px;
+  }
+
+  .user-avatar,
+  .user-avatar-fallback {
+    width: 26px;
+    height: 26px;
+  }
+
+  .user-avatar-fallback {
+    font-size: 11px;
+  }
+
+  .username {
+    font-size: 12px;
+  }
+
+  .channel-info {
+    font-size: 10px;
   }
 }
