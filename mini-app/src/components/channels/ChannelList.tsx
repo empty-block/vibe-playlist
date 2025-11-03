@@ -60,6 +60,7 @@ const ChannelList: Component<ChannelListProps> = (props) => {
               topic={channel.topic}
               messageCount={channel.messageCount}
               colorHex={channel.colorHex}
+              iconUrl={channel.iconUrl}
               isEven={index() % 2 === 1}
               onClick={() => props.onChannelClick(channel.id, channel.threadId)}
             />

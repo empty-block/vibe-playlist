@@ -13,6 +13,8 @@ export interface ChannelRowProps {
 }
 
 const ChannelRow: Component<ChannelRowProps> = (props) => {
+  console.log(`[ChannelRow] ${props.name} iconUrl:`, props.iconUrl);
+
   const handleClick = (e: MouseEvent) => {
     props.onClick();
   };

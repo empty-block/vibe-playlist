@@ -17,7 +17,7 @@ const ChannelsPage: Component = () => {
     const data = channelsData();
     if (!data || !data.channels) return [];
 
-    return data.channels.map(ch => ({
+    const transformed = data.channels.map(ch => ({
       id: ch.id,
       name: ch.name.toLowerCase().replace(/\s+/g, '_'),
       topic: ch.description || '',
@@ -26,6 +26,9 @@ const ChannelsPage: Component = () => {
       iconUrl: ch.iconUrl,
       threadId: ch.id // Using channel ID as threadId for now
     }));
+
+    console.log('[ChannelsPage] Transformed channels:', transformed.map(c => ({ name: c.name, iconUrl: c.iconUrl })));
+    return transformed;
   });
 
   // Handle channel click - navigate to channel view with channel ID
