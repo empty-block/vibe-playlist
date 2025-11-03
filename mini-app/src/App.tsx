@@ -1,5 +1,5 @@
 import { Router, Route } from '@solidjs/router';
-import { Component, Show, JSX } from 'solid-js';
+import { Component, Show, JSX, onMount } from 'solid-js';
 import HomePage from './pages/HomePage';
 import ThreadsPage from './pages/ThreadsPage';
 import ThreadViewPage from './pages/ThreadViewPage';
@@ -10,9 +10,15 @@ import ChannelsPage from './pages/ChannelsPage';
 import TrendingPage from './pages/TrendingPage';
 import MediaPlayer from './components/player/MediaPlayer';
 import { currentTrack } from './stores/playerStore';
+import { initPlayerLayoutSync } from './utils/playerLayoutSync';
 
 // Root component that wraps all routes and provides player
 const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
+  // Initialize player layout synchronization on mount
+  onMount(() => {
+    initPlayerLayoutSync();
+  });
+
   return (
     <>
       {props.children}

@@ -410,6 +410,7 @@ body:not(.theme-dark) .sort-label {
 /* Track Feed */
 .track-feed {
   padding: 8px;
+  /* Additional bottom padding handled by window-layout.css .feed-section */
 }
 
 /* Feed Header - Light Mode */
