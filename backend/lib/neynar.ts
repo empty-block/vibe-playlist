@@ -310,6 +310,79 @@ export class NeynarService {
       }
     })
   }
+
+  /**
+   * Fetch channel details by channel ID
+   *
+   * @param channelId - The channel ID (e.g., 'hip-hop', 'jazz')
+   * @returns Channel metadata including description, images, and creation date
+   */
+  async fetchChannelDetails(channelId: string): Promise<{
+    id: string
+    name: string
+    description: string
+    image_url: string
+    lead_fid?: number
+    created_at: number
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const response = await this.client.lookupChannel({
+        id: channelId,
+        type: 'id'
+      })
+
+      const createdAt = response.channel.created_at
+      const createdAtNumber = typeof createdAt === 'string' ? parseInt(createdAt, 10) : (createdAt || 0)
+
+      return {
+        id: response.channel.id,
+        name: response.channel.name || '',
+        description: response.channel.description || '',
+        image_url: response.channel.image_url || '',
+        lead_fid: response.channel.lead?.fid,
+        created_at: createdAtNumber
+      }
+    })
+  }
+
+  /**
+   * Fetch multiple channels by their IDs (bulk fetch)
+   *
+   * @param channelIds - Array of channel IDs
+   * @returns Array of channel metadata objects
+   */
+  async fetchBulkChannelDetails(channelIds: string[]): Promise<
+    Array<{
+      id: string
+      name: string
+      description: string
+      image_url: string
+      lead_fid?: number
+      created_at: number
+    }>
+  > {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const response = await this.client.fetchBulkChannels({ ids: channelIds })
+
+      return (response.channels || []).map((channel: any) => {
+        const createdAt = channel.created_at
+        const createdAtNumber = typeof createdAt === 'string' ? parseInt(createdAt, 10) : (createdAt || 0)
+
+        return {
+          id: channel.id,
+          name: channel.name || '',
+          description: channel.description || '',
+          image_url: channel.image_url || '',
+          lead_fid: channel.lead?.fid,
+          created_at: createdAtNumber
+        }
+      })
+    })
+  }
 }
 
 // Singleton instance
