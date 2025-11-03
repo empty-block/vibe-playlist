@@ -1,4 +1,4 @@
-import { Component, onMount, createMemo, createResource, Show } from 'solid-js';
+import { Component, onMount, createMemo, createResource, Show, createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import ChannelList from '../components/channels/ChannelList';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
@@ -8,6 +8,10 @@ import './channelsPage.css';
 
 const ChannelsPage: Component = () => {
   const navigate = useNavigate();
+
+  // Window state
+  const [windowMinimized, setWindowMinimized] = createSignal(false);
+  const [windowMaximized, setWindowMaximized] = createSignal(false);
 
   // Fetch channels from API
   const [channelsData] = createResource(fetchChannels);
@@ -64,6 +68,8 @@ const ChannelsPage: Component = () => {
             <ChannelList
               channels={channels()}
               onChannelClick={handleChannelClick}
+              onMinimize={() => setWindowMinimized(!windowMinimized())}
+              onMaximize={() => setWindowMaximized(!windowMaximized())}
             />
           </div>
         </Show>

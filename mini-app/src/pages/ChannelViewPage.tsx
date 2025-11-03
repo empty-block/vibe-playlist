@@ -54,6 +54,8 @@ const ChannelViewPage: Component = () => {
   const [genres, setGenres] = createSignal<string[]>([]);
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0); // Increment to trigger new shuffle
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false); // Filter dialog state
+  const [windowMinimized, setWindowMinimized] = createSignal(false);
+  const [windowMaximized, setWindowMaximized] = createSignal(false);
 
   // Pagination state
   const [threads, setThreads] = createSignal<any[]>([]);
@@ -298,18 +300,9 @@ const ChannelViewPage: Component = () => {
           showClose={true}
           showThemeToggle={true}
           onClose={handleClose}
+          onMinimize={() => setWindowMinimized(!windowMinimized())}
+          onMaximize={() => setWindowMaximized(!windowMaximized())}
           contentPadding="0"
-          footer={
-            <div class="status-bar">
-              <div class="status-item">
-                <div class="status-indicator">●</div>
-                <span>Online</span>
-              </div>
-              <div class="status-item">
-                <span>{displayedThreads().length || 0} tracks loaded</span>
-              </div>
-            </div>
-          }
         >
           <div class="content">
             <Show when={channelData.loading || (isLoading() && threads().length === 0)}>
