@@ -89,12 +89,12 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       setWaitingForDevice(true);
 
       try {
-        // Use HTTPS URL instead of spotify: URI (better WebView compatibility)
-        const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
-        console.log('Opening Spotify URL:', spotifyUrl);
+        // Try spotify: URI first (may work via Farcaster SDK native layer)
+        const spotifyUri = `spotify:track:${track.sourceId}`;
+        console.log('Attempting to open Spotify URI:', spotifyUri);
 
         // Try to open Spotify via Farcaster SDK
-        await sdk.actions.openUrl(spotifyUrl);
+        await sdk.actions.openUrl(spotifyUri);
 
         console.log('Waiting for Spotify device to become active...');
 
