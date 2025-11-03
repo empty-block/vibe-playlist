@@ -167,19 +167,12 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         >
           <span>♥</span>
           <span class="count">{props.stats.likes || 0}</span>
+          <span class="label">likes</span>
         </div>
         <div class="stat-box">
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
-        </div>
-        <div
-          class="stat-box clickable"
-          onClick={handleLikeClick}
-          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
-          title={props.castHash ? 'Open in Farcaster to recast' : ''}
-        >
-          <span>🔄</span>
-          <span class="count">{props.stats.recasts || 0}</span>
+          <span class="label">replies</span>
         </div>
         <div class="music-source">
           via {(() => {
