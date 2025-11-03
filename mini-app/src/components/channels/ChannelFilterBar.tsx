@@ -34,19 +34,6 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
 
   return (
     <div class="channel-filter-bar-container">
-      {/* Shuffle Button */}
-      <button
-        class={`shuffle-btn ${
-          props.activeSort === 'shuffle' ? 'shuffle-btn--active' : ''
-        }`}
-        onClick={() => {
-          console.log('[ChannelFilterBar] Shuffle clicked');
-          props.onSortChange('shuffle');
-        }}
-      >
-        🔀 Shuffle
-      </button>
-
       {/* Sort Dropdown */}
       <SortDropdown
         activeSort={props.activeSort}
@@ -65,6 +52,19 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         <Show when={activeFilterCount() > 0}>
           <span class="filter-badge">{activeFilterCount()}</span>
         </Show>
+      </button>
+
+      {/* Shuffle Button */}
+      <button
+        class={`shuffle-btn ${
+          props.activeSort === 'shuffle' ? 'shuffle-btn--active' : ''
+        }`}
+        onClick={() => {
+          console.log('[ChannelFilterBar] Shuffle clicked');
+          props.onSortChange('shuffle');
+        }}
+      >
+        🔀 Shuffle
       </button>
 
       {/* Filter Dialog */}
