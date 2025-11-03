@@ -77,7 +77,7 @@ body:not(.theme-dark) .filter-toggle-btn--active:hover {
   text-transform: none;
   background: #001100;
   border: 2px solid #00ff00;
-  color: #00ff00;
+  color: #ffffff;
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
@@ -196,7 +196,7 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
   text-transform: none;
   background: #001100;
   border: 2px solid #00ff00;
-  color: #00ff00;
+  color: #ffffff;
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;

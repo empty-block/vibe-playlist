@@ -25,6 +25,9 @@ export interface RetroWindowProps {
   /** Show close button in title bar */
   showClose?: boolean;
 
+  /** Show theme toggle button in title bar */
+  showThemeToggle?: boolean;
+
   /** Close button click handler */
   onClose?: () => void;
 
@@ -80,6 +83,7 @@ const RetroWindow: Component<RetroWindowProps> = (props) => {
     showMinimize: props.showMinimize,
     showMaximize: props.showMaximize,
     showClose: props.showClose,
+    showThemeToggle: props.showThemeToggle,
     onClose: props.onClose,
     onMinimize: props.onMinimize,
     onMaximize: props.onMaximize

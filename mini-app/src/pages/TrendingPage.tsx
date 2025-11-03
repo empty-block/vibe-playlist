@@ -92,6 +92,7 @@ const TrendingPage: Component = () => {
           variant="3d"
           showMinimize={true}
           showMaximize={true}
+          showThemeToggle={true}
           onMinimize={() => setWindow1Minimized(!window1Minimized())}
           onMaximize={() => setWindow1Maximized(!window1Maximized())}
           contentPadding="0"

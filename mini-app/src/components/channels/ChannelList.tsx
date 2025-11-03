@@ -30,6 +30,7 @@ const ChannelList: Component<ChannelListProps> = (props) => {
       showMinimize={true}
       showMaximize={true}
       showClose={true}
+      showThemeToggle={true}
       contentPadding="0"
       footer={
         <div class="search-section">

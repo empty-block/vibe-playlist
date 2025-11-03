@@ -235,6 +235,7 @@ const HomePage: Component = () => {
           icon={<div class="title-icon">🏠</div>}
           variant="3d"
           contentPadding="0"
+          showThemeToggle={true}
           footer={
             <div class="status-bar">
               <span class="status-bar-section">

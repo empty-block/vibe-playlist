@@ -1,4 +1,5 @@
 import { Component, JSX, Show } from 'solid-js';
+import ThemeToggle from './ThemeToggle';
 import './retro-chrome.css';
 
 export interface RetroTitleBarProps {
@@ -16,6 +17,9 @@ export interface RetroTitleBarProps {
 
   /** Show close button */
   showClose?: boolean;
+
+  /** Show theme toggle button */
+  showThemeToggle?: boolean;
 
   /** Close button click handler */
   onClose?: () => void;
@@ -64,8 +68,12 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
         <span class="retro-titlebar__title">{props.title}</span>
       </div>
 
-      <Show when={props.showMinimize || props.showMaximize || props.showClose}>
+      <Show when={props.showMinimize || props.showMaximize || props.showClose || props.showThemeToggle}>
         <div class="retro-titlebar__controls">
+          <Show when={props.showThemeToggle}>
+            <ThemeToggle class="retro-titlebar__theme-toggle" />
+          </Show>
+
           <Show when={props.showMinimize}>
             <button
               class="retro-titlebar__button"

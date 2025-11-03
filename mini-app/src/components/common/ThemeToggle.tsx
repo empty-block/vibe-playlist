@@ -7,12 +7,18 @@ interface ThemeToggleProps {
 }
 
 const ThemeToggle: Component<ThemeToggleProps> = (props) => {
+  const handleToggle = (e: MouseEvent) => {
+    e.stopPropagation();
+    toggleTheme();
+  };
+
   return (
     <button
-      class={`theme-toggle retro-button ${props.class || ''}`}
-      onClick={toggleTheme}
+      class={`theme-toggle ${props.class || ''}`}
+      onClick={handleToggle}
       title={`Switch to ${theme() === 'light' ? 'dark' : 'light'} mode`}
       aria-label={`Switch to ${theme() === 'light' ? 'dark' : 'light'} mode`}
+      type="button"
     >
       <span class="theme-toggle-icon">
         {theme() === 'light' ? '🌙' : '☀️'}

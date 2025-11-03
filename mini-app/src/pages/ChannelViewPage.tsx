@@ -296,6 +296,7 @@ const ChannelViewPage: Component = () => {
           showMinimize={true}
           showMaximize={true}
           showClose={true}
+          showThemeToggle={true}
           onClose={handleClose}
           contentPadding="0"
           footer={

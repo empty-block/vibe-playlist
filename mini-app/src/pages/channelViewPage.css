@@ -194,7 +194,7 @@ body:not(.theme-dark) .channel-view-page .channel-description {
   padding: 4px 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 11px;
-  color: #00ff00;
+  color: #ffffff;
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -282,7 +282,7 @@ body:not(.theme-dark) .action-bar {
 .theme-dark .action-button {
   background: #001100;
   border: 2px solid #00ff00;
-  color: #00ff00;
+  color: #ffffff;
   box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
 }
 
@@ -334,7 +334,7 @@ body:not(.theme-dark) .sort-label {
 
 /* Sort Label - Dark Mode */
 .theme-dark .sort-label {
-  color: #00ff00;
+  color: #ffffff;
   font-weight: bold;
 }
 
@@ -436,7 +436,7 @@ body:not(.theme-dark) .feed-header {
   margin-bottom: 8px;
   font-size: 12px;
   font-weight: bold;
-  color: #00ff00;
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -484,7 +484,7 @@ body:not(.theme-dark) .activity-header {
 /* Activity Header - Dark Mode */
 .theme-dark .activity-header {
   background: #000000;
-  color: #00ff00;
+  color: #ffffff;
   padding: 8px 10px;
   display: flex;
   align-items: center;
@@ -553,7 +553,7 @@ body:not(.theme-dark) .channel-link {
 }
 
 .theme-dark .channel-link {
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .channel-link:hover {
@@ -735,7 +735,7 @@ body:not(.theme-dark) .comment-box {
   line-height: 1.5;
   border-top: 1px solid #00ff00;
   border-bottom: 1px solid #00ff00;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 /* Stats Row - Inset boxes - Light Mode */
@@ -789,7 +789,7 @@ body:not(.theme-dark) .stat-box:hover {
   border: 1px solid #00ff00;
   cursor: pointer;
   transition: background 0.1s ease;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .theme-dark .stat-box:hover {
@@ -821,7 +821,7 @@ body:not(.theme-dark) .status-bar {
   background: #000000;
   border-top: 2px solid #00ff00;
   font-size: 11px;
-  color: #00ff00;
+  color: #ffffff;
   display: flex;
   gap: 20px;
   flex-shrink: 0;
@@ -893,7 +893,7 @@ body:not(.theme-dark) .status-bar {
 }
 
 .theme-dark .loading-more {
-  color: #00ff00;
+  color: #ffffff;
 }
 
 /* End of Feed Message */
@@ -906,7 +906,7 @@ body:not(.theme-dark) .status-bar {
 }
 
 .theme-dark .end-of-feed {
-  color: #00ff00;
+  color: #ffffff;
   opacity: 0.7;
 }
 

@@ -86,10 +86,10 @@ body:not(.theme-dark) {
 
   /* Text Colors */
   --text-primary: #FFFFFF; /* White text */
-  --text-secondary: #888888; /* Gray text */
-  --text-tertiary: #666666; /* Darker gray */
-  --text-lcd: #00FF00; /* Green LCD text (same) */
-  --text-lcd-secondary: #00FFFF; /* Cyan LCD text (same) */
+  --text-secondary: #CCCCCC; /* Light gray text for better readability */
+  --text-tertiary: #999999; /* Medium gray */
+  --text-lcd: #00FF00; /* Green LCD text (special displays only) */
+  --text-lcd-secondary: #00FFFF; /* Cyan LCD text (special displays only) */
 
   /* Accent Colors */
   --accent-primary: #00ff00; /* Neon green */
@@ -113,8 +113,8 @@ body:not(.theme-dark) {
 
   /* Typography */
   --font-display: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
-  --light-text: #888888; /* Lighter gray for dark mode */
-  --muted-text: #666666; /* More muted for dark mode */
+  --light-text: #CCCCCC; /* Light gray for secondary text in dark mode */
+  --muted-text: #999999; /* Medium gray for muted text in dark mode */
 
   /* Interactive States */
   --hover-bg: #222222;

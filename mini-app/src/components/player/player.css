@@ -226,7 +226,7 @@
 }
 
 .player-track-title {
-  color: #00FF00;
+  color: #ffffff;
   font-size: 14px;
   font-weight: bold;
   margin-bottom: 2px;
@@ -236,7 +236,7 @@
 }
 
 .player-track-subtitle {
-  color: #00FF00;
+  color: #cccccc;
   font-size: 12px;
   margin-bottom: 2px;
   opacity: 0.8;

@@ -293,7 +293,7 @@ body:not(.theme-dark) .retro-titlebar {
 /* Dark mode button effects */
 .theme-dark .retro-button {
   background: var(--bg-card);
-  color: var(--text-lcd);
+  color: var(--text-primary);
 }
 
 .theme-dark .retro-button:hover:not(:disabled) {

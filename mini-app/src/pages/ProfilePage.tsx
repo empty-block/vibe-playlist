@@ -290,6 +290,7 @@ const ProfilePage: Component = () => {
           showMinimize={true}
           showMaximize={true}
           showClose={true}
+          showThemeToggle={true}
           onClose={() => navigate('/trending')}
           contentPadding="0"
           footer={

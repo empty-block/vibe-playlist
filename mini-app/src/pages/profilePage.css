@@ -62,7 +62,7 @@ body:not(.theme-dark) .status-bar-section {
   border: 1px solid #00ff00;
   padding: 2px 6px;
   background: #000000;
-  color: #00ff00;
+  color: #ffffff;
   font-size: 10px;
 }
 
@@ -133,7 +133,7 @@ body:not(.theme-dark) .share-track-button:active {
 .theme-dark .share-track-button {
   background: #000000;
   border: 2px solid #00ff00;
-  color: #00ff00;
+  color: #ffffff;
   font-family: 'Courier New', monospace;
   font-size: 12px;
   font-weight: bold;
@@ -333,7 +333,7 @@ body:not(.theme-dark) .filter-button:active {
   cursor: pointer;
   white-space: nowrap;
   text-align: center;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .theme-dark .filter-button:hover {
@@ -375,7 +375,7 @@ body:not(.theme-dark) .feed-header {
   margin-bottom: 12px;
   font-size: 13px;
   font-weight: bold;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .theme-light .feed-type,
@@ -387,7 +387,7 @@ body:not(.theme-dark) .feed-count {
 
 .theme-dark .feed-type,
 .theme-dark .feed-count {
-  color: #00ff00;
+  color: #ffffff;
 }
 
 /* Empty State - Light Mode */
@@ -405,7 +405,7 @@ body:not(.theme-dark) .profile-empty-state {
 .theme-dark .profile-empty-state {
   padding: 40px 20px;
   text-align: center;
-  color: #00ff00;
+  color: #ffffff;
   background: #000000;
   border: 2px solid #00ff00;
   margin-bottom: 20px;
@@ -458,7 +458,7 @@ body:not(.theme-dark) .activity-header {
 /* Activity Card Header - Dark Mode */
 .theme-dark .activity-header {
   background: #000000;
-  color: #00ff00;
+  color: #ffffff;
   padding: 10px 12px;
   display: flex;
   align-items: center;
@@ -622,7 +622,7 @@ body:not(.theme-dark) .comment-box {
   line-height: 1.5;
   border-top: 1px solid #003300;
   border-bottom: 1px solid #003300;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 /* Stats Row - Light Mode */
@@ -676,7 +676,7 @@ body:not(.theme-dark) .stat-box:hover {
   border: 1px solid #00ff00;
   cursor: pointer;
   transition: background 0.1s ease;
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .theme-dark .stat-box:hover {
@@ -783,7 +783,7 @@ body:not(.theme-dark) .stat-box:hover {
 }
 
 .theme-dark .loading-more {
-  color: #00ff00;
+  color: #ffffff;
 }
 
 /* End of Feed Message */
@@ -796,7 +796,7 @@ body:not(.theme-dark) .stat-box:hover {
 }
 
 .theme-dark .end-of-feed {
-  color: #00ff00;
+  color: #ffffff;
   opacity: 0.7;
 }
 
