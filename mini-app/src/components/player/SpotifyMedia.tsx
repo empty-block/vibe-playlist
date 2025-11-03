@@ -38,6 +38,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [waitingForDevice, setWaitingForDevice] = createSignal(false);
   const [connectionFailed, setConnectionFailed] = createSignal(false);
   const [isConnecting, setIsConnecting] = createSignal(false); // Prevent auto-play during initial connection
+  const [debugMessage, setDebugMessage] = createSignal<string>(''); // Visual debugging
   let pollingInterval: number | undefined;
 
   // Use persistent signals for state that needs to survive remounts
@@ -86,15 +87,56 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       // Step 2: No active device - try to open Spotify
       console.log('No active device found. Opening Spotify...');
+      setDebugMessage('No active device. Opening Spotify...');
       setWaitingForDevice(true);
 
-      try {
-        // Try spotify: URI first (may work via Farcaster SDK native layer)
-        const spotifyUri = `spotify:track:${track.sourceId}`;
-        console.log('Attempting to open Spotify URI:', spotifyUri);
+      // Try multiple approaches in sequence
+      let openSuccess = false;
 
-        // Try to open Spotify via Farcaster SDK
-        await sdk.actions.openUrl(spotifyUri);
+      try {
+        // Approach 1: Try spotify: URI
+        console.log('[ATTEMPT 1] Trying spotify: URI scheme...');
+        setDebugMessage('Trying spotify: URI...');
+        const spotifyUri = `spotify:track:${track.sourceId}`;
+        console.log('[ATTEMPT 1] URI:', spotifyUri);
+
+        try {
+          const result = await sdk.actions.openUrl(spotifyUri);
+          console.log('[ATTEMPT 1] openUrl result:', result);
+          console.log('[ATTEMPT 1] Spotify URI call completed (no error thrown)');
+          setDebugMessage('✅ URI call completed');
+          openSuccess = true;
+        } catch (uriError) {
+          console.error('[ATTEMPT 1] FAILED - spotify: URI error:', uriError);
+          console.error('[ATTEMPT 1] Error details:', JSON.stringify(uriError));
+          setDebugMessage(`❌ URI failed: ${uriError}`);
+
+          // Approach 2: Try HTTPS URL as fallback
+          console.log('[ATTEMPT 2] Trying HTTPS URL fallback...');
+          setDebugMessage('Trying HTTPS URL...');
+          const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
+          console.log('[ATTEMPT 2] URL:', spotifyUrl);
+
+          try {
+            const result2 = await sdk.actions.openUrl(spotifyUrl);
+            console.log('[ATTEMPT 2] openUrl result:', result2);
+            console.log('[ATTEMPT 2] HTTPS URL call completed');
+            setDebugMessage('✅ HTTPS call completed');
+            openSuccess = true;
+          } catch (urlError) {
+            console.error('[ATTEMPT 2] FAILED - HTTPS URL error:', urlError);
+            console.error('[ATTEMPT 2] Error details:', JSON.stringify(urlError));
+            setDebugMessage(`❌ HTTPS failed: ${urlError}`);
+          }
+        }
+
+        if (openSuccess) {
+          console.log('✅ Open call succeeded, waiting for Spotify device...');
+          setDebugMessage('Waiting for device...');
+        } else {
+          console.warn('⚠️ Both open attempts completed but unclear if successful');
+          setDebugMessage('⚠️ Open attempts unclear');
+        }
 
         console.log('Waiting for Spotify device to become active...');
 
@@ -102,7 +144,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         const result = await waitForActiveDevice(5, 2000); // 5 attempts, 10 seconds total
 
         if (result.success) {
-          console.log('Spotify device detected:', result.deviceName);
+          console.log('✅ Spotify device detected:', result.deviceName);
           setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
           setConnectReady(true);
@@ -110,14 +152,16 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           startPlaybackPolling();
           setIsConnecting(false);
         } else {
-          console.log('Device detection timed out - showing manual instructions');
+          console.log('⏱️ Device detection timed out - showing manual instructions');
           setWaitingForDevice(false);
           setConnectionFailed(true);
           setIsConnecting(false);
           // Don't treat as error - show instructions for manual sync
         }
       } catch (error) {
-        console.error('Error opening Spotify:', error);
+        console.error('❌ Unexpected error in openInSpotify:', error);
+        console.error('Error type:', typeof error);
+        console.error('Error details:', JSON.stringify(error));
         setWaitingForDevice(false);
         setConnectionFailed(true);
         setIsConnecting(false);
@@ -638,6 +682,12 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                           2. Start playing any track<br/>
                           3. Tap the button below
                         </div>
+                        {/* Debug message */}
+                        <Show when={debugMessage()}>
+                          <div class="mt-1 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
+                            DEBUG: {debugMessage()}
+                          </div>
+                        </Show>
                         <button
                           onClick={manualSyncSpotify}
                           class="mt-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-xs transition-colors flex items-center gap-1.5"
@@ -668,6 +718,12 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                 <div class="text-white text-sm font-semibold">⏳ Waiting for Spotify...</div>
                 <div class="text-white/70 text-xs">Opening track in Spotify app</div>
                 <div class="text-white/70 text-xs">Controls will appear when playback starts</div>
+                {/* Debug message */}
+                <Show when={debugMessage()}>
+                  <div class="mt-2 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
+                    DEBUG: {debugMessage()}
+                  </div>
+                </Show>
                 {/* Loading animation */}
                 <div class="flex gap-1 mt-2">
                   <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0s"></div>
