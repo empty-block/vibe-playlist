@@ -3,7 +3,7 @@ import { currentTrack, isPlaying, setIsPlaying, setCurrentTime, setDuration, set
 import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { spotifyAccessToken, isSpotifyAuthenticated } from '../../stores/authStore';
 import SpotifyLoginPrompt from './SpotifyLoginPrompt';
-import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice } from '../../services/spotifyConnect';
+import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice, getAvailableDevices } from '../../services/spotifyConnect';
 import sdk from '@farcaster/miniapp-sdk';
 
 // Persistent Spotify Connect state (survives component remounts)
