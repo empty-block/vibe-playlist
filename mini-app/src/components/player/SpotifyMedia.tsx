@@ -38,7 +38,6 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [waitingForDevice, setWaitingForDevice] = createSignal(false);
   const [connectionFailed, setConnectionFailed] = createSignal(false);
   const [isConnecting, setIsConnecting] = createSignal(false); // Prevent auto-play during initial connection
-  const [debugMessage, setDebugMessage] = createSignal<string>(''); // Visual debugging
   let pollingInterval: number | undefined;
 
   // Use persistent signals for state that needs to survive remounts
@@ -72,46 +71,29 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   };
 
   const openInSpotify = async () => {
-    console.log('🔘 openInSpotify CALLED');
-    setDebugMessage('🔘 Function called');
-
     const track = currentTrack();
-    if (!track?.sourceId) {
-      setDebugMessage('❌ No track/sourceId');
-      return;
-    }
-
-    setDebugMessage('✅ Track found: ' + track.sourceId.substring(0, 10));
+    if (!track?.sourceId) return;
 
     // Verify authentication before using Connect API
     if (!isSpotifyAuthenticated()) {
       console.error('Cannot start playback - user not authenticated');
-      setDebugMessage('❌ Not authenticated');
       handleTrackError('Please login to Spotify first', false);
       return;
     }
 
-    setDebugMessage('✅ Authenticated');
-
     // In Farcaster mobile, use hybrid approach: try deep link + Connect API
     if (isInFarcasterSync()) {
-      console.log('Attempting to connect to Spotify...');
-      setDebugMessage('📱 In Farcaster mode');
-
       // Set connecting state
       setIsConnecting(true);
       setConnectionFailed(false);
       setWaitingForDevice(false);
 
       // Step 1: Check for existing active devices first
-      setDebugMessage('Checking for devices...');
       const devices = await getAvailableDevices();
-      setDebugMessage(`Found ${devices.length} device(s)`);
       const activeDevice = devices.find((d: any) => d.is_active);
 
       if (activeDevice) {
         // Device already active - just play the track
-        console.log('Found active device:', activeDevice.name);
         const success = await playTrackOnConnect(track.sourceId);
         if (success) {
           setDeviceName(activeDevice.name);
@@ -124,79 +106,34 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       }
 
       // Step 2: No active device - try to open Spotify
-      console.log('No active device found. Opening Spotify...');
-      setDebugMessage('No active device. Opening Spotify...');
       setWaitingForDevice(true);
 
       // Extract clean track ID from sourceId (handles URLs, URIs, or plain IDs)
       const trackId = extractSpotifyTrackId(track.sourceId);
       if (!trackId) {
         console.error('Could not extract Spotify track ID from:', track.sourceId);
-        setDebugMessage(`❌ Invalid sourceId: ${track.sourceId}`);
         setWaitingForDevice(false);
         setConnectionFailed(true);
         setIsConnecting(false);
         return;
       }
 
-      console.log('Extracted track ID:', trackId, 'from sourceId:', track.sourceId);
-      setDebugMessage(`Track ID: ${trackId.substring(0, 10)}...`);
-
-      // Try multiple approaches in sequence
-      let openSuccess = false;
-
       try {
-        // Approach 1: Try spotify: URI
-        console.log('[ATTEMPT 1] Trying spotify: URI scheme...');
-        setDebugMessage('Trying spotify: URI...');
+        // Try spotify: URI (with HTTPS fallback)
         const spotifyUri = `spotify:track:${trackId}`;
-        console.log('[ATTEMPT 1] URI:', spotifyUri);
 
         try {
-          const result = await sdk.actions.openUrl(spotifyUri);
-          console.log('[ATTEMPT 1] openUrl result:', result);
-          console.log('[ATTEMPT 1] Spotify URI call completed (no error thrown)');
-          setDebugMessage('✅ URI call completed');
-          openSuccess = true;
+          await sdk.actions.openUrl(spotifyUri);
         } catch (uriError) {
-          console.error('[ATTEMPT 1] FAILED - spotify: URI error:', uriError);
-          console.error('[ATTEMPT 1] Error details:', JSON.stringify(uriError));
-          setDebugMessage(`❌ URI failed: ${uriError}`);
-
-          // Approach 2: Try HTTPS URL as fallback
-          console.log('[ATTEMPT 2] Trying HTTPS URL fallback...');
-          setDebugMessage('Trying HTTPS URL...');
+          // Fallback to HTTPS URL
           const spotifyUrl = `https://open.spotify.com/track/${trackId}`;
-          console.log('[ATTEMPT 2] URL:', spotifyUrl);
-
-          try {
-            const result2 = await sdk.actions.openUrl(spotifyUrl);
-            console.log('[ATTEMPT 2] openUrl result:', result2);
-            console.log('[ATTEMPT 2] HTTPS URL call completed');
-            setDebugMessage('✅ HTTPS call completed');
-            openSuccess = true;
-          } catch (urlError) {
-            console.error('[ATTEMPT 2] FAILED - HTTPS URL error:', urlError);
-            console.error('[ATTEMPT 2] Error details:', JSON.stringify(urlError));
-            setDebugMessage(`❌ HTTPS failed: ${urlError}`);
-          }
+          await sdk.actions.openUrl(spotifyUrl);
         }
 
-        if (openSuccess) {
-          console.log('✅ Open call succeeded, waiting for Spotify device...');
-          setDebugMessage('Waiting for device...');
-        } else {
-          console.warn('⚠️ Both open attempts completed but unclear if successful');
-          setDebugMessage('⚠️ Open attempts unclear');
-        }
-
-        console.log('Waiting for Spotify device to become active...');
-
-        // Wait for device to become active (reduced to 10 seconds)
-        const result = await waitForActiveDevice(5, 2000); // 5 attempts, 10 seconds total
+        // Wait for device to become active (10 seconds)
+        const result = await waitForActiveDevice(5, 2000);
 
         if (result.success) {
-          console.log('✅ Spotify device detected:', result.deviceName);
           setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
           setConnectReady(true);
@@ -204,16 +141,12 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           startPlaybackPolling();
           setIsConnecting(false);
         } else {
-          console.log('⏱️ Device detection timed out - showing manual instructions');
           setWaitingForDevice(false);
           setConnectionFailed(true);
           setIsConnecting(false);
-          // Don't treat as error - show instructions for manual sync
         }
       } catch (error) {
-        console.error('❌ Unexpected error in openInSpotify:', error);
-        console.error('Error type:', typeof error);
-        console.error('Error details:', JSON.stringify(error));
+        console.error('Error opening Spotify:', error);
         setWaitingForDevice(false);
         setConnectionFailed(true);
         setIsConnecting(false);
@@ -713,12 +646,6 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                       fallback={
                         /* Default state - show Play on Spotify button */
                         <>
-                          {/* Debug message */}
-                          <Show when={debugMessage()}>
-                            <div class="mb-2 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
-                              DEBUG: {debugMessage()}
-                            </div>
-                          </Show>
                           <button
                             onClick={openInSpotify}
                             class="bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-sm transition-colors flex items-center gap-2"
@@ -740,12 +667,6 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                           2. Start playing any track<br/>
                           3. Tap the button below
                         </div>
-                        {/* Debug message */}
-                        <Show when={debugMessage()}>
-                          <div class="mt-1 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
-                            DEBUG: {debugMessage()}
-                          </div>
-                        </Show>
                         <button
                           onClick={manualSyncSpotify}
                           class="mt-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-xs transition-colors flex items-center gap-1.5"
@@ -776,12 +697,6 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                 <div class="text-white text-sm font-semibold">⏳ Waiting for Spotify...</div>
                 <div class="text-white/70 text-xs">Opening track in Spotify app</div>
                 <div class="text-white/70 text-xs">Controls will appear when playback starts</div>
-                {/* Debug message */}
-                <Show when={debugMessage()}>
-                  <div class="mt-2 px-3 py-1.5 bg-black/50 rounded text-[10px] text-yellow-300 font-mono max-w-full overflow-x-auto">
-                    DEBUG: {debugMessage()}
-                  </div>
-                </Show>
                 {/* Loading animation */}
                 <div class="flex gap-1 mt-2">
                   <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0s"></div>
