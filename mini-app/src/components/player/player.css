@@ -477,6 +477,34 @@
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
+/* Reply button - cyan theme to match social context */
+.player-control--reply {
+  color: #00FFFF;
+  border-color: #00FFFF;
+}
+
+.player-control--reply:hover:not(:disabled) {
+  background: #00FFFF;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+}
+
+.player-control--reply:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.theme-dark .player-control--reply {
+  color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+.theme-dark .player-control--reply:hover:not(:disabled) {
+  background: var(--accent-secondary);
+  color: #000000;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.7);
+}
+
 /* Mobile responsive */
 @media (max-width: 640px) {
   .player-bar {

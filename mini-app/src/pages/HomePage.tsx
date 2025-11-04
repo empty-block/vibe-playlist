@@ -183,7 +183,8 @@ const HomePage: Component = () => {
       likes: thread.stats.likes,
       replies: thread.stats.replies,
       recasts: thread.stats.recasts,
-      duration: ''
+      duration: '',
+      castHash: thread.castHash
     };
   };
 

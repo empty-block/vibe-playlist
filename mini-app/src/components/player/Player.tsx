@@ -18,7 +18,6 @@ import {
 } from '../../stores/playerStore';
 import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
-import RetroTitleBar from '../common/RetroTitleBar';
 import { skipToNextOnConnect, skipToPreviousOnConnect } from '../../services/spotifyConnect';
 import './player.css';
 
@@ -97,9 +96,22 @@ const Player: Component<PlayerProps> = (props) => {
     console.log('Shuffle:', newShuffleState ? 'ON' : 'OFF');
   };
 
-  const handleChatToggle = () => {
-    console.log('Open chat for track:', currentTrack()?.id);
-    // TODO: Navigate to track's conversation thread or open chat sidebar
+  const handleChatToggle = async () => {
+    const track = currentTrack();
+    if (!track?.castHash) {
+      console.log('[Player] No castHash available for track:', track?.id);
+      return;
+    }
+
+    try {
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      console.log('[Player] Opening cast with hash:', track.castHash);
+      await sdk.actions.viewCast({
+        hash: track.castHash
+      });
+    } catch (error) {
+      console.error('[Player] Failed to open cast:', error);
+    }
   };
 
   const handleArtistClick = () => {
@@ -153,18 +165,10 @@ const Player: Component<PlayerProps> = (props) => {
   return (
     <Show when={currentTrack()}>
       <div class="player-bar">
-        {/* Retro Title Bar */}
-        <RetroTitleBar
-          title="Now Playing"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-        />
-
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
-            'player-audio-container--hidden': !isPlaying() && !(currentTrack()?.source === 'youtube' && isInFarcasterSync() === true && !(props.hasStartedPlayback && props.hasStartedPlayback())) && currentTrack()?.source !== 'spotify'
+            'player-audio-container--hidden': !isPlaying() && props.hasStartedPlayback?.()
           }}>
             <div class="player-audio-embed" classList={{
               'player-video-embed': currentTrack()?.source === 'youtube'
@@ -199,7 +203,9 @@ const Player: Component<PlayerProps> = (props) => {
           </Show>
 
           {/* Track Info Panel - Green LCD style with integrated controls */}
-          <div class="player-track-info">
+          {/* Only show when paused AND has started playback */}
+          <Show when={!isPlaying() && props.hasStartedPlayback?.()}>
+            <div class="player-track-info">
             <div class="player-track-metadata">
               <div class="player-track-title">{currentTrack()?.title}</div>
               <div class="player-track-subtitle">{currentTrack()?.artist}</div>
@@ -243,8 +249,18 @@ const Player: Component<PlayerProps> = (props) => {
               >
                 ⏭
               </button>
+              <button
+                ref={chatButtonRef!}
+                onClick={handleChatToggle}
+                class="player-control player-control--reply"
+                disabled={!currentTrack()?.castHash}
+                title={currentTrack()?.castHash ? 'Reply in Farcaster' : 'No conversation available'}
+              >
+                💬
+              </button>
             </div>
           </div>
+          </Show>
 
           {/* Animated Visualizer - only show when playing and player is ready */}
           <Show when={isPlaying() && props.playerReady()}>
