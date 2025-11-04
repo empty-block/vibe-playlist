@@ -264,43 +264,59 @@ export default {
         console.error('[Cron] AI Worker errors:', aiResult.errors)
       }
 
-      // Run Channel Sync (sync all 9 channels)
-      const { syncAllChannels } = await import('./lib/channel-sync-worker')
-      const syncResult = await syncAllChannels()
+      // EMERGENCY DISABLE: Channel Sync (TASK-712)
+      // fetchChannelFeed costs ~1,200 Neynar credits per call (not 100 CU as calculated!)
+      // Channel sync running every 1 minute, syncing ALL 9 channels = 10,800 credits/min
+      // Sync interval logic not working correctly - all channels syncing every run
+      //
+      // TODO: Debug why channel_sync_status timestamps aren't preventing re-syncs
+      // TODO: Ensure music channel syncs every 5 min, others every 30 min
+      //
+      // const { syncAllChannels } = await import('./lib/channel-sync-worker')
+      // const syncResult = await syncAllChannels()
+      //
+      // console.log(
+      //   `[Cron] Channel Sync: ${syncResult.channelsSynced} channels synced, ` +
+      //   `${syncResult.totalNewCasts} new casts`
+      // )
+      //
+      // if (syncResult.errors.length > 0) {
+      //   console.error('[Cron] Channel sync errors:', syncResult.errors)
+      // }
 
-      console.log(
-        `[Cron] Channel Sync: ${syncResult.channelsSynced} channels synced, ` +
-        `${syncResult.totalNewCasts} new casts`
-      )
+      console.log('[Cron] Channel sync TEMPORARILY DISABLED (emergency fix for API usage)')
 
-      if (syncResult.errors.length > 0) {
-        console.error('[Cron] Channel sync errors:', syncResult.errors)
-      }
+      // EMERGENCY DISABLE: Likes Sync (TASK-712)
+      // This was causing 290+ API calls every 5 minutes because 282 casts had no tracking data
+      // and were ALL being treated as "changed" (missing data = {likes: 0, recasts: 0})
+      //
+      // TODO: Fix likes-sync-worker to properly initialize tracking data for new casts
+      // before re-enabling this worker.
+      //
+      // const currentMinute = new Date().getMinutes()
+      // console.log(`[Cron] Checking likes sync: minute=${currentMinute}, divisible by 5: ${currentMinute % 5 === 0}`)
+      //
+      // if (currentMinute % 5 === 0) {
+      //   console.log('[Cron] Starting likes sync...')
+      //   try {
+      //     const { syncRecentCastReactions } = await import('./lib/likes-sync-worker')
+      //     const likesResult = await syncRecentCastReactions()
+      //
+      //     console.log(
+      //       `[Cron] Likes Sync: ${likesResult.castsChecked} casts checked, ` +
+      //       `${likesResult.castsChanged} changed, ${likesResult.reactionsAdded} reactions added, ` +
+      //       `${likesResult.apiCalls} API calls, ${likesResult.duration}ms`
+      //     )
+      //
+      //     if (likesResult.errors.length > 0) {
+      //       console.error('[Cron] Likes sync errors:', likesResult.errors)
+      //     }
+      //   } catch (likesError: any) {
+      //     console.error('[CRON] LIKES SYNC FAILED:', likesError.message, likesError.stack)
+      //   }
+      // }
 
-      // Run Likes Sync (every 5 minutes)
-      // Check if current minute is divisible by 5
-      const currentMinute = new Date().getMinutes()
-      console.log(`[Cron] Checking likes sync: minute=${currentMinute}, divisible by 5: ${currentMinute % 5 === 0}`)
-
-      if (currentMinute % 5 === 0) {
-        console.log('[Cron] Starting likes sync...')
-        try {
-          const { syncRecentCastReactions } = await import('./lib/likes-sync-worker')
-          const likesResult = await syncRecentCastReactions()
-
-          console.log(
-            `[Cron] Likes Sync: ${likesResult.castsChecked} casts checked, ` +
-            `${likesResult.castsChanged} changed, ${likesResult.reactionsAdded} reactions added, ` +
-            `${likesResult.apiCalls} API calls, ${likesResult.duration}ms`
-          )
-
-          if (likesResult.errors.length > 0) {
-            console.error('[Cron] Likes sync errors:', likesResult.errors)
-          }
-        } catch (likesError: any) {
-          console.error('[Cron] LIKES SYNC FAILED:', likesError.message, likesError.stack)
-        }
-      }
+      console.log('[Cron] Likes sync DISABLED (emergency fix for API usage)')
     } catch (error: any) {
       console.error('[Cron] Scheduled task failed:', error.message, error.stack)
     }
