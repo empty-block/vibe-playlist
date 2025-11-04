@@ -22,10 +22,10 @@ export async function syncAllChannels(): Promise<{
   const supabase = getSupabaseClient()
   const syncEngine = getSyncEngine()
 
-  // Get all active, visible channels
+  // Get all active, visible channels with sync intervals
   const { data: channels, error } = await supabase
     .from('channels')
-    .select('id, name')
+    .select('id, name, sync_interval_minutes')
     .eq('is_archived', false)
     .eq('is_visible', true)
     .order('name')
@@ -45,20 +45,46 @@ export async function syncAllChannels(): Promise<{
   const errors: string[] = []
 
   // Sync each channel (incremental - only processes NEW casts)
+  // Only sync if enough time has elapsed based on channel's sync_interval_minutes
   for (const channel of channels) {
     try {
-      const result = await syncEngine.syncChannel(channel.id, {
-        limit: 25  // Small batch for frequent syncs
-      })
+      const syncInterval = channel.sync_interval_minutes || 5 // Default to 5 min
 
-      if (result.newCasts > 0) {
-        console.log(`[Channel Sync] ${channel.name}: ${result.newCasts} new casts`)
-      }
+      // Get last sync time for this channel
+      const { data: syncStatus } = await supabase
+        .from('channel_sync_status')
+        .select('last_sync_at')
+        .eq('channel_id', channel.id)
+        .maybeSingle()
 
-      totalNewCasts += result.newCasts
+      // Calculate minutes since last sync
+      const now = Date.now()
+      const lastSyncTime = syncStatus?.last_sync_at ? new Date(syncStatus.last_sync_at).getTime() : 0
+      const minutesSinceSync = (now - lastSyncTime) / 60000
 
-      if (!result.success) {
-        errors.push(...result.errors.map(e => `${channel.id}: ${e}`))
+      // Only sync if interval has elapsed
+      if (minutesSinceSync >= syncInterval) {
+        const result = await syncEngine.syncChannel(channel.id, {
+          limit: 25  // Small batch for frequent syncs
+        })
+
+        if (result.newCasts > 0) {
+          console.log(`[Channel Sync] ${channel.name}: ${result.newCasts} new casts`)
+        }
+
+        totalNewCasts += result.newCasts
+
+        if (!result.success) {
+          errors.push(...result.errors.map(e => `${channel.id}: ${e}`))
+        }
+      } else {
+        // Skip - not time yet
+        const timeUntilNext = syncInterval - minutesSinceSync
+        console.log(
+          `[Channel Sync] Skipping ${channel.name}: ` +
+          `synced ${minutesSinceSync.toFixed(1)}min ago ` +
+          `(needs ${syncInterval}min, next in ${timeUntilNext.toFixed(1)}min)`
+        )
       }
     } catch (error) {
       const msg = `${channel.id}: ${error}`

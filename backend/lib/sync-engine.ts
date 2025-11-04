@@ -249,12 +249,33 @@ export class SyncEngine {
     // Skip if cast has no reactions (optimization)
     const hasReactions = (cast.reactions?.likes_count || 0) > 0 || (cast.reactions?.recasts_count || 0) > 0
     if (hasReactions) {
-      // Non-fatal - if reaction sync fails, we still want to continue
-      try {
-        await this.syncCastReactions(cast.hash, cast.author.fid)
-      } catch (error) {
-        console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
-        // Continue processing - reaction sync failure is non-fatal
+      // Throttle reaction syncing - only sync if not synced in last hour
+      const { data: castNode } = await this.supabase
+        .from('cast_nodes')
+        .select('last_reaction_sync')
+        .eq('cast_hash', cast.hash)
+        .maybeSingle()
+
+      const lastReactionSync = castNode?.last_reaction_sync ? new Date(castNode.last_reaction_sync).getTime() : 0
+      const hoursSinceSync = (Date.now() - lastReactionSync) / 3600000
+
+      // Only sync if never synced OR >1 hour since last sync
+      if (!lastReactionSync || hoursSinceSync >= 1) {
+        // Non-fatal - if reaction sync fails, we still want to continue
+        try {
+          await this.syncCastReactions(cast.hash, cast.author.fid)
+
+          // Update last_reaction_sync timestamp
+          await this.supabase
+            .from('cast_nodes')
+            .update({ last_reaction_sync: new Date().toISOString() })
+            .eq('cast_hash', cast.hash)
+        } catch (error) {
+          console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
+          // Continue processing - reaction sync failure is non-fatal
+        }
+      } else {
+        console.log(`[Sync] Skipping reaction sync for ${cast.hash}: synced ${hoursSinceSync.toFixed(1)}h ago`)
       }
     }
   }
