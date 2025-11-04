@@ -47,6 +47,30 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const deviceName = persistentDeviceName;
   const setDeviceName = setPersistentDeviceName;
 
+  // Helper to extract Spotify track ID from URL, URI, or plain ID
+  const extractSpotifyTrackId = (sourceId: string): string | null => {
+    if (!sourceId) return null;
+
+    // Already just an ID (alphanumeric)
+    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
+      return sourceId;
+    }
+
+    // Extract from URL (https://open.spotify.com/track/ID)
+    const urlMatch = sourceId.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    if (urlMatch) {
+      return urlMatch[1];
+    }
+
+    // Extract from URI (spotify:track:ID)
+    const uriMatch = sourceId.match(/spotify:track:([a-zA-Z0-9]+)/);
+    if (uriMatch) {
+      return uriMatch[1];
+    }
+
+    return null;
+  };
+
   const openInSpotify = async () => {
     console.log('🔘 openInSpotify CALLED');
     setDebugMessage('🔘 Function called');
@@ -104,6 +128,20 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       setDebugMessage('No active device. Opening Spotify...');
       setWaitingForDevice(true);
 
+      // Extract clean track ID from sourceId (handles URLs, URIs, or plain IDs)
+      const trackId = extractSpotifyTrackId(track.sourceId);
+      if (!trackId) {
+        console.error('Could not extract Spotify track ID from:', track.sourceId);
+        setDebugMessage(`❌ Invalid sourceId: ${track.sourceId}`);
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+        setIsConnecting(false);
+        return;
+      }
+
+      console.log('Extracted track ID:', trackId, 'from sourceId:', track.sourceId);
+      setDebugMessage(`Track ID: ${trackId.substring(0, 10)}...`);
+
       // Try multiple approaches in sequence
       let openSuccess = false;
 
@@ -111,7 +149,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         // Approach 1: Try spotify: URI
         console.log('[ATTEMPT 1] Trying spotify: URI scheme...');
         setDebugMessage('Trying spotify: URI...');
-        const spotifyUri = `spotify:track:${track.sourceId}`;
+        const spotifyUri = `spotify:track:${trackId}`;
         console.log('[ATTEMPT 1] URI:', spotifyUri);
 
         try {
@@ -128,7 +166,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           // Approach 2: Try HTTPS URL as fallback
           console.log('[ATTEMPT 2] Trying HTTPS URL fallback...');
           setDebugMessage('Trying HTTPS URL...');
-          const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
+          const spotifyUrl = `https://open.spotify.com/track/${trackId}`;
           console.log('[ATTEMPT 2] URL:', spotifyUrl);
 
           try {
