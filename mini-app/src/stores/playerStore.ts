@@ -40,6 +40,7 @@ export interface Track {
   // Track original source if resolved from songlink/apple_music
   originalSource?: TrackSource;
   url?: string; // Original URL for resolution
+  castHash?: string; // Farcaster cast hash for opening in Farcaster client
 }
 
 export interface Playlist {
