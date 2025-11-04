@@ -21,21 +21,6 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Format time ago helper
-const formatTimeAgo = (timestamp: string) => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffHours < 1) return 'now';
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-  return `${Math.floor(diffDays / 30)}m ago`;
-};
-
 const ChannelViewPage: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -54,6 +39,8 @@ const ChannelViewPage: Component = () => {
   const [genres, setGenres] = createSignal<string[]>([]);
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0); // Increment to trigger new shuffle
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false); // Filter dialog state
+  const [windowMinimized, setWindowMinimized] = createSignal(false);
+  const [windowMaximized, setWindowMaximized] = createSignal(false);
 
   // Pagination state
   const [threads, setThreads] = createSignal<any[]>([]);
@@ -298,18 +285,9 @@ const ChannelViewPage: Component = () => {
           showClose={true}
           showThemeToggle={true}
           onClose={handleClose}
+          onMinimize={() => setWindowMinimized(!windowMinimized())}
+          onMaximize={() => setWindowMaximized(!windowMaximized())}
           contentPadding="0"
-          footer={
-            <div class="status-bar">
-              <div class="status-item">
-                <div class="status-indicator">●</div>
-                <span>Online</span>
-              </div>
-              <div class="status-item">
-                <span>{displayedThreads().length || 0} tracks loaded</span>
-              </div>
-            </div>
-          }
         >
           <div class="content">
             <Show when={channelData.loading || (isLoading() && threads().length === 0)}>
@@ -342,13 +320,10 @@ const ChannelViewPage: Component = () => {
                     </div>
                     <div class="channel-stats">
                       <div class="stat-item">
-                        <span class="number">{displayedThreads().length || 0}</span> tracks
+                        <span class="number">{channelData()!.stats?.threadCount || 0}</span> tracks
                       </div>
                       <div class="stat-item">
-                        <span class="number">{channelData()!.stats?.memberCount || 0}</span> members
-                      </div>
-                      <div class="stat-item">
-                        Updated <span class="number">2h</span> ago
+                        <span class="number">{channelData()!.stats?.uniqueContributors || 0}</span> members
                       </div>
                     </div>
                   </div>
@@ -380,11 +355,6 @@ const ChannelViewPage: Component = () => {
 
               {/* Track Feed */}
               <div class="track-feed">
-                <div class="feed-header">
-                  <span class="icon">💿</span>
-                  <span>Channel Tracks</span>
-                </div>
-
                 <Show when={displayedThreads().length > 0}>
                   <For each={displayedThreads()}>
                     {(thread) => {

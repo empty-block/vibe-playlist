@@ -1,6 +1,7 @@
 import { Component, Show } from 'solid-js';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../../shared/types/channels';
 import { FilterDialog } from './FilterDialog';
+import { SortDropdown } from './SortDropdown';
 import './ChannelFilterBar.css';
 
 interface ChannelFilterBarProps {
@@ -33,6 +34,26 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
 
   return (
     <div class="channel-filter-bar-container">
+      {/* Sort Dropdown */}
+      <SortDropdown
+        activeSort={props.activeSort}
+        onSortChange={props.onSortChange}
+      />
+
+      {/* Filter Button with Badge */}
+      <button
+        class={`filter-toggle-btn ${
+          activeFilterCount() > 0 ? 'filter-toggle-btn--active' : ''
+        }`}
+        onClick={() => props.onFilterDialogOpenChange(true)}
+      >
+        <span class="filter-icon">🔍</span>
+        Filter
+        <Show when={activeFilterCount() > 0}>
+          <span class="filter-badge">{activeFilterCount()}</span>
+        </Show>
+      </button>
+
       {/* Shuffle Button */}
       <button
         class={`shuffle-btn ${
@@ -44,19 +65,6 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         }}
       >
         🔀 Shuffle
-      </button>
-
-      {/* Filter Button with Badge */}
-      <button
-        class={`filter-toggle-btn ${
-          activeFilterCount() > 0 ? 'filter-toggle-btn--active' : ''
-        }`}
-        onClick={() => props.onFilterDialogOpenChange(true)}
-      >
-        Filter
-        <Show when={activeFilterCount() > 0}>
-          <span class="filter-badge">{activeFilterCount()}</span>
-        </Show>
       </button>
 
       {/* Filter Dialog */}

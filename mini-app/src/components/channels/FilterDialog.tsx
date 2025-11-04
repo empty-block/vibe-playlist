@@ -17,19 +17,10 @@ interface FilterDialogProps {
   availableGenres: string[];
 }
 
-const SORT_OPTIONS: Array<{
-  value: ChannelFeedSortOption;
-  label: string;
-}> = [
-  { value: 'recent', label: 'Recent' },
-  { value: 'popular_24h', label: 'Popular (24h)' },
-  { value: 'popular_7d', label: 'Popular (7d)' },
-  { value: 'all_time', label: 'All Time' },
-];
-
-const QUALITY_OPTIONS = [
+const ENGAGEMENT_OPTIONS = [
   { value: 0, label: 'All Posts' },
   { value: 3, label: '3+ Likes' },
+  { value: 10, label: '10+ Likes' },
 ];
 
 const PLATFORM_LABELS: Record<MusicPlatform, string> = {
@@ -62,7 +53,6 @@ export const FilterDialog: Component<FilterDialogProps> = (props) => {
   };
 
   const handleClearAll = () => {
-    props.onSortChange('recent');
     props.onQualityFilterChange(0);
     props.onMusicSourcesChange([]);
     props.onGenresChange([]);
@@ -70,7 +60,6 @@ export const FilterDialog: Component<FilterDialogProps> = (props) => {
 
   const hasActiveFilters = () => {
     return (
-      props.activeSort !== 'recent' ||
       props.qualityFilter > 0 ||
       props.musicSources.length > 0 ||
       props.genres.length > 0
@@ -98,36 +87,16 @@ export const FilterDialog: Component<FilterDialogProps> = (props) => {
 
           {/* Content */}
           <div class="filter-dialog-content">
-            {/* Sort By Section */}
+            {/* Engagement Filter Section */}
             <div class="filter-section">
-              <div class="filter-section-header">Sort By</div>
+              <div class="filter-section-header">Engagement Filter</div>
               <div class="filter-section-options">
-                <For each={SORT_OPTIONS}>
+                <For each={ENGAGEMENT_OPTIONS}>
                   {(option) => (
                     <label class="filter-radio-option">
                       <input
                         type="radio"
-                        name="sort"
-                        checked={props.activeSort === option.value}
-                        onChange={() => props.onSortChange(option.value)}
-                      />
-                      <span>{option.label}</span>
-                    </label>
-                  )}
-                </For>
-              </div>
-            </div>
-
-            {/* Quality Section */}
-            <div class="filter-section">
-              <div class="filter-section-header">Quality Filter</div>
-              <div class="filter-section-options">
-                <For each={QUALITY_OPTIONS}>
-                  {(option) => (
-                    <label class="filter-radio-option">
-                      <input
-                        type="radio"
-                        name="quality"
+                        name="engagement"
                         checked={props.qualityFilter === option.value}
                         onChange={() => props.onQualityFilterChange(option.value)}
                       />

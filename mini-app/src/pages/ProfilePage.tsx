@@ -27,6 +27,8 @@ const ProfilePage: Component = () => {
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
   const [isSubmitting, setIsSubmitting] = createSignal(false);
   const [submitError, setSubmitError] = createSignal<string | null>(null);
+  const [windowMinimized, setWindowMinimized] = createSignal(false);
+  const [windowMaximized, setWindowMaximized] = createSignal(false);
 
   // Sentinel element for infinite scroll
   let sentinelRef: HTMLDivElement | undefined;
@@ -292,6 +294,8 @@ const ProfilePage: Component = () => {
           showClose={true}
           showThemeToggle={true}
           onClose={() => navigate('/trending')}
+          onMinimize={() => setWindowMinimized(!windowMinimized())}
+          onMaximize={() => setWindowMaximized(!windowMaximized())}
           contentPadding="0"
           footer={
             <div class="status-bar">

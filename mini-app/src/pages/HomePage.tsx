@@ -255,20 +255,6 @@ const HomePage: Component = () => {
           variant="3d"
           contentPadding="0"
           showThemeToggle={true}
-          footer={
-            <div class="status-bar">
-              <span class="status-bar-section">
-                <div class="status-indicator">●</div>
-                <span>Live</span>
-              </span>
-              <span class="status-bar-section">
-                {displayedThreads().length || 0} tracks{qualityFilterText()}
-              </span>
-              <span class="status-bar-section">
-                All Channels • {activeSort() === 'shuffle' ? 'Shuffled' : activeSort()}
-              </span>
-            </div>
-          }
         >
           <div class="channel-view-content">
             {/* Feed Section - includes filter bar so it scrolls with content */}

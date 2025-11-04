@@ -1,18 +1,19 @@
+-- Migration: Add sorting and filtering parameters to get_channel_feed
+-- This brings get_channel_feed up to parity with get_home_feed
+-- Date: 2025-11-03
+-- Task: TASK-707
+
 -- Function: get_channel_feed (UPDATED)
 -- Get paginated feed of threads for a specific channel with sorting and filtering
--- Similar to get_home_feed but filtered by channel
 --
--- Changes (2025-11-03):
+-- Changes:
 -- - Added sort_by parameter (recent, popular_24h, popular_7d, all_time)
 -- - Added min_likes parameter for engagement filtering
 -- - Added p_music_sources parameter for platform filtering
 -- - Added p_genres parameter for genre filtering
---
--- Usage:
---   SELECT * FROM get_channel_feed('hip-hop');
---   SELECT * FROM get_channel_feed('hip-hop', 25);
---   SELECT * FROM get_channel_feed('hip-hop', 25, '2025-10-13 10:00:00'::timestamp);
---   SELECT * FROM get_channel_feed('hip-hop', 50, NULL, NULL, FALSE, 'popular_7d', 3);
+-- - Implemented dynamic sorting logic
+-- - Added time window filters for popular sorts
+-- - Added music source and genre filtering
 
 CREATE OR REPLACE FUNCTION get_channel_feed(
   p_channel_id TEXT,

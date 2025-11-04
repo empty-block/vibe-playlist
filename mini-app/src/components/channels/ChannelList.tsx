@@ -6,6 +6,9 @@ import './channelList.css';
 export interface ChannelListProps {
   channels: (Omit<ChannelRowProps, 'onClick'> & { threadId: string })[];
   onChannelClick: (channelId: string, threadId: string) => void;
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
 }
 
 const ChannelList: Component<ChannelListProps> = (props) => {
@@ -31,6 +34,9 @@ const ChannelList: Component<ChannelListProps> = (props) => {
       showMaximize={true}
       showClose={true}
       showThemeToggle={true}
+      onClose={props.onClose}
+      onMinimize={props.onMinimize}
+      onMaximize={props.onMaximize}
       contentPadding="0"
       footer={
         <div class="search-section">

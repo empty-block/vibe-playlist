@@ -112,6 +112,11 @@ body:not(.theme-dark) .filter-toggle-btn--active:hover {
   filter: brightness(1.1);
 }
 
+.filter-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
 .filter-badge {
   background: #ff0000;
   color: #ffffff;
