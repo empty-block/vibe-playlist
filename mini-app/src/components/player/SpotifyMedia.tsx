@@ -3,7 +3,8 @@ import { currentTrack, isPlaying, setIsPlaying, setCurrentTime, setDuration, set
 import { isInFarcasterSync } from '../../stores/farcasterStore';
 import { spotifyAccessToken, isSpotifyAuthenticated } from '../../stores/authStore';
 import SpotifyLoginPrompt from './SpotifyLoginPrompt';
-import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice } from '../../services/spotifyConnect';
+import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice, getAvailableDevices } from '../../services/spotifyConnect';
+import sdk from '@farcaster/miniapp-sdk';
 
 // Persistent Spotify Connect state (survives component remounts)
 // This is necessary because SpotifyMedia remounts on every track change
@@ -45,6 +46,30 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const deviceName = persistentDeviceName;
   const setDeviceName = setPersistentDeviceName;
 
+  // Helper to extract Spotify track ID from URL, URI, or plain ID
+  const extractSpotifyTrackId = (sourceId: string): string | null => {
+    if (!sourceId) return null;
+
+    // Already just an ID (alphanumeric)
+    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
+      return sourceId;
+    }
+
+    // Extract from URL (https://open.spotify.com/track/ID)
+    const urlMatch = sourceId.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    if (urlMatch) {
+      return urlMatch[1];
+    }
+
+    // Extract from URI (spotify:track:ID)
+    const uriMatch = sourceId.match(/spotify:track:([a-zA-Z0-9]+)/);
+    if (uriMatch) {
+      return uriMatch[1];
+    }
+
+    return null;
+  };
+
   const openInSpotify = async () => {
     const track = currentTrack();
     if (!track?.sourceId) return;
@@ -56,74 +81,75 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    // In Farcaster, use hybrid device detection flow
+    // In Farcaster mobile, use hybrid approach: try deep link + Connect API
     if (isInFarcasterSync()) {
-      console.log('Starting playback via Spotify Connect API...');
-
-      // Set connecting flag to prevent auto-play effect from triggering
+      // Set connecting state
       setIsConnecting(true);
-
-      // Reset failure state but keep connectReady/deviceName if device was previously active
       setConnectionFailed(false);
       setWaitingForDevice(false);
 
-      // Try Connect API first (will work if device already active)
-      const success = await playTrackOnConnect(track.sourceId);
+      // Step 1: Check for existing active devices first
+      const devices = await getAvailableDevices();
+      const activeDevice = devices.find((d: any) => d.is_active);
 
-      if (success) {
-        console.log('Playback started via API - device already active');
-        setIsPlaying(true);
-        setConnectReady(true);
-        // Keep existing deviceName or set a default if not present
-        if (!deviceName()) {
-          console.log('[openInSpotify] Setting deviceName to "Spotify"');
-          setDeviceName('Spotify');
-        } else {
-          console.log('[openInSpotify] deviceName already set:', deviceName());
+      if (activeDevice) {
+        // Device already active - just play the track
+        const success = await playTrackOnConnect(track.sourceId);
+        if (success) {
+          setDeviceName(activeDevice.name);
+          setIsPlaying(true);
+          setConnectReady(true);
+          startPlaybackPolling();
+          setIsConnecting(false);
+          return;
         }
-        startPlaybackPolling();
-        setIsConnecting(false); // Connection complete
+      }
+
+      // Step 2: No active device - try to open Spotify
+      setWaitingForDevice(true);
+
+      // Extract clean track ID from sourceId (handles URLs, URIs, or plain IDs)
+      const trackId = extractSpotifyTrackId(track.sourceId);
+      if (!trackId) {
+        console.error('Could not extract Spotify track ID from:', track.sourceId);
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+        setIsConnecting(false);
         return;
       }
 
-      // No active device - open Spotify link and wait for device
-      console.log('No active device - opening Spotify and waiting...');
-      const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
-      window.open(spotifyUrl, '_blank');
+      try {
+        // Try spotify: URI (with HTTPS fallback)
+        const spotifyUri = `spotify:track:${trackId}`;
 
-      // Show waiting UI
-      setWaitingForDevice(true);
+        try {
+          await sdk.actions.openUrl(spotifyUri);
+        } catch (uriError) {
+          // Fallback to HTTPS URL
+          const spotifyUrl = `https://open.spotify.com/track/${trackId}`;
+          await sdk.actions.openUrl(spotifyUrl);
+        }
 
-      // Wait for device to become active (max 20 seconds)
-      const result = await waitForActiveDevice();
+        // Wait for device to become active (10 seconds)
+        const result = await waitForActiveDevice(5, 2000);
 
-      if (result.success) {
-        console.log('Device is now active - retrying playback');
-        const newDeviceName = result.deviceName || 'Spotify';
-        console.log('[openInSpotify] Setting deviceName after detection:', newDeviceName);
-        setDeviceName(newDeviceName);
-
-        // Try to start playback now that device is active
-        const retrySuccess = await playTrackOnConnect(track.sourceId);
-
-        if (retrySuccess) {
-          console.log('Playback started successfully after device detection');
+        if (result.success) {
+          setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
-          setIsConnecting(false); // Connection complete
+          setIsConnecting(false);
         } else {
-          console.error('Playback failed even after device detected');
           setWaitingForDevice(false);
           setConnectionFailed(true);
-          setIsConnecting(false); // Connection failed
+          setIsConnecting(false);
         }
-      } else {
-        console.log('Device detection timed out');
+      } catch (error) {
+        console.error('Error opening Spotify:', error);
         setWaitingForDevice(false);
         setConnectionFailed(true);
-        setIsConnecting(false); // Connection failed
+        setIsConnecting(false);
       }
 
       return;
@@ -132,6 +158,40 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     // Fallback for browser mode: open in Spotify app/web
     const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
     window.open(spotifyUrl, '_blank');
+  };
+
+  // Manual sync function for when user opens Spotify themselves
+  const manualSyncSpotify = async () => {
+    const track = currentTrack();
+    if (!track?.sourceId) return;
+
+    console.log('Manual sync requested...');
+    setConnectionFailed(false);
+    setWaitingForDevice(true);
+
+    // Check for active devices
+    const devices = await getAvailableDevices();
+    const activeDevice = devices.find((d: any) => d.is_active);
+
+    if (activeDevice) {
+      console.log('Found active device:', activeDevice.name);
+      const success = await playTrackOnConnect(track.sourceId);
+      if (success) {
+        setDeviceName(activeDevice.name);
+        setIsPlaying(true);
+        setConnectReady(true);
+        setWaitingForDevice(false);
+        startPlaybackPolling();
+        setIsConnecting(false);
+      } else {
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+      }
+    } else {
+      console.log('No active device found during manual sync');
+      setWaitingForDevice(false);
+      setConnectionFailed(true);
+    }
   };
 
   // Load SDK when authenticated (browser only)
@@ -594,22 +654,31 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                             Play on Spotify
                           </button>
                           <div class="text-xs text-white/60">
-                            Opens in Spotify app or web player
+                            Opens in your Spotify mobile app
                           </div>
                         </>
                       }
                     >
-                      {/* Failed state with retry */}
-                      <div class="flex flex-col items-center gap-2">
-                        <div class="text-yellow-400 text-xs font-semibold">ℹ️ Manual Playback Required</div>
-                        <div class="text-white/70 text-xs">Play the track in your Spotify app,</div>
-                        <div class="text-white/70 text-xs">then return here for controls</div>
+                      {/* Failed state with manual sync instructions */}
+                      <div class="flex flex-col items-center gap-2 px-4">
+                        <div class="text-white text-xs font-semibold">📱 Open Spotify & Play</div>
+                        <div class="text-white/70 text-[11px] text-center leading-tight">
+                          1. Open your Spotify app<br/>
+                          2. Start playing any track<br/>
+                          3. Tap the button below
+                        </div>
+                        <button
+                          onClick={manualSyncSpotify}
+                          class="mt-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-xs transition-colors flex items-center gap-1.5"
+                        >
+                          <i class="fab fa-spotify"></i>
+                          I'm Playing in Spotify
+                        </button>
                         <button
                           onClick={openInSpotify}
-                          class="mt-2 bg-white/20 hover:bg-white/30 text-white font-bold py-1.5 px-3 rounded-full text-xs transition-colors flex items-center gap-1"
+                          class="bg-white/10 hover:bg-white/20 text-white/70 font-medium py-1 px-3 rounded-full text-[10px] transition-colors"
                         >
-                          <i class="fas fa-redo"></i>
-                          Try Again
+                          Try opening Spotify again
                         </button>
                       </div>
                     </Show>

@@ -245,18 +245,9 @@ export class SyncEngine {
     // Process music embeds (TASK-639)
     await this.processMusicEmbeds(cast.hash, cast.embeds || [])
 
-    // Sync reactions (TASK-649 Phase 1 & 3)
-    // Skip if cast has no reactions (optimization)
-    const hasReactions = (cast.reactions?.likes_count || 0) > 0 || (cast.reactions?.recasts_count || 0) > 0
-    if (hasReactions) {
-      // Non-fatal - if reaction sync fails, we still want to continue
-      try {
-        await this.syncCastReactions(cast.hash, cast.author.fid)
-      } catch (error) {
-        console.warn(`[Sync] Failed to sync reactions for cast ${cast.hash}:`, error)
-        // Continue processing - reaction sync failure is non-fatal
-      }
-    }
+    // Note: Reaction syncing is handled by the dedicated likes-sync-worker
+    // which uses bulk polling and is much more efficient than syncing per-cast.
+    // Removed automatic reaction syncing here to prevent excessive Neynar API usage.
   }
 
   /**
@@ -435,22 +426,8 @@ export class SyncEngine {
         )
       }
 
-      // Update tracking table with current counts
-      try {
-        await this.supabase
-          .from('cast_likes_sync_status')
-          .upsert({
-            cast_hash: castHash,
-            last_sync_at: new Date().toISOString(),
-            likes_count_at_sync: likes.length,
-            recasts_count_at_sync: recasts.length,
-            updated_at: new Date().toISOString()
-          })
-      } catch (trackingError) {
-        // Non-fatal - log but don't fail the sync
-        console.warn(`[Sync] Failed to update tracking table for ${castHash}:`, trackingError)
-      }
-
+      // Note: last_reaction_sync timestamp is updated in processCast()
+      // after this method completes successfully
       return totalReactionsSynced
     } catch (error) {
       console.error(`[Sync] Failed to sync reactions for ${castHash}:`, error)

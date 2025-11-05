@@ -8,6 +8,7 @@ import { Track, playTrackFromFeed } from '../stores/playerStore';
 import { fetchHomeFeed } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
+import './channelViewPage.css'; // Import shared track card styles
 import './homePage.css';
 
 // Fisher-Yates shuffle algorithm for randomizing array
