@@ -196,43 +196,10 @@ if (isLocalDev) {
   console.log('')
 
   // =====================================================
-  // AI Worker - Background music metadata processing
+  // AI Worker - Runs ONLY on Cloudflare Workers (via scheduled() handler)
+  // Local dev server is HTTP-only - no background processing
+  // Use POST /api/music-ai/process endpoint for manual testing
   // =====================================================
-
-  // Start AI worker if enabled (default: true)
-  const workerEnabled = process.env.AI_WORKER_ENABLED !== 'false'
-
-  if (workerEnabled) {
-    const workerConfig = {
-      intervalMs: parseInt(process.env.AI_WORKER_INTERVAL_MS || '30000'),
-      batchSize: parseInt(process.env.AI_WORKER_BATCH_SIZE || '20'),
-      runImmediately: true
-    }
-
-    const worker = getWorker(workerConfig)
-    worker.start()
-
-    console.log('🤖 AI Worker Status:')
-    console.log(`   ✓ Enabled and running`)
-    console.log(`   Interval: ${workerConfig.intervalMs}ms (${workerConfig.intervalMs / 1000}s)`)
-    console.log(`   Batch size: ${workerConfig.batchSize} tracks`)
-    console.log('')
-
-    // Graceful shutdown handler
-    const shutdown = () => {
-      console.log('\n🛑 Shutting down gracefully...')
-      worker.stop()
-      console.log('✓ AI Worker stopped')
-      process.exit(0)
-    }
-
-    process.on('SIGTERM', shutdown)
-    process.on('SIGINT', shutdown)
-  } else {
-    console.log('🤖 AI Worker Status:')
-    console.log('   ✗ Disabled (set AI_WORKER_ENABLED=true to enable)')
-    console.log('')
-  }
 }
 
 // =====================================================
@@ -264,27 +231,19 @@ export default {
         console.error('[Cron] AI Worker errors:', aiResult.errors)
       }
 
-      // EMERGENCY DISABLE: Channel Sync (TASK-712)
-      // fetchChannelFeed costs ~1,200 Neynar credits per call (not 100 CU as calculated!)
-      // Channel sync running every 1 minute, syncing ALL 9 channels = 10,800 credits/min
-      // Sync interval logic not working correctly - all channels syncing every run
-      //
-      // TODO: Debug why channel_sync_status timestamps aren't preventing re-syncs
-      // TODO: Ensure music channel syncs every 5 min, others every 30 min
-      //
-      // const { syncAllChannels } = await import('./lib/channel-sync-worker')
-      // const syncResult = await syncAllChannels()
-      //
-      // console.log(
-      //   `[Cron] Channel Sync: ${syncResult.channelsSynced} channels synced, ` +
-      //   `${syncResult.totalNewCasts} new casts`
-      // )
-      //
-      // if (syncResult.errors.length > 0) {
-      //   console.error('[Cron] Channel sync errors:', syncResult.errors)
-      // }
+      // Run Channel Sync (sync all 9 channels with interval checking)
+      // Music channel: every 5 min, Others: every 30 min (interval logic in worker)
+      const { syncAllChannels } = await import('./lib/channel-sync-worker')
+      const syncResult = await syncAllChannels()
 
-      console.log('[Cron] Channel sync TEMPORARILY DISABLED (emergency fix for API usage)')
+      console.log(
+        `[Cron] Channel Sync: ${syncResult.channelsSynced} channels synced, ` +
+        `${syncResult.totalNewCasts} new casts`
+      )
+
+      if (syncResult.errors.length > 0) {
+        console.error('[Cron] Channel sync errors:', syncResult.errors)
+      }
 
       // EMERGENCY DISABLE: Likes Sync (TASK-712)
       // This was causing 290+ API calls every 5 minutes because 282 casts had no tracking data
