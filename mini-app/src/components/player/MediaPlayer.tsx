@@ -11,7 +11,7 @@ interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
 }
 
-type MediaSource = 'youtube' | 'spotify' | 'soundcloud' | 'songlink' | 'apple_music' | null;
+type MediaSource = 'youtube' | 'spotify' | 'soundcloud' | 'songlink' | 'apple_music' | 'tortoise' | null;
 
 const MediaPlayer: Component<MediaPlayerProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
@@ -152,6 +152,23 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onPlaybackStarted={handlePlaybackStarted}
             onPause={(pauseFn) => {}} // No-op pause since it resolves to another player
           />
+        );
+      case 'tortoise':
+        return (
+          <div class="bg-gray-800 rounded flex flex-col items-center justify-center w-48 h-44 sm:w-72 sm:h-52 p-4">
+            <div class="text-gray-300 text-center">
+              <div class="text-5xl mb-3">🐢</div>
+              <div class="text-xl mb-4">Tortoise</div>
+              <a
+                href={track.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+              >
+                Open in Tortoise
+              </a>
+            </div>
+          </div>
         );
       default:
         // Fallback for unknown sources

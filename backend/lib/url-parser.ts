@@ -171,6 +171,30 @@ export function parseMusicUrl(url: string): ParsedMusicUrl | null {
       }
     }
 
+    // Tortoise (Farcaster-native music platform)
+    if (hostname.includes('tortoise.studio')) {
+      // URL formats:
+      // - https://tortoise.studio/song/seams-of-dreams
+      // - https://tortoise.studio/?id=1afdf5c4-aa1c-4030-a457-8da92d51322f
+      const songMatch = pathname.match(/\/song\/([^/?]+)/)
+      if (songMatch) {
+        return {
+          platform_name: 'tortoise',
+          platform_id: songMatch[1],
+          url
+        }
+      }
+
+      const idParam = searchParams.get('id')
+      if (idParam) {
+        return {
+          platform_name: 'tortoise',
+          platform_id: idParam,
+          url
+        }
+      }
+    }
+
     // URL didn't match any known music platform
     return null
   } catch (error) {

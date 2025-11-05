@@ -184,6 +184,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             if (platform === 'audius') return 'Audius';
             if (platform === 'bandcamp') return 'Bandcamp';
             if (platform === 'tidal') return 'Tidal';
+            if (platform === 'tortoise') return 'Tortoise';
             // Capitalize first letter for unknown platforms
             return platform.charAt(0).toUpperCase() + platform.slice(1);
           })()}
