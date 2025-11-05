@@ -457,7 +457,7 @@ body:not(.theme-dark) .activity-header {
 
 /* Activity Card Header - Dark Mode */
 .theme-dark .activity-header {
-  background: #000000;
+  background: linear-gradient(90deg, #3b00fd, #04caf4);
   color: #ffffff;
   padding: 10px 12px;
   display: flex;
@@ -672,15 +672,16 @@ body:not(.theme-dark) .stat-box:hover {
   gap: 6px;
   font-size: 12px;
   padding: 4px 8px;
-  background: #001100;
-  border: 1px solid #00ff00;
+  background: #000000;
+  border: 1px solid #04caf4;
   cursor: pointer;
   transition: background 0.1s ease;
-  color: #ffffff;
+  color: #04caf4;
 }
 
 .theme-dark .stat-box:hover {
-  background: #003300;
+  background: #001a1a;
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.2);
 }
 
 .stat-box .count {
