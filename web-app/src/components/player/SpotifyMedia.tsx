@@ -153,9 +153,43 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
   });
 
+  const handleClick = () => {
+    if (playerReady()) {
+      togglePlay();
+    }
+  };
+
   return (
-    <div class="bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center">
-      <i class="fab fa-spotify text-green-400 text-6xl sm:text-8xl"></i>
+    <div
+      class="bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+      onClick={handleClick}
+      title={playerReady() ? (isPlaying() ? 'Pause' : 'Play on Spotify') : 'Loading...'}
+      style={{
+        'box-shadow': isPlaying()
+          ? '0 0 20px rgba(0, 249, 42, 0.4)'
+          : '0 0 10px rgba(29, 185, 84, 0.2)',
+        'border': isPlaying()
+          ? '2px solid rgba(0, 249, 42, 0.6)'
+          : '2px solid rgba(29, 185, 84, 0.4)',
+        'opacity': playerReady() ? '1' : '0.6'
+      }}
+    >
+      <div class="text-center">
+        <i class={`fab fa-spotify text-6xl sm:text-8xl transition-all duration-200 ${
+          isPlaying() ? 'text-green-400 animate-pulse' : 'text-green-500'
+        }`}></i>
+        {playerReady() && (
+          <div class="mt-2 text-xs sm:text-sm font-mono font-bold text-green-400 flex items-center justify-center gap-2">
+            <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'} text-xs`}></i>
+            <span>{isPlaying() ? 'PLAYING' : 'CLICK TO PLAY'}</span>
+          </div>
+        )}
+        {!playerReady() && (
+          <div class="mt-2 text-xs sm:text-sm font-mono text-green-600">
+            Loading...
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
+import { canPlayTrack, initiateSpotifyAuth } from './authStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp';
 
@@ -127,4 +128,21 @@ export const getAllTracksAsync = async () => {
 
 export const getTracksByUserAsync = async (username: string) => {
   return await mockDataService.getTracksByUser(username);
+};
+
+// Smart track setter that handles Spotify auth requirement
+export const playTrack = async (track: Track) => {
+  // Check if user can play this track source
+  if (!canPlayTrack(track.source)) {
+    if (track.source === 'spotify') {
+      // Store the track and initiate Spotify auth
+      console.log('User needs Spotify auth to play this track, redirecting...', track);
+      await initiateSpotifyAuth(track);
+      return;
+    }
+  }
+
+  // User can play this track, set it as current
+  setCurrentTrack(track);
+  setIsPlaying(true);
 };
