@@ -484,7 +484,7 @@ body:not(.theme-dark) .activity-header {
 
 /* Activity Header - Dark Mode */
 .theme-dark .activity-header {
-  background: #000000;
+  background: linear-gradient(90deg, #001a00, #004d00);
   color: #ffffff;
   padding: 8px 10px;
   display: flex;
