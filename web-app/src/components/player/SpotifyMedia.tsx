@@ -1,6 +1,7 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying } from '../../stores/playerStore';
 import { spotifyAccessToken } from '../../stores/authStore';
+import { SPOTIFY_CONFIG } from '../../config/spotify';
 
 interface SpotifyMediaProps {
   onPlayerReady: (ready: boolean) => void;
@@ -136,6 +137,76 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
   };
 
+  const playSpotifyTrack = async (trackId: string) => {
+    const token = spotifyAccessToken();
+    const device = deviceId();
+
+    if (!token || !device) {
+      console.error('Cannot play track - missing token or device');
+      return;
+    }
+
+    try {
+      console.log('Starting Spotify playback via Web API:', trackId);
+
+      // Extract clean track ID from various formats
+      const cleanTrackId = trackId.replace(/^spotify:track:/, '').split('?')[0];
+
+      const response = await fetch(`${SPOTIFY_CONFIG.API_BASE_URL}/me/player/play?device_id=${device}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uris: [`spotify:track:${cleanTrackId}`],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to start playback:', response.status, errorData);
+
+        // If 404, device might not be active - try activating it first
+        if (response.status === 404) {
+          console.log('Device not active, attempting to activate...');
+          await activateDevice();
+          // Retry playback after activation
+          setTimeout(() => playSpotifyTrack(trackId), 1000);
+        }
+      } else {
+        console.log('Successfully started Spotify playback');
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error('Error playing Spotify track:', error);
+    }
+  };
+
+  const activateDevice = async () => {
+    const token = spotifyAccessToken();
+    const device = deviceId();
+
+    if (!token || !device) return;
+
+    try {
+      await fetch(`${SPOTIFY_CONFIG.API_BASE_URL}/me/player`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          device_ids: [device],
+          play: false,
+        }),
+      });
+      console.log('Device activated successfully');
+    } catch (error) {
+      console.error('Error activating device:', error);
+    }
+  };
+
   createEffect(() => {
     const track = currentTrack();
     console.log('SpotifyMedia createEffect triggered:', {
@@ -146,10 +217,16 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       deviceId: deviceId()
     });
 
+    // Pause Spotify if switching to a different source
+    if (track && track.source !== 'spotify' && player && isPlaying()) {
+      console.log('Pausing Spotify - switched to different source');
+      player.pause();
+    }
+
+    // Load and play new Spotify track
     if (track && track.source === 'spotify' && track.sourceId && playerReady() && deviceId()) {
       console.log('Loading Spotify track:', track.title, track.sourceId);
-      // Here you would implement Spotify track loading logic
-      // This would involve making API calls to start playback
+      playSpotifyTrack(track.sourceId);
     }
   });
 

@@ -684,10 +684,37 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                     </Show>
                   }
                 >
-                  {/* Connected state */}
-                  <div class="flex flex-col items-center gap-1">
-                    <div class="text-green-400 text-xs font-semibold">✓ Connected to Spotify</div>
-                    <div class="text-white/60 text-xs">Now playing on: {deviceName()}</div>
+                  {/* Connected state - entire area is clickable YouTube-style */}
+                  <div class="absolute inset-0 flex flex-col">
+                    {/* Top status badge */}
+                    <div class="flex justify-center pt-3 pb-2">
+                      <div class="text-green-400 text-xs font-semibold bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+                        ✓ Connected to Spotify
+                      </div>
+                    </div>
+
+                    {/* Main clickable area - entire center */}
+                    <button
+                      onClick={togglePlayConnect}
+                      class="flex-1 flex items-center justify-center group transition-all active:scale-95"
+                      aria-label={isPlaying() ? 'Pause' : 'Play'}
+                    >
+                      {/* Large centered play/pause icon - subtle by default, more visible on hover */}
+                      <div class="relative">
+                        <i
+                          class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'} text-white text-6xl sm:text-7xl opacity-60 group-hover:opacity-90 transition-all duration-200 drop-shadow-lg ${!isPlaying() ? 'pl-1.5' : ''}`}
+                        ></i>
+                        {/* Circular background glow on hover */}
+                        <div class="absolute inset-0 -m-6 bg-black/0 group-hover:bg-black/30 rounded-full blur-xl transition-all duration-200"></div>
+                      </div>
+                    </button>
+
+                    {/* Bottom device name */}
+                    <div class="flex justify-center pb-3 pt-2">
+                      <div class="text-white/70 text-xs bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full">
+                        {deviceName()}
+                      </div>
+                    </div>
                   </div>
                 </Show>
               }
