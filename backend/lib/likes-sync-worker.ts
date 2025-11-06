@@ -5,18 +5,20 @@ import { getNeynarService } from './neynar'
 /**
  * Sync reactions for casts using efficient bulk polling with delta fetching
  *
- * NEW OPTIMIZED Strategy:
- * - Tiered time windows (recent = more frequent checks)
+ * NEW OPTIMIZED Strategy (5-tier system):
+ * - Tiered time windows (newer = more frequent checks)
  * - Delta fetching (only fetch NEW reactions, not all reactions)
  * - Batch check reaction counts using fetchBulkCasts (50 CU per 100 casts)
  * - Only sync deltas for casts with changed counts (2 CU × delta)
  * - Update tracking table for optimization
  *
- * Cost breakdown with delta approach:
- * - Tier 1 (48hr, hourly): ~132K CU/month
- * - Tier 2 (7day, daily): ~14K CU/month
- * - Tier 3 (old, weekly): ~11K CU/month
- * - Total: ~157K CU/month (1.57% of 10M budget)
+ * Cost breakdown with delta approach (5 tiers):
+ * - Tier 0 (0-12hr, every 15min): ~265K CU/month
+ * - Tier 1 (12-24hr, every 30min): ~115K CU/month
+ * - Tier 2 (24-48hr, hourly): ~53K CU/month
+ * - Tier 3 (48hr-7day, daily): ~16K CU/month
+ * - Tier 4 (>7day, weekly): ~11K CU/month
+ * - Total: ~460K CU/month (4.6% of 10M budget)
  */
 
 interface SyncResult {
@@ -26,7 +28,7 @@ interface SyncResult {
   apiCalls: number
   duration: number
   errors: string[]
-  tier: 'recent' | 'medium' | 'old'
+  tier: 'ultra-recent' | 'recent' | 'medium-recent' | 'medium' | 'old'
 }
 
 interface CastToCheck {
@@ -39,12 +41,14 @@ interface CastToCheck {
  * Sync reactions for casts in a specific time window
  *
  * @param tier - Which time tier to sync:
- *   - 'recent': Last 48 hours (most active, check hourly)
+ *   - 'ultra-recent': Last 12 hours (most active, check every 15 min)
+ *   - 'recent': 12-24 hours (very active, check every 30 min)
+ *   - 'medium-recent': 24-48 hours (moderate, check hourly)
  *   - 'medium': 48 hours - 7 days (check daily)
  *   - 'old': Older than 7 days (check weekly)
  */
 export async function syncReactionsForTier(
-  tier: 'recent' | 'medium' | 'old' = 'recent'
+  tier: 'ultra-recent' | 'recent' | 'medium-recent' | 'medium' | 'old' = 'ultra-recent'
 ): Promise<SyncResult> {
   const startTime = Date.now()
   const supabase = getSupabaseClient()
@@ -66,13 +70,23 @@ export async function syncReactionsForTier(
 
     // 1. Determine time window based on tier
     const now = new Date()
-    let startDate: Date
+    let startDate: Date | undefined
     let endDate: Date | null = null
 
     switch (tier) {
+      case 'ultra-recent':
+        // Last 12 hours (most active)
+        startDate = new Date(now.getTime() - 12 * 60 * 60 * 1000)
+        break
       case 'recent':
-        // Last 48 hours
+        // 12-24 hours ago (very active)
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+        endDate = new Date(now.getTime() - 12 * 60 * 60 * 1000)
+        break
+      case 'medium-recent':
+        // 24-48 hours ago (moderate activity)
         startDate = new Date(now.getTime() - 48 * 60 * 60 * 1000)
+        endDate = new Date(now.getTime() - 24 * 60 * 60 * 1000)
         break
       case 'medium':
         // 48 hours to 7 days ago
@@ -95,14 +109,14 @@ export async function syncReactionsForTier(
     if (tier === 'old') {
       // For old tier: get casts older than 7 days
       query = query.lt('created_at', endDate!.toISOString())
-    } else if (tier === 'medium') {
-      // For medium tier: get casts between 48hr and 7 days
+    } else if (tier === 'ultra-recent') {
+      // For ultra-recent tier: get casts from last 12 hours
+      query = query.gte('created_at', startDate!.toISOString())
+    } else {
+      // For other tiers: get casts in the time range [startDate, endDate)
       query = query
         .gte('created_at', startDate!.toISOString())
         .lt('created_at', endDate!.toISOString())
-    } else {
-      // For recent tier: get casts from last 48 hours
-      query = query.gte('created_at', startDate!.toISOString())
     }
 
     const { data: casts, error: queryError } = await query
