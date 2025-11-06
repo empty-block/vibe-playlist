@@ -195,7 +195,7 @@ export async function syncReactionsForTier(
             // If count decreased (someone unliked), we need to refetch all to reconcile
             // Otherwise, just fetch the delta
             const limit = (likesDelta < 0 || recastsDelta < 0)
-              ? Math.max(currentLikes, currentRecasts) // Refetch all
+              ? currentLikes + currentRecasts // Refetch all (sum both types!)
               : totalDelta // Just fetch new ones
 
             if (limit > 0) {

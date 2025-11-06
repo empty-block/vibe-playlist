@@ -378,10 +378,15 @@ export class SyncEngine {
       )
       let totalReactionsSynced = 0
 
+      // Track failures for detailed reporting
+      const userUpsertFailures: Array<{ fid: string; username: string; error: string }> = []
+      const edgeInsertFailures: Array<{ fid: string; username: string; error: string; isDuplicate: boolean }> = []
+
       // Process likes
       for (const like of allLikes) {
         try {
           const userId = like.user.fid.toString()
+          const username = like.user.username || 'unknown'
 
           // 1. Upsert reactor user
           const { error: userError } = await this.supabase
@@ -396,11 +401,17 @@ export class SyncEngine {
             })
 
           if (userError) {
+            const errorDetails = {
+              fid: userId,
+              username,
+              error: `${userError.message} (code: ${userError.code}, details: ${JSON.stringify(userError.details)})`
+            }
+            userUpsertFailures.push(errorDetails)
             console.error(
-              `[Sync] ❌ Failed to upsert user ${userId}:`,
+              `[Sync] ❌ Failed to upsert user ${userId} (@${username}):`,
               userError.message,
               '| Code:', userError.code,
-              '| Details:', userError.details
+              '| Details:', JSON.stringify(userError.details)
             )
             continue
           }
@@ -417,20 +428,30 @@ export class SyncEngine {
             .select()
 
           if (edgeError) {
-            // Ignore duplicate key errors (already synced)
-            if (!edgeError.message.includes('duplicate key')) {
+            const isDuplicate = edgeError.message.includes('duplicate key')
+            const errorDetails = {
+              fid: userId,
+              username,
+              error: `${edgeError.message} (code: ${edgeError.code}, details: ${JSON.stringify(edgeError.details)})`,
+              isDuplicate
+            }
+
+            if (!isDuplicate) {
+              // Only log and track non-duplicate errors
+              edgeInsertFailures.push(errorDetails)
               console.error(
-                `[Sync] ❌ Failed to insert LIKED edge for user ${userId}:`,
+                `[Sync] ❌ Failed to insert LIKED edge for user ${userId} (@${username}):`,
                 edgeError.message,
                 '| Code:', edgeError.code,
-                '| Details:', edgeError.details
+                '| Details:', JSON.stringify(edgeError.details)
               )
             }
           } else {
             totalReactionsSynced++
           }
         } catch (error) {
-          console.error(`[Sync] Error processing like reaction:`, error)
+          console.error(`[Sync] ❌ Unexpected error processing like reaction:`, error)
+          console.error(`[Sync]    Like data:`, JSON.stringify(like, null, 2))
         }
       }
 
@@ -438,6 +459,7 @@ export class SyncEngine {
       for (const recast of allRecasts) {
         try {
           const userId = recast.user.fid.toString()
+          const username = recast.user.username || 'unknown'
 
           // 1. Upsert recaster user
           const { error: userError } = await this.supabase
@@ -452,11 +474,17 @@ export class SyncEngine {
             })
 
           if (userError) {
+            const errorDetails = {
+              fid: userId,
+              username,
+              error: `${userError.message} (code: ${userError.code}, details: ${JSON.stringify(userError.details)})`
+            }
+            userUpsertFailures.push(errorDetails)
             console.error(
-              `[Sync] ❌ Failed to upsert user ${userId}:`,
+              `[Sync] ❌ Failed to upsert user ${userId} (@${username}):`,
               userError.message,
               '| Code:', userError.code,
-              '| Details:', userError.details
+              '| Details:', JSON.stringify(userError.details)
             )
             continue
           }
@@ -473,21 +501,64 @@ export class SyncEngine {
             .select()
 
           if (edgeError) {
-            // Ignore duplicate key errors (already synced)
-            if (!edgeError.message.includes('duplicate key')) {
+            const isDuplicate = edgeError.message.includes('duplicate key')
+            const errorDetails = {
+              fid: userId,
+              username,
+              error: `${edgeError.message} (code: ${edgeError.code}, details: ${JSON.stringify(edgeError.details)})`,
+              isDuplicate
+            }
+
+            if (!isDuplicate) {
+              // Only log and track non-duplicate errors
+              edgeInsertFailures.push(errorDetails)
               console.error(
-                `[Sync] ❌ Failed to insert RECASTED edge for user ${userId}:`,
+                `[Sync] ❌ Failed to insert RECASTED edge for user ${userId} (@${username}):`,
                 edgeError.message,
                 '| Code:', edgeError.code,
-                '| Details:', edgeError.details
+                '| Details:', JSON.stringify(edgeError.details)
               )
             }
           } else {
             totalReactionsSynced++
           }
         } catch (error) {
-          console.error(`[Sync] Error processing recast reaction:`, error)
+          console.error(`[Sync] ❌ Unexpected error processing recast reaction:`, error)
+          console.error(`[Sync]    Recast data:`, JSON.stringify(recast, null, 2))
         }
+      }
+
+      // Report failures summary
+      if (userUpsertFailures.length > 0 || edgeInsertFailures.length > 0) {
+        console.log('\n' + '='.repeat(80))
+        console.log(`[Sync] 🔍 FAILURE SUMMARY for cast ${castHash}`)
+        console.log('='.repeat(80))
+
+        if (userUpsertFailures.length > 0) {
+          console.log(`\n❌ User upsert failures: ${userUpsertFailures.length}`)
+          console.log('First 5 failures:')
+          userUpsertFailures.slice(0, 5).forEach((failure, i) => {
+            console.log(`  ${i + 1}. FID ${failure.fid} (@${failure.username}):`)
+            console.log(`     ${failure.error}`)
+          })
+          if (userUpsertFailures.length > 5) {
+            console.log(`  ... and ${userUpsertFailures.length - 5} more`)
+          }
+        }
+
+        if (edgeInsertFailures.length > 0) {
+          console.log(`\n❌ Edge insert failures (non-duplicate): ${edgeInsertFailures.length}`)
+          console.log('First 5 failures:')
+          edgeInsertFailures.slice(0, 5).forEach((failure, i) => {
+            console.log(`  ${i + 1}. FID ${failure.fid} (@${failure.username}):`)
+            console.log(`     ${failure.error}`)
+          })
+          if (edgeInsertFailures.length > 5) {
+            console.log(`  ... and ${edgeInsertFailures.length - 5} more`)
+          }
+        }
+
+        console.log('\n' + '='.repeat(80) + '\n')
       }
 
       if (totalReactionsSynced > 0) {
