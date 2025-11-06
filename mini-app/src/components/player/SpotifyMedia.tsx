@@ -422,10 +422,24 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
 
     console.log('Starting Spotify Connect playback polling (every 2s)');
+    let lastPlayingState = isPlaying();
+
     pollingInterval = window.setInterval(async () => {
       const state = await getPlaybackState();
       if (state) {
-        setIsPlaying(state.is_playing);
+        const currentPlayingState = state.is_playing;
+
+        // Only update and notify if state actually changed
+        if (currentPlayingState !== lastPlayingState) {
+          console.log('Playback state changed via polling:', lastPlayingState, '->', currentPlayingState);
+          setIsPlaying(currentPlayingState);
+          props.onPlaybackStarted?.(currentPlayingState);
+          lastPlayingState = currentPlayingState;
+        } else {
+          // State didn't change, just update silently
+          setIsPlaying(currentPlayingState);
+        }
+
         setCurrentTime(state.progress_ms / 1000);
         if (state.item) {
           setDuration(state.item.duration_ms / 1000);
