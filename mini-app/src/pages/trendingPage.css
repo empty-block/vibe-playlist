@@ -241,23 +241,23 @@ body:not(.theme-dark) .track-submitted {
 }
 
 .submitted-username {
-  color: #e010e0;
+  color: #E73895;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .submitted-username:hover {
-  color: #ff1aff;
+  color: #E73895;
   text-decoration: underline;
 }
 
 .theme-dark .submitted-username {
-  color: #e010e0;
+  color: #E73895;
 }
 
 .theme-dark .submitted-username:hover {
-  color: #ff1aff;
+  color: #E73895;
 }
 
 .track-stats {

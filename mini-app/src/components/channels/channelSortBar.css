@@ -35,26 +35,26 @@
 
 /* === HOT SORT === */
 .channel-sort-button[data-sort="hot"]:not(.channel-sort-button--active) {
-  background: rgba(249, 6, 214, 0.08);
-  border-color: rgba(249, 6, 214, 0.3);
-  color: rgba(249, 6, 214, 0.7);
+  background: rgba(231, 56, 149, 0.08);
+  border-color: rgba(231, 56, 149, 0.3);
+  color: rgba(231, 56, 149, 0.7);
 }
 
 .channel-sort-button[data-sort="hot"].channel-sort-button--active {
-  background: rgba(249, 6, 214, 0.15);
-  border-color: #f906d6;
-  color: #f906d6;
-  text-shadow: 0 0 6px rgba(249, 6, 214, 0.5);
+  background: rgba(231, 56, 149, 0.15);
+  border-color: #E73895;
+  color: #E73895;
+  text-shadow: 0 0 6px rgba(231, 56, 149, 0.5);
   box-shadow:
-    0 0 8px rgba(249, 6, 214, 0.3),
-    inset 0 0 8px rgba(249, 6, 214, 0.1);
+    0 0 8px rgba(231, 56, 149, 0.3),
+    inset 0 0 8px rgba(231, 56, 149, 0.1);
 }
 
 .channel-sort-button[data-sort="hot"]:hover:not(.channel-sort-button--active) {
-  background: rgba(249, 6, 214, 0.12);
-  border-color: rgba(249, 6, 214, 0.5);
-  color: rgba(249, 6, 214, 0.9);
-  box-shadow: 0 0 12px rgba(249, 6, 214, 0.4);
+  background: rgba(231, 56, 149, 0.12);
+  border-color: rgba(231, 56, 149, 0.5);
+  color: rgba(231, 56, 149, 0.9);
+  box-shadow: 0 0 12px rgba(231, 56, 149, 0.4);
 }
 
 /* === ACTIVE SORT === */

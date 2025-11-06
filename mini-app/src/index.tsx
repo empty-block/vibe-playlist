@@ -42,9 +42,13 @@ if (spotifyCode) {
         window.history.replaceState({}, document.title, window.location.pathname);
 
         // Restore pending track if one was stored before auth
+        // Wait for app to fully initialize
         setTimeout(() => {
-          restorePendingTrack();
-        }, 100);
+          const restored = restorePendingTrack();
+          if (restored) {
+            console.log('Successfully restored pending track after auth');
+          }
+        }, 500);
       } else {
         console.error('Spotify authentication failed');
       }
@@ -84,9 +88,13 @@ window.addEventListener('message', (event) => {
         console.log('Spotify authentication successful via popup!');
 
         // Restore pending track if one was stored before auth
+        // Wait for app to fully initialize
         setTimeout(() => {
-          restorePendingTrack();
-        }, 100);
+          const restored = restorePendingTrack();
+          if (restored) {
+            console.log('Successfully restored pending track after auth');
+          }
+        }, 500);
       } else {
         console.error('Spotify authentication failed');
       }
