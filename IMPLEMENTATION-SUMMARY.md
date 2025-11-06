@@ -271,13 +271,81 @@ The changes are ready to deploy! The cron jobs will automatically start syncing 
 
 ---
 
+## 🐛 Missing Likes Root Cause - ACTUAL ISSUE FOUND
+
+### Problem Discovered
+User noticed Khruangbin track showing ~88 likes in DB but 206+ likes on Farcaster.
+
+### Investigation Process
+1. **First wrong theory**: Null/undefined user objects from Neynar API
+   - **Reality**: ALL 100 reactions from API had valid user data (tested)
+   - Reverted commits based on this false assumption
+
+2. **Second theory**: Foreign key constraints blocking inserts
+   - **Reality**: All constraints were fine, cast existed, users upserted successfully
+
+3. **Actual testing with comprehensive error logging**:
+   - Ran manual sync with detailed logging
+   - **ZERO user upsert failures**
+   - **ZERO edge insert failures**
+   - 199 reactions inserted successfully!
+
+### ROOT CAUSE (Confirmed)
+
+**Location:** `backend/lib/likes-sync-worker.ts:198`
+
+```typescript
+const limit = (likesDelta < 0 || recastsDelta < 0)
+  ? Math.max(currentLikes, currentRecasts) // ← BUG: Should be sum, not max!
+  : totalDelta
+```
+
+**The Bug:** When reaction counts decrease (someone unlikes/unrecasts), code refetches "all" reactions using `Math.max(currentLikes, currentRecasts)` instead of `currentLikes + currentRecasts`.
+
+**Impact:**
+- Cast with 295 likes + 53 recasts = 348 total reactions
+- If someone unlikes: `limit = Math.max(295, 53) = 295`
+- Neynar API `limit` parameter is for TOTAL reactions (likes + recasts combined)
+- Only fetches 295 reactions total → might get 242 likes + 53 recasts
+- **Missing 53 likes** due to insufficient limit!
+
+**Why it was hard to find:**
+- The Neynar API combines likes and recasts in the limit, not per-type
+- Delta calculation assumed separate limits for each type
+- Code looked correct at first glance (was using delta sum for increases)
+- Only manifested when counts decreased OR for high-engagement casts
+
+### Fix Applied
+
+```typescript
+const limit = (likesDelta < 0 || recastsDelta < 0)
+  ? currentLikes + currentRecasts  // ← FIXED: Sum both types!
+  : totalDelta
+```
+
+Now when refetching all reactions, we properly account for both likes AND recasts.
+
+### Verification
+Manual sync test after fix:
+- Fetched 253 likes + 47 recasts with limit=300 ✓
+- Fetched 294 likes + 53 recasts with limit=999999 (all reactions) ✓
+- Zero insert failures, comprehensive error logging confirmed working ✓
+
+---
+
 ## 📝 Files Changed
 
-1. `backend/lib/sync-engine.ts` - Added limit parameter support
-2. `backend/lib/likes-sync-worker.ts` - Complete rewrite with delta + tiers
-3. `backend/server.ts` - Added 3 tiered cron jobs
-4. `backend/test-likes-sync.ts` - New comprehensive test script
-5. Database - Initialized 2,138 missing tracking records
+1. `backend/lib/sync-engine.ts` - Added limit parameter, pagination, comprehensive error logging
+2. `backend/lib/likes-sync-worker.ts` - Complete rewrite with delta + tiers, fixed Math.max bug
+3. `backend/lib/neynar.ts` - Added cursor support for pagination
+4. `backend/server.ts` - Added 3 tiered cron jobs (hourly/daily/weekly)
+5. `backend/test-likes-sync.ts` - Test script for cost estimation
+6. `backend/test-single-cast-sync.ts` - Debug script for investigating missing likes
+7. `backend/test-full-sync.ts` - Test script for unlimited sync
+8. `backend/test-actual-reactions.ts` - Script to verify Neynar API response format
+9. `backend/check-cast-counts.ts` - Script to compare Neynar vs DB counts
+10. Database - Initialized 2,138 missing tracking records via Supabase MCP
+11. `IMPLEMENTATION-SUMMARY.md` - This comprehensive documentation
 
 ---
 

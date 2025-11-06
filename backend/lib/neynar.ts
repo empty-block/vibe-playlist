@@ -243,10 +243,12 @@ export class NeynarService {
       types?: ('likes' | 'recasts')[]
       limit?: number
       viewerFid?: number
+      cursor?: string
     }
   ): Promise<{
     likes: any[]
     recasts: any[]
+    nextCursor?: string
   }> {
     await this.throttle()
 
@@ -258,7 +260,8 @@ export class NeynarService {
         hash: castHash,
         types: types as any,
         limit,
-        viewerFid: options?.viewerFid
+        viewerFid: options?.viewerFid,
+        cursor: options?.cursor
       })
 
       // The API returns reactions as a flat array with reaction_type field
@@ -267,7 +270,11 @@ export class NeynarService {
       const likes = reactions.filter((r: any) => r.reaction_type === 'like')
       const recasts = reactions.filter((r: any) => r.reaction_type === 'recast')
 
-      return { likes, recasts }
+      return {
+        likes,
+        recasts,
+        nextCursor: response.next?.cursor || undefined
+      }
     })
   }
 
