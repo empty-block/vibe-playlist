@@ -98,7 +98,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (success) {
           setDeviceName(activeDevice.name);
           setIsPlaying(true);
-          props.onPlaybackStart?.(true); // Notify parent that playback has started
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           startPlaybackPolling();
           setIsConnecting(false);
@@ -137,7 +137,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (result.success) {
           setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
-          props.onPlaybackStart?.(true); // Notify parent that playback has started
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
@@ -181,7 +181,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       if (success) {
         setDeviceName(activeDevice.name);
         setIsPlaying(true);
-        props.onPlaybackStart?.(true); // Notify parent that playback has started
+        props.onPlaybackStarted?.(true); // Notify parent that playback has started
         setConnectReady(true);
         setWaitingForDevice(false);
         startPlaybackPolling();
@@ -534,6 +534,8 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     if (success) {
       setIsPlaying(newState);
+      // Notify parent about playback state change
+      props.onPlaybackStarted?.(newState);
     } else {
       console.error('Failed to toggle Spotify Connect playback');
     }
