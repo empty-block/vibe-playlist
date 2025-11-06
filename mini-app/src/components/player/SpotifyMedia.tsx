@@ -98,6 +98,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (success) {
           setDeviceName(activeDevice.name);
           setIsPlaying(true);
+          props.onPlaybackStart?.(true); // Notify parent that playback has started
           setConnectReady(true);
           startPlaybackPolling();
           setIsConnecting(false);
@@ -136,6 +137,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (result.success) {
           setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
+          props.onPlaybackStart?.(true); // Notify parent that playback has started
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
@@ -179,6 +181,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       if (success) {
         setDeviceName(activeDevice.name);
         setIsPlaying(true);
+        props.onPlaybackStart?.(true); // Notify parent that playback has started
         setConnectReady(true);
         setWaitingForDevice(false);
         startPlaybackPolling();
@@ -684,28 +687,17 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                     </Show>
                   }
                 >
-                  {/* Connected state - clickable to pause (play handled by custom controls) */}
+                  {/* Connected state - clickable to pause */}
                   <button
                     onClick={() => {
-                      // Only pause when playing - play is handled by custom controls
+                      // Pause when clicked
                       if (isPlaying()) {
                         togglePlayConnect();
                       }
                     }}
                     class="absolute inset-0 cursor-pointer"
                     aria-label="Pause"
-                  >
-                    <div class="absolute top-3 left-1/2 -translate-x-1/2">
-                      <div class="text-green-400 text-xs font-semibold bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full pointer-events-none">
-                        ✓ Connected to Spotify
-                      </div>
-                    </div>
-                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2">
-                      <div class="text-white/70 text-xs bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full pointer-events-none">
-                        {deviceName()}
-                      </div>
-                    </div>
-                  </button>
+                  ></button>
                 </Show>
               }
             >
