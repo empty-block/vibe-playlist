@@ -1,7 +1,7 @@
 /* WINAMP-STYLE MUSIC PLAYER BAR - Retro Aesthetic */
 .player-bar {
   position: fixed;
-  bottom: 60px; /* Space for navigation bar */
+  bottom: 64px; /* Reduced gap - closer to window content */
   left: 4px;
   right: 4px;
   background: var(--bg-panel);
@@ -87,7 +87,7 @@
 }
 
 .player-content {
-  padding: 4px;
+  padding: 0px;
 }
 
 /* Removed old .player-video styles - now using unified .player-audio-container */
@@ -99,8 +99,8 @@
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
-  padding: 8px;
-  margin-bottom: 4px;
+  padding: 1px 8px 8px 8px;
+  margin-bottom: 0px;
   display: flex;
   flex-direction: column;
   gap: 8px;

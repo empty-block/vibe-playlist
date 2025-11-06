@@ -29,7 +29,7 @@
  * Handles all responsive sizing, centering, and height calculations
  */
 .page-window-container {
-  margin: 16px auto;
+  margin: 16px auto 2px auto;
   width: var(--window-width-mobile);
   max-width: var(--window-max-width-compact);
 
@@ -62,7 +62,7 @@
 /* Ultra-small mobile: Tighter margins */
 @media (max-width: 360px) {
   .page-window-container {
-    margin: 8px auto;
+    margin: 8px auto 2px auto;
     width: calc(100% - 16px);
     height: calc(100dvh - var(--nav-height) - 24px - var(--player-bar-height));
   }
@@ -123,7 +123,7 @@
 
 /* Additional bottom padding for feed sections to ensure last items are fully visible */
 .page-window-container .feed-section {
-  padding-bottom: 16px;
+  padding-bottom: 2px;
 }
 
 /* ============================================
@@ -148,12 +148,12 @@
  */
 @media (max-width: 640px) {
   .page-window-container {
-    margin: 10px auto;
+    margin: 10px auto 2px auto;
   }
 
   /* Slightly reduce feed padding on mobile to maximize visible content */
   .page-window-container .feed-section {
-    padding-bottom: 12px;
+    padding-bottom: 2px;
   }
 }
 
