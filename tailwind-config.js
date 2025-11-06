@@ -4,7 +4,7 @@ tailwind.config = {
       colors: {
         grunge: {
           yellow: '#ffff00',
-          magenta: '#ff00ff',
+          magenta: '#E73895',
           cyan: '#00ffff',
           lime: '#00ff00',
           orange: '#ff8800',
@@ -20,10 +20,10 @@ tailwind.config = {
           blue: '#3b00fd',
           green: '#00f92a',
           cyan: '#04caf4',
-          pink: '#f906d6',
-          magenta: '#e010e0',
-          'magenta-bright': '#ff1aff',
-          'magenta-soft': '#cc0ecc',
+          pink: '#E73895',
+          magenta: '#E73895',
+          'magenta-bright': '#E73895',
+          'magenta-soft': '#E73895',
           orange: '#ff9b00',
           yellow: '#d1f60a'
         }

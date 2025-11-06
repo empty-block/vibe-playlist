@@ -32,21 +32,21 @@ body:not(.theme-dark) {
   /* Accent Colors */
   --accent-primary: #3b00fd; /* Neon blue */
   --accent-secondary: #00FFFF; /* Cyan */
-  --accent-tertiary: #FF00FF; /* Magenta */
+  --accent-tertiary: #E73895; /* Berry red */
 
   /* Neon Color Palette (90s inspired) */
   --neon-blue: #3b00fd;
   --neon-green: #00f92a;
   --neon-cyan: #04caf4;
-  --neon-pink: #f906d6;
-  --neon-magenta: #f906d6; /* Alias for pink */
-  --neon-magenta-bright: #f906d6;
+  --neon-pink: #E73895;
+  --neon-magenta: #E73895; /* Alias for pink */
+  --neon-magenta-bright: #E73895;
   --neon-yellow: #d1f60a;
 
   /* Gradient Definitions */
   --gradient-page-bg: linear-gradient(135deg, #04caf4 0%, #00f92a 100%); /* Cyan to green - blue dominant */
   --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Neon blue to cyan */
-  --gradient-avatar: linear-gradient(135deg, #f906d6, #04caf4); /* Magenta to cyan */
+  --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
   --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
 
   /* Typography */
@@ -94,21 +94,21 @@ body:not(.theme-dark) {
   /* Accent Colors */
   --accent-primary: #00ff00; /* Neon green */
   --accent-secondary: #00FFFF; /* Cyan (same) */
-  --accent-tertiary: #E010E0; /* Magenta (from v6) */
+  --accent-tertiary: #E73895; /* Berry red (from v6) */
 
   /* Neon Color Palette (90s inspired) - same in both themes */
   --neon-blue: #3b00fd;
   --neon-green: #00f92a;
   --neon-cyan: #04caf4;
-  --neon-pink: #f906d6;
-  --neon-magenta: #f906d6; /* Alias for pink */
-  --neon-magenta-bright: #f906d6;
+  --neon-pink: #E73895;
+  --neon-magenta: #E73895; /* Alias for pink */
+  --neon-magenta-bright: #E73895;
   --neon-yellow: #d1f60a;
 
   /* Gradient Definitions - same in both themes */
   --gradient-page-bg: linear-gradient(135deg, #00f92a 0%, #04caf4 100%); /* Green to cyan */
   --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Neon blue to cyan */
-  --gradient-avatar: linear-gradient(135deg, #f906d6, #04caf4); /* Magenta to cyan */
+  --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
   --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
 
   /* Typography */

@@ -100,7 +100,7 @@ body:not(.theme-dark) .channel-view-page .channel-header {
 .channel-view-page .channel-image {
   width: 100px;
   height: 100px;
-  background: linear-gradient(135deg, #ff00ff, #00ffff);
+  background: linear-gradient(135deg, #E73895, #00ffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -697,7 +697,7 @@ body:not(.theme-dark) .activity-card .track-info .track-title {
 body:not(.theme-dark) .channel-view-page .track-item .track-info .track-artist,
 .theme-light .activity-card .track-info .track-artist,
 body:not(.theme-dark) .activity-card .track-info .track-artist {
-  color: #e010e0; /* Magenta */
+  color: #E73895; /* Berry red */
 }
 
 /* Track artist - Dark Mode */
