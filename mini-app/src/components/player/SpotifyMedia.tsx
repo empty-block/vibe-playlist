@@ -433,7 +433,10 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (currentPlayingState !== lastPlayingState) {
           console.log('Playback state changed via polling:', lastPlayingState, '->', currentPlayingState);
           setIsPlaying(currentPlayingState);
-          props.onPlaybackStarted?.(currentPlayingState);
+          // Only notify when playback STARTS, not when it pauses
+          if (currentPlayingState === true) {
+            props.onPlaybackStarted?.(true);
+          }
           lastPlayingState = currentPlayingState;
         } else {
           // State didn't change, just update silently
@@ -548,8 +551,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     if (success) {
       setIsPlaying(newState);
-      // Notify parent about playback state change
-      props.onPlaybackStarted?.(newState);
+      // Only notify when STARTING playback, not when pausing
+      // Pausing should keep hasStartedPlayback=true so embed hides correctly
+      if (newState === true) {
+        props.onPlaybackStarted?.(true);
+      }
     } else {
       console.error('Failed to toggle Spotify Connect playback');
     }
