@@ -312,15 +312,25 @@ export class SyncEngine {
    *
    * @param castHash - The cast to fetch reactions for
    * @param viewerFid - FID of the viewer context (usually cast author)
+   * @param options - Optional sync parameters
    * @returns Number of reactions synced
    */
-  async syncCastReactions(castHash: string, viewerFid: number): Promise<number> {
-    console.log(`[Sync] Fetching reactions for cast: ${castHash} (viewer: ${viewerFid})`)
+  async syncCastReactions(
+    castHash: string,
+    viewerFid: number,
+    options?: {
+      limit?: number
+      currentLikesCount?: number
+      currentRecastsCount?: number
+    }
+  ): Promise<number> {
+    const limit = options?.limit || 100
+    console.log(`[Sync] Fetching reactions for cast: ${castHash} (viewer: ${viewerFid}, limit: ${limit})`)
     try {
       // Fetch reactions from Neynar with viewer context
       const { likes, recasts } = await this.neynar.fetchCastReactions(castHash, {
         types: ['likes', 'recasts'],
-        limit: 100,
+        limit,
         viewerFid
       })
 
@@ -426,8 +436,26 @@ export class SyncEngine {
         )
       }
 
-      // Note: last_reaction_sync timestamp is updated in processCast()
-      // after this method completes successfully
+      // Update tracking table with current counts
+      const currentLikesCount = options?.currentLikesCount || likes.length
+      const currentRecastsCount = options?.currentRecastsCount || recasts.length
+
+      const { error: trackingError } = await this.supabase
+        .from('cast_likes_sync_status')
+        .upsert({
+          cast_hash: castHash,
+          last_sync_at: new Date().toISOString(),
+          likes_count_at_sync: currentLikesCount,
+          recasts_count_at_sync: currentRecastsCount,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'cast_hash'
+        })
+
+      if (trackingError) {
+        console.warn(`[Sync] Failed to update tracking for ${castHash}:`, trackingError.message)
+      }
+
       return totalReactionsSynced
     } catch (error) {
       console.error(`[Sync] Failed to sync reactions for ${castHash}:`, error)
