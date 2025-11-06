@@ -261,15 +261,6 @@ const Player: Component<PlayerProps> = (props) => {
             </div>
           </div>
           </Show>
-
-          {/* Animated Visualizer - only show when playing and player is ready */}
-          <Show when={isPlaying() && props.playerReady()}>
-            <div class="player-visualizer">
-              <For each={Array(16).fill(0)}>
-                {() => <div class="player-visualizer-bar"></div>}
-              </For>
-            </div>
-          </Show>
         </div>
       </div>
     </Show>
