@@ -430,7 +430,7 @@ const ProfilePage: Component = () => {
 
                 <Show when={filteredContent().length > 0}>
                   <For each={filteredContent()}>
-                    {(activityItem) => {
+                    {(activityItem, index) => {
                       const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
 
                       return (
@@ -456,6 +456,7 @@ const ProfilePage: Component = () => {
                               e.preventDefault();
                               navigate(`/profile/${fid}`);
                             }}
+                            animationDelay={Math.min(index(), 20) * 50}
                           />
                         </Show>
                       );

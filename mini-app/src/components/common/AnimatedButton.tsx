@@ -1,5 +1,5 @@
 import { Component, JSX, onMount } from 'solid-js';
-import { buttonHover, socialButtonClick, playButtonPulse, iconSpin } from '../../utils/animations';
+import { buttonHover, socialButtonClick, playButtonPulse, iconSpin, joyfulClick } from '../../utils/animations';
 
 interface AnimatedButtonProps {
   children: JSX.Element;
@@ -8,7 +8,7 @@ interface AnimatedButtonProps {
   classList?: Record<string, boolean>;
   title?: string;
   disabled?: boolean;
-  animationType?: 'default' | 'social' | 'play' | 'spin';
+  animationType?: 'default' | 'social' | 'play' | 'spin' | 'joyful';
   spinIcon?: boolean;
 }
 
@@ -46,6 +46,9 @@ const AnimatedButton: Component<AnimatedButtonProps> = (props) => {
             } else {
               iconSpin(buttonRef);
             }
+            break;
+          case 'joyful':
+            joyfulClick(buttonRef);
             break;
           default:
             socialButtonClick(buttonRef);

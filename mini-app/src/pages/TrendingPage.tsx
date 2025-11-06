@@ -5,7 +5,63 @@ import RetroWindow from '../components/common/RetroWindow';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
 import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import { formatRelativeTime } from '../utils/time';
+import { trackCardEntrance } from '../utils/animations';
 import './trendingPage.css';
+
+// Wrapper component for animated track item
+const AnimatedTrackItem: Component<{ track: any; index: number; onClick: () => void; onUsernameClick: (fid: string, e: MouseEvent) => void }> = (props) => {
+  let trackItemRef: HTMLDivElement | undefined;
+
+  onMount(() => {
+    if (trackItemRef) {
+      trackCardEntrance.fadeIn(trackItemRef, Math.min(props.index, 20) * 50);
+    }
+  });
+
+  return (
+    <div
+      ref={trackItemRef}
+      class="track-item"
+      onClick={props.onClick}
+    >
+      <div
+        class="track-rank"
+        classList={{ 'top-3': props.track.rank <= 3 }}
+      >
+        {props.track.rank}
+      </div>
+      <div class="track-thumbnail">
+        {props.track.thumbnail ? (
+          <img src={props.track.thumbnail} alt={props.track.title} />
+        ) : (
+          '🎵'
+        )}
+      </div>
+      <div class="track-info">
+        <div class="track-title">{props.track.title}</div>
+        <div class="track-artist">{props.track.artist}</div>
+        {(props.track as any).submittedBy && (props.track as any).submittedBy.length > 0 && (
+          <div class="track-submitted">
+            shared by {(props.track as any).submittedBy.map((user: any, idx: number) => (
+              <>
+                <span
+                  class="submitted-username"
+                  onClick={(e) => props.onUsernameClick(user.fid, e)}
+                >
+                  {user.username}
+                </span>
+                {idx < (props.track as any).submittedBy.length - 1 && ', '}
+              </>
+            ))}
+          </div>
+        )}
+      </div>
+      <div class="track-stats">
+        {props.track.rank <= 3 && <span class="fire-icon">🔥</span>}
+      </div>
+    </div>
+  );
+};
 
 const TrendingPage: Component = () => {
   const navigate = useNavigate();
@@ -122,47 +178,13 @@ const TrendingPage: Component = () => {
               </div>
             ) : (
               <For each={tracks()}>
-                {(track) => (
-                  <div
-                    class="track-item"
+                {(track, index) => (
+                  <AnimatedTrackItem
+                    track={track}
+                    index={index()}
                     onClick={() => handleTrackClick(track)}
-                  >
-                    <div
-                      class="track-rank"
-                      classList={{ 'top-3': track.rank <= 3 }}
-                    >
-                      {track.rank}
-                    </div>
-                    <div class="track-thumbnail">
-                      {track.thumbnail ? (
-                        <img src={track.thumbnail} alt={track.title} />
-                      ) : (
-                        '🎵'
-                      )}
-                    </div>
-                    <div class="track-info">
-                      <div class="track-title">{track.title}</div>
-                      <div class="track-artist">{track.artist}</div>
-                      {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
-                        <div class="track-submitted">
-                          shared by {(track as any).submittedBy.map((user: any, idx: number) => (
-                            <>
-                              <span
-                                class="submitted-username"
-                                onClick={(e) => handleUsernameClick(user.fid, e)}
-                              >
-                                {user.username}
-                              </span>
-                              {idx < (track as any).submittedBy.length - 1 && ', '}
-                            </>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <div class="track-stats">
-                      {track.rank <= 3 && <span class="fire-icon">🔥</span>}
-                    </div>
-                  </div>
+                    onUsernameClick={handleUsernameClick}
+                  />
                 )}
               </For>
             )}

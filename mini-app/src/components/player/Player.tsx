@@ -1,4 +1,4 @@
-import { Component, Show, JSX, createSignal, onMount, For } from 'solid-js';
+import { Component, Show, JSX, createSignal, onMount, createEffect, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import {
   currentTrack,
@@ -17,7 +17,7 @@ import {
   playerError
 } from '../../stores/playerStore';
 import { isInFarcasterSync } from '../../stores/farcasterStore';
-import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
+import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse, playerTransitions } from '../../utils/animations';
 import { skipToNextOnConnect, skipToPreviousOnConnect } from '../../services/spotifyConnect';
 import './player.css';
 
@@ -41,6 +41,23 @@ const Player: Component<PlayerProps> = (props) => {
   let shuffleButtonRef: HTMLButtonElement | undefined;
   let chatButtonRef: HTMLButtonElement | undefined;
   let statusIndicatorRef: HTMLDivElement | undefined;
+  let playerBarRef: HTMLDivElement | undefined;
+
+  // Track changes for animations
+  createEffect(() => {
+    const track = currentTrack();
+    if (track && playerBarRef) {
+      playerTransitions.trackChange(playerBarRef);
+    }
+  });
+
+  // Play/pause state changes for animations
+  createEffect(() => {
+    const playing = isPlaying();
+    if (playerBarRef) {
+      playerTransitions.stateChange(playerBarRef);
+    }
+  });
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -164,7 +181,7 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class="player-bar">
+      <div ref={playerBarRef} class="player-bar">
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{

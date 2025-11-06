@@ -346,7 +346,7 @@ const HomePage: Component = () => {
               ) : (
                 <>
                   <For each={displayedThreads()}>
-                    {(thread: any) => (
+                    {(thread: any, index) => (
                       <TrackCard
                         author={{
                           username: thread.author.username,
@@ -378,6 +378,7 @@ const HomePage: Component = () => {
                         castHash={thread.castHash}
                         onPlay={() => handleTrackPlay(thread)}
                         onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
+                        animationDelay={Math.min(index(), 20) * 50}
                       />
                     )}
                   </For>

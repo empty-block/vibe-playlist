@@ -1,7 +1,8 @@
-import { Component, Show, createSignal } from 'solid-js';
+import { Component, Show, createSignal, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
+import { trackCardEntrance } from '../../../../utils/animations';
 
 const MAX_TEXT_LENGTH = 200;
 
@@ -32,6 +33,7 @@ interface TrackCardProps {
   castHash?: string; // For opening cast in Farcaster to like/recast
   onPlay: (track: any) => void;
   onUsernameClick?: (fid: string, e: MouseEvent) => void;
+  animationDelay?: number; // For staggered entrance animations
 }
 
 // Format time ago helper
@@ -56,6 +58,15 @@ const TrackCard: Component<TrackCardProps> = (props) => {
   const [isExpanded, setIsExpanded] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
+
+  let cardRef: HTMLDivElement | undefined;
+
+  // Apply entrance animation on mount
+  onMount(() => {
+    if (cardRef) {
+      trackCardEntrance.fadeIn(cardRef, props.animationDelay || 0);
+    }
+  });
 
   const handleUsernameClick = (e: MouseEvent) => {
     if (props.onUsernameClick) {
@@ -91,7 +102,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
   };
 
   return (
-    <div class="terminal-track-card activity-card">
+    <div ref={cardRef} class="terminal-track-card activity-card">
       {/* Navy header bar */}
       <div class="activity-header">
         <div class="user-info">

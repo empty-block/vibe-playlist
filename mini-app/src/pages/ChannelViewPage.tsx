@@ -357,7 +357,7 @@ const ChannelViewPage: Component = () => {
               <div class="track-feed">
                 <Show when={displayedThreads().length > 0}>
                   <For each={displayedThreads()}>
-                    {(thread) => {
+                    {(thread, index) => {
                       const track = thread.music && thread.music[0] ? thread.music[0] : null;
 
                       return (
@@ -370,6 +370,7 @@ const ChannelViewPage: Component = () => {
                             stats={thread.stats}
                             onPlay={handleTrackPlay}
                             onUsernameClick={handleUsernameClick}
+                            animationDelay={Math.min(index(), 20) * 50}
                           />
                         </Show>
                       );
