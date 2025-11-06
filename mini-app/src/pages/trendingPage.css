@@ -4,7 +4,7 @@
 /* Page Container - Background inherited from body */
 .trending-page {
   min-height: 100vh;
-  padding-bottom: 80px; /* Space for mobile navigation */
+  padding-bottom: 8px; /* Space for mobile navigation */
   display: flex;
   flex-direction: column;
 }

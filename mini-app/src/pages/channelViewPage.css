@@ -8,7 +8,7 @@
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   line-height: 1.4;
   min-height: 100vh;
-  padding-bottom: 80px; /* Space for mobile nav */
+  padding-bottom: 8px; /* Small gap to show background */
 }
 
 /* Light Mode Text Color */
@@ -1034,7 +1034,7 @@ body:not(.theme-dark) .status-bar {
 /* Mobile Responsive */
 @media (max-width: 600px) {
   .channel-view-page {
-    padding-bottom: 70px;
+    padding-bottom: 8px;
   }
 
   .channel-view-page .channel-header {

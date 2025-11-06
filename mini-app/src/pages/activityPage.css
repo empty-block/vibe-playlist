@@ -1,7 +1,7 @@
 /* Page Container - Background inherited from body */
 .activity-page {
   min-height: 100vh;
-  padding-bottom: 80px;
+  padding-bottom: 8px;
   display: flex;
   flex-direction: column;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
