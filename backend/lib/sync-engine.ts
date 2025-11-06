@@ -324,21 +324,62 @@ export class SyncEngine {
       currentRecastsCount?: number
     }
   ): Promise<number> {
-    const limit = options?.limit || 100
-    console.log(`[Sync] Fetching reactions for cast: ${castHash} (viewer: ${viewerFid}, limit: ${limit})`)
-    try {
-      // Fetch reactions from Neynar with viewer context
-      const { likes, recasts } = await this.neynar.fetchCastReactions(castHash, {
-        types: ['likes', 'recasts'],
-        limit,
-        viewerFid
-      })
+    const requestedLimit = options?.limit || 100
+    console.log(`[Sync] Fetching reactions for cast: ${castHash} (viewer: ${viewerFid}, limit: ${requestedLimit})`)
 
-      console.log(`[Sync] Got ${likes.length} likes and ${recasts.length} recasts for ${castHash}`)
+    try {
+      // Handle pagination for casts with > 100 reactions
+      let allLikes: any[] = []
+      let allRecasts: any[] = []
+      let cursor: string | undefined = undefined
+      let remainingToFetch = requestedLimit
+      let pageNum = 0
+
+      // Fetch reactions in batches of 100 until we have enough or run out
+      while (remainingToFetch > 0) {
+        pageNum++
+        const batchLimit = Math.min(remainingToFetch, 100)
+
+        console.log(
+          `[Sync] Fetching batch ${pageNum} for ${castHash}: ` +
+          `limit=${batchLimit}, cursor=${cursor ? cursor.substring(0, 10) + '...' : 'none'}`
+        )
+
+        const { likes, recasts, nextCursor } = await this.neynar.fetchCastReactions(castHash, {
+          types: ['likes', 'recasts'],
+          limit: batchLimit,
+          viewerFid,
+          cursor
+        })
+
+        allLikes.push(...likes)
+        allRecasts.push(...recasts)
+
+        const fetchedCount = likes.length + recasts.length
+        remainingToFetch -= fetchedCount
+
+        console.log(
+          `[Sync] Batch ${pageNum}: Got ${likes.length} likes + ${recasts.length} recasts ` +
+          `(total so far: ${allLikes.length + allRecasts.length}/${requestedLimit})`
+        )
+
+        // Stop if no more reactions available or no cursor for next page
+        if (!nextCursor || fetchedCount < batchLimit) {
+          console.log(`[Sync] Pagination complete: ${nextCursor ? 'no more data' : 'end of results'}`)
+          break
+        }
+
+        cursor = nextCursor
+      }
+
+      console.log(
+        `[Sync] Fetched total: ${allLikes.length} likes and ${allRecasts.length} recasts for ${castHash} ` +
+        `(${pageNum} API call${pageNum > 1 ? 's' : ''})`
+      )
       let totalReactionsSynced = 0
 
       // Process likes
-      for (const like of likes) {
+      for (const like of allLikes) {
         try {
           const userId = like.user.fid.toString()
 
@@ -355,7 +396,12 @@ export class SyncEngine {
             })
 
           if (userError) {
-            console.warn(`[Sync] Failed to upsert user ${userId}:`, userError.message)
+            console.error(
+              `[Sync] ❌ Failed to upsert user ${userId}:`,
+              userError.message,
+              '| Code:', userError.code,
+              '| Details:', userError.details
+            )
             continue
           }
 
@@ -373,7 +419,12 @@ export class SyncEngine {
           if (edgeError) {
             // Ignore duplicate key errors (already synced)
             if (!edgeError.message.includes('duplicate key')) {
-              console.warn(`[Sync] Failed to insert LIKED edge:`, edgeError.message)
+              console.error(
+                `[Sync] ❌ Failed to insert LIKED edge for user ${userId}:`,
+                edgeError.message,
+                '| Code:', edgeError.code,
+                '| Details:', edgeError.details
+              )
             }
           } else {
             totalReactionsSynced++
@@ -384,7 +435,7 @@ export class SyncEngine {
       }
 
       // Process recasts
-      for (const recast of recasts) {
+      for (const recast of allRecasts) {
         try {
           const userId = recast.user.fid.toString()
 
@@ -401,7 +452,12 @@ export class SyncEngine {
             })
 
           if (userError) {
-            console.warn(`[Sync] Failed to upsert user ${userId}:`, userError.message)
+            console.error(
+              `[Sync] ❌ Failed to upsert user ${userId}:`,
+              userError.message,
+              '| Code:', userError.code,
+              '| Details:', userError.details
+            )
             continue
           }
 
@@ -419,7 +475,12 @@ export class SyncEngine {
           if (edgeError) {
             // Ignore duplicate key errors (already synced)
             if (!edgeError.message.includes('duplicate key')) {
-              console.warn(`[Sync] Failed to insert RECASTED edge:`, edgeError.message)
+              console.error(
+                `[Sync] ❌ Failed to insert RECASTED edge for user ${userId}:`,
+                edgeError.message,
+                '| Code:', edgeError.code,
+                '| Details:', edgeError.details
+              )
             }
           } else {
             totalReactionsSynced++
@@ -432,13 +493,35 @@ export class SyncEngine {
       if (totalReactionsSynced > 0) {
         console.log(
           `[Sync] ✓ Synced ${totalReactionsSynced} reactions for cast ${castHash} ` +
-          `(${likes.length} likes, ${recasts.length} recasts)`
+          `(${allLikes.length} likes, ${allRecasts.length} recasts)`
         )
       }
 
-      // Update tracking table with current counts
-      const currentLikesCount = options?.currentLikesCount || likes.length
-      const currentRecastsCount = options?.currentRecastsCount || recasts.length
+      // Update tracking table with ACTUAL counts in DB, not fetched counts
+      // We need to query the actual count to handle partial insert failures
+      const { count: actualLikesCount } = await this.supabase
+        .from('interaction_edges')
+        .select('*', { count: 'exact', head: true })
+        .eq('cast_id', castHash)
+        .eq('edge_type', 'LIKED')
+
+      const { count: actualRecastsCount } = await this.supabase
+        .from('interaction_edges')
+        .select('*', { count: 'exact', head: true })
+        .eq('cast_id', castHash)
+        .eq('edge_type', 'RECASTED')
+
+      const currentLikesCount = actualLikesCount || 0
+      const currentRecastsCount = actualRecastsCount || 0
+
+      // Log if there's a discrepancy
+      if (allLikes.length !== currentLikesCount || allRecasts.length !== currentRecastsCount) {
+        console.warn(
+          `[Sync] ⚠️ Insert discrepancy for ${castHash}: ` +
+          `Fetched ${allLikes.length} likes but only ${currentLikesCount} in DB (${allLikes.length - currentLikesCount} failed), ` +
+          `Fetched ${allRecasts.length} recasts but only ${currentRecastsCount} in DB (${allRecasts.length - currentRecastsCount} failed)`
+        )
+      }
 
       const { error: trackingError } = await this.supabase
         .from('cast_likes_sync_status')
