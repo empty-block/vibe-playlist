@@ -121,6 +121,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
             onPlayerReady={handlePlayerReady}
             onTogglePlay={handleTogglePlaySetup}
             onSeek={handleSeekSetup}
+            onPlaybackStarted={handlePlaybackStarted}
             onPause={(pauseFn) => setSpotifyPauseFn(() => pauseFn)}
           />
         );
