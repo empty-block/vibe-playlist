@@ -1,7 +1,7 @@
 import { Router, Route } from '@solidjs/router';
 import { Component, Show, JSX, onMount, lazy } from 'solid-js';
 import MediaPlayer from './components/player/MediaPlayer';
-import { currentTrack } from './stores/playerStore';
+import { currentTrack, restorePendingTrack } from './stores/playerStore';
 import { initPlayerLayoutSync } from './utils/playerLayoutSync';
 
 // Lazy load all page components for code splitting
@@ -19,6 +19,26 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
   // Initialize player layout synchronization on mount
   onMount(() => {
     initPlayerLayoutSync();
+
+    // Check if we need to restore pending track after Spotify auth
+    const shouldRestore = sessionStorage.getItem('restore_pending_after_render');
+    if (shouldRestore === 'true') {
+      console.log('App mounted - checking for pending track to restore...');
+      sessionStorage.removeItem('restore_pending_after_render');
+
+      // Wait for next frame to ensure everything is rendered
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          console.log('Attempting to restore pending track after auth...');
+          const restored = restorePendingTrack();
+          if (restored) {
+            console.log('Successfully restored pending track after auth');
+          } else {
+            console.log('No pending track to restore or restoration failed');
+          }
+        }, 500);
+      });
+    }
   });
 
   return (
