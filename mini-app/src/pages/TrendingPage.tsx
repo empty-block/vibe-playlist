@@ -145,13 +145,13 @@ const TrendingPage: Component = () => {
                       <div class="track-artist">{track.artist}</div>
                       {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
                         <div class="track-submitted">
-                          Shared by {(track as any).submittedBy.map((user: any, idx: number) => (
+                          shared by {(track as any).submittedBy.map((user: any, idx: number) => (
                             <>
                               <span
                                 class="submitted-username"
                                 onClick={(e) => handleUsernameClick(user.fid, e)}
                               >
-                                @{user.username}
+                                {user.username}
                               </span>
                               {idx < (track as any).submittedBy.length - 1 && ', '}
                             </>

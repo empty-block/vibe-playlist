@@ -1,7 +1,9 @@
-import { Component, Show } from 'solid-js';
+import { Component, Show, createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
+
+const MAX_TEXT_LENGTH = 200;
 
 interface TrackCardProps {
   author: {
@@ -51,6 +53,7 @@ const formatTimeAgo = (timestamp: string) => {
 
 const TrackCard: Component<TrackCardProps> = (props) => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
@@ -113,9 +116,8 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             </span>
             <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
               <span class="channel-separator">•</span>
-              <span class="channel-info">
-                shared in <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
-              </span>
+              <span class="channel-shared-text">shared in </span>
+              <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
             </Show>
           </div>
         </div>
@@ -146,15 +148,35 @@ const TrackCard: Component<TrackCardProps> = (props) => {
           })}
           title="Open track in player"
         >
-          ↓
+          ▼
         </button>
       </div>
 
       {/* Comment if present */}
       <Show when={props.text && props.text.trim()}>
-        <div class="comment-box">
-          {stripUrls(props.text)}
-        </div>
+        {(() => {
+          const cleanText = stripUrls(props.text!);
+          const isLongText = cleanText.length > MAX_TEXT_LENGTH;
+
+          return (
+            <div class="comment-box">
+              <Show
+                when={isLongText && !isExpanded()}
+                fallback={<>{cleanText}</>}
+              >
+                {cleanText.substring(0, MAX_TEXT_LENGTH)}...
+              </Show>
+              <Show when={isLongText}>
+                <button
+                  class="show-more-btn"
+                  onClick={() => setIsExpanded(!isExpanded())}
+                >
+                  {isExpanded() ? 'Show less' : 'Show more'}
+                </button>
+              </Show>
+            </div>
+          );
+        })()}
       </Show>
 
       {/* Stats row */}
