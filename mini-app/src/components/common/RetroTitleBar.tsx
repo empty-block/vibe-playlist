@@ -1,4 +1,4 @@
-import { Component, JSX, Show } from 'solid-js';
+import { Component, JSX, Show, createSignal, For, onCleanup } from 'solid-js';
 import ThemeToggle from './ThemeToggle';
 import './retro-chrome.css';
 
@@ -20,6 +20,16 @@ export interface RetroTitleBarProps {
 
   /** Show theme toggle button */
   showThemeToggle?: boolean;
+
+  /** Show hamburger menu button */
+  showMenu?: boolean;
+
+  /** Menu items for hamburger dropdown */
+  menuItems?: Array<{
+    label: string;
+    icon?: string;
+    onClick: () => void;
+  }>;
 
   /** Close button click handler */
   onClose?: () => void;
@@ -44,6 +54,9 @@ export interface RetroTitleBarProps {
  * - Fully accessible
  */
 const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
+  const [isMenuOpen, setIsMenuOpen] = createSignal(false);
+  let menuRef: HTMLDivElement | undefined;
+
   const handleMinimize = (e: MouseEvent) => {
     e.stopPropagation();
     props.onMinimize?.();
@@ -59,6 +72,32 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
     props.onClose?.();
   };
 
+  const toggleMenu = (e: MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(!isMenuOpen());
+  };
+
+  const handleMenuItemClick = (onClick: () => void, e: MouseEvent) => {
+    e.stopPropagation();
+    onClick();
+    setIsMenuOpen(false);
+  };
+
+  // Close menu when clicking outside
+  const handleClickOutside = (e: MouseEvent) => {
+    if (menuRef && !menuRef.contains(e.target as Node)) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  // Setup and cleanup click listener
+  if (props.showMenu) {
+    document.addEventListener('click', handleClickOutside);
+    onCleanup(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+  }
+
   return (
     <div class={`retro-titlebar ${props.class || ''}`}>
       <div class="retro-titlebar__text">
@@ -68,10 +107,42 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
         <span class="retro-titlebar__title">{props.title}</span>
       </div>
 
-      <Show when={props.showMinimize || props.showMaximize || props.showClose || props.showThemeToggle}>
+      <Show when={props.showMinimize || props.showMaximize || props.showClose || props.showThemeToggle || props.showMenu}>
         <div class="retro-titlebar__controls">
           <Show when={props.showThemeToggle}>
             <ThemeToggle class="retro-titlebar__theme-toggle" />
+          </Show>
+
+          <Show when={props.showMenu}>
+            <div class="retro-titlebar__menu-container" ref={menuRef}>
+              <button
+                class="retro-titlebar__button retro-titlebar__menu-button"
+                onClick={toggleMenu}
+                aria-label="Menu"
+                aria-expanded={isMenuOpen()}
+                type="button"
+              >
+                ☰
+              </button>
+              <Show when={isMenuOpen() && props.menuItems && props.menuItems.length > 0}>
+                <div class="retro-titlebar__dropdown">
+                  <For each={props.menuItems}>
+                    {(item) => (
+                      <button
+                        class="retro-titlebar__dropdown-item"
+                        onClick={(e) => handleMenuItemClick(item.onClick, e)}
+                        type="button"
+                      >
+                        <Show when={item.icon}>
+                          <span class="retro-titlebar__dropdown-icon">{item.icon}</span>
+                        </Show>
+                        <span>{item.label}</span>
+                      </button>
+                    )}
+                  </For>
+                </div>
+              </Show>
+            </div>
           </Show>
 
           <Show when={props.showMinimize}>

@@ -530,55 +530,79 @@ body:not(.theme-dark) .activity-header {
   overflow: hidden;
 }
 
+/* Username styling */
 .username {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 14px;
-  color: var(--neon-magenta);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   flex-shrink: 1;
 }
 
-.channel-separator {
-  opacity: 0.7;
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-/* Track card channel info - more specific to override channelRow.css */
-.activity-card .channel-info,
-.terminal-track-card .channel-info {
-  font-size: 12px;
-  opacity: 0.9;
-  display: inline !important;
-  white-space: nowrap !important;
-  flex-shrink: 0;
-  flex-direction: initial !important;
-  flex: initial !important;
-}
-
-.activity-card .channel-link,
-.terminal-track-card .channel-link {
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: bold;
-  color: var(--neon-cyan);
-  display: inline !important;
-  white-space: nowrap !important;
-}
-
-.theme-light .channel-link,
-body:not(.theme-dark) .channel-link {
+/* Light mode - white username */
+.theme-light .username,
+body:not(.theme-dark) .username {
   color: rgba(255, 255, 255, 0.95);
 }
 
+/* Dark mode - white username */
+.theme-dark .username {
+  color: #ffffff;
+}
+
+.channel-separator {
+  opacity: 0.7;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin: 0 6px;
+}
+
+/* "shared in" text - smaller and more subtle */
+.channel-shared-text {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.7;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Light mode - dimmed white */
+.theme-light .channel-shared-text,
+body:not(.theme-dark) .channel-shared-text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Dark mode - dimmed white */
+.theme-dark .channel-shared-text {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Channel link styling */
+.activity-card .channel-link,
+.terminal-track-card .channel-link {
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline !important;
+  white-space: nowrap !important;
+  transition: opacity 0.2s ease;
+}
+
+/* Light mode - white channel link */
+.theme-light .channel-link,
+body:not(.theme-dark) .channel-link {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Dark mode - slightly dimmed white */
 .theme-dark .channel-link {
-  color: var(--neon-cyan);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .channel-link:hover {
-  opacity: 0.8;
+  opacity: 0.6;
 }
 
 .timestamp {
@@ -702,7 +726,7 @@ body:not(.theme-dark) .activity-card .track-info .track-artist {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 18px;
   color: #000000;
   font-weight: bold;
   transition: all 0.2s ease;
@@ -751,6 +775,66 @@ body:not(.theme-dark) .comment-box {
   border-top: 1px solid #00ff00;
   border-bottom: 1px solid #00ff00;
   color: #ffffff;
+}
+
+/* Show More Button - Subtle Text Link Style */
+.show-more-btn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'MS Sans Serif', sans-serif;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-top: 6px;
+  display: block;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.show-more-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.show-more-btn:hover::after {
+  opacity: 0.6;
+}
+
+.show-more-btn:active {
+  transform: translateY(1px);
+}
+
+/* Light mode - subtle gray text */
+.theme-light .show-more-btn,
+body:not(.theme-dark) .show-more-btn {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.theme-light .show-more-btn:hover,
+body:not(.theme-dark) .show-more-btn:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Dark mode - subtle cyan text */
+.theme-dark .show-more-btn {
+  color: rgba(4, 202, 244, 0.5);
+}
+
+.theme-dark .show-more-btn:hover {
+  color: rgba(4, 202, 244, 0.8);
+}
+
+.theme-dark .show-more-btn:active {
+  transform: translateY(1px);
 }
 
 /* Stats Row - Inset boxes - Light Mode */
@@ -1040,7 +1124,7 @@ body:not(.theme-dark) .status-bar {
   .open-button {
     width: 44px;
     height: 44px;
-    font-size: 20px;
+    font-size: 16px;
     border-width: 2px;
   }
 
@@ -1129,7 +1213,7 @@ body:not(.theme-dark) .status-bar {
   .open-button {
     width: 40px;
     height: 40px;
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .track-title {

@@ -137,6 +137,70 @@ body:not(.theme-dark) .retro-titlebar {
   box-shadow: 0 0 8px var(--glow-accent);
 }
 
+/* Hamburger Menu Styles */
+.retro-titlebar__menu-container {
+  position: relative;
+}
+
+.retro-titlebar__menu-button {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.retro-titlebar__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg-panel);
+  border-top: 2px solid var(--border-raised-light);
+  border-left: 2px solid var(--border-raised-light);
+  border-right: 2px solid var(--border-raised-dark);
+  border-bottom: 2px solid var(--border-raised-dark);
+  z-index: 1000;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .retro-titlebar__dropdown {
+  background: var(--bg-card);
+  box-shadow: 0 0 15px var(--glow-accent), 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.retro-titlebar__dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  font-family: var(--font-main);
+  font-size: 16px;
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+  min-height: 56px;
+}
+
+.retro-titlebar__dropdown-item:hover {
+  background: var(--hover-bg);
+}
+
+.retro-titlebar__dropdown-item:active {
+  background: var(--active-bg);
+}
+
+.theme-dark .retro-titlebar__dropdown-item:hover {
+  background: var(--hover-bg);
+  box-shadow: inset 0 0 8px var(--glow-accent);
+}
+
+.retro-titlebar__dropdown-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
 /* ============================================
    RETRO PANEL
    ============================================ */

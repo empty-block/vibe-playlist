@@ -1,4 +1,4 @@
-import { Component, createSignal, For, createResource, createMemo, createEffect, onMount } from 'solid-js';
+import { Component, createSignal, For, createResource, createMemo, createEffect, onMount, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
@@ -226,8 +226,32 @@ const HomePage: Component = () => {
   const qualityFilterText = createMemo(() => {
     const minLikes = qualityFilter();
     if (minLikes === 0) return '';
-    return ` • Quality filtered (${minLikes}+ ♥)`;
+    return `Quality filtered (${minLikes}+ ♥)`;
   });
+
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: 'Trending',
+      icon: '⚡',
+      onClick: () => navigate('/trending')
+    },
+    {
+      label: 'Channels',
+      icon: '📻',
+      onClick: () => navigate('/channels')
+    },
+    {
+      label: 'My Profile',
+      icon: '👤',
+      onClick: () => navigate('/profile')
+    },
+    {
+      label: 'Refresh Feed',
+      icon: '🔄',
+      onClick: () => loadFeed(true)
+    }
+  ];
 
   return (
     <div class="home-page">
@@ -256,6 +280,16 @@ const HomePage: Component = () => {
           variant="3d"
           contentPadding="0"
           showThemeToggle={true}
+          showMenu={true}
+          menuItems={menuItems}
+          footer={
+            <div class="status-bar">
+              <span class="status-bar-section">{threads().length} tracks loaded</span>
+              <Show when={qualityFilterText()}>
+                <span class="status-bar-section">{qualityFilterText()}</span>
+              </Show>
+            </div>
+          }
         >
           <div class="channel-view-content">
             {/* Feed Section - includes filter bar so it scrolls with content */}
