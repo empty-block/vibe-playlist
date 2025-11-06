@@ -2,6 +2,7 @@ import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
+import { isSpotifyAuthenticated, initiateSpotifyAuth } from './authStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music';
 
@@ -286,4 +287,64 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
     setIsPlaying(true);
     console.log('Non-YouTube track loaded from feed - autoplaying');
   }
+};
+
+/**
+ * Store pending track context in localStorage (for Spotify auth redirect)
+ */
+export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
+  const pendingData = {
+    track,
+    feedTracks,
+    feedId,
+    timestamp: Date.now()
+  };
+  localStorage.setItem('pending_track_after_auth', JSON.stringify(pendingData));
+  console.log('Stored pending track for post-auth restoration:', track.title);
+};
+
+/**
+ * Restore pending track after Spotify auth (if exists)
+ */
+export const restorePendingTrack = (): boolean => {
+  const pendingData = localStorage.getItem('pending_track_after_auth');
+  if (!pendingData) return false;
+
+  try {
+    const { track, feedTracks, feedId, timestamp } = JSON.parse(pendingData);
+
+    // Clear the stored data
+    localStorage.removeItem('pending_track_after_auth');
+
+    // Check if data is stale (more than 5 minutes old)
+    if (Date.now() - timestamp > 5 * 60 * 1000) {
+      console.log('Pending track data is stale, ignoring');
+      return false;
+    }
+
+    console.log('Restoring pending track after auth:', track.title);
+    playTrackFromFeed(track, feedTracks, feedId);
+    return true;
+  } catch (error) {
+    console.error('Failed to restore pending track:', error);
+    localStorage.removeItem('pending_track_after_auth');
+    return false;
+  }
+};
+
+/**
+ * Play track with Spotify auth check - stores pending track if auth needed
+ * This is the function that UI components should call instead of playTrackFromFeed directly
+ */
+export const playTrackWithAuthCheck = (track: Track, feedTracks: Track[], feedId: string) => {
+  // If it's a Spotify track and user is not authenticated, store for later and start auth
+  if (track.source === 'spotify' && !isSpotifyAuthenticated()) {
+    console.log('Spotify track requires auth - storing for post-auth restoration');
+    storePendingTrack(track, feedTracks, feedId);
+    initiateSpotifyAuth();
+    return;
+  }
+
+  // Otherwise play normally
+  playTrackFromFeed(track, feedTracks, feedId);
 };

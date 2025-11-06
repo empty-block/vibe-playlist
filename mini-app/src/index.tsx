@@ -4,6 +4,7 @@ import App from './App';
 import './styles/theme.css';
 import './styles/window-layout.css';
 import { handleSpotifyCallback, initializeAuth } from './stores/authStore';
+import { restorePendingTrack } from './stores/playerStore';
 
 // Initialize Farcaster SDK and render app
 // The ready() call must happen before render to hide splash screen
@@ -39,6 +40,11 @@ if (spotifyCode) {
       if (success) {
         console.log('Spotify authentication successful!');
         window.history.replaceState({}, document.title, window.location.pathname);
+
+        // Restore pending track if one was stored before auth
+        setTimeout(() => {
+          restorePendingTrack();
+        }, 100);
       } else {
         console.error('Spotify authentication failed');
       }
@@ -76,6 +82,11 @@ window.addEventListener('message', (event) => {
     handleSpotifyCallback(data.code).then((success) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
+
+        // Restore pending track if one was stored before auth
+        setTimeout(() => {
+          restorePendingTrack();
+        }, 100);
       } else {
         console.error('Spotify authentication failed');
       }
