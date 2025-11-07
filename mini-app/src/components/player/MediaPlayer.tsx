@@ -6,6 +6,7 @@ import SpotifyMedia from './SpotifyMedia';
 import SoundCloudMedia from './SoundCloudMedia';
 import SonglinkMedia from './SonglinkMedia';
 import AppleMusicMedia from './AppleMusicMedia';
+import sdk from '@farcaster/miniapp-sdk';
 
 interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
@@ -166,13 +167,12 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         const tortoiseUrl = track.url || `https://tortoise.studio/song/${track.sourceId}`;
 
         return (
-          <a
-            href={tortoiseUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30 no-underline"
+          <div
+            class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
             onClick={() => {
-              console.log('[Tortoise Player] Opening URL:', tortoiseUrl);
+              console.log('[Tortoise Player] Navigating to:', tortoiseUrl);
+              // Force full page navigation to bypass Farcaster's frame detection
+              window.location.href = tortoiseUrl;
             }}
           >
             {/* Large background logo */}
@@ -191,7 +191,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
                 Open in Tortoise
               </div>
             </div>
-          </a>
+          </div>
         );
       default:
         // Fallback for unknown sources
