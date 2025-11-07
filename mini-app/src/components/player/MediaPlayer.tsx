@@ -157,16 +157,17 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         return (
           <div class="bg-gray-800 rounded flex flex-col items-center justify-center w-48 h-44 sm:w-72 sm:h-52 p-4">
             <div class="text-gray-300 text-center">
-              <div class="text-5xl mb-3">🐢</div>
-              <div class="text-xl mb-4">Tortoise</div>
-              <a
-                href={track.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+              <img
+                src="/tortoise-logo.avif"
+                alt="Tortoise"
+                class="w-20 h-20 mb-4 mx-auto object-contain"
+              />
+              <button
+                onClick={() => window.open(track.sourceUrl, '_blank')}
+                class="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors cursor-pointer border-none"
               >
                 Open in Tortoise
-              </a>
+              </button>
             </div>
           </div>
         );
