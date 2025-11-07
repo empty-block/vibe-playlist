@@ -137,7 +137,40 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
   };
 
-  const playSpotifyTrack = async (trackId: string) => {
+  // Helper to extract Spotify ID and content type from URL, URI, or plain ID
+  const extractSpotifyInfo = (sourceId: string, contentType?: 'track' | 'album' | 'playlist'): { id: string; type: 'track' | 'album' | 'playlist' } | null => {
+    if (!sourceId) return null;
+
+    // Extract from URL (https://open.spotify.com/{type}/ID)
+    const urlMatch = sourceId.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (urlMatch) {
+      return {
+        id: urlMatch[2],
+        type: urlMatch[1] as 'track' | 'album' | 'playlist'
+      };
+    }
+
+    // Extract from URI (spotify:{type}:ID)
+    const uriMatch = sourceId.match(/spotify:(track|album|playlist):([a-zA-Z0-9]+)/);
+    if (uriMatch) {
+      return {
+        id: uriMatch[2],
+        type: uriMatch[1] as 'track' | 'album' | 'playlist'
+      };
+    }
+
+    // Plain ID - use contentType from track metadata or default to 'track'
+    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
+      return {
+        id: sourceId,
+        type: contentType || 'track'
+      };
+    }
+
+    return null;
+  };
+
+  const playSpotifyTrack = async (sourceId: string, contentType?: 'track' | 'album' | 'playlist') => {
     const token = spotifyAccessToken();
     const device = deviceId();
 
@@ -146,11 +179,25 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    try {
-      console.log('Starting Spotify playback via Web API:', trackId);
+    // Extract Spotify ID and content type
+    const spotifyInfo = extractSpotifyInfo(sourceId, contentType);
+    if (!spotifyInfo) {
+      console.error('Could not extract Spotify info from:', sourceId);
+      return;
+    }
 
-      // Extract clean track ID from various formats
-      const cleanTrackId = trackId.replace(/^spotify:track:/, '').split('?')[0];
+    try {
+      console.log(`Starting Spotify ${spotifyInfo.type} playback via Web API:`, spotifyInfo.id);
+
+      // Build proper request body based on content type
+      const contextUri = `spotify:${spotifyInfo.type}:${spotifyInfo.id}`;
+      const body = spotifyInfo.type === 'track'
+        ? {
+            uris: [contextUri], // Single track uses uris array
+          }
+        : {
+            context_uri: contextUri, // Albums/playlists use context_uri
+          };
 
       const response = await fetch(`${SPOTIFY_CONFIG.API_BASE_URL}/me/player/play?device_id=${device}`, {
         method: 'PUT',
@@ -158,9 +205,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          uris: [`spotify:track:${cleanTrackId}`],
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -172,7 +217,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           console.log('Device not active, attempting to activate...');
           await activateDevice();
           // Retry playback after activation
-          setTimeout(() => playSpotifyTrack(trackId), 1000);
+          setTimeout(() => playSpotifyTrack(sourceId, contentType), 1000);
         }
       } else {
         console.log('Successfully started Spotify playback');
@@ -225,8 +270,8 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     // Load and play new Spotify track
     if (track && track.source === 'spotify' && track.sourceId && playerReady() && deviceId()) {
-      console.log('Loading Spotify track:', track.title, track.sourceId);
-      playSpotifyTrack(track.sourceId);
+      console.log('Loading Spotify content:', track.title, track.sourceId);
+      playSpotifyTrack(track.sourceId, track.contentType);
     }
   });
 

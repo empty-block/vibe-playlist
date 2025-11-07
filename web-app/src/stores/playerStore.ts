@@ -36,6 +36,8 @@ export interface Track {
   // Filter-specific flags for ProfilePage
   isLiked?: boolean;
   isConversation?: boolean;
+  // Content type for Spotify/SoundCloud collections (albums, playlists, sets)
+  contentType?: 'track' | 'album' | 'playlist';
 }
 
 export interface Playlist {
