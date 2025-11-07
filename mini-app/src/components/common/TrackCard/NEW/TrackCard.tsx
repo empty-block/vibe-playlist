@@ -127,7 +127,6 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             </span>
             <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
               <span class="channel-separator">•</span>
-              <span class="channel-shared-text">shared in </span>
               <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
             </Show>
           </div>

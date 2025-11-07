@@ -558,11 +558,11 @@ body:not(.theme-dark) .username {
   margin: 0 6px;
 }
 
-/* "shared in" text - smaller and more subtle */
+/* "in" text - smaller and more subtle */
 .channel-shared-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
-  opacity: 0.7;
+  opacity: 0.6;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -587,6 +587,9 @@ body:not(.theme-dark) .channel-shared-text {
   font-size: 14px;
   display: inline !important;
   white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
   transition: opacity 0.2s ease;
 }
 
@@ -1154,6 +1157,11 @@ body:not(.theme-dark) .status-bar {
     font-size: 11px;
   }
 
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 90px;
+  }
+
   .comment-box {
     padding: 6px 8px;
     font-size: 11px;
@@ -1239,6 +1247,15 @@ body:not(.theme-dark) .status-bar {
   }
 
   .channel-info {
+    font-size: 10px;
+  }
+
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 70px;
+  }
+
+  .channel-shared-text {
     font-size: 10px;
   }
 }

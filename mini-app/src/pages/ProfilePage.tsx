@@ -287,7 +287,12 @@ const ProfilePage: Component = () => {
       <div class="page-window-container">
         <RetroWindow
           title={windowTitle()}
-          icon={<div class="title-icon">👤</div>}
+          icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20 C4 16 7.58 13 12 13 C16.42 13 20 16 20 20 L20 22 L4 22 Z" />
+            </svg>
+          }
           variant="3d"
           showMinimize={true}
           showMaximize={true}

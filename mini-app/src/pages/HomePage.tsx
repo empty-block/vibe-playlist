@@ -259,22 +259,8 @@ const HomePage: Component = () => {
         <RetroWindow
           title="Home Feed"
           icon={
-            <svg width="16" height="16" viewBox="0 0 28 28" fill="none" style="image-rendering: pixelated;">
-              <path
-                d="M4 12L14 3L24 12V23C24 23.5523 23.5523 24 23 24H5C4.44772 24 4 23.5523 4 23V12Z"
-                stroke="currentColor"
-                stroke-width="2"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10 24V15H18V24"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              <path d="M12 2 L2 11 L4 11 L4 22 L10 22 L10 16 L14 16 L14 22 L20 22 L20 11 L22 11 Z" />
             </svg>
           }
           variant="3d"

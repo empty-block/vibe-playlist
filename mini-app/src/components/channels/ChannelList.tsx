@@ -28,7 +28,11 @@ const ChannelList: Component<ChannelListProps> = (props) => {
   return (
     <RetroWindow
       title="Music Channels"
-      icon={<div class="title-icon"></div>}
+      icon={
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+          <path d="M3 5 L3 3 L10 3 L11 5 L21 5 L21 19 L3 19 Z" />
+        </svg>
+      }
       variant="3d"
       showMinimize={true}
       showMaximize={true}
