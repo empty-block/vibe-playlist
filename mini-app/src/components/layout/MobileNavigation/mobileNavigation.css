@@ -117,7 +117,8 @@
     padding-left: 2px;
     padding-right: 2px;
     /* Push button content up above home indicator on mobile */
-    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+    /* Use max() to ensure at least 24px padding-bottom even if env() fails */
+    padding-bottom: max(24px, calc(4px + env(safe-area-inset-bottom, 0px)));
     gap: 2px;
   }
 
