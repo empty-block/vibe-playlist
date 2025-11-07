@@ -166,11 +166,13 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         const tortoiseUrl = track.url || `https://tortoise.studio/song/${track.sourceId}`;
 
         return (
-          <div
-            class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
+          <a
+            href={tortoiseUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30 no-underline"
             onClick={() => {
               console.log('[Tortoise Player] Opening URL:', tortoiseUrl);
-              window.open(tortoiseUrl, '_blank', 'noopener,noreferrer');
             }}
           >
             {/* Large background logo */}
@@ -189,7 +191,7 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
                 Open in Tortoise
               </div>
             </div>
-          </div>
+          </a>
         );
       default:
         // Fallback for unknown sources
