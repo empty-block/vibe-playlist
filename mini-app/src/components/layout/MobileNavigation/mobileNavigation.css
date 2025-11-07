@@ -28,7 +28,9 @@
   border-left: 2px solid var(--border-raised-light);
   border-right: 2px solid var(--border-raised-dark);
   /* Remove bottom border on all buttons for cleaner mobile appearance */
-  padding: 6px 4px;
+  padding-top: 6px;
+  padding-left: 4px;
+  padding-right: 4px;
   /* Push button content up above home indicator */
   padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   display: flex;
@@ -111,7 +113,9 @@
   }
 
   .nav-button {
-    padding: 4px 2px;
+    padding-top: 4px;
+    padding-left: 2px;
+    padding-right: 2px;
     /* Push button content up above home indicator on mobile */
     padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
     gap: 2px;
