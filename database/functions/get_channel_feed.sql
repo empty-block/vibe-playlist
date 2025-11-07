@@ -86,7 +86,8 @@ BEGIN
           'platformId', ml.platform_id,
           'url', ml.url,
           -- Use OpenGraph image for thumbnail
-          'thumbnail', ml.og_image_url
+          'thumbnail', ml.og_image_url,
+          'musicType', ml.music_type
         )
         ORDER BY cme.embed_index NULLS LAST
       ) as music_data
