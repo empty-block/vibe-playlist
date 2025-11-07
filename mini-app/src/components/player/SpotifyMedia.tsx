@@ -103,7 +103,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       if (activeDevice) {
         // Device already active - just play the track
-        const success = await playTrackOnConnect(track.sourceId);
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           setDeviceName(activeDevice.name);
           setIsPlaying(true);
@@ -189,7 +189,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     if (activeDevice) {
       console.log('Found active device:', activeDevice.name);
-      const success = await playTrackOnConnect(track.sourceId);
+      const success = await playTrackOnConnect(track.sourceId, track.contentType);
       if (success) {
         setDeviceName(activeDevice.name);
         setIsPlaying(true);
@@ -498,9 +498,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   };
 
   // Play track using Spotify Connect (Farcaster only)
-  const playTrackConnect = async (trackId: string) => {
+  const playTrackConnect = async (trackId: string, contentType?: 'track' | 'album' | 'playlist') => {
     console.log('Playing track via Spotify Connect:', trackId);
-    const success = await playTrackOnConnect(trackId);
+    const success = await playTrackOnConnect(trackId, contentType);
     if (success) {
       console.log('Track started on Spotify Connect - starting polling');
       setConnectReady(true);
@@ -551,7 +551,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       // Use untrack to avoid re-triggering on isPlaying changes
       untrack(async () => {
-        const success = await playTrackOnConnect(track.sourceId);
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           console.log('Track started on Spotify Connect - starting polling');
           setConnectReady(true);
