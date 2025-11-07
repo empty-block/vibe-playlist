@@ -5,6 +5,7 @@ import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
 import {
   profileUser,
@@ -282,6 +283,28 @@ const ProfilePage: Component = () => {
     return `${u.displayName || 'Loading...'} (@${u.username || '...'})`;
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Refresh Profile',
+      icon: '🔄',
+      onClick: () => {
+        const fid = params.fid || currentUser()?.fid.toString();
+        if (fid) loadUserProfile(fid);
+      }
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
+
   return (
     <div class="profile-page">
       <div class="page-window-container">
@@ -294,13 +317,8 @@ const ProfilePage: Component = () => {
             </svg>
           }
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-          showThemeToggle={true}
-          onClose={() => navigate('/trending')}
-          onMinimize={() => setWindowMinimized(!windowMinimized())}
-          onMaximize={() => setWindowMaximized(!windowMaximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
           footer={
             <div class="status-bar">

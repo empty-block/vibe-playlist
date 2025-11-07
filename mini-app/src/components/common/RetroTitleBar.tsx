@@ -1,5 +1,4 @@
 import { Component, JSX, Show, createSignal, For, onCleanup } from 'solid-js';
-import ThemeToggle from './ThemeToggle';
 import './retro-chrome.css';
 
 export interface RetroTitleBarProps {
@@ -18,16 +17,13 @@ export interface RetroTitleBarProps {
   /** Show close button */
   showClose?: boolean;
 
-  /** Show theme toggle button */
-  showThemeToggle?: boolean;
-
   /** Show hamburger menu button */
   showMenu?: boolean;
 
   /** Menu items for hamburger dropdown */
   menuItems?: Array<{
-    label: string;
-    icon?: string;
+    label: string | (() => string);
+    icon?: string | (() => string);
     onClick: () => void;
   }>;
 
@@ -107,12 +103,8 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
         <span class="retro-titlebar__title">{props.title}</span>
       </div>
 
-      <Show when={props.showMinimize || props.showMaximize || props.showClose || props.showThemeToggle || props.showMenu}>
+      <Show when={props.showMinimize || props.showMaximize || props.showClose || props.showMenu}>
         <div class="retro-titlebar__controls">
-          <Show when={props.showThemeToggle}>
-            <ThemeToggle class="retro-titlebar__theme-toggle" />
-          </Show>
-
           <Show when={props.showMenu}>
             <div class="retro-titlebar__menu-container" ref={menuRef}>
               <button
@@ -134,9 +126,11 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
                         type="button"
                       >
                         <Show when={item.icon}>
-                          <span class="retro-titlebar__dropdown-icon">{item.icon}</span>
+                          <span class="retro-titlebar__dropdown-icon">
+                            {typeof item.icon === 'function' ? item.icon() : item.icon}
+                          </span>
                         </Show>
-                        <span>{item.label}</span>
+                        <span>{typeof item.label === 'function' ? item.label() : item.label}</span>
                       </button>
                     )}
                   </For>

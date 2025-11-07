@@ -4,6 +4,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import RetroWindow from '../components/common/RetroWindow';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
 import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { formatRelativeTime } from '../utils/time';
 import './trendingPage.css';
 
@@ -82,6 +83,25 @@ const TrendingPage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Refresh Trending',
+      icon: '🔄',
+      onClick: () => loadTrendingData()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
+
   return (
     <div class="trending-page">
       <div class="page-window-container">
@@ -95,11 +115,8 @@ const TrendingPage: Component = () => {
             </svg>
           }
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showThemeToggle={true}
-          onMinimize={() => setWindow1Minimized(!window1Minimized())}
-          onMaximize={() => setWindow1Maximized(!window1Maximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
           footer={
             <div class="status-bar">

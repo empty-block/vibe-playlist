@@ -5,6 +5,7 @@ import AddTrackModal from '../components/library/AddTrackModal';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
@@ -272,6 +273,24 @@ const ChannelViewPage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Refresh Channel',
+      icon: '🔄',
+      onClick: () => loadFeed(true)
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
 
   return (
     <div class="channel-view-page">
@@ -280,13 +299,8 @@ const ChannelViewPage: Component = () => {
           title={`${channelData()?.name || 'Channel'} - Channel Library`}
           icon={<span class="title-icon">📁</span>}
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-          showThemeToggle={true}
-          onClose={handleClose}
-          onMinimize={() => setWindowMinimized(!windowMinimized())}
-          onMaximize={() => setWindowMaximized(!windowMaximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
         >
           <div class="content">
