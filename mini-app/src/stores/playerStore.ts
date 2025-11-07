@@ -4,7 +4,7 @@ import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmission
 import { isInFarcasterSync } from './farcasterStore';
 import { isSpotifyAuthenticated, initiateSpotifyAuth } from './authStore';
 
-export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music';
+export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music' | 'tortoise';
 
 export interface Reply {
   id: string;

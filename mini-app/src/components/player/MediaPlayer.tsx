@@ -155,20 +155,39 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
           />
         );
       case 'tortoise':
+        // Debug: log track data
+        console.log('[Tortoise Player] Track data:', {
+          url: track.url,
+          sourceId: track.sourceId,
+          title: track.title
+        });
+
+        // Construct Tortoise URL from sourceId if url is missing
+        const tortoiseUrl = track.url || `https://tortoise.studio/song/${track.sourceId}`;
+
         return (
-          <div class="bg-gray-800 rounded flex flex-col items-center justify-center w-48 h-44 sm:w-72 sm:h-52 p-4">
-            <div class="text-gray-300 text-center">
-              <img
-                src="/tortoise-logo.avif"
-                alt="Tortoise"
-                class="w-20 h-20 mb-4 mx-auto object-contain"
-              />
-              <button
-                onClick={() => window.open(track.sourceUrl, '_blank')}
-                class="inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors cursor-pointer border-none"
-              >
+          <div
+            class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
+            onClick={() => {
+              console.log('[Tortoise Player] Opening URL:', tortoiseUrl);
+              window.open(tortoiseUrl, '_blank', 'noopener,noreferrer');
+            }}
+          >
+            {/* Large background logo */}
+            <img
+              src="/tortoise-logo.avif"
+              alt="Tortoise"
+              class="absolute inset-0 w-full h-full object-contain p-8 opacity-90 group-hover:opacity-100 transition-opacity duration-200"
+            />
+
+            {/* Overlay gradient for text readability - very light to keep logo bright */}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+
+            {/* Call-to-action text overlay */}
+            <div class="relative z-10 flex flex-col items-center justify-end h-full pb-6 sm:pb-8 text-center px-4">
+              <div class="text-white font-bold text-base sm:text-lg drop-shadow-lg">
                 Open in Tortoise
-              </button>
+              </div>
             </div>
           </div>
         );
