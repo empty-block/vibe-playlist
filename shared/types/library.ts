@@ -44,7 +44,8 @@ export interface Track {
   sourceUrl: string       // Full URL from embeds_metadata
   thumbnailUrl?: string
   duration?: number
-  
+  contentType?: 'track' | 'album' | 'playlist' // Type of content (for Spotify albums/playlists, SoundCloud sets)
+
   // Social context
   user: {
     username: string

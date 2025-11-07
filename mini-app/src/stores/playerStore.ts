@@ -42,6 +42,8 @@ export interface Track {
   originalSource?: TrackSource;
   url?: string; // Original URL for resolution
   castHash?: string; // Farcaster cast hash for opening in Farcaster client
+  // Content type for Spotify/SoundCloud collections (albums, playlists, sets)
+  contentType?: 'track' | 'album' | 'playlist';
 }
 
 export interface Playlist {

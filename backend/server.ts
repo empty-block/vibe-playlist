@@ -205,6 +205,14 @@ if (isLocalDev) {
   console.log('')
 
   // =====================================================
+  // Start Local Development Server
+  // =====================================================
+  Bun.serve({
+    port,
+    fetch: app.fetch,
+  })
+
+  // =====================================================
   // AI Worker - Runs ONLY on Cloudflare Workers (via scheduled() handler)
   // Local dev server is HTTP-only - no background processing
   // Use POST /api/music-ai/process endpoint for manual testing
