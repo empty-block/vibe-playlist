@@ -197,7 +197,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         </div>
         <div class="music-source">
           via {(() => {
-            const platform = props.track.platform.toLowerCase();
+            const platform = (props.track.platform || 'unknown').toLowerCase();
             if (platform === 'youtube' || platform === 'youtube_music') return 'YouTube';
             if (platform === 'spotify') return 'Spotify';
             if (platform === 'soundcloud') return 'SoundCloud';
