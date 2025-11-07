@@ -4,8 +4,8 @@
   "description": "Jamzy Backend API",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch server.ts",
-    "start": "bun run server.ts",
+    "dev": "bun run --watch --env-file=../.env server.ts",
+    "start": "bun run --env-file=../.env server.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

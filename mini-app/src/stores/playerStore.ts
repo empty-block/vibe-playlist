@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
 
-export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music';
+export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music' | 'tortoise';
 
 export interface Reply {
   id: string;
