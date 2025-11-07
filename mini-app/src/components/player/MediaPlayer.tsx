@@ -169,8 +169,9 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
           <div
             class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
             onClick={() => {
-              console.log('[Tortoise Player] Opening URL via Farcaster SDK:', tortoiseUrl);
-              sdk.actions.openUrl(tortoiseUrl);
+              console.log('[Tortoise Player] Navigating to:', tortoiseUrl);
+              // Force full page navigation to bypass Farcaster's frame detection
+              window.location.href = tortoiseUrl;
             }}
           >
             {/* Large background logo */}
