@@ -28,7 +28,7 @@ export interface SpotifyPlaybackState {
 /**
  * Helper to extract Spotify ID and content type from URL, URI, or plain ID
  */
-const extractSpotifyInfo = (sourceId: string): { id: string; type: 'track' | 'album' | 'playlist' } | null => {
+const extractSpotifyInfo = (sourceId: string, contentType?: 'track' | 'album' | 'playlist'): { id: string; type: 'track' | 'album' | 'playlist' } | null => {
   if (!sourceId) return null;
 
   // Extract from URL (https://open.spotify.com/{type}/ID)
@@ -49,11 +49,11 @@ const extractSpotifyInfo = (sourceId: string): { id: string; type: 'track' | 'al
     };
   }
 
-  // Plain ID - default to track for backward compatibility
+  // Plain ID - use contentType from track metadata or default to 'track'
   if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
     return {
       id: sourceId,
-      type: 'track'
+      type: contentType || 'track'
     };
   }
 
@@ -63,7 +63,7 @@ const extractSpotifyInfo = (sourceId: string): { id: string; type: 'track' | 'al
 /**
  * Start playback of a track/album/playlist on the user's active Spotify device
  */
-export const playTrackOnConnect = async (sourceId: string): Promise<boolean> => {
+export const playTrackOnConnect = async (sourceId: string, contentType?: 'track' | 'album' | 'playlist'): Promise<boolean> => {
   const token = spotifyAccessToken();
   console.log('playTrackOnConnect - token check:', token ? `has token (${token.substring(0, 20)}...)` : 'NO TOKEN!');
 
@@ -74,7 +74,7 @@ export const playTrackOnConnect = async (sourceId: string): Promise<boolean> => 
   }
 
   // Extract Spotify ID and content type
-  const spotifyInfo = extractSpotifyInfo(sourceId);
+  const spotifyInfo = extractSpotifyInfo(sourceId, contentType);
   if (!spotifyInfo) {
     console.error('Could not extract Spotify info from:', sourceId);
     return false;
