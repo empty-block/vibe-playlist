@@ -25,16 +25,13 @@ export interface RetroWindowProps {
   /** Show close button in title bar */
   showClose?: boolean;
 
-  /** Show theme toggle button in title bar */
-  showThemeToggle?: boolean;
-
   /** Show hamburger menu button in title bar */
   showMenu?: boolean;
 
   /** Menu items for hamburger dropdown */
   menuItems?: Array<{
-    label: string;
-    icon?: string;
+    label: string | (() => string);
+    icon?: string | (() => string);
     onClick: () => void;
   }>;
 
@@ -93,7 +90,6 @@ const RetroWindow: Component<RetroWindowProps> = (props) => {
     showMinimize: props.showMinimize,
     showMaximize: props.showMaximize,
     showClose: props.showClose,
-    showThemeToggle: props.showThemeToggle,
     showMenu: props.showMenu,
     menuItems: props.menuItems,
     onClose: props.onClose,

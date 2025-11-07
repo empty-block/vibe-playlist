@@ -1,6 +1,7 @@
 import { Component, For, createSignal } from 'solid-js';
 import ChannelRow, { ChannelRowProps } from './ChannelRow';
 import RetroWindow from '../common/RetroWindow';
+import { theme, toggleTheme } from '../../stores/themeStore';
 import './channelList.css';
 
 export interface ChannelListProps {
@@ -25,6 +26,20 @@ const ChannelList: Component<ChannelListProps> = (props) => {
     );
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
+
   return (
     <RetroWindow
       title="Music Channels"
@@ -34,13 +49,8 @@ const ChannelList: Component<ChannelListProps> = (props) => {
         </svg>
       }
       variant="3d"
-      showMinimize={true}
-      showMaximize={true}
-      showClose={true}
-      showThemeToggle={true}
-      onClose={props.onClose}
-      onMinimize={props.onMinimize}
-      onMaximize={props.onMaximize}
+      showMenu={true}
+      menuItems={menuItems}
       contentPadding="0"
       footer={
         <div class="search-section">

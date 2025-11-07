@@ -5,6 +5,7 @@ import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import { Track, playTrackFromFeed } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { fetchHomeFeed } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
@@ -232,24 +233,19 @@ const HomePage: Component = () => {
   // Menu items for hamburger dropdown
   const menuItems = [
     {
-      label: 'Trending',
-      icon: '⚡',
-      onClick: () => navigate('/trending')
-    },
-    {
-      label: 'Channels',
-      icon: '📻',
-      onClick: () => navigate('/channels')
-    },
-    {
-      label: 'My Profile',
-      icon: '👤',
-      onClick: () => navigate('/profile')
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
     },
     {
       label: 'Refresh Feed',
       icon: '🔄',
       onClick: () => loadFeed(true)
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
     }
   ];
 
@@ -265,7 +261,6 @@ const HomePage: Component = () => {
           }
           variant="3d"
           contentPadding="0"
-          showThemeToggle={true}
           showMenu={true}
           menuItems={menuItems}
           footer={
