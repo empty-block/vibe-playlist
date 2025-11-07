@@ -199,6 +199,9 @@ body:not(.theme-dark) .home-page {
   color: var(--neon-cyan);
   display: inline !important;
   white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .theme-light .channel-link,
@@ -339,6 +342,11 @@ body:not(.theme-dark) .channel-link {
   .status-bar-section {
     gap: 3px;
   }
+
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 90px;
+  }
 }
 
 /* Ultra-mobile (very small phones) */
@@ -362,5 +370,14 @@ body:not(.theme-dark) .channel-link {
 
   .status-bar {
     gap: 6px;
+  }
+
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 70px;
+  }
+
+  .channel-shared-text {
+    font-size: 10px;
   }
 }
