@@ -78,7 +78,8 @@ BEGIN
           'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
-          'thumbnail', ml.og_image_url
+          'thumbnail', ml.og_image_url,
+          'musicType', ml.music_type
         )
         ORDER BY cme.embed_index NULLS LAST
       ) as music_data
