@@ -8,13 +8,18 @@
   border-top: 2px solid var(--border-raised-light);
   border-left: 2px solid var(--border-raised-light);
   border-right: 2px solid var(--border-raised-dark);
-  border-bottom: 2px solid var(--border-raised-dark);
+  /* Remove bottom border to avoid conflict with rounded screen edges */
+  border-radius: 2px 2px 0 0;
+  /* Extend background into safe area while pushing content up */
   padding: 4px;
+  padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
   margin: 0;
   display: flex;
   gap: 2px;
   z-index: 1000;
   font-family: var(--font-main);
+  /* Add inner shadow for depth instead of bottom border */
+  box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .nav-button {
@@ -24,11 +29,11 @@
   border-left: 2px solid var(--border-raised-light);
   border-right: 2px solid var(--border-raised-dark);
   border-bottom: 2px solid var(--border-raised-dark);
-  padding: 8px 4px;
+  padding: 6px 4px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
   user-select: none;
   text-decoration: none;
@@ -62,11 +67,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--text-primary);
 }
 
-/* Update SVG strokes for dark mode */
-.theme-dark .nav-icon svg {
-  filter: drop-shadow(0 0 2px rgba(0, 255, 0, 0.3));
+/* Active state uses berry red accent */
+.nav-button--active .nav-icon {
+  color: #E73895;
 }
 
 .nav-label {
@@ -77,8 +83,9 @@
   letter-spacing: 0.5px;
 }
 
-.theme-dark .nav-label {
-  text-shadow: 0 0 3px var(--glow-accent);
+/* Active state for label also uses berry red */
+.nav-button--active .nav-label {
+  color: #E73895;
 }
 
 /* Safe area for mobile devices */
@@ -90,12 +97,13 @@
 @media (max-width: 640px) {
   .nav-bar {
     padding: 3px;
+    padding-bottom: calc(3px + env(safe-area-inset-bottom, 0px));
     gap: 1px;
   }
 
   .nav-button {
-    padding: 6px 2px;
-    gap: 3px;
+    padding: 4px 2px;
+    gap: 2px;
   }
 
   .nav-icon {

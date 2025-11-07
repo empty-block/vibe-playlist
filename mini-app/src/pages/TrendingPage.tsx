@@ -88,7 +88,12 @@ const TrendingPage: Component = () => {
         {/* Trending Tracks Window */}
         <RetroWindow
           title="Trending Tracks - Last 24 Hours"
-          icon={<div class="title-icon">⚡</div>}
+          icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              {/* Lightning bolt - classic zigzag shape */}
+              <path d="M14 2 L6 13 L11 13 L10 22 L18 11 L13 11 Z" />
+            </svg>
+          }
           variant="3d"
           showMinimize={true}
           showMaximize={true}
