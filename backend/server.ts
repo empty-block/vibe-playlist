@@ -245,20 +245,43 @@ export default {
         console.error('[Cron] Channel sync errors:', syncResult.errors)
       }
 
-      // OPTIMIZED TIERED LIKES SYNC (TASK-718)
-      // New approach with delta fetching and tiered time windows:
-      // - Tier 1 (recent, 48hr): Hourly - ~132K CU/month
-      // - Tier 2 (medium, 7day): Daily at 2am - ~14K CU/month
-      // - Tier 3 (old, >7day): Weekly on Sunday at 3am - ~11K CU/month
-      // Total: ~157K CU/month (1.57% of 10M budget)
+      // OPTIMIZED 5-TIER LIKES SYNC (TASK-718)
+      // Enhanced approach with delta fetching and 5 tiered time windows:
+      // - Tier 0 (ultra-recent, 0-12hr): Every 15min - ~265K CU/month
+      // - Tier 1 (recent, 12-24hr): Every 30min - ~115K CU/month
+      // - Tier 2 (medium-recent, 24-48hr): Hourly - ~53K CU/month
+      // - Tier 3 (medium, 48hr-7day): Daily at 2am - ~16K CU/month
+      // - Tier 4 (old, >7day): Weekly on Sunday at 3am - ~11K CU/month
+      // Total: ~460K CU/month (4.6% of 10M budget)
 
       const now = new Date()
       const currentHour = now.getHours()
       const currentMinute = now.getMinutes()
       const dayOfWeek = now.getDay() // 0 = Sunday, 6 = Saturday
 
-      // Tier 1: Recent casts (last 48 hours) - run every hour
-      if (currentMinute === 0) {
+      // Tier 0: Ultra-recent casts (0-12 hours) - run every 15 minutes
+      if (currentMinute % 15 === 0) {
+        console.log('[Cron] Starting Tier 0 (ultra-recent) likes sync...')
+        try {
+          const { syncReactionsForTier } = await import('./lib/likes-sync-worker')
+          const tier0Result = await syncReactionsForTier('ultra-recent')
+
+          console.log(
+            `[Cron] Tier 0 Likes Sync: ${tier0Result.castsChecked} casts checked, ` +
+            `${tier0Result.castsChanged} changed, ${tier0Result.reactionsAdded} reactions added, ` +
+            `${tier0Result.apiCalls} API calls, ${tier0Result.duration}ms`
+          )
+
+          if (tier0Result.errors.length > 0) {
+            console.error('[Cron] Tier 0 sync errors:', tier0Result.errors)
+          }
+        } catch (error: any) {
+          console.error('[CRON] TIER 0 LIKES SYNC FAILED:', error.message, error.stack)
+        }
+      }
+
+      // Tier 1: Recent casts (12-24 hours) - run every 30 minutes
+      if (currentMinute % 30 === 0) {
         console.log('[Cron] Starting Tier 1 (recent) likes sync...')
         try {
           const { syncReactionsForTier } = await import('./lib/likes-sync-worker')
@@ -278,12 +301,12 @@ export default {
         }
       }
 
-      // Tier 2: Medium casts (48hr - 7 days) - run daily at 2am
-      if (currentHour === 2 && currentMinute === 0) {
-        console.log('[Cron] Starting Tier 2 (medium) likes sync...')
+      // Tier 2: Medium-recent casts (24-48 hours) - run hourly
+      if (currentMinute === 0) {
+        console.log('[Cron] Starting Tier 2 (medium-recent) likes sync...')
         try {
           const { syncReactionsForTier } = await import('./lib/likes-sync-worker')
-          const tier2Result = await syncReactionsForTier('medium')
+          const tier2Result = await syncReactionsForTier('medium-recent')
 
           console.log(
             `[Cron] Tier 2 Likes Sync: ${tier2Result.castsChecked} casts checked, ` +
@@ -299,12 +322,12 @@ export default {
         }
       }
 
-      // Tier 3: Old casts (older than 7 days) - run weekly on Sunday at 3am
-      if (dayOfWeek === 0 && currentHour === 3 && currentMinute === 0) {
-        console.log('[Cron] Starting Tier 3 (old) likes sync...')
+      // Tier 3: Medium casts (48hr - 7 days) - run daily at 2am
+      if (currentHour === 2 && currentMinute === 0) {
+        console.log('[Cron] Starting Tier 3 (medium) likes sync...')
         try {
           const { syncReactionsForTier } = await import('./lib/likes-sync-worker')
-          const tier3Result = await syncReactionsForTier('old')
+          const tier3Result = await syncReactionsForTier('medium')
 
           console.log(
             `[Cron] Tier 3 Likes Sync: ${tier3Result.castsChecked} casts checked, ` +
@@ -317,6 +340,27 @@ export default {
           }
         } catch (error: any) {
           console.error('[CRON] TIER 3 LIKES SYNC FAILED:', error.message, error.stack)
+        }
+      }
+
+      // Tier 4: Old casts (older than 7 days) - run weekly on Sunday at 3am
+      if (dayOfWeek === 0 && currentHour === 3 && currentMinute === 0) {
+        console.log('[Cron] Starting Tier 4 (old) likes sync...')
+        try {
+          const { syncReactionsForTier } = await import('./lib/likes-sync-worker')
+          const tier4Result = await syncReactionsForTier('old')
+
+          console.log(
+            `[Cron] Tier 4 Likes Sync: ${tier4Result.castsChecked} casts checked, ` +
+            `${tier4Result.castsChanged} changed, ${tier4Result.reactionsAdded} reactions added, ` +
+            `${tier4Result.apiCalls} API calls, ${tier4Result.duration}ms`
+          )
+
+          if (tier4Result.errors.length > 0) {
+            console.error('[Cron] Tier 4 sync errors:', tier4Result.errors)
+          }
+        } catch (error: any) {
+          console.error('[CRON] TIER 4 LIKES SYNC FAILED:', error.message, error.stack)
         }
       }
     } catch (error: any) {
