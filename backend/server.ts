@@ -12,6 +12,7 @@ import activityApp from './api/activity'
 import channelsApp from './api/channels'
 import syncApp from './api/sync'
 import authApp from './api/auth'
+import invitesApp from './api/invites'
 import { resolveUrl } from './api/odesli'
 import { getWorker } from './lib/ai-worker'
 import { processBatch } from './lib/ai-queue-processor'
@@ -92,6 +93,9 @@ app.get('/api/health', (c) => {
 // Mount auth routes
 app.route('/api/auth', authApp)
 
+// Mount invite routes
+app.route('/api/invites', invitesApp)
+
 // Mount mini-app thread routes
 app.route('/api/threads', threadsApp)
 
@@ -168,6 +172,11 @@ if (isLocalDev) {
   console.log('')
   console.log('📍 API Endpoints:')
   console.log('  GET    /api/health')
+  console.log('  POST   /api/invites/verify')
+  console.log('  POST   /api/invites/redeem')
+  console.log('  POST   /api/invites/check-status')
+  console.log('  POST   /api/invites/create')
+  console.log('  GET    /api/invites/stats')
   console.log('  POST   /api/threads')
   console.log('  GET    /api/threads')
   console.log('  GET    /api/threads/:castHash')

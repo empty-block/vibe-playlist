@@ -1,6 +1,7 @@
 import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 import { farcasterAuth } from './farcasterStore';
+import { checkInviteStatus } from '../utils/invite';
 
 // Current user state - now derived from Farcaster auth
 export const [currentUser, setCurrentUser] = createSignal<{
@@ -13,32 +14,61 @@ export const [currentUser, setCurrentUser] = createSignal<{
 // General authentication state - derived from Farcaster
 export const [isAuthenticated, setIsAuthenticated] = createSignal(false);
 
-// Sync currentUser with Farcaster auth state
-createEffect(() => {
+// Invite code modal state
+export const [showInviteModal, setShowInviteModal] = createSignal(false);
+export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
+
+// Sync currentUser with Farcaster auth state and check invite access
+createEffect(async () => {
   const auth = farcasterAuth();
 
   if (auth.isAuthenticated && auth.fid) {
-    // Use username as displayName if displayName is null
-    const effectiveDisplayName = auth.displayName || auth.username || 'User';
-    const effectiveUsername = auth.username || 'unknown';
+    // Check if user has invite access
+    setInviteCheckPending(true);
+    const inviteStatus = await checkInviteStatus(auth.fid);
+    setInviteCheckPending(false);
 
-    setCurrentUser({
-      fid: auth.fid,
-      username: effectiveUsername,
-      avatar: auth.pfpUrl,
-      displayName: effectiveDisplayName,
-    });
-    setIsAuthenticated(true);
+    if (inviteStatus.hasAccess) {
+      // User has access (either redeemed code or dev mode)
+      const effectiveDisplayName = auth.displayName || auth.username || 'User';
+      const effectiveUsername = auth.username || 'unknown';
+
+      setCurrentUser({
+        fid: auth.fid,
+        username: effectiveUsername,
+        avatar: auth.pfpUrl,
+        displayName: effectiveDisplayName,
+      });
+      setIsAuthenticated(true);
+      setShowInviteModal(false);
+    } else {
+      // User needs to enter invite code
+      setShowInviteModal(true);
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
   } else {
     // For local development without Farcaster context, use mock data
-    // Using a different FID (dwr.eth = FID 3) to distinguish from real auth
-    setCurrentUser({
-      fid: '3',
-      username: 'dwr',
-      avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
-      displayName: 'Dan Romero (Dev Mode)'
-    });
-    setIsAuthenticated(true);
+    // But still check invite access
+    setInviteCheckPending(true);
+    const inviteStatus = await checkInviteStatus('3'); // Mock FID
+    setInviteCheckPending(false);
+
+    if (inviteStatus.hasAccess) {
+      setCurrentUser({
+        fid: '3',
+        username: 'dwr',
+        avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
+        displayName: 'Dan Romero (Dev Mode)'
+      });
+      setIsAuthenticated(true);
+      setShowInviteModal(false);
+    } else {
+      // Even in dev mode, require invite code if bypass is disabled
+      setShowInviteModal(true);
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
   }
 });
 

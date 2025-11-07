@@ -3,6 +3,8 @@ import { Component, Show, JSX, onMount, lazy } from 'solid-js';
 import MediaPlayer from './components/player/MediaPlayer';
 import { currentTrack, restorePendingTrack } from './stores/playerStore';
 import { initPlayerLayoutSync } from './utils/playerLayoutSync';
+import InviteGatePage from './pages/InviteGatePage';
+import { showInviteModal } from './stores/authStore';
 
 // Lazy load all page components for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -43,11 +45,17 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 
   return (
     <>
-      {props.children}
+      {/* Show invite gate page if user needs beta access */}
+      <Show
+        when={!showInviteModal()}
+        fallback={<InviteGatePage />}
+      >
+        {props.children}
 
-      {/* Player - Fixed at bottom */}
-      <Show when={currentTrack()}>
-        <MediaPlayer />
+        {/* Player - Fixed at bottom */}
+        <Show when={currentTrack()}>
+          <MediaPlayer />
+        </Show>
       </Show>
     </>
   );

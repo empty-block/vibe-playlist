@@ -1,0 +1,318 @@
+/* ==========================================
+   INVITE CODE MODAL - RETRO AESTHETIC
+   Light & Dark Mode Support
+   ========================================== */
+
+/* ==========================================
+   MODAL CONTENT
+   ========================================== */
+
+.invite-modal-content {
+  padding: 24px;
+}
+
+/* ==========================================
+   WELCOME TEXT
+   ========================================== */
+
+.invite-welcome-text {
+  margin-bottom: 24px;
+}
+
+.invite-welcome-primary {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-family: var(--font-interface, -apple-system, sans-serif);
+}
+
+/* Dark Mode */
+.invite-welcome-primary {
+  color: var(--light-text, #ffffff);
+}
+
+/* Light Mode */
+.theme-light .invite-welcome-primary {
+  color: #333;
+}
+
+.invite-welcome-secondary {
+  font-size: 14px;
+  line-height: 1.5;
+  font-family: var(--font-interface, -apple-system, sans-serif);
+}
+
+/* Dark Mode */
+.invite-welcome-secondary {
+  color: var(--muted-text, #cccccc);
+}
+
+/* Light Mode */
+.theme-light .invite-welcome-secondary {
+  color: #666;
+}
+
+/* ==========================================
+   INPUT SECTION
+   ========================================== */
+
+.invite-input-wrapper {
+  margin-bottom: 16px;
+}
+
+/* Override TextInput styles for retro aesthetic */
+.invite-input-wrapper input {
+  border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+  font-family: var(--font-monospace, 'JetBrains Mono', monospace) !important;
+  letter-spacing: 0.05em;
+  font-size: 14px !important;
+  padding: 12px 16px !important;
+}
+
+/* Dark Mode Input */
+.invite-input-wrapper input {
+  background: rgba(13, 13, 13, 0.8) !important;
+  border: 2px solid rgba(4, 202, 244, 0.3) !important;
+  color: var(--light-text, #ffffff) !important;
+}
+
+.invite-input-wrapper input:focus {
+  border-color: var(--neon-cyan, #04caf4) !important;
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4) !important;
+  background: rgba(13, 13, 13, 1) !important;
+  outline: none !important;
+}
+
+.invite-input-wrapper input::placeholder {
+  color: rgba(204, 204, 204, 0.5) !important;
+  letter-spacing: 0.05em;
+}
+
+/* Light Mode Input */
+.theme-light .invite-input-wrapper input {
+  background: #ffffff !important;
+  border: 2px inset #d0d0d0 !important;
+  color: #333 !important;
+  box-shadow: inset -1px -1px 0px #ffffff !important;
+}
+
+.theme-light .invite-input-wrapper input:focus {
+  border-color: #1084d0 !important;
+  box-shadow:
+    inset -1px -1px 0px #ffffff,
+    0 0 8px rgba(16, 132, 208, 0.3) !important;
+  outline: none !important;
+}
+
+.theme-light .invite-input-wrapper input::placeholder {
+  color: #999 !important;
+}
+
+/* ==========================================
+   ERROR STATE
+   ========================================== */
+
+.invite-error-box {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 0;
+  animation: errorPulse 0.3s ease-out;
+}
+
+/* Dark Mode Error */
+.invite-error-box {
+  background: rgba(209, 246, 10, 0.1);
+  border: 2px solid var(--neon-yellow, #d1f60a);
+  box-shadow: 0 0 12px rgba(209, 246, 10, 0.3);
+}
+
+/* Light Mode Error */
+.theme-light .invite-error-box {
+  background: #fff9e6;
+  border: 2px solid #f0c000;
+  box-shadow: 0 2px 8px rgba(240, 192, 0, 0.2);
+}
+
+.invite-error-text {
+  font-size: 14px;
+  margin: 0;
+  font-family: var(--font-interface, -apple-system, sans-serif);
+}
+
+/* Dark Mode Error Text */
+.invite-error-text {
+  color: var(--neon-yellow, #d1f60a);
+  text-shadow: 0 0 4px rgba(209, 246, 10, 0.4);
+}
+
+/* Light Mode Error Text */
+.theme-light .invite-error-text {
+  color: #b88900;
+  text-shadow: none;
+}
+
+@keyframes errorPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================
+   BUTTON SECTION
+   ========================================== */
+
+.invite-button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invite-submit-button {
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+  padding: 12px 32px !important;
+  transition: all 0.2s ease !important;
+  font-family: var(--font-interface, -apple-system, sans-serif) !important;
+  font-size: 15px !important;
+  min-width: 120px;
+}
+
+/* Dark Mode Button */
+.invite-submit-button {
+  background: linear-gradient(135deg, var(--neon-blue, #3b00fd), var(--neon-cyan, #04caf4)) !important;
+  border: none !important;
+  color: var(--light-text, #ffffff) !important;
+}
+
+.invite-submit-button:hover:not(:disabled) {
+  box-shadow:
+    0 0 16px rgba(4, 202, 244, 0.5),
+    0 4px 20px rgba(4, 202, 244, 0.3) !important;
+  transform: translateY(-2px) !important;
+}
+
+.invite-submit-button:active:not(:disabled) {
+  transform: translateY(0) !important;
+}
+
+.invite-submit-button:disabled {
+  background: rgba(59, 0, 253, 0.3) !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+/* Light Mode Button */
+.theme-light .invite-submit-button {
+  background: linear-gradient(to bottom, #1084d0, #0a5c99) !important;
+  border: 1px outset #66b3e0 !important;
+  color: #ffffff !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .invite-submit-button:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #2094e0, #1084d0) !important;
+  box-shadow:
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    0 0 12px rgba(16, 132, 208, 0.5),
+    0 4px 12px rgba(16, 132, 208, 0.3) !important;
+}
+
+.theme-light .invite-submit-button:active:not(:disabled) {
+  background: linear-gradient(to bottom, #0a5c99, #084578) !important;
+  border: 1px inset #66b3e0 !important;
+  box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.2) !important;
+}
+
+.theme-light .invite-submit-button:disabled {
+  background: linear-gradient(to bottom, #c0c0c0, #a0a0a0) !important;
+  border: 1px outset #d0d0d0 !important;
+  color: #808080 !important;
+  opacity: 1 !important;
+}
+
+/* ==========================================
+   FOOTER SECTION
+   ========================================== */
+
+.invite-footer {
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+/* Dark Mode Footer Border */
+.invite-footer {
+  border-top: 1px solid rgba(4, 202, 244, 0.2);
+}
+
+/* Light Mode Footer Border */
+.theme-light .invite-footer {
+  border-top: 1px solid #d0d0d0;
+}
+
+.invite-footer-text {
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 0;
+  font-family: var(--font-interface, -apple-system, sans-serif);
+}
+
+/* Dark Mode Footer Text */
+.invite-footer-text {
+  color: var(--muted-text, #cccccc);
+}
+
+/* Light Mode Footer Text */
+.theme-light .invite-footer-text {
+  color: #666;
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
+@media (max-width: 767px) {
+  .invite-modal-content {
+    padding: 20px 16px;
+  }
+
+  .invite-input-wrapper input {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+    padding: 14px 16px !important;
+  }
+
+  .invite-submit-button {
+    width: 100% !important;
+    padding: 14px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* ==========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================== */
+
+.invite-input-wrapper input:focus-visible,
+.invite-submit-button:focus-visible {
+  outline: 2px solid var(--neon-cyan, #04caf4);
+  outline-offset: 2px;
+}
+
+.theme-light .invite-input-wrapper input:focus-visible,
+.theme-light .invite-submit-button:focus-visible {
+  outline-color: #1084d0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .invite-modal-content *,
+  .invite-error-box,
+  .invite-submit-button {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -26,7 +26,8 @@
     "deploy": "./deploy-all.sh",
     "deploy:backend": "./deploy-backend.sh",
     "deploy:miniapp": "./deploy-miniapp.sh",
-    "backfill": "bun run backend/scripts/backfill-channel.ts"
+    "backfill": "bun run backend/scripts/backfill-channel.ts",
+    "reset-invite": "bun run backend/scripts/reset-test-access.ts"
   },
   "devDependencies": {
     "@anthropic-ai/claude-code": "^2.0.0",
