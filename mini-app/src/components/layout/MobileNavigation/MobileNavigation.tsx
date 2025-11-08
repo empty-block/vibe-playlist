@@ -56,13 +56,13 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
     }
   };
 
-  // Calculate padding-bottom using Farcaster SDK safe area insets
-  // Add 8px breathing room above the home indicator
+  // Calculate bottom margin using Farcaster SDK safe area insets
+  // The navbar should sit ABOVE the safe area, not extend into it
   const navBarStyle = () => {
     const insets = safeAreaInsets();
-    const bottomPadding = 8 + insets.bottom; // 8px + safe area
+    // Just use the safe area inset directly - no extra padding needed
     return {
-      'padding-bottom': `${bottomPadding}px`
+      'margin-bottom': `${insets.bottom}px`
     };
   };
 
