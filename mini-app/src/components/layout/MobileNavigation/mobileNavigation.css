@@ -118,12 +118,14 @@
   }
 
   .nav-button {
-    /* Better proportions for professional look */
-    padding-top: 12px;
+    /* Compact proportions matching professional apps (Reddit, Farcaster) */
+    padding-top: 8px;
     padding-left: 8px;
     padding-right: 8px;
-    padding-bottom: 8px;  /* Base padding - navbar will add safe area via inline styles */
-    gap: 4px;  /* More breathing room between icon and text */
+    padding-bottom: 6px;  /* Minimal bottom padding - navbar handles safe area */
+    gap: 3px;  /* Tight spacing between icon and text */
+
+    /* Minimum tap target height of 44px maintained by icon(20) + gap(3) + text(11) + padding(8+6) = 48px */
 
     /* Remove button borders for cleaner appearance */
     border: none;
@@ -157,13 +159,13 @@
   }
 
   .nav-icon {
-    width: 24px;   /* Larger for better visibility and tap target */
-    height: 24px;
+    width: 20px;   /* More compact like professional apps */
+    height: 20px;
   }
 
   /* Icon opacity for inactive state */
   .nav-icon {
-    opacity: 0.7;
+    opacity: 0.6;  /* Slightly more subtle when inactive */
   }
 
   .nav-button--active .nav-icon {
@@ -171,13 +173,15 @@
   }
 
   .nav-label {
-    font-size: 10px;  /* Better readability */
-    font-weight: normal;  /* Lighter feel */
-    letter-spacing: 0.3px;  /* Less cramped */
+    font-size: 11px;  /* Slightly larger for readability */
+    font-weight: 500;  /* Medium weight - not bold, not too light */
+    letter-spacing: 0;  /* No letter spacing - natural spacing */
+    text-transform: none;  /* CRITICAL: Use regular capitalization, not uppercase */
     opacity: 0.6;  /* Subtle when inactive */
   }
 
   .nav-button--active .nav-label {
     opacity: 1;  /* Full opacity when active */
+    font-weight: 600;  /* Slightly bolder when active */
   }
 }
