@@ -3,7 +3,7 @@ import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
-import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackWithAuthCheck, TrackSource } from '../stores/playerStore';
 import { theme, toggleTheme } from '../stores/themeStore';
 import { formatRelativeTime } from '../utils/time';
 import { trackCardEntrance } from '../utils/animations';
@@ -126,7 +126,7 @@ const TrendingPage: Component = () => {
     };
 
     const feedTracks = getTrendingTracks();
-    playTrackFromFeed(trackObj, feedTracks, 'trending');
+    playTrackWithAuthCheck(trackObj, feedTracks, 'trending');
   };
 
   // Event handlers

@@ -6,7 +6,7 @@ import { TrackCard } from '../components/common/TrackCard/NEW';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
 import { theme, toggleTheme } from '../stores/themeStore';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackWithAuthCheck, TrackSource } from '../stores/playerStore';
 import {
   profileUser,
   activity,
@@ -161,7 +161,7 @@ const ProfilePage: Component = () => {
   const playTrack = (track: Track) => {
     const profileTracks = getProfileTracks();
     const feedId = `profile-${userFid()}-${currentFilter()}`;
-    playTrackFromFeed(track, profileTracks, feedId);
+    playTrackWithAuthCheck(track, profileTracks, feedId);
   };
 
   // Handle opening the add track modal

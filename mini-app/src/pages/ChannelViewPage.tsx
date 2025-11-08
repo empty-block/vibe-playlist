@@ -6,7 +6,7 @@ import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import { theme, toggleTheme } from '../stores/themeStore';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackWithAuthCheck } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
@@ -217,7 +217,7 @@ const ChannelViewPage: Component = () => {
   const playTrack = (track: Track) => {
     const feedTracks = getFeedTracks();
     const feedId = `channel-${channelId()}`;
-    playTrackFromFeed(track, feedTracks, feedId);
+    playTrackWithAuthCheck(track, feedTracks, feedId);
   };
 
   // Add track handler
