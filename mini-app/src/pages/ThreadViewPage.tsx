@@ -5,7 +5,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
-import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackWithAuthCheck } from '../stores/playerStore';
 import { fetchThread } from '../services/api';
 import { transformApiThreadDetail } from '../types/api';
 import './threadView.css';
@@ -57,7 +57,7 @@ const ThreadViewPage: Component = () => {
   const playTrack = (track: Track) => {
     const threadTracks = getThreadTracks();
     const feedId = `thread-${params.id}`;
-    playTrackFromFeed(track, threadTracks, feedId);
+    playTrackWithAuthCheck(track, threadTracks, feedId);
   };
 
   const likeTrack = (track: Track) => {

@@ -4,7 +4,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
-import { Track, playTrackFromFeed } from '../stores/playerStore';
+import { Track, playTrackWithAuthCheck } from '../stores/playerStore';
 import { theme, toggleTheme } from '../stores/themeStore';
 import { fetchHomeFeed } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
@@ -205,7 +205,7 @@ const HomePage: Component = () => {
     if (!track) return;
 
     const allTracks = getAllTracks();
-    playTrackFromFeed(track, allTracks, 'home');
+    playTrackWithAuthCheck(track, allTracks, 'home');
   };
 
   // Handle username click
