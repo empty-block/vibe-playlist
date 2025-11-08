@@ -127,20 +127,9 @@
 
     /* Minimum tap target height of 44px maintained by icon(20) + gap(3) + text(11) + padding(8+6) = 48px */
 
-    /* Remove button borders for cleaner appearance */
+    /* Remove all button borders for clean appearance */
     border: none;
     background: transparent;
-
-    /* Subtle separator between buttons */
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .nav-button:last-child {
-    border-right: none;
-  }
-
-  .nav-button:first-child {
-    border-left: none;  /* Override desktop rule */
   }
 
   /* Active state - subtle background instead of borders */
