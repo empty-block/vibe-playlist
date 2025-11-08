@@ -108,25 +108,76 @@
 /* Mobile responsive */
 @media (max-width: 640px) {
   .nav-bar {
-    padding: 3px;
-    gap: 1px;
+    padding: 0;  /* Remove inner padding for cleaner look */
+    gap: 0;      /* Seamless buttons */
+    border-left: none;   /* Only top border for subtle retro */
+    border-right: none;
+    border-radius: 0;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);  /* Subtle depth */
   }
 
   .nav-button {
-    padding-top: 4px;
-    padding-left: 2px;
-    padding-right: 2px;
-    /* 34px minimum for iOS home indicator safe area */
-    padding-bottom: max(34px, calc(4px + env(safe-area-inset-bottom, 0px)));
-    gap: 2px;
+    /* Better proportions for professional look */
+    padding-top: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    /* Natural safe area spacing - 8px breathing room above gesture bar */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    gap: 4px;  /* More breathing room between icon and text */
+
+    /* Remove button borders for cleaner appearance */
+    border: none;
+    background: transparent;
+
+    /* Subtle separator between buttons */
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-button:last-child {
+    border-right: none;
+  }
+
+  .nav-button:first-child {
+    border-left: none;  /* Override desktop rule */
+  }
+
+  /* Active state - subtle background instead of borders */
+  .nav-button--active {
+    background: rgba(231, 56, 149, 0.08);  /* Subtle berry tint */
+    transform: none;  /* Remove translateY on mobile */
+  }
+
+  /* Tap feedback - quick scale instead of translateY */
+  .nav-button:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.05);
+    border-top: none;  /* Override desktop active border */
+    border-left: none;
+    border-right: none;
   }
 
   .nav-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;   /* Larger for better visibility and tap target */
+    height: 24px;
+  }
+
+  /* Icon opacity for inactive state */
+  .nav-icon {
+    opacity: 0.7;
+  }
+
+  .nav-button--active .nav-icon {
+    opacity: 1;
   }
 
   .nav-label {
-    font-size: 9px;
+    font-size: 10px;  /* Better readability */
+    font-weight: normal;  /* Lighter feel */
+    letter-spacing: 0.3px;  /* Less cramped */
+    opacity: 0.6;  /* Subtle when inactive */
+  }
+
+  .nav-button--active .nav-label {
+    opacity: 1;  /* Full opacity when active */
   }
 }
