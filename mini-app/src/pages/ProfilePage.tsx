@@ -291,14 +291,6 @@ const ProfilePage: Component = () => {
       onClick: () => toggleTheme()
     },
     {
-      label: 'Refresh Profile',
-      icon: '🔄',
-      onClick: () => {
-        const fid = params.fid || currentUser()?.fid.toString();
-        if (fid) loadUserProfile(fid);
-      }
-    },
-    {
       label: 'Feedback',
       icon: '💬',
       onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')

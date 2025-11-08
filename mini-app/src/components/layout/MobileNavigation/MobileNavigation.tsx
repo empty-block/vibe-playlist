@@ -3,6 +3,7 @@ import { For } from 'solid-js';
 import { A, useLocation } from '@solidjs/router';
 import { setCurrentSection, currentSection } from '../../../stores/navigationStore';
 import { navigationSections } from '../Sidebar/NavigationData';
+import { safeAreaInsets } from '../../../stores/safeAreaStore';
 import './mobileNavigation.css';
 
 interface MobileNavigationProps {
@@ -55,9 +56,20 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
     }
   };
 
+  // Calculate padding-bottom using Farcaster SDK safe area insets
+  // Add 8px breathing room above the home indicator
+  const navBarStyle = () => {
+    const insets = safeAreaInsets();
+    const bottomPadding = 8 + insets.bottom; // 8px + safe area
+    return {
+      'padding-bottom': `${bottomPadding}px`
+    };
+  };
+
   return (
     <nav
       class={`nav-bar ${props.class || ''}`}
+      style={navBarStyle()}
       role="navigation"
       aria-label="Main navigation"
     >

@@ -91,11 +91,6 @@ const TrendingPage: Component = () => {
       onClick: () => toggleTheme()
     },
     {
-      label: 'Refresh Trending',
-      icon: '🔄',
-      onClick: () => loadTrendingData()
-    },
-    {
       label: 'Feedback',
       icon: '💬',
       onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')

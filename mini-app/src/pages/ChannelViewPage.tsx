@@ -281,11 +281,6 @@ const ChannelViewPage: Component = () => {
       onClick: () => toggleTheme()
     },
     {
-      label: 'Refresh Channel',
-      icon: '🔄',
-      onClick: () => loadFeed(true)
-    },
-    {
       label: 'Feedback',
       icon: '💬',
       onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
