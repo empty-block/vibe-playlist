@@ -61,9 +61,9 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 
       // Wait for next frame to ensure everything is rendered
       requestAnimationFrame(() => {
-        setTimeout(() => {
+        setTimeout(async () => {
           console.log('🔄 Attempting to restore pending track after auth...');
-          const restored = restorePendingTrack();
+          const restored = await restorePendingTrack();
           if (restored) {
             console.log('✅ Successfully restored pending track after auth');
             setDebugInfo(prev => prev + 'Restored: YES ✅');

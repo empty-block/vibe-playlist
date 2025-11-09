@@ -294,16 +294,22 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 /**
  * Store pending track context in URL hash (for Spotify auth redirect)
  * URL hash survives redirects and doesn't rely on localStorage in iframes
+ * Only stores IDs - full track data will be fetched on return
  */
 export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
+  // Extract platform info from track URL
+  const platformName = track.source; // 'spotify', 'youtube', 'soundcloud'
+  const platformId = track.id; // Platform-specific track ID
+
   const pendingData = {
-    track,
-    feedTracks,
+    platformName,
+    platformId,
     feedId,
+    castHash: track.castHash, // Optional - for specific cast context
     timestamp: Date.now()
   };
 
-  // Encode data in URL hash - this survives the redirect!
+  // Encode minimal data in URL hash - this survives the redirect!
   const encoded = encodeURIComponent(JSON.stringify(pendingData));
   const currentUrl = new URL(window.location.href);
   currentUrl.hash = `pending_track=${encoded}`;
@@ -311,14 +317,19 @@ export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: str
   // Update URL without reloading the page
   window.history.replaceState(null, '', currentUrl.toString());
 
-  console.log('✅ Stored pending track in URL hash:', track.title);
+  console.log('✅ Stored pending track IDs in URL hash:', {
+    platform: platformName,
+    id: platformId,
+    feedId
+  });
   console.log('✅ Hash will survive Spotify redirect');
 };
 
 /**
  * Restore pending track after Spotify auth (if exists in URL hash)
+ * Fetches full track data from API using stored IDs
  */
-export const restorePendingTrack = (): boolean => {
+export const restorePendingTrack = async (): Promise<boolean> => {
   // Check URL hash for pending track data
   const hash = window.location.hash;
   if (!hash || !hash.includes('pending_track=')) {
@@ -333,7 +344,7 @@ export const restorePendingTrack = (): boolean => {
 
     const encoded = match[1];
     const decoded = decodeURIComponent(encoded);
-    const { track, feedTracks, feedId, timestamp } = JSON.parse(decoded);
+    const { platformName, platformId, feedId, castHash, timestamp } = JSON.parse(decoded);
 
     // Clear the hash from URL
     const cleanUrl = window.location.href.split('#')[0];
@@ -345,7 +356,60 @@ export const restorePendingTrack = (): boolean => {
       return false;
     }
 
-    console.log('✅ Restoring pending track from URL hash:', track.title);
+    console.log('✅ Fetching pending track from API:', { platformName, platformId, feedId });
+
+    // Dynamically import to avoid circular dependency
+    const { fetchTrack, fetchHomeFeed, fetchChannelFeed } = await import('../services/api');
+
+    // Fetch the track data from API
+    const { track: apiTrack } = await fetchTrack(platformName, platformId);
+
+    if (!apiTrack) {
+      console.error('❌ Track not found in database');
+      return false;
+    }
+
+    // Convert API track to Track type
+    const track: Track = {
+      id: apiTrack.platformId || apiTrack.id,
+      title: apiTrack.title,
+      artist: apiTrack.artist,
+      albumArt: apiTrack.thumbnail || apiTrack.albumArt,
+      url: apiTrack.url,
+      source: (apiTrack.platform || platformName) as TrackSource,
+      username: '', // Will be populated if needed
+      userAvatar: null,
+      userFid: '',
+      timestamp: apiTrack.timestamp || new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0,
+      duration: '',
+      castHash: castHash || undefined
+    };
+
+    // Fetch feed data to get playlist context
+    let feedTracks: Track[] = [];
+    try {
+      if (feedId === 'home') {
+        const feedData = await fetchHomeFeed({});
+        // Convert feed threads to tracks (simplified - you may need to adapt this)
+        feedTracks = [track]; // For now, just use the single track
+      } else if (feedId.startsWith('channel-')) {
+        const channelId = feedId.replace('channel-', '');
+        const feedData = await fetchChannelFeed(channelId, {});
+        feedTracks = [track];
+      } else {
+        // For other feed types, just use the single track
+        feedTracks = [track];
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to fetch feed context, using single track only:', error);
+      feedTracks = [track];
+    }
+
+    console.log('✅ Restoring pending track:', track.title);
     playTrackFromFeed(track, feedTracks, feedId);
     return true;
   } catch (error) {

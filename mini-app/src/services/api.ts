@@ -234,4 +234,17 @@ export async function fetchHomeFeed(
   return apiFetch<ApiThreadsResponse>(endpoint);
 }
 
+/**
+ * Fetch a single track by platform and platform_id
+ */
+export async function fetchTrack(platform: string, platformId: string): Promise<{ track: any }> {
+  const queryParams = new URLSearchParams({
+    platform,
+    id: platformId
+  });
+
+  const endpoint = `/api/music/track?${queryParams.toString()}`;
+  return apiFetch<{ track: any }>(endpoint);
+}
+
 export { ApiError };
