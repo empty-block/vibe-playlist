@@ -118,24 +118,24 @@
   }
 
   .nav-button {
-    /* Compact proportions matching professional apps (Reddit, Farcaster) */
-    padding-top: 8px;
+    /* Bottom-aligned layout - content sits at bottom edge */
+    padding-top: 10px;   /* Top padding pushes content down */
     padding-left: 8px;
     padding-right: 8px;
-    padding-bottom: 6px;  /* Minimal bottom padding - navbar handles safe area */
+    padding-bottom: 0;   /* No bottom padding - content sits at edge */
     gap: 3px;  /* Tight spacing between icon and text */
 
-    /* Minimum tap target height of 44px maintained by icon(20) + gap(3) + text(11) + padding(8+6) = 48px */
+    /* Minimum tap target height maintained by icon(20) + gap(3) + text(11) + padding(10) = 44px */
 
     /* Remove all button borders for clean appearance */
     border: none;
     background: transparent;
   }
 
-  /* Active state - subtle background instead of borders */
+  /* Active state - NO background color, only opacity/weight changes */
   .nav-button--active {
-    background: rgba(231, 56, 149, 0.08);  /* Subtle berry tint */
-    transform: none;  /* Remove translateY on mobile */
+    background: transparent;  /* Remove background color */
+    transform: none;
   }
 
   /* Tap feedback - quick scale instead of translateY */
