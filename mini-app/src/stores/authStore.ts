@@ -122,8 +122,9 @@ export const initiateSpotifyAuth = async () => {
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
 
-  // Open in popup window for iframe compatibility
-  // Popup will send auth code back via postMessage
+  console.log('🔐 Opening Spotify auth URL:', authURL);
+
+  // Try popup first for desktop
   const width = 600;
   const height = 700;
   const left = window.screen.width / 2 - width / 2;
@@ -136,8 +137,8 @@ export const initiateSpotifyAuth = async () => {
   );
 
   if (!popup) {
-    console.error('Failed to open popup - may be blocked');
-    // Fallback to redirect if popup is blocked
+    console.error('Failed to open popup - falling back to redirect');
+    // Fallback to redirect if popup is blocked (common on mobile/iframe)
     window.location.href = authURL;
   }
 };

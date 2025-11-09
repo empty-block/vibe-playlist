@@ -41,10 +41,10 @@ export const generateCodeVerifier = (): string => {
 export const getSpotifyAuthURL = async (): Promise<string> => {
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
-  
+
   // Store verifier for token exchange
   localStorage.setItem('spotify_code_verifier', codeVerifier);
-  
+
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: SPOTIFY_CONFIG.CLIENT_ID,
@@ -56,7 +56,7 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   });
 
   const authURL = `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/authorize?${params.toString()}`;
-  
+
   return authURL;
 };
 

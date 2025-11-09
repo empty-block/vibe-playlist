@@ -292,7 +292,8 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 };
 
 /**
- * Store pending track context in localStorage (for Spotify auth redirect)
+ * Store pending track context in URL hash (for Spotify auth redirect)
+ * URL hash survives redirects and doesn't rely on localStorage in iframes
  */
 export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
   const pendingData = {
@@ -301,35 +302,57 @@ export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: str
     feedId,
     timestamp: Date.now()
   };
-  localStorage.setItem('pending_track_after_auth', JSON.stringify(pendingData));
-  console.log('Stored pending track for post-auth restoration:', track.title);
+
+  // Encode data in URL hash - this survives the redirect!
+  const encoded = encodeURIComponent(JSON.stringify(pendingData));
+  const currentUrl = new URL(window.location.href);
+  currentUrl.hash = `pending_track=${encoded}`;
+
+  // Update URL without reloading the page
+  window.history.replaceState(null, '', currentUrl.toString());
+
+  console.log('✅ Stored pending track in URL hash:', track.title);
+  console.log('✅ Hash will survive Spotify redirect');
 };
 
 /**
- * Restore pending track after Spotify auth (if exists)
+ * Restore pending track after Spotify auth (if exists in URL hash)
  */
 export const restorePendingTrack = (): boolean => {
-  const pendingData = localStorage.getItem('pending_track_after_auth');
-  if (!pendingData) return false;
+  // Check URL hash for pending track data
+  const hash = window.location.hash;
+  if (!hash || !hash.includes('pending_track=')) {
+    console.log('ℹ️ No pending track in URL hash');
+    return false;
+  }
 
   try {
-    const { track, feedTracks, feedId, timestamp } = JSON.parse(pendingData);
+    // Extract the encoded data from hash
+    const match = hash.match(/pending_track=([^&]*)/);
+    if (!match) return false;
 
-    // Clear the stored data
-    localStorage.removeItem('pending_track_after_auth');
+    const encoded = match[1];
+    const decoded = decodeURIComponent(encoded);
+    const { track, feedTracks, feedId, timestamp } = JSON.parse(decoded);
+
+    // Clear the hash from URL
+    const cleanUrl = window.location.href.split('#')[0];
+    window.history.replaceState(null, '', cleanUrl);
 
     // Check if data is stale (more than 5 minutes old)
     if (Date.now() - timestamp > 5 * 60 * 1000) {
-      console.log('Pending track data is stale, ignoring');
+      console.log('⏰ Pending track data is stale, ignoring');
       return false;
     }
 
-    console.log('Restoring pending track after auth:', track.title);
+    console.log('✅ Restoring pending track from URL hash:', track.title);
     playTrackFromFeed(track, feedTracks, feedId);
     return true;
   } catch (error) {
-    console.error('Failed to restore pending track:', error);
-    localStorage.removeItem('pending_track_after_auth');
+    console.error('❌ Failed to restore pending track from URL hash:', error);
+    // Clean up the hash on error
+    const cleanUrl = window.location.href.split('#')[0];
+    window.history.replaceState(null, '', cleanUrl);
     return false;
   }
 };
@@ -339,14 +362,21 @@ export const restorePendingTrack = (): boolean => {
  * This is the function that UI components should call instead of playTrackFromFeed directly
  */
 export const playTrackWithAuthCheck = (track: Track, feedTracks: Track[], feedId: string) => {
+  console.log('🎵 playTrackWithAuthCheck called:', {
+    track: track.title,
+    source: track.source,
+    isSpotifyAuth: isSpotifyAuthenticated()
+  });
+
   // If it's a Spotify track and user is not authenticated, store for later and start auth
   if (track.source === 'spotify' && !isSpotifyAuthenticated()) {
-    console.log('Spotify track requires auth - storing for post-auth restoration');
+    console.log('🔐 Spotify track requires auth - storing for post-auth restoration');
     storePendingTrack(track, feedTracks, feedId);
     initiateSpotifyAuth();
     return;
   }
 
   // Otherwise play normally
+  console.log('▶️ Playing track normally (already authed or not Spotify)');
   playTrackFromFeed(track, feedTracks, feedId);
 };
