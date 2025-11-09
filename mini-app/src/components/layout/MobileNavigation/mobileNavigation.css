@@ -82,22 +82,12 @@
   color: var(--text-primary);
 }
 
-/* Active state uses berry red accent */
-.nav-button--active .nav-icon {
-  color: #E73895;
-}
-
 .nav-label {
   font-size: 10px;
   font-weight: bold;
   color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-}
-
-/* Active state for label also uses berry red */
-.nav-button--active .nav-label {
-  color: #E73895;
 }
 
 /* Safe area for mobile devices */
