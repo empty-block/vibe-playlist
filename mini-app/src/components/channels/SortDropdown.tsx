@@ -1,6 +1,5 @@
 import { Component, Show, createSignal, onMount, onCleanup } from 'solid-js';
 import type { ChannelFeedSortOption } from '../../../../shared/types/channels';
-import './SortDropdown.css';
 
 interface SortDropdownProps {
   activeSort: ChannelFeedSortOption;
@@ -46,12 +45,14 @@ export const SortDropdown: Component<SortDropdownProps> = (props) => {
   return (
     <div class="sort-dropdown-wrapper" ref={dropdownRef}>
       <button
-        class="sort-dropdown-btn"
+        class="filter-toggle-btn"
         onClick={() => setIsOpen(!isOpen())}
         aria-label="Sort options"
         aria-expanded={isOpen()}
       >
-        📊 Sort ▼
+        <span class="filter-icon">📊</span>
+        Sort
+        <span class="chevron">{isOpen() ? '▲' : '▼'}</span>
       </button>
 
       <Show when={isOpen()}>
