@@ -253,6 +253,8 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
     font-size: 13px !important;
     padding: 8px 12px !important;
     min-height: 44px !important;
+    max-height: none !important;
+    height: auto !important;
   }
 
   .sort-dropdown-btn:active {

@@ -367,7 +367,8 @@
     left: 2px;
     right: 2px;
     /* Account for navbar height + safe area insets */
-    bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+    /* Navbar = ~44px button content + 4px gap + safe area */
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
   .player-content {
