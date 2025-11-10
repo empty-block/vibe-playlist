@@ -58,6 +58,9 @@
   user-select: none;
   min-height: 36px;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 /* Light mode: Neon blue gradient */
@@ -347,6 +350,9 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   font-size: 10px;
   color: var(--text-secondary);
   transition: transform 0.3s ease, opacity 0.3s ease;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
 }
 
 .retro-window__footer.retro-window__footer--hidden,
