@@ -232,6 +232,7 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
    ============================================ */
 
 @media (max-width: 640px) {
+  /* Button - maintain 44px touch target */
   .sort-dropdown-btn {
     font-size: 13px;
     padding: 8px 12px;
@@ -250,25 +251,43 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
     font-size: 9px;
   }
 
+  /* Dropdown menu */
   .sort-dropdown-menu {
     min-width: 160px;
   }
 
+  /* Header - increase readability */
   .dropdown-header {
     padding: 5px 6px;
-    font-size: 10px;
+    font-size: 13px;
   }
 
+  /* Radio options - 44px touch targets with better readability */
   .radio-option {
-    padding: 3px 5px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+
+  .radio-option input[type='radio'] {
+    width: 18px;
+    height: 18px;
+    border: 2px solid;
+    border-color: #808080 #ffffff #ffffff #808080;
+  }
+
+  .radio-option input[type='radio']:checked::before {
+    width: 10px;
+    height: 10px;
   }
 
   .radio-option span {
-    font-size: 10px;
+    font-size: 14px;
   }
 }
 
 @media (max-width: 360px) {
+  /* Maintain 44px touch targets on small screens */
   .sort-dropdown-btn {
     font-size: 12px;
     padding: 8px 10px;
@@ -285,6 +304,11 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
 
   .sort-dropdown-menu {
     min-width: 140px;
+  }
+
+  /* Keep readable text and touch targets */
+  .radio-option {
+    padding: 12px 14px;
   }
 }
 
