@@ -29,22 +29,22 @@ body:not(.theme-dark) .channel-view-page {
 /* Content Area - Light Mode */
 .theme-light .content,
 body:not(.theme-dark) .content {
-  height: 100%;
   background: #FFFFFF;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   /* overflow-y removed - scroll handled by .retro-window__content */
+  /* height removed - let content flow naturally for proper scroll detection */
 }
 
 /* Content Area - Dark Mode */
 .theme-dark .content {
-  height: 100%;
   background: #000000;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   /* overflow-y removed - scroll handled by .retro-window__content */
+  /* height removed - let content flow naturally for proper scroll detection */
 }
 
 /* Windows 95 Scrollbar */
