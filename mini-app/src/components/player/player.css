@@ -366,7 +366,8 @@
   .player-bar {
     left: 2px;
     right: 2px;
-    bottom: 52px;  /* Navbar ~44px + 8px gap */
+    /* Account for navbar height + safe area insets */
+    bottom: calc(52px + env(safe-area-inset-bottom, 0px));
   }
 
   .player-content {
