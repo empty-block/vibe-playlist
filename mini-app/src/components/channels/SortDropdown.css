@@ -26,13 +26,14 @@ body:not(.theme-dark) .sort-dropdown-btn {
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   min-height: 38px;
   max-height: 38px;
   height: 38px;
+  line-height: 1;
   width: 100%;
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
@@ -63,13 +64,14 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   min-height: 38px;
   max-height: 38px;
   height: 38px;
+  line-height: 1;
   width: 100%;
   box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
 }
