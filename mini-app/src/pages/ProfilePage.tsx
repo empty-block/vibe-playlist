@@ -32,6 +32,7 @@ const ProfilePage: Component = () => {
   const [submitError, setSubmitError] = createSignal<string | null>(null);
   const [windowMinimized, setWindowMinimized] = createSignal(false);
   const [windowMaximized, setWindowMaximized] = createSignal(false);
+  const [filterDropdownOpen, setFilterDropdownOpen] = createSignal(false);
 
   // Sort and filter state for ChannelFilterBar
   const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
@@ -358,64 +359,54 @@ const ProfilePage: Component = () => {
 
             {/* Profile Content */}
             <Show when={!isLoading() || profileUser()}>
-              {/* Napster Buddy List Style Header */}
+              {/* Compact Profile Header - Channel-style Layout */}
               <div class="profile-header">
-                <Show when={user().avatar} fallback={
-                  <div class="profile-avatar-fallback">
-                    {(user().displayName || 'U').charAt(0).toUpperCase()}
-                  </div>
-                }>
-                  <img
-                    src={user().avatar}
-                    alt={user().displayName}
-                    class="profile-avatar"
-                  />
-                </Show>
-                <div class="profile-info">
-                  <div class="profile-username">@{user().username}</div>
-                  <Show when={user().bio}>
-                    <div class="profile-bio">{user().bio}</div>
-                  </Show>
-                  <div class="profile-stats-inline">
-                    <Show when={profileUser()} fallback={
-                      <>
-                        <div class="stat-inline">
-                          <span class="number">{sharedTracks().length}</span> shared
-                        </div>
-                        <div class="stat-inline">
-                          <span class="number">{likedTracks().length}</span> liked
-                        </div>
-                        <div class="stat-inline">
-                          <span class="number">{repliedTracks().length}</span> replies
-                        </div>
-                      </>
+                <div class="profile-main">
+                  <div class="profile-avatar-container">
+                    <Show when={user().avatar} fallback={
+                      <div class="profile-avatar-fallback">
+                        {(user().displayName || 'U').charAt(0).toUpperCase()}
+                      </div>
                     }>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksShared}</span> shared
-                      </div>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
-                      </div>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
-                      </div>
+                      <img
+                        src={user().avatar}
+                        alt={user().displayName}
+                        class="profile-avatar"
+                      />
                     </Show>
                   </div>
+                  <div class="profile-info">
+                    <div class="profile-username">@{user().username}</div>
+                    <Show when={user().bio}>
+                      <div class="profile-bio">{user().bio}</div>
+                    </Show>
+                    <div class="profile-stats-inline">
+                      <Show when={profileUser()} fallback={
+                        <>
+                          <div class="stat-inline">
+                            <span class="number">{sharedTracks().length}</span> shared
+                          </div>
+                          <div class="stat-inline">
+                            <span class="number">{likedTracks().length}</span> liked
+                          </div>
+                          <div class="stat-inline">
+                            <span class="number">{repliedTracks().length}</span> replies
+                          </div>
+                        </>
+                      }>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksShared}</span> shared
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
+                        </div>
+                      </Show>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Share Track Button - Only show on current user's profile */}
-                <Show when={currentUser() && userFid() === currentUser()?.fid}>
-                  <button
-                    class="share-track-button"
-                    onClick={handleShareTrack}
-                    title="Share a track"
-                  >
-                    <span class="button-bracket">[</span>
-                    <span class="button-icon">+</span>
-                    <span class="button-text">SHARE TRACK</span>
-                    <span class="button-bracket">]</span>
-                  </button>
-                </Show>
               </div>
 
               {/* Feed Controls - Sort/Filter/Add Track */}
@@ -438,43 +429,72 @@ const ProfilePage: Component = () => {
                 />
               </div>
 
-              {/* Feed Filter Buttons - Activity Type */}
-              <div class="feed-filter">
+              {/* Activity Filter Dropdown */}
+              <div class="activity-filter-dropdown-wrapper">
                 <button
-                  class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('all')}
+                  class="activity-filter-dropdown-btn"
+                  onClick={() => setFilterDropdownOpen(!filterDropdownOpen())}
                 >
-                  {getFilterLabel('all')}
+                  <span class="filter-icon">📤</span>
+                  <span class="filter-text">
+                    Showing: <span class="filter-value">
+                      {currentFilter() === 'all' ? 'All Activity' :
+                       currentFilter() === 'shared' ? 'Shared Tracks' :
+                       currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
+                    </span>
+                    <span class="filter-count"> ({filteredContent().length})</span>
+                  </span>
+                  <span class="chevron">{filterDropdownOpen() ? '▲' : '▼'}</span>
                 </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'shared' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('shared')}
-                >
-                  {getFilterLabel('shared')}
-                </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'likes' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('likes')}
-                >
-                  {getFilterLabel('likes')}
-                </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('replies')}
-                >
-                  {getFilterLabel('replies')}
-                </button>
+
+                <Show when={filterDropdownOpen()}>
+                  <div class="activity-filter-dropdown-menu">
+                    <button
+                      class={`filter-option ${currentFilter() === 'all' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('all');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">📋 All Activity</span>
+                      <span class="option-count">({allCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'shared' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('shared');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">📤 Shared Tracks</span>
+                      <span class="option-count">({sharedCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'likes' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('likes');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">♥ Liked Tracks</span>
+                      <span class="option-count">({likesCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'replies' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('replies');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">💬 Replies</span>
+                      <span class="option-count">({repliesCount()})</span>
+                    </button>
+                  </div>
+                </Show>
               </div>
 
               {/* Track Feed */}
               <div class="track-feed">
-                <div class="feed-header">
-                  📤 Showing: <span class="feed-type">
-                    {currentFilter() === 'all' ? 'All Activity' :
-                     currentFilter() === 'shared' ? 'Shared Tracks' :
-                     currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
-                  </span> (<span class="feed-count">{filteredContent().length}</span>)
-                </div>
 
                 <Show when={filteredContent().length === 0}>
                   <div class="profile-empty-state">
