@@ -711,16 +711,18 @@ body:not(.theme-dark) .stat-box:hover {
 /* Mobile Responsive */
 @media (max-width: 640px) {
   .profile-header {
-    flex-direction: column;
-    text-align: center;
     padding: 12px;
+  }
+
+  .profile-main {
+    gap: 12px;
   }
 
   .profile-avatar,
   .profile-avatar-fallback {
-    width: 80px;
-    height: 80px;
-    font-size: 36px;
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
   }
 
   .profile-username {
