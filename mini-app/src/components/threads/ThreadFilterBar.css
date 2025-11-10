@@ -90,8 +90,8 @@
 
 .filter-btn[data-filter="top"].filter-btn--active {
   background: rgba(0, 249, 42, 0.15);
-  border-color: #00f92a;
-  color: #00f92a;
+  border-color: var(--accent-secondary);
+  color: var(--accent-secondary);
   text-shadow: 0 0 6px rgba(0, 249, 42, 0.5);
   box-shadow:
     0 0 8px rgba(0, 249, 42, 0.3),

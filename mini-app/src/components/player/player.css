@@ -32,7 +32,7 @@
 
 /* Dark mode: darker gradient with green accent */
 .theme-dark .player-titlebar {
-  background: linear-gradient(90deg, #001a00, #003300);
+  background: linear-gradient(90deg, #0a0820, #1a0d2e);
   color: var(--text-lcd);
   border-bottom: 1px solid var(--border-accent);
   text-shadow: 0 0 5px var(--glow-accent);
