@@ -57,6 +57,10 @@
   font-family: var(--font-main);
   user-select: none;
   min-height: 36px;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-bottom 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* Light mode: Neon blue gradient */
@@ -72,6 +76,15 @@ body:not(.theme-dark) .retro-titlebar {
   color: var(--text-lcd);
   border-bottom: 1px solid var(--border-accent);
   text-shadow: 0 0 5px var(--glow-accent);
+}
+
+/* Title bar hiding on scroll */
+.retro-titlebar.retro-titlebar--hidden,
+.theme-light .retro-titlebar.retro-titlebar--hidden,
+.theme-dark .retro-titlebar.retro-titlebar--hidden,
+body:not(.theme-dark) .retro-titlebar.retro-titlebar--hidden {
+  transform: translateY(-100%);
+  margin-bottom: -48px; /* Collapse space - matches min-height + padding */
 }
 
 /* Title bar text section */
@@ -335,6 +348,18 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   background: rgba(0, 0, 0, 0.05);
   font-size: 10px;
   color: var(--text-secondary);
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-top 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.retro-window__footer.retro-window__footer--hidden,
+.theme-dark .retro-window__footer.retro-window__footer--hidden,
+.theme-light .retro-window__footer.retro-window__footer--hidden,
+body:not(.theme-dark) .retro-window__footer.retro-window__footer--hidden {
+  transform: translateY(100%);
+  margin-top: -40px; /* Collapse space - approximate footer height */
 }
 
 .theme-dark .retro-window__footer {
