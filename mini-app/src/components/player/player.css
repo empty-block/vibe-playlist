@@ -366,7 +366,7 @@
   .player-bar {
     left: 2px;
     right: 2px;
-    bottom: 56px;
+    bottom: 52px;  /* Navbar ~44px + 8px gap */
   }
 
   .player-content {

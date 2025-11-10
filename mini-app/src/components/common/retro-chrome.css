@@ -143,7 +143,10 @@ body:not(.theme-dark) .retro-titlebar {
 }
 
 .retro-titlebar__menu-button {
-  font-size: 14px;
+  /* Enhanced sizing for better mobile usability */
+  width: 40px;
+  height: 36px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -410,20 +413,31 @@ body:not(.theme-dark) .retro-titlebar {
 
 @media (max-width: 640px) {
   .retro-titlebar {
-    font-size: 12px;
-    padding: 6px 6px;
-    min-height: 32px;
+    font-size: 15px;
+    padding: 8px 8px;
+    min-height: 48px;
+  }
+
+  .retro-titlebar__text {
+    gap: 10px;
   }
 
   .retro-titlebar__icon {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
   }
 
   .retro-titlebar__button {
     width: 22px;
     height: 20px;
     font-size: 11px;
+  }
+
+  /* Larger hamburger menu button for mobile tap targets */
+  .retro-titlebar__menu-button {
+    width: 48px;
+    height: 44px;
+    font-size: 18px;
   }
 
   .retro-button {
@@ -453,6 +467,13 @@ body:not(.theme-dark) .retro-titlebar {
     width: 20px;
     height: 18px;
     font-size: 10px;
+  }
+
+  /* Keep hamburger menu button large even on very small screens */
+  .retro-titlebar__menu-button {
+    width: 48px;
+    height: 44px;
+    font-size: 18px;
   }
 
   .retro-button {

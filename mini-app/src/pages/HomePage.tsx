@@ -238,11 +238,6 @@ const HomePage: Component = () => {
       onClick: () => toggleTheme()
     },
     {
-      label: 'Refresh Feed',
-      icon: '🔄',
-      onClick: () => loadFeed(true)
-    },
-    {
       label: 'Feedback',
       icon: '💬',
       onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
