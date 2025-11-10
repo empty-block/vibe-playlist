@@ -358,7 +358,7 @@ const HomePage: Component = () => {
                         }}
                         castHash={thread.castHash}
                         onPlay={() => handleTrackPlay(thread)}
-                        onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
+                        onUsernameClick={handleUsernameClick}
                         animationDelay={Math.min(index(), 20) * 50}
                       />
                     )}

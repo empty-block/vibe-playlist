@@ -163,7 +163,7 @@ const TrendingPage: Component = () => {
       <div class="page-window-container">
         {/* Trending Tracks Window */}
         <RetroWindow
-          title="Trending Tracks - Last 24 Hours"
+          title="Trending Tracks"
           icon={
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
               {/* Lightning bolt - classic zigzag shape */}
@@ -182,10 +182,6 @@ const TrendingPage: Component = () => {
           }
         >
           <div class="window-content-inner" classList={{ minimized: window1Minimized() }}>
-            <div class="section-header">
-              <div class="section-title">Hot Right Now</div>
-            </div>
-
             {isLoading() && tracks().length === 0 ? (
               <div class="loading-state">
                 Loading trending tracks...

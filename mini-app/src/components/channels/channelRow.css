@@ -11,6 +11,8 @@ body:not(.theme-dark) .channel-item {
   background: #FFFFFF;
   transition: none;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  opacity: 0;
+  transform: translateY(15px);
 }
 
 .theme-light .channel-item.even,
@@ -48,6 +50,8 @@ body:not(.theme-dark) .channel-item:focus {
   background: #000000;
   transition: all 0.2s ease;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  opacity: 0;
+  transform: translateY(15px);
 }
 
 .theme-dark .channel-item.even {

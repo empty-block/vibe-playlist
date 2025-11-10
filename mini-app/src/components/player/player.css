@@ -277,13 +277,13 @@
   border-left: 2px solid var(--border-raised-light);
   border-right: 2px solid var(--border-raised-dark);
   border-bottom: 2px solid var(--border-raised-dark);
-  width: 44px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: var(--accent-primary);
   user-select: none;
@@ -304,9 +304,11 @@
 }
 
 .player-control-play {
-  width: 56px;
+  width: 60px;
+  height: 60px;
   background: var(--accent-secondary);
   color: var(--neon-blue);
+  font-size: 24px;
 }
 
 /* Dark mode control button effects */
@@ -389,17 +391,19 @@
   }
 
   .player-controls {
-    gap: 2px;
+    gap: 3px;
   }
 
   .player-control {
-    width: 40px;
-    height: 36px;
-    font-size: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
 
   .player-control-play {
-    width: 50px;
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
   }
 }
 
@@ -426,12 +430,14 @@
   }
 
   .player-control {
-    width: 38px;
-    height: 34px;
-    font-size: 15px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
   }
 
   .player-control-play {
-    width: 46px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
 }

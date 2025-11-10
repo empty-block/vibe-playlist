@@ -1,4 +1,5 @@
 import { Component, Show } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { TrackShareActivity as TrackShareActivityType } from '../../data/mockActivity';
 import { setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
 
@@ -22,6 +23,8 @@ const formatTimeAgo = (timestamp: string) => {
 };
 
 const TrackShareActivity: Component<TrackShareActivityProps> = (props) => {
+  const navigate = useNavigate();
+
   const handleTrackPlay = () => {
     const track = {
       id: props.activity.track.id,
@@ -44,6 +47,13 @@ const TrackShareActivity: Component<TrackShareActivityProps> = (props) => {
     }
   };
 
+  const handleUsernameClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (props.activity.user.fid) {
+      navigate(`/profile/${props.activity.user.fid}`);
+    }
+  };
+
   const isCurrentTrack = () => currentTrack()?.id === props.activity.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
@@ -53,11 +63,27 @@ const TrackShareActivity: Component<TrackShareActivityProps> = (props) => {
       <div class="activity-header">
         <div class="user-info">
           <Show when={props.activity.user.pfp} fallback={
-            <div class="user-avatar-fallback">{props.activity.user.username.charAt(0).toUpperCase()}</div>
+            <div
+              class="user-avatar-fallback"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.activity.user.fid ? 'pointer' : 'default' }}
+            >
+              {props.activity.user.username.charAt(0).toUpperCase()}
+            </div>
           }>
-            <img src={props.activity.user.pfp} alt={props.activity.user.username} class="user-avatar" />
+            <img
+              src={props.activity.user.pfp}
+              alt={props.activity.user.username}
+              class="user-avatar"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.activity.user.fid ? 'pointer' : 'default' }}
+            />
           </Show>
-          <span class="username">
+          <span
+            class="username"
+            onClick={handleUsernameClick}
+            style={{ cursor: props.activity.user.fid ? 'pointer' : 'default' }}
+          >
             {props.activity.user.username}
             <span style={{ 'font-weight': 'normal', 'margin-left': '4px' }}>• shared track</span>
           </span>

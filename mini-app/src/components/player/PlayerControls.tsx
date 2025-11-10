@@ -18,11 +18,7 @@ interface PlayerControlsProps {
 const PlayerControls: Component<PlayerControlsProps> = (props) => {
   // Button refs for animations
   let playButtonRef: HTMLButtonElement;
-  let prevButtonRef: HTMLButtonElement;
-  let nextButtonRef: HTMLButtonElement;
   let compactPlayButtonRef: HTMLButtonElement;
-  let compactPrevButtonRef: HTMLButtonElement;
-  let compactNextButtonRef: HTMLButtonElement;
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -34,11 +30,7 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
   onMount(() => {
     const buttons = [
       playButtonRef,
-      prevButtonRef, 
-      nextButtonRef,
-      compactPlayButtonRef,
-      compactPrevButtonRef,
-      compactNextButtonRef
+      compactPlayButtonRef
     ];
 
     const cleanupFunctions: (() => void)[] = [];
@@ -80,27 +72,6 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
         ? `0 0 10px ${NEON_COLORS.green}CC` 
         : 'none'
     };
-  };
-
-  const getControlButtonStyles = () => {
-    const styles = createNeonButton('cyan');
-    return {
-      ...styles.base,
-      boxShadow: props.playerReady() ? 'none' : '0 0 0 2px rgba(128, 128, 128, 0.3)'
-    };
-  };
-
-  const handleControlHover = (element: HTMLElement, enter: boolean) => {
-    if (!props.playerReady()) return;
-
-    if (enter) {
-      element.style.borderColor = NEON_COLORS.cyan;
-      element.style.boxShadow = `0 0 20px ${NEON_COLORS.cyan}99`;
-      element.style.color = NEON_COLORS.cyan;
-      element.style.textShadow = `0 0 8px ${NEON_COLORS.cyan}CC`;
-    } else {
-      Object.assign(element.style, getControlButtonStyles());
-    }
   };
 
   const handlePlayButtonHover = (element: HTMLElement, enter: boolean) => {
@@ -158,21 +129,8 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
 
           {/* Main Control Buttons */}
           <div class="flex items-center justify-center gap-4 mb-4">
-            {/* Previous Button */}
-            <button 
-              ref={prevButtonRef!}
-              onClick={props.onSkipPrevious}
-              class="w-12 h-12 rounded-lg flex items-center justify-center text-lg transition-all duration-300"
-              style={getControlButtonStyles()}
-              disabled={!props.playerReady()}
-              onMouseEnter={(e) => handleControlHover(e.currentTarget, true)}
-              onMouseLeave={(e) => handleControlHover(e.currentTarget, false)}
-            >
-              <i class="fas fa-step-backward"></i>
-            </button>
-            
             {/* Main Play Button */}
-            <button 
+            <button
               ref={playButtonRef!}
               onClick={props.onTogglePlay}
               class="w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-all duration-300"
@@ -182,19 +140,6 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
               onMouseLeave={(e) => handlePlayButtonHover(e.currentTarget, false)}
             >
               <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-            </button>
-            
-            {/* Next Button */}
-            <button 
-              ref={nextButtonRef!}
-              onClick={props.onSkipNext}
-              class="w-12 h-12 rounded-lg flex items-center justify-center text-lg transition-all duration-300"
-              style={getControlButtonStyles()}
-              disabled={!props.playerReady()}
-              onMouseEnter={(e) => handleControlHover(e.currentTarget, true)}
-              onMouseLeave={(e) => handleControlHover(e.currentTarget, false)}
-            >
-              <i class="fas fa-step-forward"></i>
             </button>
           </div>
           
@@ -224,25 +169,8 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
       <Show when={props.isCompact()}>
         {/* Compact Controls */}
         <div class="flex items-center gap-2 flex-wrap">
-          {/* Compact Previous Button */}
-          <button 
-            ref={compactPrevButtonRef!}
-            onClick={props.onSkipPrevious}
-            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xs sm:text-sm transition-all duration-300"
-            style={{
-              ...getControlButtonStyles(),
-              minHeight: PLAYER_CONSTANTS.minButtonHeight
-            }}
-            disabled={!props.playerReady()}
-            title="Previous track"
-            onMouseEnter={(e) => handleControlHover(e.currentTarget, true)}
-            onMouseLeave={(e) => handleControlHover(e.currentTarget, false)}
-          >
-            <i class="fas fa-step-backward"></i>
-          </button>
-          
           {/* Compact Play Button */}
-          <button 
+          <button
             ref={compactPlayButtonRef!}
             onClick={props.onTogglePlay}
             class="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-sm sm:text-lg transition-all duration-300"
@@ -255,23 +183,6 @@ const PlayerControls: Component<PlayerControlsProps> = (props) => {
             onMouseLeave={(e) => handlePlayButtonHover(e.currentTarget, false)}
           >
             <i class={`fas ${isPlaying() ? 'fa-pause' : 'fa-play'}`}></i>
-          </button>
-          
-          {/* Compact Next Button */}
-          <button 
-            ref={compactNextButtonRef!}
-            onClick={props.onSkipNext}
-            class="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-xs sm:text-sm transition-all duration-300"
-            style={{
-              ...getControlButtonStyles(),
-              minHeight: PLAYER_CONSTANTS.minButtonHeight
-            }}
-            disabled={!props.playerReady()}
-            title="Next track"
-            onMouseEnter={(e) => handleControlHover(e.currentTarget, true)}
-            onMouseLeave={(e) => handleControlHover(e.currentTarget, false)}
-          >
-            <i class="fas fa-step-forward"></i>
           </button>
         </div>
       </Show>

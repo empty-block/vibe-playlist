@@ -107,7 +107,11 @@ const TrackCard: Component<TrackCardProps> = (props) => {
       <div class="activity-header">
         <div class="user-info">
           <Show when={props.author.pfpUrl} fallback={
-            <div class="user-avatar-fallback">
+            <div
+              class="user-avatar-fallback"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+            >
               {props.author.username.charAt(0).toUpperCase()}
             </div>
           }>
@@ -115,6 +119,8 @@ const TrackCard: Component<TrackCardProps> = (props) => {
               src={props.author.pfpUrl}
               alt={props.author.username}
               class="user-avatar"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
             />
           </Show>
           <div class="user-text">
