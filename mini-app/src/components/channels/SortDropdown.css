@@ -247,7 +247,7 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 640px) and (hover: none) {
+@media (max-width: 640px) {
   /* Button - maintain 44px touch target */
   .sort-dropdown-btn {
     font-size: 13px !important;
@@ -308,7 +308,7 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
   }
 }
 
-@media (max-width: 360px) and (hover: none) {
+@media (max-width: 360px) {
   /* Maintain 44px touch targets on small screens */
   .sort-dropdown-btn {
     font-size: 12px !important;
