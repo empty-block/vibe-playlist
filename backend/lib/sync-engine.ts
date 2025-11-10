@@ -722,6 +722,76 @@ export class SyncEngine {
   }
 
   /**
+   * Sync profile data for a specific user from Neynar
+   *
+   * @param fid - Farcaster ID of the user
+   * @returns Sync result with user data
+   */
+  async syncUserProfile(fid: number): Promise<{
+    success: boolean
+    user?: {
+      fid: string
+      username: string
+      displayName: string
+      avatar: string | null
+    }
+    error?: string
+  }> {
+    try {
+      console.log(`[Sync] Fetching profile data for user: ${fid}`)
+
+      // Fetch user data from Neynar
+      const userData = await this.neynar.fetchUserByFid(fid)
+
+      if (!userData) {
+        return {
+          success: false,
+          error: 'User not found on Farcaster'
+        }
+      }
+
+      // Upsert user profile to database
+      const { error: upsertError } = await this.supabase
+        .from('user_nodes')
+        .upsert({
+          node_id: fid.toString(),
+          fname: userData.username,
+          display_name: userData.display_name,
+          avatar_url: userData.pfp_url
+        }, {
+          onConflict: 'node_id'
+        })
+
+      if (upsertError) {
+        console.error(`[Sync] Failed to upsert user profile for ${fid}:`, upsertError.message)
+        return {
+          success: false,
+          error: `Database error: ${upsertError.message}`
+        }
+      }
+
+      console.log(`[Sync] ✓ Synced profile for user ${fid} (@${userData.username})`)
+
+      return {
+        success: true,
+        user: {
+          fid: fid.toString(),
+          username: userData.username,
+          displayName: userData.display_name,
+          avatar: userData.pfp_url || null
+        }
+      }
+    } catch (error) {
+      const errorMsg = `Failed to sync user profile: ${error}`
+      console.error(`[Sync] ${errorMsg}`)
+      return {
+        success: false,
+        error: errorMsg
+      }
+    }
+  }
+
+  /**
    * Sync reactions (likes/recasts) made by a specific user
    *
    * Fetches all reactions from Neynar API and processes each liked cast.
