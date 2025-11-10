@@ -8,28 +8,22 @@ interface SortDropdownProps {
 }
 
 const SORT_OPTIONS: Array<{
-  value: Exclude<ChannelFeedSortOption, 'shuffle'>;
+  value: ChannelFeedSortOption;
   label: string;
 }> = [
   { value: 'recent', label: 'Recent' },
   { value: 'popular_24h', label: 'Popular 24h' },
   { value: 'popular_7d', label: 'Popular 7d' },
   { value: 'all_time', label: 'All Time' },
+  { value: 'shuffle', label: 'Shuffle' },
 ];
 
 export const SortDropdown: Component<SortDropdownProps> = (props) => {
   const [isOpen, setIsOpen] = createSignal(false);
   let dropdownRef: HTMLDivElement | undefined;
 
-  // Get label for current sort (exclude shuffle)
-  const currentLabel = () => {
-    if (props.activeSort === 'shuffle') return 'Recent';
-    const option = SORT_OPTIONS.find(opt => opt.value === props.activeSort);
-    return option?.label || 'Recent';
-  };
-
   // Handle sort selection
-  const handleSortSelect = (sort: Exclude<ChannelFeedSortOption, 'shuffle'>) => {
+  const handleSortSelect = (sort: ChannelFeedSortOption) => {
     props.onSortChange(sort);
     setIsOpen(false);
   };
@@ -57,9 +51,7 @@ export const SortDropdown: Component<SortDropdownProps> = (props) => {
         aria-label="Sort options"
         aria-expanded={isOpen()}
       >
-        <span class="sort-icon">📊</span>
-        <span class="sort-label">Sort: {currentLabel()}</span>
-        <span class="chevron">{isOpen() ? '▲' : '▼'}</span>
+        📊 Sort ▼
       </button>
 
       <Show when={isOpen()}>

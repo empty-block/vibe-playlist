@@ -341,11 +341,6 @@ const ChannelViewPage: Component = () => {
 
               {/* Action Bar with Filters */}
               <div class="action-bar">
-                <button class="action-button" onClick={handleAddTrack}>
-                  <span class="icon">➕</span>
-                  <span>Add Track</span>
-                </button>
-
                 <ChannelFilterBar
                   activeSort={activeSort()}
                   onSortChange={handleSortChange}
@@ -359,6 +354,8 @@ const ChannelViewPage: Component = () => {
                   availableGenres={availableGenres}
                   filterDialogOpen={filterDialogOpen()}
                   onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleAddTrack}
                 />
               </div>
 

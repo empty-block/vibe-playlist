@@ -146,7 +146,7 @@ body:not(.theme-dark) .retro-titlebar {
   /* Enhanced sizing for better mobile usability */
   width: 44px;
   height: 44px;
-  font-size: 24px;
+  font-size: 18px;
   line-height: 0;
 
   /* Remove background - let it sit on the gradient */
@@ -483,7 +483,7 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   .retro-titlebar__menu-button {
     width: 48px;
     height: 44px;
-    font-size: 28px;
+    font-size: 20px;
   }
 
   .retro-button {
@@ -519,7 +519,7 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   .retro-titlebar__menu-button {
     width: 48px;
     height: 44px;
-    font-size: 26px;
+    font-size: 19px;
   }
 
   .retro-button {

@@ -4,6 +4,7 @@
 
 .sort-dropdown-wrapper {
   position: relative;
+  flex: 1;
 }
 
 /* ============================================
@@ -25,10 +26,12 @@ body:not(.theme-dark) .sort-dropdown-btn {
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: 38px;
+  width: 100%;
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -58,10 +61,12 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: 38px;
+  width: 100%;
   box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
 }
 
@@ -226,23 +231,23 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .sort-dropdown-btn {
-    font-size: 11px;
-    padding: 5px 10px;
-    min-height: 30px;
+    font-size: 13px;
+    padding: 8px 12px;
+    min-height: 44px;
   }
 
   .sort-dropdown-btn:active {
-    padding: 6px 9px 4px 11px;
+    padding: 9px 11px 7px 13px;
   }
 
   .sort-icon {
-    font-size: 13px;
+    font-size: 16px;
   }
 
   .chevron {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .sort-dropdown-menu {
@@ -265,13 +270,17 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
 
 @media (max-width: 360px) {
   .sort-dropdown-btn {
-    font-size: 10px;
-    padding: 4px 8px;
-    min-height: 28px;
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 44px;
   }
 
   .sort-dropdown-btn:active {
-    padding: 5px 7px 3px 9px;
+    padding: 9px 9px 7px 11px;
+  }
+
+  .sort-icon {
+    font-size: 15px;
   }
 
   .sort-dropdown-menu {

@@ -4,6 +4,7 @@ import MobileNavigation from '../components/layout/MobileNavigation/MobileNaviga
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
+import AddTrackModal from '../components/library/AddTrackModal';
 import { Track, playTrackWithAuthCheck } from '../stores/playerStore';
 import { theme, toggleTheme } from '../stores/themeStore';
 import { fetchHomeFeed } from '../services/api';
@@ -32,6 +33,7 @@ const HomePage: Component = () => {
   const [genres, setGenres] = createSignal<string[]>([]);
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0);
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
 
   // Pagination state
   const [threads, setThreads] = createSignal<any[]>([]);
@@ -214,6 +216,18 @@ const HomePage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
+  // Handle add track
+  const handleAddTrack = () => {
+    setShowAddTrackModal(true);
+  };
+
+  // Handle track submission
+  const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    console.log('Track submitted to home feed:', data);
+    setShowAddTrackModal(false);
+    // TODO: Implement actual track submission via Farcaster composer
+  };
+
   // Count active filters
   const activeFilterCount = createMemo(() => {
     let count = 0;
@@ -283,9 +297,10 @@ const HomePage: Component = () => {
                   onGenresChange={setGenres}
                   availablePlatforms={availablePlatforms}
                   availableGenres={availableGenres}
-                  activeFilterCount={activeFilterCount()}
                   filterDialogOpen={filterDialogOpen()}
                   onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleAddTrack}
                 />
               </div>
 
@@ -385,6 +400,14 @@ const HomePage: Component = () => {
 
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
+
+      {/* Add Track Modal */}
+      <AddTrackModal
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleTrackSubmit}
+        title="Share Track to Feed"
+      />
     </div>
   );
 };

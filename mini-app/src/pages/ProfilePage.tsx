@@ -3,6 +3,7 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
+import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
 import { theme, toggleTheme } from '../stores/themeStore';
@@ -17,6 +18,7 @@ import {
   loadMoreActivity
 } from '../stores/profileStore';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
+import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './profilePage.css';
 
 type FilterType = 'all' | 'shared' | 'likes' | 'replies';
@@ -30,6 +32,17 @@ const ProfilePage: Component = () => {
   const [submitError, setSubmitError] = createSignal<string | null>(null);
   const [windowMinimized, setWindowMinimized] = createSignal(false);
   const [windowMaximized, setWindowMaximized] = createSignal(false);
+
+  // Sort and filter state for ChannelFilterBar
+  const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
+  const [qualityFilter, setQualityFilter] = createSignal<number>(0);
+  const [musicSources, setMusicSources] = createSignal<MusicPlatform[]>([]);
+  const [genres, setGenres] = createSignal<string[]>([]);
+  const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
+
+  // Available filter options
+  const availablePlatforms: MusicPlatform[] = ['spotify', 'youtube', 'apple_music', 'soundcloud', 'songlink', 'audius'];
+  const availableGenres = ['hip-hop', 'electronic', 'rock', 'jazz', 'classical', 'metal', 'indie', 'folk', 'r&b', 'pop'];
 
   // Sentinel element for infinite scroll
   let sentinelRef: HTMLDivElement | undefined;
@@ -162,6 +175,13 @@ const ProfilePage: Component = () => {
     const profileTracks = getProfileTracks();
     const feedId = `profile-${userFid()}-${currentFilter()}`;
     playTrackWithAuthCheck(track, profileTracks, feedId);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSort: ChannelFeedSortOption) => {
+    setActiveSort(newSort);
+    // Note: Profile page data is already loaded, this is just for UI state
+    // If we wanted to apply actual sorting, we'd need to implement it in filteredContent
   };
 
   // Handle opening the add track modal
@@ -398,7 +418,27 @@ const ProfilePage: Component = () => {
                 </Show>
               </div>
 
-              {/* Feed Filter Buttons */}
+              {/* Feed Controls - Sort/Filter/Add Track */}
+              <div class="action-bar" style="margin-bottom: 12px;">
+                <ChannelFilterBar
+                  activeSort={activeSort()}
+                  onSortChange={handleSortChange}
+                  qualityFilter={qualityFilter()}
+                  onQualityFilterChange={setQualityFilter}
+                  musicSources={musicSources()}
+                  onMusicSourcesChange={setMusicSources}
+                  genres={genres()}
+                  onGenresChange={setGenres}
+                  availablePlatforms={availablePlatforms}
+                  availableGenres={availableGenres}
+                  filterDialogOpen={filterDialogOpen()}
+                  onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleShareTrack}
+                />
+              </div>
+
+              {/* Feed Filter Buttons - Activity Type */}
               <div class="feed-filter">
                 <button
                   class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
