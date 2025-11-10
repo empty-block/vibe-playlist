@@ -24,10 +24,10 @@ body:not(.theme-dark) .profile-page {
 
 /* Profile Content Wrapper (inside RetroWindow) */
 .profile-content {
-  height: 100%;
   overflow-x: hidden;
   background: #FFFFFF;
   /* overflow-y removed - scroll handled by .retro-window__content */
+  /* height removed - let content flow naturally for proper scroll detection */
 }
 
 .theme-dark .profile-content {
