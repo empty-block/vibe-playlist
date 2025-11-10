@@ -306,9 +306,10 @@
 .player-control-play {
   width: 60px;
   height: 60px;
-  background: var(--accent-secondary);
-  color: var(--neon-blue);
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  color: #ffffff;
   font-size: 24px;
+  box-shadow: 0 0 10px rgba(231, 56, 149, 0.4);
 }
 
 /* Dark mode control button effects */
@@ -326,11 +327,24 @@
   background: var(--active-bg);
 }
 
-/* Play button stays cyan in dark mode */
+/* Play button uses berry (primary CTA) */
 .theme-dark .player-control-play {
-  background: var(--accent-secondary);
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(231, 56, 149, 0.6);
+}
+
+/* Hover with cyan (exploratory) */
+.player-control-play:hover:not(:disabled) {
+  background: linear-gradient(135deg, #04caf4 0%, #6fd9ff 100%);
   color: #000000;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(4, 202, 244, 0.7);
+}
+
+/* Active stays berry (commitment) */
+.player-control-play:active {
+  background: linear-gradient(135deg, #c12e73 0%, #E73895 100%);
+  box-shadow: 0 0 20px rgba(231, 56, 149, 0.8);
 }
 
 /* Reply button - cyan theme to match social context */

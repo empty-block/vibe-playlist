@@ -44,7 +44,7 @@ body:not(.theme-dark) {
   --neon-yellow: #d1f60a;
 
   /* Gradient Definitions */
-  --gradient-page-bg: linear-gradient(135deg, #04caf4 0%, #3b00fd 50%, #E73895 100%); /* Cyan to Blue to Berry */
+  --gradient-page-bg: linear-gradient(135deg, #E73895 0%, #3b00fd 50%, #04caf4 100%); /* Berry to Blue to Cyan */
   --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Neon blue to cyan */
   --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
   --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
@@ -116,7 +116,7 @@ body:not(.theme-dark) {
   --neon-yellow: #d1f60a;
 
   /* Gradient Definitions - Brand consistency */
-  --gradient-page-bg: linear-gradient(135deg, #04caf4 0%, #3b00fd 50%, #E73895 100%); /* Cyan to Blue to Berry */
+  --gradient-page-bg: linear-gradient(135deg, #E73895 0%, #3b00fd 50%, #04caf4 100%); /* Berry to Blue to Cyan */
   --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Brand: blue to cyan */
   --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
   --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
