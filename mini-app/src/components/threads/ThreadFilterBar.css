@@ -50,11 +50,12 @@
     inset 0 0 8px rgba(231, 56, 149, 0.1);
 }
 
+/* Hover with cyan (exploratory) */
 .filter-btn[data-filter="hot"]:hover:not(.filter-btn--active) {
-  background: rgba(231, 56, 149, 0.12);
-  border-color: rgba(231, 56, 149, 0.5);
-  color: rgba(231, 56, 149, 0.9);
-  box-shadow: 0 0 12px rgba(231, 56, 149, 0.4);
+  background: rgba(4, 202, 244, 0.12);
+  border-color: rgba(4, 202, 244, 0.5);
+  color: rgba(4, 202, 244, 0.9);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4);
 }
 
 /* === LATEST FILTER === */
@@ -64,16 +65,18 @@
   color: rgba(4, 202, 244, 0.7);
 }
 
+/* Active state uses berry (signature color) */
 .filter-btn[data-filter="latest"].filter-btn--active {
-  background: rgba(4, 202, 244, 0.15);
-  border-color: #04caf4;
-  color: #04caf4;
-  text-shadow: 0 0 6px rgba(4, 202, 244, 0.5);
+  background: rgba(231, 56, 149, 0.15);
+  border-color: #E73895;
+  color: #E73895;
+  text-shadow: 0 0 6px rgba(231, 56, 149, 0.5);
   box-shadow:
-    0 0 8px rgba(4, 202, 244, 0.3),
-    inset 0 0 8px rgba(4, 202, 244, 0.1);
+    0 0 8px rgba(231, 56, 149, 0.3),
+    inset 0 0 8px rgba(231, 56, 149, 0.1);
 }
 
+/* Hover with cyan (exploratory) */
 .filter-btn[data-filter="latest"]:hover:not(.filter-btn--active) {
   background: rgba(4, 202, 244, 0.12);
   border-color: rgba(4, 202, 244, 0.5);
@@ -88,21 +91,23 @@
   color: rgba(0, 249, 42, 0.7);
 }
 
+/* Active state uses berry (signature color) */
 .filter-btn[data-filter="top"].filter-btn--active {
-  background: rgba(0, 249, 42, 0.15);
-  border-color: #00f92a;
-  color: #00f92a;
-  text-shadow: 0 0 6px rgba(0, 249, 42, 0.5);
+  background: rgba(231, 56, 149, 0.15);
+  border-color: #E73895;
+  color: #E73895;
+  text-shadow: 0 0 6px rgba(231, 56, 149, 0.5);
   box-shadow:
-    0 0 8px rgba(0, 249, 42, 0.3),
-    inset 0 0 8px rgba(0, 249, 42, 0.1);
+    0 0 8px rgba(231, 56, 149, 0.3),
+    inset 0 0 8px rgba(231, 56, 149, 0.1);
 }
 
+/* Hover with cyan (exploratory) */
 .filter-btn[data-filter="top"]:hover:not(.filter-btn--active) {
-  background: rgba(0, 249, 42, 0.12);
-  border-color: rgba(0, 249, 42, 0.5);
-  color: rgba(0, 249, 42, 0.9);
-  box-shadow: 0 0 12px rgba(0, 249, 42, 0.4);
+  background: rgba(4, 202, 244, 0.12);
+  border-color: rgba(4, 202, 244, 0.5);
+  color: rgba(4, 202, 244, 0.9);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4);
 }
 
 /* === FOCUS STATE (Accessibility) === */

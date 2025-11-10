@@ -59,7 +59,7 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
   letter-spacing: 0;
   text-transform: none;
   background: #001100;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   color: #ffffff;
   cursor: pointer;
   transition: background 0.1s ease;
@@ -73,19 +73,19 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
   height: 38px;
   line-height: 1;
   width: 100%;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .theme-dark .sort-dropdown-btn:hover {
   background: #002200;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.5);
 }
 
 .theme-dark .sort-dropdown-btn:active {
   background: #000800;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   padding: 7px 11px 5px 13px;
-  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: inset 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 /* Sort icon and label */

@@ -271,7 +271,7 @@
 
 /* Dark Mode Title Icon */
 .add-track-modal .win95-panel h2 i {
-  color: var(--neon-green, #00f92a) !important;
+  color: var(--neon-green, var(--accent-secondary)) !important;
 }
 
 /* Light Mode Title Icon */

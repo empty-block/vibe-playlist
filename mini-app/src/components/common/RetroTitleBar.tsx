@@ -38,6 +38,9 @@ export interface RetroTitleBarProps {
 
   /** Additional CSS classes */
   class?: string;
+
+  /** Ref callback for the title bar element */
+  ref?: (el: HTMLDivElement) => void;
 }
 
 /**
@@ -95,7 +98,10 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
   }
 
   return (
-    <div class={`retro-titlebar ${props.class || ''}`}>
+    <div
+      class={`retro-titlebar ${props.class || ''}`}
+      ref={props.ref}
+    >
       <div class="retro-titlebar__text">
         <Show when={props.icon} fallback={<div class="retro-titlebar__icon" />}>
           {props.icon}
