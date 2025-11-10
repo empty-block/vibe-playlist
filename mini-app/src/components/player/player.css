@@ -367,8 +367,9 @@
     left: 2px;
     right: 2px;
     /* Account for navbar height + safe area insets */
-    /* Navbar = 44px total (icon 20px + gap 3px + text 11px + padding-top 10px) */
-    bottom: calc(44px + env(safe-area-inset-bottom, 0px));
+    /* Navbar = 44px button content + Farcaster SDK adds safe-area padding dynamically */
+    /* Safe area on iPhone X+ is ~34px, so total navbar ~78px */
+    bottom: 80px;
   }
 
   .player-content {

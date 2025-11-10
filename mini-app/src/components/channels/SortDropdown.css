@@ -249,7 +249,9 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
 
 @media (max-width: 640px) {
   /* Button - maintain 44px touch target */
-  .sort-dropdown-btn {
+  .theme-light .sort-dropdown-btn,
+  body:not(.theme-dark) .sort-dropdown-btn,
+  .theme-dark .sort-dropdown-btn {
     font-size: 13px !important;
     padding: 8px 12px !important;
     min-height: 44px !important;
@@ -257,7 +259,9 @@ body:not(.theme-dark) .sort-dropdown-btn:active {
     height: auto !important;
   }
 
-  .sort-dropdown-btn:active {
+  .theme-light .sort-dropdown-btn:active,
+  body:not(.theme-dark) .sort-dropdown-btn:active,
+  .theme-dark .sort-dropdown-btn:active {
     padding: 9px 11px 7px 13px !important;
   }
 
