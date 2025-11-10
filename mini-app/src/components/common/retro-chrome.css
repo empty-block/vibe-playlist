@@ -304,6 +304,7 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   flex-direction: column;
   background: var(--bg-panel);
   position: relative;
+  overflow: hidden; /* Hide header/footer when they slide out of view */
 }
 
 /* Window with 3D borders */
@@ -340,6 +341,31 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
 .theme-dark .retro-window__footer {
   background: #000000;
   color: var(--text-lcd);
+}
+
+/* Scroll-based header/footer hiding animations */
+.retro-titlebar {
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-bottom 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.retro-titlebar--hidden {
+  transform: translateY(-100%);
+  margin-bottom: -48px; /* Collapse space - matches min-height from line 59 */
+}
+
+.retro-window__footer {
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-top 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.retro-window__footer--hidden {
+  transform: translateY(100%);
+  margin-top: -40px; /* Collapse space - approximate footer height */
 }
 
 /* ============================================

@@ -31,20 +31,20 @@ body:not(.theme-dark) .channel-view-page {
 body:not(.theme-dark) .content {
   height: 100%;
   background: #FFFFFF;
-  overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+  /* overflow-y removed - scroll handled by .retro-window__content */
 }
 
 /* Content Area - Dark Mode */
 .theme-dark .content {
   height: 100%;
   background: #000000;
-  overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+  /* overflow-y removed - scroll handled by .retro-window__content */
 }
 
 /* Windows 95 Scrollbar */
