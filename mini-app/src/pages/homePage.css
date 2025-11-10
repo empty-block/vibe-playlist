@@ -59,12 +59,12 @@ body:not(.theme-dark) .home-page {
 /* Dark mode header */
 .theme-dark .home-header {
   background: linear-gradient(135deg, #000000 0%, #001a1a 100%);
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid var(--border-emphasis);
 }
 
 .theme-dark .home-title {
   color: #ffffff;
-  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);
 }
 
 .theme-dark .home-description {
@@ -141,7 +141,7 @@ body:not(.theme-dark) .home-page {
 
 .theme-dark .empty-state {
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
 }
 
 .theme-dark .empty-state p {
@@ -299,7 +299,7 @@ body:not(.theme-dark) .channel-link {
 
 .theme-dark .status-bar {
   background: #000000;
-  border-top: 2px solid #00ff00;
+  border-top: 2px solid var(--border-emphasis);
   color: #ffffff;
 }
 

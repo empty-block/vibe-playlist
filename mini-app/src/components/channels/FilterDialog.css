@@ -25,8 +25,8 @@ body:not(.theme-dark) .filter-dialog-modal {
 /* Dark Mode */
 .theme-dark .filter-dialog-modal {
   background: #001100 !important;
-  border: 3px solid #00ff00 !important;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4) !important;
+  border: 3px solid var(--border-emphasis) !important;
+  box-shadow: 0 0 20px rgba(4, 202, 244, 0.4) !important;
 }
 
 /* ============================================
@@ -88,7 +88,7 @@ body:not(.theme-dark) .filter-dialog-content {
 
 .theme-dark .filter-section {
   background: #001a00;
-  border-color: #00ff00;
+  border-color: var(--accent-secondary);
 }
 
 .filter-section:last-child {
@@ -108,8 +108,8 @@ body:not(.theme-dark) .filter-dialog-content {
 }
 
 .theme-dark .filter-section-header {
-  color: #00ff00;
-  border-bottom-color: #00ff00;
+  color: var(--accent-secondary);
+  border-bottom-color: var(--accent-secondary);
 }
 
 .filter-section-options {
@@ -167,7 +167,7 @@ body:not(.theme-dark) .filter-dialog-content {
 
 .theme-dark .filter-radio-option input[type='radio'] {
   background: #001100;
-  border-color: #00ff00;
+  border-color: var(--accent-secondary);
 }
 
 .filter-radio-option input[type='radio']:checked {
@@ -191,7 +191,7 @@ body:not(.theme-dark) .filter-dialog-content {
 }
 
 .theme-dark .filter-radio-option input[type='radio']:checked::before {
-  background: #00ff00;
+  background: var(--accent-secondary);
 }
 
 .filter-radio-option input[type='radio']:hover {
@@ -257,7 +257,7 @@ body:not(.theme-dark) .filter-dialog-content {
 
 .theme-dark .filter-checkbox-option input[type='checkbox'] {
   background: #001100;
-  border-color: #00ff00;
+  border-color: var(--accent-secondary);
 }
 
 .filter-checkbox-option input[type='checkbox']:checked {
@@ -280,7 +280,7 @@ body:not(.theme-dark) .filter-dialog-content {
 }
 
 .theme-dark .filter-checkbox-option input[type='checkbox']:checked::before {
-  color: #00ff00;
+  color: var(--accent-secondary);
 }
 
 .filter-checkbox-option input[type='checkbox']:hover {
@@ -321,7 +321,7 @@ body:not(.theme-dark) .filter-dialog-content {
 
 .theme-dark .filter-dialog-footer {
   background: #001100;
-  border-top-color: #00ff00;
+  border-top-color: var(--accent-secondary);
 }
 
 .filter-clear-all-btn,
@@ -346,7 +346,7 @@ body:not(.theme-dark) .filter-dialog-content {
 .theme-dark .filter-clear-all-btn,
 .theme-dark .filter-apply-btn {
   background: #001100;
-  border-color: #00ff00;
+  border-color: var(--accent-secondary);
   color: #ffffff;
 }
 
@@ -358,7 +358,7 @@ body:not(.theme-dark) .filter-dialog-content {
 .theme-dark .filter-clear-all-btn:hover,
 .theme-dark .filter-apply-btn:hover {
   background: #002200;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.5);
 }
 
 .filter-clear-all-btn:active,
@@ -370,8 +370,8 @@ body:not(.theme-dark) .filter-dialog-content {
 
 .theme-dark .filter-clear-all-btn:active,
 .theme-dark .filter-apply-btn:active {
-  border-color: #00ff00;
-  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3);
+  border-color: var(--accent-secondary);
+  box-shadow: inset 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .filter-apply-btn {
