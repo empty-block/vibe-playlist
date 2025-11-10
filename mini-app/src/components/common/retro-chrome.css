@@ -144,10 +144,56 @@ body:not(.theme-dark) .retro-titlebar {
 
 .retro-titlebar__menu-button {
   /* Enhanced sizing for better mobile usability */
-  width: 40px;
-  height: 36px;
-  font-size: 16px;
-  line-height: 1;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  line-height: 0;
+
+  /* Remove background - let it sit on the gradient */
+  background: transparent;
+
+  /* Subtle dotted border for retro aesthetic */
+  border: 1px dotted rgba(255, 255, 255, 0.3);
+
+  /* Ensure proper spacing and centering */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  /* Smooth transitions for interactions */
+  transition: all 0.15s ease;
+}
+
+/* Light mode: white icon with subtle border */
+.theme-light .retro-titlebar__menu-button,
+body:not(.theme-dark) .retro-titlebar__menu-button {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Hover state: subtle border enhancement */
+.retro-titlebar__menu-button:hover {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.6);
+  border-width: 1px;
+}
+
+/* Active state: pressed appearance */
+.retro-titlebar__menu-button:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Dark mode: neon glow on hover */
+.theme-dark .retro-titlebar__menu-button {
+  border-color: rgba(0, 255, 42, 0.3);
+  color: var(--text-lcd);
+}
+
+.theme-dark .retro-titlebar__menu-button:hover {
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .retro-titlebar__dropdown {
@@ -437,7 +483,7 @@ body:not(.theme-dark) .retro-titlebar {
   .retro-titlebar__menu-button {
     width: 48px;
     height: 44px;
-    font-size: 18px;
+    font-size: 28px;
   }
 
   .retro-button {
@@ -473,7 +519,7 @@ body:not(.theme-dark) .retro-titlebar {
   .retro-titlebar__menu-button {
     width: 48px;
     height: 44px;
-    font-size: 18px;
+    font-size: 26px;
   }
 
   .retro-button {
