@@ -78,12 +78,12 @@ const ProfilePage: Component = () => {
   // Get user display info
   const user = createMemo(() => {
     const profile = profileUser();
-    if (profile) {
+    if (profile && profile.user && profile.user.username) {
       return {
         fid: profile.user.fid,
         username: profile.user.username,
         displayName: profile.user.displayName || profile.user.username || 'User',
-        avatar: profile.user.avatar,
+        avatar: profile.user.avatar || null,
         bio: undefined // Will add later when we have bio in DB
       };
     }
@@ -301,7 +301,10 @@ const ProfilePage: Component = () => {
   // Reactive title for the window
   const windowTitle = () => {
     const u = user();
-    return `${u.displayName || 'Loading...'} (@${u.username || '...'})`;
+    if (u.username === 'loading') {
+      return 'Loading Profile...';
+    }
+    return u.displayName || u.username || 'Profile';
   };
 
   // Menu items for hamburger dropdown
@@ -376,7 +379,7 @@ const ProfilePage: Component = () => {
                     </Show>
                   </div>
                   <div class="profile-info">
-                    <div class="profile-username">@{user().username}</div>
+                    <div class="profile-username">{user().displayName || user().username}</div>
                     <Show when={user().bio}>
                       <div class="profile-bio">{user().bio}</div>
                     </Show>
