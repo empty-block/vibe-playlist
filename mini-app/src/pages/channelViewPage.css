@@ -723,27 +723,28 @@ body:not(.theme-dark) .activity-card .track-info .track-artist {
   width: 48px;
   height: 48px;
   flex-shrink: 0;
-  background: var(--neon-cyan);
+  background: #E73895;
   border: 2px solid #000000;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  color: #000000;
+  color: #FFFFFF;
   font-weight: bold;
   transition: all 0.2s ease;
 }
 
 .theme-dark .open-button {
-  background: var(--neon-cyan);
-  border: 2px solid var(--neon-cyan);
-  color: #000000;
-  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  border: 2px solid #E73895;
+  color: #FFFFFF;
+  box-shadow: 0 0 8px rgba(231, 56, 149, 0.4);
 }
 
 .open-button:hover {
-  background: var(--neon-blue);
+  background: linear-gradient(135deg, #04caf4 0%, #6fd9ff 100%);
+  color: #000000;
   transform: translateY(2px);
 }
 
@@ -752,6 +753,8 @@ body:not(.theme-dark) .activity-card .track-info .track-artist {
 }
 
 .open-button:active {
+  background: linear-gradient(135deg, #c12e73 0%, #E73895 100%);
+  color: #FFFFFF;
   transform: translateY(4px);
 }
 
