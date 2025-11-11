@@ -121,8 +121,20 @@ export const verifyAuthMiddleware = async (c: any, next: any) => {
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
-    // For local development, use localhost as domain
-    const payload = await quickAuthClient.verifyJwt({ token, domain: 'localhost' });
+    // Auto-detect domain from request or use environment variable
+    // Priority: FARCASTER_AUTH_DOMAIN env var > Host header > localhost fallback
+    let domain = process.env.FARCASTER_AUTH_DOMAIN;
+    if (!domain) {
+      const host = c.req.header('Host');
+      if (host) {
+        // Remove port if present (e.g., localhost:3000 -> localhost)
+        domain = host.split(':')[0];
+      } else {
+        domain = 'localhost';
+      }
+    }
+
+    const payload = await quickAuthClient.verifyJwt({ token, domain });
 
     if (!payload || !payload.sub) {
       return c.json({ error: 'Invalid token' }, 401);
