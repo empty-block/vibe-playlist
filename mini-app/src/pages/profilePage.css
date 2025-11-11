@@ -487,29 +487,6 @@ body:not(.theme-dark) .filter-option.active {
   text-align: left;
 }
 
-=======
-  justify-content: space-between;
-  color: #ffffff;
-  transition: background 0.1s ease;
-  min-height: 44px;
-}
-
-.theme-dark .filter-option:hover {
-  background: #002200;
-  box-shadow: 0 0 8px rgba(4, 202, 244, 0.2);
-}
-
-.theme-dark .filter-option.active {
-  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
-  color: #ffffff;
-  border-color: #E73895;
-}
-
-.filter-option .option-label {
-  flex: 1;
-  text-align: left;
-}
-
 .filter-option .option-count {
   opacity: 0.7;
   margin-left: 8px;
