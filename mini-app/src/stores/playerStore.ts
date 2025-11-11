@@ -299,7 +299,7 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
   // Extract platform info from track URL
   const platformName = track.source; // 'spotify', 'youtube', 'soundcloud'
-  const platformId = track.id; // Platform-specific track ID
+  const platformId = track.sourceId; // Platform-specific track ID (Spotify ID, YouTube video ID, etc.)
 
   const pendingData = {
     platformName,
