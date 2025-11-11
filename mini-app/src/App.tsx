@@ -18,7 +18,7 @@ const TrendingPage = lazy(() => import('./pages/TrendingPage'));
 
 // Root component that wraps all routes and provides player
 const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
-  const [debugInfo, setDebugInfo] = createSignal<string>('');
+  const [loadingTrack, setLoadingTrack] = createSignal<boolean>(false);
 
   // Initialize player layout synchronization on mount
   onMount(() => {
@@ -27,22 +27,14 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
     // Check sessionStorage for pending track from index.tsx (same page load)
     const pendingTrackRaw = sessionStorage.getItem('spotify_pending_track');
 
-    let debugMsg = `📱 App Loaded After OAuth\n`;
-    debugMsg += `sessionStorage: ${pendingTrackRaw ? 'YES ✅' : 'NO ❌'}\n`;
-
     let pendingData: any = null;
     if (pendingTrackRaw) {
       try {
         pendingData = JSON.parse(pendingTrackRaw);
-        debugMsg += `Platform: ${pendingData.platformName || 'unknown'}\n`;
-        debugMsg += `Track ID: ${pendingData.platformId || 'unknown'}\n`;
-        debugMsg += `Feed: ${pendingData.feedId || 'unknown'}\n`;
       } catch (e) {
-        debugMsg += `Parse error: ${e.message}\n`;
+        console.error('Failed to parse pending track data:', e);
       }
     }
-
-    setDebugInfo(debugMsg);
 
     console.log('🔍 DEBUG - App.tsx onMount checking sessionStorage');
     console.log('🔍 DEBUG - Has pending track in sessionStorage:', !!pendingTrackRaw);
@@ -54,52 +46,49 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
       // Clear sessionStorage to prevent re-processing
       sessionStorage.removeItem('spotify_pending_track');
 
+      // Show loading state
+      setLoadingTrack(true);
+
       // Wait for next frame to ensure everything is rendered
       requestAnimationFrame(() => {
         setTimeout(async () => {
           console.log('🔄 Attempting to restore pending track after auth...');
-          setDebugInfo(prev => prev + 'Restoring...\n');
           const restored = await restorePendingTrack(pendingData);
+
+          // Hide loading state
+          setLoadingTrack(false);
+
           if (restored) {
             console.log('✅ Successfully restored pending track after auth');
-            const track = currentTrack();
-            setDebugInfo(prev => prev + 'Restored: YES ✅\n' +
-              `Thumbnail: ${track?.thumbnail ? '✅ ' + track.thumbnail.substring(0, 40) + '...' : '❌ MISSING'}`);
           } else {
             console.log('❌ Failed to restore pending track');
-            setDebugInfo(prev => prev + 'Restored: FAILED ❌');
           }
-
-          // Clear debug after 15 seconds
-          setTimeout(() => setDebugInfo(''), 15000);
-        }, 500);
+        }, 100);
       });
-    } else {
-      console.log('ℹ️ No pending track data - normal app load');
-      // Clear debug after 5 seconds on normal load
-      setTimeout(() => setDebugInfo(''), 5000);
     }
   });
 
   return (
     <>
-      {/* DEBUG BANNER - Shows state without console */}
-      <Show when={debugInfo()}>
+      {/* Loading indicator for track restoration after OAuth */}
+      <Show when={loadingTrack()}>
         <div style={{
           position: 'fixed',
-          top: '0',
-          left: '0',
-          right: '0',
-          'background-color': 'rgba(0, 0, 0, 0.9)',
-          color: '#0f0',
-          'font-family': 'monospace',
-          'font-size': '12px',
-          padding: '10px',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          'background-color': 'rgba(0, 0, 0, 0.85)',
+          color: '#fff',
+          padding: '20px 30px',
+          'border-radius': '12px',
           'z-index': '99999',
-          'white-space': 'pre-wrap',
-          'border-bottom': '2px solid #0f0'
+          'text-align': 'center',
+          'font-size': '16px',
+          'font-weight': '500',
+          'box-shadow': '0 4px 20px rgba(0, 0, 0, 0.5)'
         }}>
-          {debugInfo()}
+          <div style={{ 'margin-bottom': '10px' }}>🎵</div>
+          Loading your track...
         </div>
       </Show>
 
