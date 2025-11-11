@@ -24,28 +24,16 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
   onMount(() => {
     initPlayerLayoutSync();
 
-    // Check URL QUERY PARAM for pending track data - Safari strips hash on redirects!
-    const urlParams = new URLSearchParams(window.location.search);
-    const pendingTrackParam = urlParams.get('pending_track');
+    // Check sessionStorage for pending track from index.tsx (same page load)
+    const pendingTrackRaw = sessionStorage.getItem('spotify_pending_track');
 
     let debugMsg = `📱 App Loaded After OAuth\n`;
-    debugMsg += `Full URL: ${window.location.href.substring(0, 80)}...\n`;
-    debugMsg += `Query string: ${window.location.search}\n`;
-    debugMsg += `Has pending_track: ${pendingTrackParam ? 'YES ✅' : 'NO ❌'}\n`;
-
-    // Debug: show ALL query params
-    const allParams: string[] = [];
-    urlParams.forEach((value, key) => {
-      allParams.push(`${key}=${value.substring(0, 20)}...`);
-    });
-    if (allParams.length > 0) {
-      debugMsg += `All params: ${allParams.join(', ')}\n`;
-    }
+    debugMsg += `sessionStorage: ${pendingTrackRaw ? 'YES ✅' : 'NO ❌'}\n`;
 
     let pendingData: any = null;
-    if (pendingTrackParam) {
+    if (pendingTrackRaw) {
       try {
-        pendingData = JSON.parse(decodeURIComponent(pendingTrackParam));
+        pendingData = JSON.parse(pendingTrackRaw);
         debugMsg += `Platform: ${pendingData.platformName || 'unknown'}\n`;
         debugMsg += `Track ID: ${pendingData.platformId || 'unknown'}\n`;
         debugMsg += `Feed: ${pendingData.feedId || 'unknown'}\n`;
@@ -56,15 +44,15 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 
     setDebugInfo(debugMsg);
 
-    console.log('🔍 DEBUG - App.tsx onMount checking query params');
-    console.log('🔍 DEBUG - Has pending track in query:', !!pendingTrackParam);
+    console.log('🔍 DEBUG - App.tsx onMount checking sessionStorage');
+    console.log('🔍 DEBUG - Has pending track in sessionStorage:', !!pendingTrackRaw);
 
     if (pendingData) {
-      console.log('✅ App mounted - found pending track data in query params');
+      console.log('✅ App mounted - found pending track data in sessionStorage');
       console.log('📦 Pending track data:', pendingData);
 
-      // Clear query param to prevent re-processing
-      window.history.replaceState({}, document.title, window.location.pathname);
+      // Clear sessionStorage to prevent re-processing
+      sessionStorage.removeItem('spotify_pending_track');
 
       // Wait for next frame to ensure everything is rendered
       requestAnimationFrame(() => {

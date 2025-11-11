@@ -62,20 +62,23 @@ if (spotifyCode) {
   } else {
     // If we're not in a popup (direct redirect), handle normally
     console.log('Exchanging code for token...');
+
+    // Store pending track IMMEDIATELY in sessionStorage before async token exchange
+    // This survives within the SAME session/page load (not iframe reload)
+    if (pendingTrackData) {
+      sessionStorage.setItem('spotify_pending_track', JSON.stringify(pendingTrackData));
+      console.log('✅ Stored pending track in sessionStorage for this page load');
+    }
+
     handleSpotifyCallback(spotifyCode).then((success) => {
       if (success) {
         console.log('Spotify authentication successful!');
-
-        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
-        if (pendingTrackData) {
-          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
-          console.log('✅ Stored pending track in query param:', queryParam);
-        } else {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
       } else {
         console.error('Spotify authentication failed');
+        // Clear on failure
+        sessionStorage.removeItem('spotify_pending_track');
       }
     });
   }
@@ -108,19 +111,19 @@ window.addEventListener('message', (event) => {
 
   if (data.type === 'spotify-auth-success' && data.code) {
     console.log('Received auth code from popup, exchanging for token...');
+
+    // Store pending track IMMEDIATELY in sessionStorage
+    if (data.pendingTrackData) {
+      sessionStorage.setItem('spotify_pending_track', JSON.stringify(data.pendingTrackData));
+      console.log('✅ Stored pending track from popup in sessionStorage');
+    }
+
     handleSpotifyCallback(data.code).then((success) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
-
-        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
-        if (data.pendingTrackData) {
-          console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
-          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
-          console.log('✅ Stored pending track in query param:', queryParam);
-        }
       } else {
         console.error('Spotify authentication failed');
+        sessionStorage.removeItem('spotify_pending_track');
       }
     });
   } else if (data.type === 'spotify-auth-error') {
