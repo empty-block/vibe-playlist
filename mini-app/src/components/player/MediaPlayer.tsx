@@ -171,10 +171,10 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
               console.log('[Tortoise Player] Opening:', tortoiseUrl);
 
               try {
-                // Use Farcaster SDK for mini-app environments (mobile)
+                // Use Farcaster SDK for mini-app-to-mini-app navigation
                 const { default: sdk } = await import('@farcaster/miniapp-sdk');
-                await sdk.actions.openUrl(tortoiseUrl);
-                console.log('[Tortoise Player] Opened via Farcaster SDK');
+                await sdk.actions.openMiniApp({ url: tortoiseUrl });
+                console.log('[Tortoise Player] Opened via Farcaster SDK openMiniApp');
               } catch (error) {
                 console.error('[Tortoise Player] SDK failed, using fallback:', error);
                 // Fallback for non-mini-app environments (web browser)
