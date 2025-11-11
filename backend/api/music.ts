@@ -165,8 +165,19 @@ app.get('/track', async (c) => {
       }, 404)
     }
 
+    // Debug: Log raw database response
+    console.log('🔍 [music.ts] Raw DB track data:', {
+      platform_name: track.platform_name,
+      platform_id: track.platform_id,
+      title: track.title,
+      thumbnail_url: track.thumbnail_url,
+      allKeys: Object.keys(track)
+    })
+
     // Format track using the utility function
     const formattedTrack = formatMusic(track)
+
+    console.log('🔍 [music.ts] Formatted track:', formattedTrack)
 
     return c.json({
       track: formattedTrack
