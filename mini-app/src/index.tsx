@@ -14,6 +14,21 @@ const root = document.getElementById('root');
 const urlParams = new URLSearchParams(window.location.search);
 const spotifyCode = urlParams.get('code');
 const spotifyError = urlParams.get('error');
+const spotifyState = urlParams.get('state');
+
+// Parse state parameter to extract pending track data
+let pendingTrackData: any = null;
+if (spotifyState) {
+  try {
+    const stateData = JSON.parse(atob(spotifyState));
+    pendingTrackData = stateData.pendingTrack || null;
+    if (pendingTrackData) {
+      console.log('✅ Pending track data found in OAuth state:', pendingTrackData);
+    }
+  } catch (error) {
+    console.error('Failed to parse state parameter:', error);
+  }
+}
 
 // Check if this window is a popup (opened by window.open)
 const isPopup = window.opener && window.opener !== window;
@@ -22,12 +37,13 @@ if (spotifyCode) {
   console.log('Spotify authorization code detected');
 
   if (isPopup) {
-    // If we're in a popup, send the code to the parent window via postMessage
-    console.log('Sending auth code to parent window via postMessage');
+    // If we're in a popup, send the code AND pending data to parent window via postMessage
+    console.log('Sending auth code and pending data to parent window via postMessage');
     window.opener.postMessage(
       {
         type: 'spotify-auth-success',
-        code: spotifyCode
+        code: spotifyCode,
+        pendingTrackData: pendingTrackData
       },
       window.location.origin
     );
@@ -41,8 +57,10 @@ if (spotifyCode) {
         console.log('Spotify authentication successful!');
         window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Mark that we need to restore pending track after render
-        sessionStorage.setItem('restore_pending_after_render', 'true');
+        // Store pending track data for restoration after render
+        if (pendingTrackData) {
+          sessionStorage.setItem('pending_track_data', JSON.stringify(pendingTrackData));
+        }
       } else {
         console.error('Spotify authentication failed');
       }
@@ -81,8 +99,11 @@ window.addEventListener('message', (event) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
 
-        // Mark that we need to restore pending track after render
-        sessionStorage.setItem('restore_pending_after_render', 'true');
+        // Store pending track data for restoration after render
+        if (data.pendingTrackData) {
+          console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
+          sessionStorage.setItem('pending_track_data', JSON.stringify(data.pendingTrackData));
+        }
       } else {
         console.error('Spotify authentication failed');
       }
