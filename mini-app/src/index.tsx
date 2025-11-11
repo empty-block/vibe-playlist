@@ -18,15 +18,25 @@ const spotifyState = urlParams.get('state');
 
 // Parse state parameter to extract pending track data
 let pendingTrackData: any = null;
+console.log('🔍 DEBUG - OAuth callback URL params:', {
+  hasCode: !!spotifyCode,
+  hasError: !!spotifyError,
+  hasState: !!spotifyState
+});
+
 if (spotifyState) {
   try {
+    console.log('🔍 DEBUG - Raw state parameter:', spotifyState);
     const stateData = JSON.parse(atob(spotifyState));
+    console.log('🔍 DEBUG - Decoded state data:', stateData);
     pendingTrackData = stateData.pendingTrack || null;
     if (pendingTrackData) {
       console.log('✅ Pending track data found in OAuth state:', pendingTrackData);
+    } else {
+      console.log('⚠️ No pending track data in state parameter');
     }
   } catch (error) {
-    console.error('Failed to parse state parameter:', error);
+    console.error('❌ Failed to parse state parameter:', error);
   }
 }
 
@@ -55,11 +65,14 @@ if (spotifyCode) {
     handleSpotifyCallback(spotifyCode).then((success) => {
       if (success) {
         console.log('Spotify authentication successful!');
-        window.history.replaceState({}, document.title, window.location.pathname);
 
-        // Store pending track data for restoration after render
+        // KEEP pending track data in URL hash so it survives iframe reload
         if (pendingTrackData) {
-          sessionStorage.setItem('pending_track_data', JSON.stringify(pendingTrackData));
+          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + hashData);
+          console.log('✅ Stored pending track in URL hash:', hashData);
+        } else {
+          window.history.replaceState({}, document.title, window.location.pathname);
         }
       } else {
         console.error('Spotify authentication failed');
@@ -99,10 +112,12 @@ window.addEventListener('message', (event) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
 
-        // Store pending track data for restoration after render
+        // KEEP pending track data in URL hash so it survives iframe reload
         if (data.pendingTrackData) {
           console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
-          sessionStorage.setItem('pending_track_data', JSON.stringify(data.pendingTrackData));
+          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + hashData);
+          console.log('✅ Stored pending track in URL hash:', hashData);
         }
       } else {
         console.error('Spotify authentication failed');
