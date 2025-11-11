@@ -66,11 +66,11 @@ if (spotifyCode) {
       if (success) {
         console.log('Spotify authentication successful!');
 
-        // KEEP pending track data in URL hash so it survives iframe reload
+        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
         if (pendingTrackData) {
-          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + hashData);
-          console.log('✅ Stored pending track in URL hash:', hashData);
+          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
+          console.log('✅ Stored pending track in query param:', queryParam);
         } else {
           window.history.replaceState({}, document.title, window.location.pathname);
         }
@@ -112,12 +112,12 @@ window.addEventListener('message', (event) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
 
-        // KEEP pending track data in URL hash so it survives iframe reload
+        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
         if (data.pendingTrackData) {
           console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
-          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + hashData);
-          console.log('✅ Stored pending track in URL hash:', hashData);
+          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
+          console.log('✅ Stored pending track in query param:', queryParam);
         }
       } else {
         console.error('Spotify authentication failed');

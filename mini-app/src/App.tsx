@@ -24,25 +24,21 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
   onMount(() => {
     initPlayerLayoutSync();
 
-    // Check URL hash for pending track data (survives iframe reload)
-    const hash = window.location.hash;
-    const hasPendingTrack = hash.includes('pending_track=');
+    // Check URL QUERY PARAM for pending track data - Safari strips hash on redirects!
+    const urlParams = new URLSearchParams(window.location.search);
+    const pendingTrackParam = urlParams.get('pending_track');
 
     let debugMsg = `📱 App Loaded After OAuth\n`;
-    debugMsg += `URL hash: ${hash ? 'YES' : 'NO'}\n`;
-    debugMsg += `Has pending_track: ${hasPendingTrack ? 'YES ✅' : 'NO ❌'}\n`;
+    debugMsg += `Query params: ${window.location.search ? 'YES' : 'NO'}\n`;
+    debugMsg += `Has pending_track: ${pendingTrackParam ? 'YES ✅' : 'NO ❌'}\n`;
 
     let pendingData: any = null;
-    if (hasPendingTrack) {
+    if (pendingTrackParam) {
       try {
-        const match = hash.match(/pending_track=([^&]*)/);
-        if (match) {
-          const decoded = decodeURIComponent(match[1]);
-          pendingData = JSON.parse(decoded);
-          debugMsg += `Platform: ${pendingData.platformName || 'unknown'}\n`;
-          debugMsg += `Track ID: ${pendingData.platformId || 'unknown'}\n`;
-          debugMsg += `Feed: ${pendingData.feedId || 'unknown'}\n`;
-        }
+        pendingData = JSON.parse(decodeURIComponent(pendingTrackParam));
+        debugMsg += `Platform: ${pendingData.platformName || 'unknown'}\n`;
+        debugMsg += `Track ID: ${pendingData.platformId || 'unknown'}\n`;
+        debugMsg += `Feed: ${pendingData.feedId || 'unknown'}\n`;
       } catch (e) {
         debugMsg += `Parse error: ${e.message}\n`;
       }
@@ -50,14 +46,14 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
 
     setDebugInfo(debugMsg);
 
-    console.log('🔍 DEBUG - App.tsx onMount checking URL hash');
-    console.log('🔍 DEBUG - Has pending track in hash:', hasPendingTrack);
+    console.log('🔍 DEBUG - App.tsx onMount checking query params');
+    console.log('🔍 DEBUG - Has pending track in query:', !!pendingTrackParam);
 
     if (pendingData) {
-      console.log('✅ App mounted - found pending track data in URL hash');
+      console.log('✅ App mounted - found pending track data in query params');
       console.log('📦 Pending track data:', pendingData);
 
-      // Clear hash to prevent re-processing
+      // Clear query param to prevent re-processing
       window.history.replaceState({}, document.title, window.location.pathname);
 
       // Wait for next frame to ensure everything is rendered
