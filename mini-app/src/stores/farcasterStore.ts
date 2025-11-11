@@ -213,11 +213,6 @@ export const farcasterFetch = async (
   options?: RequestInit
 ): Promise<Response> => {
   try {
-    // For now, always use regular fetch to avoid SDK fetch issues
-    // The API endpoints don't require auth yet
-    return fetch(url, options);
-
-    /* TODO: Re-enable when backend auth is implemented
     // Check if we're in a Farcaster context (cached check)
     const isInMiniApp = await isInFarcasterContext();
 
@@ -236,7 +231,6 @@ export const farcasterFetch = async (
 
     // No token, use regular fetch
     return fetch(url, options);
-    */
   } catch (error) {
     // If anything fails, fall back to regular fetch
     console.log('farcasterFetch error, using regular fetch:', error);
