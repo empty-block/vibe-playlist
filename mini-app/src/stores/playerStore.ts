@@ -358,7 +358,8 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       artist: apiTrack.artist,
       thumbnail: apiTrack.thumbnail,
       url: apiTrack.url,
-      platform: apiTrack.platform
+      platform: apiTrack.platform,
+      fullApiResponse: apiTrack
     });
 
     // Convert API track to Track type
