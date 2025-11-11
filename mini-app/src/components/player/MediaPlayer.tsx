@@ -6,7 +6,6 @@ import SpotifyMedia from './SpotifyMedia';
 import SoundCloudMedia from './SoundCloudMedia';
 import SonglinkMedia from './SonglinkMedia';
 import AppleMusicMedia from './AppleMusicMedia';
-import sdk from '@farcaster/miniapp-sdk';
 
 interface MediaPlayerProps {
   // Simplified interface - no more compact/force compact props
@@ -169,10 +168,19 @@ const MediaPlayer: Component<MediaPlayerProps> = (props) => {
         return (
           <div
             class="relative bg-gradient-to-br from-purple-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center cursor-pointer group transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/30"
-            onClick={() => {
-              console.log('[Tortoise Player] Navigating to:', tortoiseUrl);
-              // Force full page navigation to bypass Farcaster's frame detection
-              window.location.href = tortoiseUrl;
+            onClick={async () => {
+              console.log('[Tortoise Player] Opening:', tortoiseUrl);
+
+              try {
+                // Use Farcaster SDK for mini-app-to-mini-app navigation
+                const { default: sdk } = await import('@farcaster/miniapp-sdk');
+                await sdk.actions.openMiniApp({ url: tortoiseUrl });
+                console.log('[Tortoise Player] Opened via Farcaster SDK openMiniApp');
+              } catch (error) {
+                console.error('[Tortoise Player] SDK failed, using fallback:', error);
+                // Fallback for non-mini-app environments (web browser)
+                window.open(tortoiseUrl, '_blank');
+              }
             }}
           >
             {/* Large background logo */}
