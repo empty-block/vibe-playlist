@@ -2,7 +2,7 @@ import { Component, For, Show, onMount } from 'solid-js';
 import { buttonHover, shimmer, staggeredFadeIn } from '../../../utils/animations';
 import type { Track } from '../HomePage';
 import { CompactTrackCard } from '../../common/TrackCard/NEW';
-import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
+import { playTrack } from '../../../stores/playerStore';
 import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
 interface RecentlyPlayedSectionProps {
@@ -21,7 +21,7 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
     }
   });
 
-  const handlePlayTrack = (track: Track) => {
+  const handlePlayTrack = async (track: Track) => {
     console.log('Playing track:', track.title);
     // Convert HomePage Track to PlayerTrack format
     const playerTrack: PlayerTrack = {
@@ -38,8 +38,7 @@ export const RecentlyPlayedSection: Component<RecentlyPlayedSectionProps> = (pro
       replies: 0,
       recasts: 0
     };
-    setCurrentTrack(playerTrack);
-    setIsPlaying(true);
+    await playTrack(playerTrack);
   };
 
   return (

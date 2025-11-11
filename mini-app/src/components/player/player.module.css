@@ -98,15 +98,15 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--neon-green);
-  box-shadow: 0 0 12px var(--neon-green);
+  background: var(--neon-cyan);
+  box-shadow: 0 0 12px var(--neon-cyan);
   animation: pulse 2s infinite;
   margin-right: var(--space-2);
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 8px var(--neon-green); }
-  50% { box-shadow: 0 0 16px var(--neon-green); }
+  0%, 100% { box-shadow: 0 0 8px var(--neon-cyan); }
+  50% { box-shadow: 0 0 16px var(--neon-cyan); }
 }
 
 .statusIndicator.paused {
@@ -265,8 +265,8 @@
   }
 
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 8px var(--neon-green); }
-    50% { box-shadow: 0 0 8px var(--neon-green); }
+    0%, 100% { box-shadow: 0 0 8px var(--neon-cyan); }
+    50% { box-shadow: 0 0 8px var(--neon-cyan); }
   }
 }
 

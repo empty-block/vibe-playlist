@@ -59,7 +59,7 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 ```css
 /* Colors (copy-paste ready) */
 --neon-blue: #3b00fd; --neon-green: #00f92a; --neon-cyan: #04caf4;
---neon-pink: #f906d6; --neon-magenta: #e010e0; --neon-magenta-bright: #ff1aff; --neon-magenta-soft: #cc0ecc;
+--neon-pink: #f906d6; --berry-red: #E73895; --berry-red-bright: #FF4DAD; --berry-red-soft: #D32682;
 --neon-orange: #ff9b00; --neon-yellow: #d1f60a;
 --dark-bg: #1a1a1a; --darker-bg: #0f0f0f; --light-text: #ffffff; --muted-text: #cccccc;
 
@@ -97,10 +97,10 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 --neon-cyan: #04caf4    /* Bright Cyan - Links, info, interactive elements */
 --neon-pink: #f906d6    /* Bright Pink - Special emphasis, accents */
 
-/* NEW: Primary Magenta System */
---neon-magenta: #e010e0     /* Primary highlight, active states, text emphasis */
---neon-magenta-bright: #ff1aff  /* Intense highlights, peak activity */
---neon-magenta-soft: #cc0ecc    /* Subtle backgrounds, secondary highlights */
+/* NEW: Primary Berry Red System */
+--berry-red: #E73895            /* Primary highlight, active states, text emphasis */
+--berry-red-bright: #FF4DAD     /* Intense highlights, peak activity */
+--berry-red-soft: #D32682       /* Subtle backgrounds, secondary highlights */
 
 /* Preserved Orange (Limited Use) */
 --neon-orange: #ff9b00  /* Warnings/alerts backup only */
@@ -119,9 +119,9 @@ Designs should contain subtle fun, small details (and sometimes even Easter eggs
 - **Success & Play States**: Neon green for confirmations, play buttons, positive feedback
 - **Interactive Elements**: Neon cyan for links, hover states, navigation
 - **Special Emphasis**: Neon pink sparingly for unique features, special callouts
-- **Primary Highlights**: Neon magenta for active states, text emphasis, current selections (replaces orange)
-- **Peak Activity**: Neon magenta bright for intense highlights and glow effects
-- **Subtle Highlights**: Neon magenta soft for backgrounds and secondary emphasis
+- **Primary Highlights**: Berry red for active states, text emphasis, current selections (replaces orange)
+- **Peak Activity**: Berry red bright for intense highlights and glow effects
+- **Subtle Highlights**: Berry red soft for backgrounds and secondary emphasis
 - **Warnings Only**: Neon orange limited to warnings/alerts, neon yellow for critical alerts
 
 ## ⚡ Animation & Interaction
@@ -420,7 +420,7 @@ leave: (element) => {
 <div class="social-item">
   <header class="social-header">
     <img class="user-avatar" />                  <!-- 32x32px -->
-    <span class="username">{{ username }}</span> <!-- text-sm, neon-magenta, clickable -->
+    <span class="username">{{ username }}</span> <!-- text-sm, berry-red, clickable -->
     <time class="timestamp">{{ time }}</time>    <!-- text-xs, muted-text -->
   </header>
   <main class="social-content">

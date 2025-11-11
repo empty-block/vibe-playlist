@@ -1,4 +1,4 @@
-import { Component, JSX, Show } from 'solid-js';
+import { Component, JSX, Show, createEffect, on, onMount, onCleanup } from 'solid-js';
 import RetroTitleBar, { RetroTitleBarProps } from './RetroTitleBar';
 import './retro-chrome.css';
 
@@ -25,8 +25,15 @@ export interface RetroWindowProps {
   /** Show close button in title bar */
   showClose?: boolean;
 
-  /** Show theme toggle button in title bar */
-  showThemeToggle?: boolean;
+  /** Show hamburger menu button in title bar */
+  showMenu?: boolean;
+
+  /** Menu items for hamburger dropdown */
+  menuItems?: Array<{
+    label: string | (() => string);
+    icon?: string | (() => string);
+    onClick: () => void;
+  }>;
 
   /** Close button click handler */
   onClose?: () => void;
@@ -57,6 +64,15 @@ export interface RetroWindowProps {
 
   /** Accessibility label */
   'aria-label'?: string;
+
+  /** Hide header when scrolling down (default: true) */
+  hideHeaderOnScroll?: boolean;
+
+  /** Hide footer when scrolling down (default: true) */
+  hideFooterOnScroll?: boolean;
+
+  /** Scroll threshold in pixels (default: 75px) */
+  scrollThreshold?: number;
 }
 
 /**
@@ -72,6 +88,14 @@ export interface RetroWindowProps {
 const RetroWindow: Component<RetroWindowProps> = (props) => {
   const variant = props.variant || '3d';
   const contentPadding = props.contentPadding || '12px';
+  const hideHeaderOnScroll = props.hideHeaderOnScroll ?? true; // Default enabled
+  const hideFooterOnScroll = props.hideFooterOnScroll ?? true; // Default enabled
+  const scrollThreshold = props.scrollThreshold ?? 75; // Moderate threshold
+
+  // Refs for animation targets
+  let headerRef: HTMLDivElement | undefined;
+  let footerRef: HTMLDivElement | undefined;
+  let contentRef: HTMLDivElement | undefined;
 
   const variantClass = () => {
     return variant === 'neon' ? 'retro-window--neon' : 'retro-window--3d';
@@ -83,10 +107,79 @@ const RetroWindow: Component<RetroWindowProps> = (props) => {
     showMinimize: props.showMinimize,
     showMaximize: props.showMaximize,
     showClose: props.showClose,
-    showThemeToggle: props.showThemeToggle,
+    showMenu: props.showMenu,
+    menuItems: props.menuItems,
     onClose: props.onClose,
     onMinimize: props.onMinimize,
-    onMaximize: props.onMaximize
+    onMaximize: props.onMaximize,
+    ref: (el: HTMLDivElement) => { headerRef = el; }
+  };
+
+  // Simple scroll direction detection - use queueMicrotask to ensure ref is assigned
+  onMount(() => {
+    queueMicrotask(() => {
+      if (!contentRef) return;
+
+      let lastScrollY = 0;
+      let ticking = false;
+
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            if (!contentRef) return;
+
+            const currentScrollY = contentRef.scrollTop;
+            const delta = currentScrollY - lastScrollY;
+            const isAtTop = currentScrollY <= 10;
+
+            // Simple threshold check - only trigger if scrolled more than 5px
+            if (Math.abs(delta) > 5) {
+              if (delta > 0 && !isAtTop) {
+                // Scrolling down
+                if (hideHeaderOnScroll && headerRef) hideHeader();
+                if (hideFooterOnScroll && footerRef) hideFooter();
+              } else if (delta < 0) {
+                // Scrolling up
+                if (hideHeaderOnScroll && headerRef) showHeader();
+                if (hideFooterOnScroll && footerRef) showFooter();
+              }
+            }
+
+            // Always show at top
+            if (isAtTop) {
+              if (headerRef) showHeader();
+              if (footerRef) showFooter();
+            }
+
+            lastScrollY = currentScrollY;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      contentRef.addEventListener('scroll', handleScroll, { passive: true });
+
+      onCleanup(() => {
+        contentRef?.removeEventListener('scroll', handleScroll);
+      });
+    });
+  });
+
+  const hideHeader = () => {
+    headerRef?.classList.add('retro-titlebar--hidden');
+  };
+
+  const showHeader = () => {
+    headerRef?.classList.remove('retro-titlebar--hidden');
+  };
+
+  const hideFooter = () => {
+    footerRef?.classList.add('retro-window__footer--hidden');
+  };
+
+  const showFooter = () => {
+    footerRef?.classList.remove('retro-window__footer--hidden');
   };
 
   return (
@@ -101,12 +194,16 @@ const RetroWindow: Component<RetroWindowProps> = (props) => {
       <div
         class="retro-window__content"
         style={{ padding: contentPadding }}
+        ref={(el) => { contentRef = el; }}
       >
         {props.children}
       </div>
 
       <Show when={props.footer}>
-        <div class="retro-window__footer">
+        <div
+          class="retro-window__footer"
+          ref={(el) => { footerRef = el; }}
+        >
           {props.footer}
         </div>
       </Show>

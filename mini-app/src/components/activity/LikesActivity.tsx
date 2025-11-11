@@ -1,4 +1,5 @@
 import { Component, Show } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { AggregatedLikesActivity as AggregatedLikesActivityType } from '../../data/mockActivity';
 import { setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
 
@@ -22,7 +23,8 @@ const formatTimeAgo = (timestamp: string) => {
 };
 
 const LikesActivity: Component<LikesActivityProps> = (props) => {
-  const firstUser = props.activity.users?.[0] || { username: 'users', pfp: undefined };
+  const navigate = useNavigate();
+  const firstUser = props.activity.users?.[0] || { username: 'users', pfp: undefined, fid: undefined };
   const actionText = props.activity.likeCount > 1
     ? `and ${props.activity.likeCount - 1} others liked track`
     : 'liked track';
@@ -49,6 +51,13 @@ const LikesActivity: Component<LikesActivityProps> = (props) => {
     }
   };
 
+  const handleUsernameClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (firstUser.fid) {
+      navigate(`/profile/${firstUser.fid}`);
+    }
+  };
+
   const isCurrentTrack = () => currentTrack()?.id === props.activity.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
@@ -58,11 +67,27 @@ const LikesActivity: Component<LikesActivityProps> = (props) => {
       <div class="activity-header">
         <div class="user-info">
           <Show when={firstUser.pfp} fallback={
-            <div class="user-avatar-fallback">{firstUser.username.charAt(0).toUpperCase()}</div>
+            <div
+              class="user-avatar-fallback"
+              onClick={handleUsernameClick}
+              style={{ cursor: firstUser.fid ? 'pointer' : 'default' }}
+            >
+              {firstUser.username.charAt(0).toUpperCase()}
+            </div>
           }>
-            <img src={firstUser.pfp} alt={firstUser.username} class="user-avatar" />
+            <img
+              src={firstUser.pfp}
+              alt={firstUser.username}
+              class="user-avatar"
+              onClick={handleUsernameClick}
+              style={{ cursor: firstUser.fid ? 'pointer' : 'default' }}
+            />
           </Show>
-          <span class="username">
+          <span
+            class="username"
+            onClick={handleUsernameClick}
+            style={{ cursor: firstUser.fid ? 'pointer' : 'default' }}
+          >
             {firstUser.username}
             <span style={{ 'font-weight': 'normal', 'margin-left': '4px' }}>• {actionText}</span>
           </span>

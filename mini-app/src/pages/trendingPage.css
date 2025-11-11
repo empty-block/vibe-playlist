@@ -4,7 +4,7 @@
 /* Page Container - Background inherited from body */
 .trending-page {
   min-height: 100vh;
-  padding-bottom: 80px; /* Space for mobile navigation */
+  padding-bottom: 8px; /* Space for mobile navigation */
   display: flex;
   flex-direction: column;
 }
@@ -54,7 +54,7 @@ body:not(.theme-dark) .section-header {
   margin-bottom: 12px;
   padding: 8px 10px;
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
 }
 
 /* Section Title - Light Mode */
@@ -120,14 +120,14 @@ body:not(.theme-dark) .track-item:hover {
   padding: 10px;
   margin-bottom: 8px;
   background: #1a1a1a;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .theme-dark .track-item:hover {
   background: #222222;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 10px rgba(4, 202, 244, 0.3);
 }
 
 /* Track Rank - Theme-aware */
@@ -146,7 +146,7 @@ body:not(.theme-dark) .track-rank {
 
 /* Track Rank - Dark Mode */
 .theme-dark .track-rank {
-  color: var(--neon-green); /* Neon green */
+  color: var(--neon-cyan); /* Neon green */
 }
 
 /* Top 3 Rank - Golden Gradient (works in both themes) */
@@ -241,23 +241,23 @@ body:not(.theme-dark) .track-submitted {
 }
 
 .submitted-username {
-  color: var(--neon-blue);
+  color: #E73895;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .submitted-username:hover {
-  color: var(--neon-cyan);
+  color: #E73895;
   text-decoration: underline;
 }
 
 .theme-dark .submitted-username {
-  color: #ffffff;
+  color: #E73895;
 }
 
 .theme-dark .submitted-username:hover {
-  color: #00ffaa;
+  color: #E73895;
 }
 
 .track-stats {
@@ -295,7 +295,7 @@ body:not(.theme-dark) .status-bar-section {
 
 /* Status Bar Sections - Dark Mode */
 .theme-dark .status-bar-section {
-  border: 1px solid #00ff00;
+  border: 1px solid var(--border-accent);
   padding: 2px 6px;
   background: #000000;
   color: #ffffff;

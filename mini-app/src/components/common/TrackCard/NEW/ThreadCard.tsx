@@ -128,19 +128,23 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
         <Show
           when={props.creatorAvatar}
           fallback={
-            <div style={{
-              width: '56px',
-              height: '56px',
-              'border-radius': '50%',
-              background: 'var(--terminal-muted)',
-              color: 'var(--terminal-dim)',
-              display: 'flex',
-              'align-items': 'center',
-              'justify-content': 'center',
-              'font-size': '24px',
-              'flex-shrink': 0,
-              'margin-right': '12px'
-            }}>@</div>
+            <div
+              style={{
+                width: '56px',
+                height: '56px',
+                'border-radius': '50%',
+                background: 'var(--terminal-muted)',
+                color: 'var(--terminal-dim)',
+                display: 'flex',
+                'align-items': 'center',
+                'justify-content': 'center',
+                'font-size': '24px',
+                'flex-shrink': 0,
+                'margin-right': '12px',
+                cursor: props.onUsernameClick && props.creatorFid ? 'pointer' : 'default'
+              }}
+              onClick={handleUsernameClick}
+            >@</div>
           }
         >
           <img
@@ -151,10 +155,12 @@ const ThreadCard: Component<ThreadCardProps> = (props) => {
               'border-radius': '50%',
               'object-fit': 'cover',
               'flex-shrink': 0,
-              'margin-right': '12px'
+              'margin-right': '12px',
+              cursor: props.onUsernameClick && props.creatorFid ? 'pointer' : 'default'
             }}
             alt={`${props.creatorUsername}'s avatar`}
             loading="lazy"
+            onClick={handleUsernameClick}
           />
         </Show>
         <div style={{ flex: 1, 'min-width': 0 }}>

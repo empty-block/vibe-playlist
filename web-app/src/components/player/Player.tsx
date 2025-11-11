@@ -1,9 +1,9 @@
 import { Component, Show, JSX, createSignal, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
-import { 
-  currentTrack, 
-  isPlaying, 
-  playingPlaylistId, 
+import {
+  currentTrack,
+  isPlaying,
+  playingPlaylistId,
   setCurrentPlaylistId,
   shuffleMode,
   setShuffleMode,
@@ -13,7 +13,8 @@ import {
   duration,
   isSeekable
 } from '../../stores/playerStore';
-import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
+import { enterThreadMode } from '../../stores/threadStore';
+import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse, socialButtonClick } from '../../utils/animations';
 import styles from './player.module.css';
 
 interface PlayerProps {
@@ -65,8 +66,16 @@ const Player: Component<PlayerProps> = (props) => {
   };
 
   const handleChatToggle = () => {
-    console.log('Open chat for track:', currentTrack()?.id);
-    // TODO: Navigate to track's conversation thread or open chat sidebar
+    const track = currentTrack();
+    if (!track) return;
+
+    // Add visual feedback animation
+    if (chatButtonRef) {
+      socialButtonClick(chatButtonRef);
+    }
+
+    // Enter thread mode with the current track
+    enterThreadMode(track);
   };
 
   const handleArtistClick = () => {

@@ -129,6 +129,60 @@ app.get('/trending', async (c) => {
 })
 
 /**
+ * GET /api/music/track?platform=spotify&id=abc123
+ * Get a single track by platform and platform_id
+ */
+app.get('/track', async (c) => {
+  try {
+    const platform = c.req.query('platform')
+    const platformId = c.req.query('id')
+
+    if (!platform || !platformId) {
+      return c.json({
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'Missing required parameters: platform and id'
+        }
+      }, 400)
+    }
+
+    const supabase = getSupabaseClient()
+
+    // Fetch track from music_library
+    const { data: track, error } = await supabase
+      .from('music_library')
+      .select('*')
+      .eq('platform_name', platform)
+      .eq('platform_id', platformId)
+      .single()
+
+    if (error || !track) {
+      return c.json({
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Track not found'
+        }
+      }, 404)
+    }
+
+    // Format track using the utility function
+    const formattedTrack = formatMusic(track)
+
+    return c.json({
+      track: formattedTrack
+    })
+  } catch (error) {
+    console.error('Get track error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error'
+      }
+    }, 500)
+  }
+})
+
+/**
  * GET /api/music/:musicId/casts
  * Get all casts that shared a specific track
  */

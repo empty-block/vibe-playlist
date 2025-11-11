@@ -1009,7 +1009,7 @@ export const rotateExpandIcon = {
       easing: 'easeOutQuart'
     });
   },
-  
+
   collapse: (element: HTMLElement) => {
     anime({
       targets: element,
@@ -1018,4 +1018,72 @@ export const rotateExpandIcon = {
       easing: 'easeOutQuart'
     });
   }
+};
+
+// ================================================================
+// TASK-709: SUBTLE JOYFUL ANIMATIONS FOR MINI-APP
+// ================================================================
+
+// Track card entrance animation - used for staggered loading
+export const trackCardEntrance = {
+  fadeIn: (element: HTMLElement, delay: number = 0) => {
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(20px)';
+
+    anime({
+      targets: element,
+      opacity: [0, 1],
+      translateY: [20, 0],
+      duration: 400,
+      delay: delay,
+      easing: 'easeOutCubic',
+      complete: () => {
+        element.style.transform = 'translateZ(0)';
+      }
+    });
+  }
+};
+
+// Player bar state transition animations
+export const playerTransitions = {
+  trackChange: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: [0.98, 1],
+      opacity: [0.7, 1],
+      duration: 300,
+      easing: 'easeOutQuart'
+    });
+  },
+
+  stateChange: (element: HTMLElement) => {
+    anime({
+      targets: element,
+      scale: [1, 1.01, 1],
+      duration: 200,
+      easing: 'easeOutQuad'
+    });
+  }
+};
+
+// Joyful button click feedback
+export const joyfulClick = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    scale: [1, 0.95, 1.05, 1],
+    duration: 300,
+    easing: 'easeInOutQuad'
+  });
+};
+
+// Loading state pulse animation
+export const retroLoadingPulse = (element: HTMLElement) => {
+  anime({
+    targets: element,
+    opacity: [0.5, 1, 0.5],
+    scale: [0.98, 1.02, 0.98],
+    duration: 1500,
+    loop: true,
+    easing: 'easeInOutSine'
+  });
 };

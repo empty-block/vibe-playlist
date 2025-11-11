@@ -1,7 +1,6 @@
-import { Component, createSignal, createEffect } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import BaseModal from '../common/Modal/BaseModal';
 import SongInputForm from '../common/SongInputForm';
-import { modalAnimations } from '../../utils/animations';
 import './addTrackModal.css';
 
 interface AddTrackModalProps {
@@ -14,8 +13,6 @@ interface AddTrackModalProps {
 
 const AddTrackModal: Component<AddTrackModalProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = createSignal(false);
-  let headerRef: HTMLDivElement | undefined;
-  let formRef: HTMLDivElement | undefined;
 
   const handleFormSubmit = async (data: { songUrl: string; comment: string }) => {
     setIsSubmitting(true);
@@ -30,55 +27,25 @@ const AddTrackModal: Component<AddTrackModalProps> = (props) => {
     }
   };
 
-
-  // Trigger terminal boot sequence when modal opens
-  createEffect(() => {
-    if (props.isOpen && headerRef && formRef) {
-      setTimeout(() => {
-        modalAnimations.terminalBootSequence(headerRef!, formRef!);
-      }, 400); // After modal entry animation
-    }
-  });
+  const modalTitle = props.title || "Add Track to Library";
 
   return (
     <BaseModal
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title={props.title || "Add Track to Library"}
+      title={modalTitle}
       size="md"
       className="add-track-modal"
-      showCloseButton={false}
+      showCloseButton={true}
     >
-      <div class="modal-content-wrapper">
-        <div class="terminal-header" ref={headerRef}>
-          <div class="terminal-path-container">
-            <span class="terminal-prefix">JAMZY://</span>
-            <span class="terminal-path"></span>
-          </div>
-          <button
-            class="terminal-close-button"
-            onClick={props.onClose}
-            aria-label="Close modal"
-          >
-            X
-          </button>
-        </div>
-
-        <div ref={formRef}>
-          <SongInputForm
-            onSubmit={handleFormSubmit}
-            submitLabel="[ EXECUTE ADD ]"
-            initialSongUrl={props.initialData?.songUrl}
-            initialComment={props.initialData?.comment}
-            disabled={isSubmitting()}
-          />
-        </div>
-
-        <div class="modal-footer">
-          <div class="terminal-status">
-            STATUS: READY FOR INPUT • PRESS ESC TO EXIT
-          </div>
-        </div>
+      <div class="modal-form-content">
+        <SongInputForm
+          onSubmit={handleFormSubmit}
+          submitLabel="Add Track"
+          initialSongUrl={props.initialData?.songUrl}
+          initialComment={props.initialData?.comment}
+          disabled={isSubmitting()}
+        />
       </div>
     </BaseModal>
   );

@@ -1,7 +1,10 @@
-import { Component, Show } from 'solid-js';
+import { Component, Show, createSignal, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
+import { trackCardEntrance } from '../../../../utils/animations';
+
+const MAX_TEXT_LENGTH = 200;
 
 interface TrackCardProps {
   author: {
@@ -30,6 +33,7 @@ interface TrackCardProps {
   castHash?: string; // For opening cast in Farcaster to like/recast
   onPlay: (track: any) => void;
   onUsernameClick?: (fid: string, e: MouseEvent) => void;
+  animationDelay?: number; // For staggered entrance animations
 }
 
 // Format time ago helper
@@ -51,8 +55,18 @@ const formatTimeAgo = (timestamp: string) => {
 
 const TrackCard: Component<TrackCardProps> = (props) => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
+
+  let cardRef: HTMLDivElement | undefined;
+
+  // Apply entrance animation on mount
+  onMount(() => {
+    if (cardRef) {
+      trackCardEntrance.fadeIn(cardRef, props.animationDelay || 0);
+    }
+  });
 
   const handleUsernameClick = (e: MouseEvent) => {
     if (props.onUsernameClick) {
@@ -88,12 +102,16 @@ const TrackCard: Component<TrackCardProps> = (props) => {
   };
 
   return (
-    <div class="terminal-track-card activity-card">
+    <div ref={cardRef} class="terminal-track-card activity-card">
       {/* Navy header bar */}
       <div class="activity-header">
         <div class="user-info">
           <Show when={props.author.pfpUrl} fallback={
-            <div class="user-avatar-fallback">
+            <div
+              class="user-avatar-fallback"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+            >
               {props.author.username.charAt(0).toUpperCase()}
             </div>
           }>
@@ -101,6 +119,8 @@ const TrackCard: Component<TrackCardProps> = (props) => {
               src={props.author.pfpUrl}
               alt={props.author.username}
               class="user-avatar"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
             />
           </Show>
           <div class="user-text">
@@ -113,9 +133,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             </span>
             <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
               <span class="channel-separator">•</span>
-              <span class="channel-info">
-                shared in <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
-              </span>
+              <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
             </Show>
           </div>
         </div>
@@ -146,15 +164,35 @@ const TrackCard: Component<TrackCardProps> = (props) => {
           })}
           title="Open track in player"
         >
-          ↓
+          ▼
         </button>
       </div>
 
       {/* Comment if present */}
       <Show when={props.text && props.text.trim()}>
-        <div class="comment-box">
-          {stripUrls(props.text)}
-        </div>
+        {(() => {
+          const cleanText = stripUrls(props.text!);
+          const isLongText = cleanText.length > MAX_TEXT_LENGTH;
+
+          return (
+            <div class="comment-box">
+              <Show
+                when={isLongText && !isExpanded()}
+                fallback={<>{cleanText}</>}
+              >
+                {cleanText.substring(0, MAX_TEXT_LENGTH)}...
+              </Show>
+              <Show when={isLongText}>
+                <button
+                  class="show-more-btn"
+                  onClick={() => setIsExpanded(!isExpanded())}
+                >
+                  {isExpanded() ? 'Show less' : 'Show more'}
+                </button>
+              </Show>
+            </div>
+          );
+        })()}
       </Show>
 
       {/* Stats row */}
@@ -176,7 +214,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         </div>
         <div class="music-source">
           via {(() => {
-            const platform = props.track.platform.toLowerCase();
+            const platform = (props.track.platform || 'unknown').toLowerCase();
             if (platform === 'youtube' || platform === 'youtube_music') return 'YouTube';
             if (platform === 'spotify') return 'Spotify';
             if (platform === 'soundcloud') return 'SoundCloud';

@@ -3,9 +3,66 @@ import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { tracks, contributors, isLoading, error, lastUpdated, loadTrendingData } from '../stores/trendingStore';
-import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackWithAuthCheck, TrackSource } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { formatRelativeTime } from '../utils/time';
+import { trackCardEntrance } from '../utils/animations';
 import './trendingPage.css';
+
+// Wrapper component for animated track item
+const AnimatedTrackItem: Component<{ track: any; index: number; onClick: () => void; onUsernameClick: (fid: string, e: MouseEvent) => void }> = (props) => {
+  let trackItemRef: HTMLDivElement | undefined;
+
+  onMount(() => {
+    if (trackItemRef) {
+      trackCardEntrance.fadeIn(trackItemRef, Math.min(props.index, 20) * 50);
+    }
+  });
+
+  return (
+    <div
+      ref={trackItemRef}
+      class="track-item"
+      onClick={props.onClick}
+    >
+      <div
+        class="track-rank"
+        classList={{ 'top-3': props.track.rank <= 3 }}
+      >
+        {props.track.rank}
+      </div>
+      <div class="track-thumbnail">
+        {props.track.thumbnail ? (
+          <img src={props.track.thumbnail} alt={props.track.title} />
+        ) : (
+          '🎵'
+        )}
+      </div>
+      <div class="track-info">
+        <div class="track-title">{props.track.title}</div>
+        <div class="track-artist">{props.track.artist}</div>
+        {(props.track as any).submittedBy && (props.track as any).submittedBy.length > 0 && (
+          <div class="track-submitted">
+            shared by {(props.track as any).submittedBy.map((user: any, idx: number) => (
+              <>
+                <span
+                  class="submitted-username"
+                  onClick={(e) => props.onUsernameClick(user.fid, e)}
+                >
+                  {user.username}
+                </span>
+                {idx < (props.track as any).submittedBy.length - 1 && ', '}
+              </>
+            ))}
+          </div>
+        )}
+      </div>
+      <div class="track-stats">
+        {props.track.rank <= 3 && <span class="fire-icon">🔥</span>}
+      </div>
+    </div>
+  );
+};
 
 const TrendingPage: Component = () => {
   const navigate = useNavigate();
@@ -69,7 +126,7 @@ const TrendingPage: Component = () => {
     };
 
     const feedTracks = getTrendingTracks();
-    playTrackFromFeed(trackObj, feedTracks, 'trending');
+    playTrackWithAuthCheck(trackObj, feedTracks, 'trending');
   };
 
   // Event handlers
@@ -82,19 +139,35 @@ const TrendingPage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
+
   return (
     <div class="trending-page">
       <div class="page-window-container">
         {/* Trending Tracks Window */}
         <RetroWindow
-          title="Trending Tracks - Last 24 Hours"
-          icon={<div class="title-icon">⚡</div>}
+          title="Trending Tracks"
+          icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              {/* Lightning bolt - classic zigzag shape */}
+              <path d="M14 2 L6 13 L11 13 L10 22 L18 11 L13 11 Z" />
+            </svg>
+          }
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showThemeToggle={true}
-          onMinimize={() => setWindow1Minimized(!window1Minimized())}
-          onMaximize={() => setWindow1Maximized(!window1Maximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
           footer={
             <div class="status-bar">
@@ -104,10 +177,6 @@ const TrendingPage: Component = () => {
           }
         >
           <div class="window-content-inner" classList={{ minimized: window1Minimized() }}>
-            <div class="section-header">
-              <div class="section-title">Hot Right Now</div>
-            </div>
-
             {isLoading() && tracks().length === 0 ? (
               <div class="loading-state">
                 Loading trending tracks...
@@ -122,47 +191,13 @@ const TrendingPage: Component = () => {
               </div>
             ) : (
               <For each={tracks()}>
-                {(track) => (
-                  <div
-                    class="track-item"
+                {(track, index) => (
+                  <AnimatedTrackItem
+                    track={track}
+                    index={index()}
                     onClick={() => handleTrackClick(track)}
-                  >
-                    <div
-                      class="track-rank"
-                      classList={{ 'top-3': track.rank <= 3 }}
-                    >
-                      {track.rank}
-                    </div>
-                    <div class="track-thumbnail">
-                      {track.thumbnail ? (
-                        <img src={track.thumbnail} alt={track.title} />
-                      ) : (
-                        '🎵'
-                      )}
-                    </div>
-                    <div class="track-info">
-                      <div class="track-title">{track.title}</div>
-                      <div class="track-artist">{track.artist}</div>
-                      {(track as any).submittedBy && (track as any).submittedBy.length > 0 && (
-                        <div class="track-submitted">
-                          Shared by {(track as any).submittedBy.map((user: any, idx: number) => (
-                            <>
-                              <span
-                                class="submitted-username"
-                                onClick={(e) => handleUsernameClick(user.fid, e)}
-                              >
-                                @{user.username}
-                              </span>
-                              {idx < (track as any).submittedBy.length - 1 && ', '}
-                            </>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <div class="track-stats">
-                      {track.rank <= 3 && <span class="fire-icon">🔥</span>}
-                    </div>
-                  </div>
+                    onUsernameClick={handleUsernameClick}
+                  />
                 )}
               </For>
             )}

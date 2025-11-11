@@ -3,9 +3,11 @@ import { useParams, useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
+import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
 import AddTrackModal from '../components/library/AddTrackModal';
 import { currentUser } from '../stores/authStore';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackWithAuthCheck, TrackSource } from '../stores/playerStore';
 import {
   profileUser,
   activity,
@@ -16,6 +18,7 @@ import {
   loadMoreActivity
 } from '../stores/profileStore';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
+import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './profilePage.css';
 
 type FilterType = 'all' | 'shared' | 'likes' | 'replies';
@@ -29,6 +32,18 @@ const ProfilePage: Component = () => {
   const [submitError, setSubmitError] = createSignal<string | null>(null);
   const [windowMinimized, setWindowMinimized] = createSignal(false);
   const [windowMaximized, setWindowMaximized] = createSignal(false);
+  const [filterDropdownOpen, setFilterDropdownOpen] = createSignal(false);
+
+  // Sort and filter state for ChannelFilterBar
+  const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
+  const [qualityFilter, setQualityFilter] = createSignal<number>(0);
+  const [musicSources, setMusicSources] = createSignal<MusicPlatform[]>([]);
+  const [genres, setGenres] = createSignal<string[]>([]);
+  const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
+
+  // Available filter options
+  const availablePlatforms: MusicPlatform[] = ['spotify', 'youtube', 'apple_music', 'soundcloud', 'songlink', 'audius'];
+  const availableGenres = ['hip-hop', 'electronic', 'rock', 'jazz', 'classical', 'metal', 'indie', 'folk', 'r&b', 'pop'];
 
   // Sentinel element for infinite scroll
   let sentinelRef: HTMLDivElement | undefined;
@@ -63,12 +78,12 @@ const ProfilePage: Component = () => {
   // Get user display info
   const user = createMemo(() => {
     const profile = profileUser();
-    if (profile) {
+    if (profile && profile.user && profile.user.username) {
       return {
         fid: profile.user.fid,
         username: profile.user.username,
         displayName: profile.user.displayName || profile.user.username || 'User',
-        avatar: profile.user.avatar,
+        avatar: profile.user.avatar || null,
         bio: undefined // Will add later when we have bio in DB
       };
     }
@@ -160,7 +175,14 @@ const ProfilePage: Component = () => {
   const playTrack = (track: Track) => {
     const profileTracks = getProfileTracks();
     const feedId = `profile-${userFid()}-${currentFilter()}`;
-    playTrackFromFeed(track, profileTracks, feedId);
+    playTrackWithAuthCheck(track, profileTracks, feedId);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSort: ChannelFeedSortOption) => {
+    setActiveSort(newSort);
+    // Note: Profile page data is already loaded, this is just for UI state
+    // If we wanted to apply actual sorting, we'd need to implement it in filteredContent
   };
 
   // Handle opening the add track modal
@@ -279,23 +301,40 @@ const ProfilePage: Component = () => {
   // Reactive title for the window
   const windowTitle = () => {
     const u = user();
-    return `${u.displayName || 'Loading...'} (@${u.username || '...'})`;
+    if (u.username === 'loading') {
+      return 'Loading Profile...';
+    }
+    return u.displayName || u.username || 'Profile';
   };
+
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
 
   return (
     <div class="profile-page">
       <div class="page-window-container">
         <RetroWindow
           title={windowTitle()}
-          icon={<div class="title-icon">👤</div>}
+          icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20 C4 16 7.58 13 12 13 C16.42 13 20 16 20 20 L20 22 L4 22 Z" />
+            </svg>
+          }
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-          showThemeToggle={true}
-          onClose={() => navigate('/trending')}
-          onMinimize={() => setWindowMinimized(!windowMinimized())}
-          onMaximize={() => setWindowMaximized(!windowMaximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
           footer={
             <div class="status-bar">
@@ -323,103 +362,142 @@ const ProfilePage: Component = () => {
 
             {/* Profile Content */}
             <Show when={!isLoading() || profileUser()}>
-              {/* Napster Buddy List Style Header */}
+              {/* Compact Profile Header - Channel-style Layout */}
               <div class="profile-header">
-                <Show when={user().avatar} fallback={
-                  <div class="profile-avatar-fallback">
-                    {(user().displayName || 'U').charAt(0).toUpperCase()}
-                  </div>
-                }>
-                  <img
-                    src={user().avatar}
-                    alt={user().displayName}
-                    class="profile-avatar"
-                  />
-                </Show>
-                <div class="profile-info">
-                  <div class="profile-username">@{user().username}</div>
-                  <Show when={user().bio}>
-                    <div class="profile-bio">{user().bio}</div>
-                  </Show>
-                  <div class="profile-stats-inline">
-                    <Show when={profileUser()} fallback={
-                      <>
-                        <div class="stat-inline">
-                          <span class="number">{sharedTracks().length}</span> shared
-                        </div>
-                        <div class="stat-inline">
-                          <span class="number">{likedTracks().length}</span> liked
-                        </div>
-                        <div class="stat-inline">
-                          <span class="number">{repliedTracks().length}</span> replies
-                        </div>
-                      </>
+                <div class="profile-main">
+                  <div class="profile-avatar-container">
+                    <Show when={user().avatar} fallback={
+                      <div class="profile-avatar-fallback">
+                        {(user().displayName || 'U').charAt(0).toUpperCase()}
+                      </div>
                     }>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksShared}</span> shared
-                      </div>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
-                      </div>
-                      <div class="stat-inline">
-                        <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
-                      </div>
+                      <img
+                        src={user().avatar}
+                        alt={user().displayName}
+                        class="profile-avatar"
+                      />
                     </Show>
                   </div>
+                  <div class="profile-info">
+                    <div class="profile-username">{user().displayName || user().username}</div>
+                    <Show when={user().bio}>
+                      <div class="profile-bio">{user().bio}</div>
+                    </Show>
+                    <div class="profile-stats-inline">
+                      <Show when={profileUser()} fallback={
+                        <>
+                          <div class="stat-inline">
+                            <span class="number">{sharedTracks().length}</span> shared
+                          </div>
+                          <div class="stat-inline">
+                            <span class="number">{likedTracks().length}</span> liked
+                          </div>
+                          <div class="stat-inline">
+                            <span class="number">{repliedTracks().length}</span> replies
+                          </div>
+                        </>
+                      }>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksShared}</span> shared
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksLiked}</span> liked
+                        </div>
+                        <div class="stat-inline">
+                          <span class="number">{profileUser()!.stats.tracksReplied}</span> replies
+                        </div>
+                      </Show>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Share Track Button - Only show on current user's profile */}
-                <Show when={currentUser() && userFid() === currentUser()?.fid}>
-                  <button
-                    class="share-track-button"
-                    onClick={handleShareTrack}
-                    title="Share a track"
-                  >
-                    <span class="button-bracket">[</span>
-                    <span class="button-icon">+</span>
-                    <span class="button-text">SHARE TRACK</span>
-                    <span class="button-bracket">]</span>
-                  </button>
-                </Show>
               </div>
 
-              {/* Feed Filter Buttons */}
-              <div class="feed-filter">
+              {/* Feed Controls - Sort/Filter/Add Track */}
+              <div class="action-bar" style="margin-bottom: 12px;">
+                <ChannelFilterBar
+                  activeSort={activeSort()}
+                  onSortChange={handleSortChange}
+                  qualityFilter={qualityFilter()}
+                  onQualityFilterChange={setQualityFilter}
+                  musicSources={musicSources()}
+                  onMusicSourcesChange={setMusicSources}
+                  genres={genres()}
+                  onGenresChange={setGenres}
+                  availablePlatforms={availablePlatforms}
+                  availableGenres={availableGenres}
+                  filterDialogOpen={filterDialogOpen()}
+                  onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleShareTrack}
+                />
+              </div>
+
+              {/* Activity Filter Dropdown */}
+              <div class="activity-filter-dropdown-wrapper">
                 <button
-                  class={`filter-button ${currentFilter() === 'all' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('all')}
+                  class="activity-filter-dropdown-btn"
+                  onClick={() => setFilterDropdownOpen(!filterDropdownOpen())}
                 >
-                  {getFilterLabel('all')}
+                  <span class="filter-icon">📤</span>
+                  <span class="filter-text">
+                    Showing: <span class="filter-value">
+                      {currentFilter() === 'all' ? 'All Activity' :
+                       currentFilter() === 'shared' ? 'Shared Tracks' :
+                       currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
+                    </span>
+                    <span class="filter-count"> ({filteredContent().length})</span>
+                  </span>
+                  <span class="chevron">{filterDropdownOpen() ? '▲' : '▼'}</span>
                 </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'shared' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('shared')}
-                >
-                  {getFilterLabel('shared')}
-                </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'likes' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('likes')}
-                >
-                  {getFilterLabel('likes')}
-                </button>
-                <button
-                  class={`filter-button ${currentFilter() === 'replies' ? 'active' : ''}`}
-                  onClick={() => setCurrentFilter('replies')}
-                >
-                  {getFilterLabel('replies')}
-                </button>
+
+                <Show when={filterDropdownOpen()}>
+                  <div class="activity-filter-dropdown-menu">
+                    <button
+                      class={`filter-option ${currentFilter() === 'all' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('all');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">📋 All Activity</span>
+                      <span class="option-count">({allCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'shared' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('shared');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">📤 Shared Tracks</span>
+                      <span class="option-count">({sharedCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'likes' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('likes');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">♥ Liked Tracks</span>
+                      <span class="option-count">({likesCount()})</span>
+                    </button>
+                    <button
+                      class={`filter-option ${currentFilter() === 'replies' ? 'active' : ''}`}
+                      onClick={() => {
+                        setCurrentFilter('replies');
+                        setFilterDropdownOpen(false);
+                      }}
+                    >
+                      <span class="option-label">💬 Replies</span>
+                      <span class="option-count">({repliesCount()})</span>
+                    </button>
+                  </div>
+                </Show>
               </div>
 
               {/* Track Feed */}
               <div class="track-feed">
-                <div class="feed-header">
-                  📤 Showing: <span class="feed-type">
-                    {currentFilter() === 'all' ? 'All Activity' :
-                     currentFilter() === 'shared' ? 'Shared Tracks' :
-                     currentFilter() === 'likes' ? 'Liked Tracks' : 'Replies'}
-                  </span> (<span class="feed-count">{filteredContent().length}</span>)
-                </div>
 
                 <Show when={filteredContent().length === 0}>
                   <div class="profile-empty-state">
@@ -430,7 +508,7 @@ const ProfilePage: Component = () => {
 
                 <Show when={filteredContent().length > 0}>
                   <For each={filteredContent()}>
-                    {(activityItem) => {
+                    {(activityItem, index) => {
                       const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
 
                       return (
@@ -456,6 +534,7 @@ const ProfilePage: Component = () => {
                               e.preventDefault();
                               navigate(`/profile/${fid}`);
                             }}
+                            animationDelay={Math.min(index(), 20) * 50}
                           />
                         </Show>
                       );

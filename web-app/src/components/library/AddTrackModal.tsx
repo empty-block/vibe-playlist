@@ -1,7 +1,6 @@
-import { Component, createSignal, createEffect } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import BaseModal from '../common/Modal/BaseModal';
 import SongInputForm from '../common/SongInputForm';
-import { modalAnimations } from '../../utils/animations';
 import './addTrackModal.css';
 
 interface AddTrackModalProps {
@@ -13,8 +12,6 @@ interface AddTrackModalProps {
 
 const AddTrackModal: Component<AddTrackModalProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = createSignal(false);
-  let headerRef: HTMLDivElement | undefined;
-  let formRef: HTMLDivElement | undefined;
 
   const handleFormSubmit = async (data: { songUrl: string; comment: string }) => {
     setIsSubmitting(true);
@@ -29,18 +26,8 @@ const AddTrackModal: Component<AddTrackModalProps> = (props) => {
     }
   };
 
-
-  // Trigger terminal boot sequence when modal opens
-  createEffect(() => {
-    if (props.isOpen && headerRef && formRef) {
-      setTimeout(() => {
-        modalAnimations.terminalBootSequence(headerRef!, formRef!);
-      }, 400); // After modal entry animation
-    }
-  });
-
   return (
-    <BaseModal 
+    <BaseModal
       isOpen={props.isOpen}
       onClose={props.onClose}
       title="Add Track to Library"
@@ -49,34 +36,47 @@ const AddTrackModal: Component<AddTrackModalProps> = (props) => {
       showCloseButton={false}
     >
       <div class="modal-content-wrapper">
-        <div class="terminal-header" ref={headerRef}>
-          <div class="terminal-path-container">
-            <span class="terminal-prefix">JAMZY://</span>
-            <span class="terminal-path"></span>
+        {/* Retro Windows-style title bar */}
+        <div class="retro-titlebar">
+          <div class="titlebar-left">
+            <i class="fas fa-music titlebar-icon"></i>
+            <span class="titlebar-title">Add Track to Library</span>
           </div>
-          <button
-            class="terminal-close-button"
-            onClick={props.onClose}
-            aria-label="Close modal"
-          >
-            X
-          </button>
+          <div class="titlebar-controls">
+            <button
+              class="titlebar-button minimize-btn"
+              onClick={props.onClose}
+              aria-label="Minimize"
+              disabled
+            >
+              _
+            </button>
+            <button
+              class="titlebar-button maximize-btn"
+              onClick={props.onClose}
+              aria-label="Maximize"
+              disabled
+            >
+              □
+            </button>
+            <button
+              class="titlebar-button close-btn"
+              onClick={props.onClose}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
         </div>
-        
-        <div ref={formRef}>
+
+        <div class="modal-form-content">
           <SongInputForm
             onSubmit={handleFormSubmit}
-            submitLabel="[ EXECUTE ADD ]"
+            submitLabel="Add Track"
             initialSongUrl={props.initialData?.songUrl}
             initialComment={props.initialData?.comment}
             disabled={isSubmitting()}
           />
-        </div>
-        
-        <div class="modal-footer">
-          <div class="terminal-status">
-            STATUS: READY FOR INPUT • PRESS ESC TO EXIT
-          </div>
         </div>
       </div>
     </BaseModal>

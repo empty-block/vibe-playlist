@@ -1,7 +1,7 @@
 /* WINAMP-STYLE MUSIC PLAYER BAR - Retro Aesthetic */
 .player-bar {
   position: fixed;
-  bottom: 60px; /* Space for navigation bar */
+  bottom: 64px; /* Reduced gap - closer to window content */
   left: 4px;
   right: 4px;
   background: var(--bg-panel);
@@ -47,7 +47,7 @@
 .player-titlebar-icon {
   width: 12px;
   height: 12px;
-  background: #00FF00;
+  background: #04caf4;
   border: 1px solid #000;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .player-content {
-  padding: 4px;
+  padding: 0px;
 }
 
 /* Removed old .player-video styles - now using unified .player-audio-container */
@@ -99,8 +99,8 @@
   border-left: 2px solid #000000;
   border-right: 2px solid #FFFFFF;
   border-bottom: 2px solid #FFFFFF;
-  padding: 8px;
-  margin-bottom: 4px;
+  padding: 1px 8px 8px 8px;
+  margin-bottom: 0px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -150,7 +150,7 @@
 }
 
 .player-time {
-  color: #00FF00;
+  color: #04caf4;
   font-family: 'Courier New', monospace;
   font-size: 11px;
   min-width: 40px;
@@ -163,8 +163,8 @@
   background: #001a00;
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
-  border-right: 2px solid #00FF00;
-  border-bottom: 2px solid #00FF00;
+  border-right: 2px solid #04caf4;
+  border-bottom: 2px solid #04caf4;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -172,13 +172,13 @@
 
 .player-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00FF00, #00CC00);
+  background: linear-gradient(90deg, #04caf4, #0399cc);
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px #00FF00;
+  box-shadow: 0 0 8px #04caf4;
 }
 
 .player-progress-bar:hover .player-progress-fill {
-  box-shadow: 0 0 12px #00FF00;
+  box-shadow: 0 0 12px #04caf4;
 }
 
 /* Error Message */
@@ -271,165 +271,19 @@
   color: #00FFFF;
 }
 
-.player-visualizer {
-  height: 28px;
-  background: #000;
-  border-top: 1px solid #000000;
-  border-left: 1px solid #000000;
-  border-right: 1px solid #FFFFFF;
-  border-bottom: 1px solid #FFFFFF;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: flex-end;
-  gap: 1px;
-  padding: 2px;
-}
-
-.player-visualizer-bar {
-  flex: 1;
-  background: linear-gradient(to top, #00FF00, #00FF00 60%, #FFFF00 60%, #FFFF00 85%, #FF0000 85%);
-  height: 20%; /* Start at low height */
-  animation-fill-mode: forwards; /* Keep final state */
-}
-
-/* Correlated bar animations - grouped by frequency range for realistic spectrum behavior */
-
-/* BASS RANGE (Bars 1-5): Slower, more powerful movements, highly correlated */
-@keyframes bass-pulse-1 {
-  0% { height: 50%; }
-  50% { height: 75%; }
-  100% { height: 45%; }
-}
-@keyframes bass-pulse-2 {
-  0% { height: 55%; }
-  50% { height: 80%; }
-  100% { height: 40%; }
-}
-@keyframes bass-pulse-3 {
-  0% { height: 45%; }
-  50% { height: 70%; }
-  100% { height: 50%; }
-}
-
-/* MIDS RANGE (Bars 6-11): Medium tempo, moderate correlation, most musical content */
-@keyframes mids-pulse-1 {
-  0% { height: 40%; }
-  50% { height: 65%; }
-  100% { height: 35%; }
-}
-@keyframes mids-pulse-2 {
-  0% { height: 45%; }
-  50% { height: 70%; }
-  100% { height: 40%; }
-}
-@keyframes mids-pulse-3 {
-  0% { height: 35%; }
-  50% { height: 60%; }
-  100% { height: 45%; }
-}
-
-/* HIGHS RANGE (Bars 12-16): Faster, sharper movements, more independent */
-@keyframes highs-pulse-1 {
-  0% { height: 30%; }
-  50% { height: 55%; }
-  100% { height: 25%; }
-}
-@keyframes highs-pulse-2 {
-  0% { height: 35%; }
-  50% { height: 60%; }
-  100% { height: 30%; }
-}
-@keyframes highs-pulse-3 {
-  0% { height: 25%; }
-  50% { height: 50%; }
-  100% { height: 35%; }
-}
-
-/* Apply animations with frequency-correlated timing */
-
-/* BASS BARS (1-5): Slow tempo (1.6-1.8s), similar delays, powerful movements */
-.player-visualizer-bar:nth-child(1) {
-  animation: bass-pulse-1 1.8s ease-in-out infinite alternate;
-  animation-delay: 1.0s;
-}
-.player-visualizer-bar:nth-child(2) {
-  animation: bass-pulse-2 1.75s ease-in-out infinite alternate;
-  animation-delay: 1.05s; /* Very close to bar 1 - correlated */
-}
-.player-visualizer-bar:nth-child(3) {
-  animation: bass-pulse-3 1.7s ease-in-out infinite alternate;
-  animation-delay: 1.1s; /* Still close - bass moves together */
-}
-.player-visualizer-bar:nth-child(4) {
-  animation: bass-pulse-1 1.8s ease-in-out infinite alternate;
-  animation-delay: 1.15s; /* Cycling back to bass-pulse-1 */
-}
-.player-visualizer-bar:nth-child(5) {
-  animation: bass-pulse-2 1.65s ease-in-out infinite alternate;
-  animation-delay: 1.2s; /* Transition to mids */
-}
-
-/* MIDS BARS (6-11): Medium tempo (1.2-1.5s), moderate correlation */
-.player-visualizer-bar:nth-child(6) {
-  animation: mids-pulse-1 1.4s ease infinite alternate;
-  animation-delay: 1.25s;
-}
-.player-visualizer-bar:nth-child(7) {
-  animation: mids-pulse-2 1.35s ease-in-out infinite alternate;
-  animation-delay: 1.3s; /* Close to bar 6 */
-}
-.player-visualizer-bar:nth-child(8) {
-  animation: mids-pulse-3 1.5s ease infinite alternate;
-  animation-delay: 1.35s;
-}
-.player-visualizer-bar:nth-child(9) {
-  animation: mids-pulse-1 1.3s ease-in-out infinite alternate;
-  animation-delay: 1.4s;
-}
-.player-visualizer-bar:nth-child(10) {
-  animation: mids-pulse-2 1.45s ease infinite alternate;
-  animation-delay: 1.45s;
-}
-.player-visualizer-bar:nth-child(11) {
-  animation: mids-pulse-3 1.4s ease-in-out infinite alternate;
-  animation-delay: 1.5s; /* Transition to highs */
-}
-
-/* HIGHS BARS (12-16): Fast tempo (1.0-1.2s), more independent, sharp movements */
-.player-visualizer-bar:nth-child(12) {
-  animation: highs-pulse-1 1.1s ease infinite alternate;
-  animation-delay: 1.55s;
-}
-.player-visualizer-bar:nth-child(13) {
-  animation: highs-pulse-2 1.0s linear infinite alternate;
-  animation-delay: 1.6s; /* Less correlation in highs */
-}
-.player-visualizer-bar:nth-child(14) {
-  animation: highs-pulse-3 1.15s ease infinite alternate;
-  animation-delay: 1.65s;
-}
-.player-visualizer-bar:nth-child(15) {
-  animation: highs-pulse-1 1.05s ease-in-out infinite alternate;
-  animation-delay: 1.7s;
-}
-.player-visualizer-bar:nth-child(16) {
-  animation: highs-pulse-2 1.2s ease infinite alternate;
-  animation-delay: 1.75s;
-}
-
 .player-control {
   background: var(--bg-panel);
   border-top: 2px solid var(--border-raised-light);
   border-left: 2px solid var(--border-raised-light);
   border-right: 2px solid var(--border-raised-dark);
   border-bottom: 2px solid var(--border-raised-dark);
-  width: 44px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: var(--accent-primary);
   user-select: none;
@@ -450,9 +304,11 @@
 }
 
 .player-control-play {
-  width: 56px;
+  width: 60px;
+  height: 60px;
   background: var(--accent-secondary);
   color: var(--neon-blue);
+  font-size: 24px;
 }
 
 /* Dark mode control button effects */
@@ -510,7 +366,10 @@
   .player-bar {
     left: 2px;
     right: 2px;
-    bottom: 56px;
+    /* Account for navbar height + safe area insets */
+    /* Navbar = 44px button content + Farcaster SDK adds safe-area padding dynamically */
+    /* Safe area on iPhone X+ is ~34px, so total navbar ~78px */
+    bottom: 80px;
   }
 
   .player-content {
@@ -535,21 +394,19 @@
   }
 
   .player-controls {
-    gap: 2px;
-  }
-
-  .player-visualizer {
-    height: 24px;
+    gap: 3px;
   }
 
   .player-control {
-    width: 40px;
-    height: 36px;
-    font-size: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
   }
 
   .player-control-play {
-    width: 50px;
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
   }
 }
 
@@ -576,12 +433,14 @@
   }
 
   .player-control {
-    width: 38px;
-    height: 34px;
-    font-size: 15px;
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
   }
 
   .player-control-play {
-    width: 46px;
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
   }
 }

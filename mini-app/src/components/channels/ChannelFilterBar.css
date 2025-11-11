@@ -7,7 +7,6 @@
   flex-direction: row;
   gap: 8px;
   flex: 1;
-  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -15,7 +14,8 @@
    RETRO FILTER BUTTONS (Windows 98 Style)
    ============================================ */
 
-.filter-dropdown-wrapper {
+.filter-dropdown-wrapper,
+.sort-dropdown-wrapper {
   position: relative;
 }
 
@@ -37,8 +37,10 @@ body:not(.theme-dark) .filter-toggle-btn {
   border-radius: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: 38px;
+  flex: 1;
   box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -76,39 +78,42 @@ body:not(.theme-dark) .filter-toggle-btn--active:hover {
   letter-spacing: 0;
   text-transform: none;
   background: #001100;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   color: #ffffff;
   cursor: pointer;
   transition: background 0.1s ease;
   border-radius: 0;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  min-height: 32px;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  min-height: 38px;
+  flex: 1;
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .theme-dark .filter-toggle-btn:hover {
   background: #002200;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.5);
 }
 
 .theme-dark .filter-toggle-btn:active {
   background: #000800;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   padding: 7px 11px 5px 13px;
-  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: inset 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
+/* Active state uses berry (signature color) */
 .theme-dark .filter-toggle-btn--active {
-  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%);
-  border: 2px solid #04caf4;
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  border: 2px solid #E73895;
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(4, 202, 244, 0.5);
+  box-shadow: 0 0 12px rgba(231, 56, 149, 0.5);
 }
 
 .theme-dark .filter-toggle-btn--active:hover {
-  box-shadow: 0 0 16px rgba(4, 202, 244, 0.7);
+  box-shadow: 0 0 16px rgba(231, 56, 149, 0.7);
   filter: brightness(1.1);
 }
 
@@ -139,109 +144,99 @@ body:not(.theme-dark) .filter-toggle-btn--active:hover {
 }
 
 /* ============================================
-   SHUFFLE BUTTON (Retro Style)
+   ADD TRACK BUTTON (Primary Action - Retro Style)
    ============================================ */
 
-/* Shuffle Button - Light Mode */
-.theme-light .shuffle-btn,
-body:not(.theme-dark) .shuffle-btn {
+/* Add Track Button - Light Mode */
+.theme-light .add-track-btn,
+body:not(.theme-dark) .add-track-btn {
   padding: 6px 12px;
   font-family: var(--font-display, 'JetBrains Mono', monospace);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
   background: #c0c0c0;
-  border: 2px solid;
+  border: 3px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
   color: #000000;
   cursor: pointer;
-  transition: background 0.1s ease;
+  transition: all 0.1s ease;
   border-radius: 0;
-  min-height: 32px;
-  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
+  min-height: 38px;
+  flex: 1;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
+  filter: brightness(1.1);
 }
 
-.theme-light .shuffle-btn:hover,
-body:not(.theme-dark) .shuffle-btn:hover {
+.theme-light .add-track-btn:hover,
+body:not(.theme-dark) .add-track-btn:hover {
   background: #dfdfdf;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
 }
 
-.theme-light .shuffle-btn:active,
-body:not(.theme-dark) .shuffle-btn:active {
+.theme-light .add-track-btn:active,
+body:not(.theme-dark) .add-track-btn:active {
   border-color: #000000 #ffffff #ffffff #000000;
   padding: 7px 11px 5px 13px;
   box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(0);
 }
 
-.theme-light .shuffle-btn--active,
-body:not(.theme-dark) .shuffle-btn--active {
-  background: #ff8c00;
-  border-color: #cc7000 #ffaa44 #ffaa44 #cc7000;
-  color: #000000;
-  font-weight: 700;
-  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.theme-light .shuffle-btn--active:hover,
-body:not(.theme-dark) .shuffle-btn--active:hover {
-  background: #ffa520;
-}
-
-/* Shuffle Button - Dark Mode */
-.theme-dark .shuffle-btn {
+/* Add Track Button - Dark Mode */
+.theme-dark .add-track-btn {
   padding: 6px 12px;
   font-family: var(--font-display, 'JetBrains Mono', monospace);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
   background: #001100;
-  border: 2px solid #00ff00;
+  border: 3px solid var(--neon-cyan, #04caf4);
   color: #ffffff;
   cursor: pointer;
-  transition: background 0.1s ease;
+  transition: all 0.1s ease;
   border-radius: 0;
-  min-height: 32px;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  min-height: 38px;
+  flex: 1;
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
+  filter: brightness(1.15);
 }
 
-.theme-dark .shuffle-btn:hover {
+.theme-dark .add-track-btn:hover {
   background: #002200;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 16px rgba(4, 202, 244, 0.8);
+  transform: translateY(-1px);
 }
 
-.theme-dark .shuffle-btn:active {
+.theme-dark .add-track-btn:active {
   background: #000800;
-  border: 2px solid #00ff00;
+  border: 3px solid var(--neon-cyan, #04caf4);
   padding: 7px 11px 5px 13px;
-  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: inset 0 0 8px rgba(4, 202, 244, 0.4);
+  transform: translateY(0);
 }
 
-.theme-dark .shuffle-btn--active {
-  background: #ff8c00;
-  border: 2px solid #ffaa44;
-  color: #000000;
-  font-weight: 700;
-  box-shadow: 0 0 12px rgba(255, 140, 0, 0.5);
-}
-
-.theme-dark .shuffle-btn--active:hover {
-  background: #ffa520;
-  box-shadow: 0 0 16px rgba(255, 165, 32, 0.6);
+.add-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 /* ============================================
    DROPDOWN MENU (Windows 98 Style)
    ============================================ */
 
-.filter-dropdown-menu {
+.filter-dropdown-menu,
+.sort-dropdown-menu {
   position: absolute;
   top: calc(100% + 2px);
   left: 0;
@@ -254,7 +249,8 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
-.dropdown-header {
+.filter-dropdown-menu .dropdown-header,
+.sort-dropdown-menu .dropdown-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -295,7 +291,8 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
   padding: 3px 5px 1px 7px;
 }
 
-.dropdown-options {
+.filter-dropdown-menu .dropdown-options,
+.sort-dropdown-menu .dropdown-options {
   max-height: 240px;
   overflow-y: auto;
   padding: 4px;
@@ -391,7 +388,8 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
    RADIO OPTIONS (Windows 98 Style)
    ============================================ */
 
-.dropdown-options--radio {
+.filter-dropdown-menu .dropdown-options--radio,
+.sort-dropdown-menu .dropdown-options--radio {
   padding: 4px;
 }
 
@@ -458,59 +456,74 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 600px) {
-  .channel-filter-bar-container {
-    gap: 6px;
-  }
-
+@media (max-width: 640px) {
   .filter-toggle-btn,
-  .shuffle-btn {
-    font-size: 11px;
-    padding: 5px 10px;
-    min-height: 30px;
+  .add-track-btn {
+    font-size: 13px;
+    padding: 8px 12px;
+    min-height: 44px;
   }
 
   .filter-toggle-btn:active,
-  .shuffle-btn:active {
-    padding: 6px 9px 4px 11px;
+  .add-track-btn:active {
+    padding: 9px 11px 7px 13px;
+  }
+
+  .filter-icon,
+  .add-icon {
+    font-size: 16px;
   }
 
   .chevron {
-    font-size: 8px;
+    font-size: 9px;
   }
 
-  .filter-dropdown-menu {
-    min-width: 160px;
-    max-width: 220px;
+  .filter-dropdown-menu,
+  .sort-dropdown-menu {
+    min-width: 200px;
+    max-width: 280px;
   }
 
-  .dropdown-header {
-    padding: 5px 6px;
-    font-size: 10px;
+  .filter-dropdown-menu .dropdown-header,
+  .sort-dropdown-menu .dropdown-header {
+    padding: 8px 10px;
+    font-size: 13px;
   }
 
   .checkbox-option,
   .radio-option {
-    padding: 3px 5px;
+    padding: 10px 12px;
+    margin-bottom: 4px;
   }
 
   .checkbox-option span,
   .radio-option span {
-    font-size: 10px;
+    font-size: 14px;
+  }
+
+  .checkbox-option input[type='checkbox'],
+  .radio-option input[type='radio'] {
+    width: 18px;
+    height: 18px;
   }
 }
 
 @media (max-width: 360px) {
   .filter-toggle-btn,
-  .shuffle-btn {
-    font-size: 10px;
-    padding: 4px 8px;
-    min-height: 28px;
+  .add-track-btn {
+    font-size: 12px;
+    padding: 8px 10px;
+    min-height: 44px;
   }
 
   .filter-toggle-btn:active,
-  .shuffle-btn:active {
-    padding: 5px 7px 3px 9px;
+  .add-track-btn:active {
+    padding: 9px 9px 7px 11px;
+  }
+
+  .filter-icon,
+  .add-icon {
+    font-size: 15px;
   }
 
   .filter-dropdown-menu {
@@ -520,7 +533,7 @@ body:not(.theme-dark) .shuffle-btn--active:hover {
 
 @media (prefers-reduced-motion: reduce) {
   .filter-toggle-btn,
-  .shuffle-btn,
+  .add-track-btn,
   .checkbox-option,
   .radio-option,
   .clear-btn {

@@ -1,5 +1,5 @@
 import { Component, createSignal, Show, onMount, createEffect, For } from 'solid-js';
-import { Track, setCurrentTrack, setIsPlaying, currentTrack, isPlaying } from '../../stores/playerStore';
+import { Track, playTrack, currentTrack, isPlaying } from '../../stores/playerStore';
 import SocialStats from '../social/SocialStats';
 import RetroTooltip from '../ui/RetroTooltip';
 import ExpandableText from '../ui/ExpandableText';
@@ -68,9 +68,8 @@ const LibraryTableRow: Component<LibraryTableRowProps> = (props) => {
     setTimeout(checkTruncation, 0);
   });
 
-  const handlePlayTrack = () => {
-    setCurrentTrack(props.track);
-    setIsPlaying(true);
+  const handlePlayTrack = async () => {
+    await playTrack(props.track);
   };
 
   const formatTimeAgo = (timestamp: string) => {

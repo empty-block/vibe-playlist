@@ -2,6 +2,7 @@ import { createSignal, createMemo } from 'solid-js';
 import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
+import { isSpotifyAuthenticated, initiateSpotifyAuth } from './authStore';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music' | 'tortoise';
 
@@ -41,6 +42,8 @@ export interface Track {
   originalSource?: TrackSource;
   url?: string; // Original URL for resolution
   castHash?: string; // Farcaster cast hash for opening in Farcaster client
+  // Content type for Spotify/SoundCloud collections (albums, playlists, sets)
+  contentType?: 'track' | 'album' | 'playlist';
 }
 
 export interface Playlist {
@@ -286,4 +289,141 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
     setIsPlaying(true);
     console.log('Non-YouTube track loaded from feed - autoplaying');
   }
+};
+
+/**
+ * Prepare pending track context for Spotify auth redirect
+ * Returns minimal data to be passed via OAuth state parameter
+ * Only stores IDs - full track data will be fetched on return
+ */
+export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
+  // Extract platform info from track URL
+  const platformName = track.source; // 'spotify', 'youtube', 'soundcloud'
+  const platformId = track.id; // Platform-specific track ID
+
+  const pendingData = {
+    platformName,
+    platformId,
+    feedId,
+    castHash: track.castHash, // Optional - for specific cast context
+    timestamp: Date.now()
+  };
+
+  console.log('✅ Prepared pending track data for OAuth state:', {
+    platform: platformName,
+    id: platformId,
+    feedId
+  });
+
+  // Return data to be passed via OAuth state parameter
+  return pendingData;
+};
+
+/**
+ * Restore pending track after Spotify auth (from OAuth state parameter)
+ * Fetches full track data from API using stored IDs
+ */
+export const restorePendingTrack = async (pendingData?: any): Promise<boolean> => {
+  // If no pending data provided, nothing to restore
+  if (!pendingData) {
+    console.log('ℹ️ No pending track data provided');
+    return false;
+  }
+
+  try {
+    const { platformName, platformId, feedId, castHash, timestamp } = pendingData;
+
+    // Check if data is stale (more than 5 minutes old)
+    if (Date.now() - timestamp > 5 * 60 * 1000) {
+      console.log('⏰ Pending track data is stale, ignoring');
+      return false;
+    }
+
+    console.log('✅ Fetching pending track from API:', { platformName, platformId, feedId });
+
+    // Dynamically import to avoid circular dependency
+    const { fetchTrack, fetchHomeFeed, fetchChannelFeed } = await import('../services/api');
+
+    // Fetch the track data from API
+    const { track: apiTrack } = await fetchTrack(platformName, platformId);
+
+    if (!apiTrack) {
+      console.error('❌ Track not found in database');
+      return false;
+    }
+
+    // Convert API track to Track type
+    const track: Track = {
+      id: apiTrack.platformId || apiTrack.id,
+      title: apiTrack.title,
+      artist: apiTrack.artist,
+      albumArt: apiTrack.thumbnail || apiTrack.albumArt,
+      url: apiTrack.url,
+      source: (apiTrack.platform || platformName) as TrackSource,
+      username: '', // Will be populated if needed
+      userAvatar: null,
+      userFid: '',
+      timestamp: apiTrack.timestamp || new Date().toISOString(),
+      comment: '',
+      likes: 0,
+      replies: 0,
+      recasts: 0,
+      duration: '',
+      castHash: castHash || undefined
+    };
+
+    // Fetch feed data to get playlist context
+    let feedTracks: Track[] = [];
+    try {
+      if (feedId === 'home') {
+        const feedData = await fetchHomeFeed({});
+        // Convert feed threads to tracks (simplified - you may need to adapt this)
+        feedTracks = [track]; // For now, just use the single track
+      } else if (feedId.startsWith('channel-')) {
+        const channelId = feedId.replace('channel-', '');
+        const feedData = await fetchChannelFeed(channelId, {});
+        feedTracks = [track];
+      } else {
+        // For other feed types, just use the single track
+        feedTracks = [track];
+      }
+    } catch (error) {
+      console.warn('⚠️ Failed to fetch feed context, using single track only:', error);
+      feedTracks = [track];
+    }
+
+    console.log('✅ Restoring pending track:', track.title);
+    playTrackFromFeed(track, feedTracks, feedId);
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to restore pending track from URL hash:', error);
+    // Clean up the hash on error
+    const cleanUrl = window.location.href.split('#')[0];
+    window.history.replaceState(null, '', cleanUrl);
+    return false;
+  }
+};
+
+/**
+ * Play track with Spotify auth check - stores pending track if auth needed
+ * This is the function that UI components should call instead of playTrackFromFeed directly
+ */
+export const playTrackWithAuthCheck = (track: Track, feedTracks: Track[], feedId: string) => {
+  console.log('🎵 playTrackWithAuthCheck called:', {
+    track: track.title,
+    source: track.source,
+    isSpotifyAuth: isSpotifyAuthenticated()
+  });
+
+  // If it's a Spotify track and user is not authenticated, store for later and start auth
+  if (track.source === 'spotify' && !isSpotifyAuthenticated()) {
+    console.log('🔐 Spotify track requires auth - preparing data for OAuth state parameter');
+    const pendingData = storePendingTrack(track, feedTracks, feedId);
+    initiateSpotifyAuth(pendingData);
+    return;
+  }
+
+  // Otherwise play normally
+  console.log('▶️ Playing track normally (already authed or not Spotify)');
+  playTrackFromFeed(track, feedTracks, feedId);
 };

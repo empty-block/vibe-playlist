@@ -5,7 +5,8 @@ import HomePage from './components/home/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import LibraryPage from './pages/LibraryPage';
 import StatsPage from './pages/StatsPage';
-import { initializeAuth, handleSpotifyCallback, isAuthenticated } from './stores/authStore';
+import { initializeAuth, handleSpotifyCallback, getPendingTrack } from './stores/authStore';
+import { setCurrentTrack, setIsPlaying } from './stores/playerStore';
 
 const App: Component = () => {
   onMount(async () => {
@@ -23,6 +24,15 @@ const App: Component = () => {
     } else if (code) {
       const success = await handleSpotifyCallback(code);
       if (success) {
+        // Restore pending track if there was one
+        const pendingTrack = getPendingTrack();
+        if (pendingTrack) {
+          console.log('Restoring pending track after auth:', pendingTrack);
+          setCurrentTrack(pendingTrack);
+          // Don't auto-play, just open the player so user can manually play
+          setIsPlaying(false);
+        }
+
         // Clean up URL
         window.history.replaceState({}, document.title, window.location.pathname);
       }

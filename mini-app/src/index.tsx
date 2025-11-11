@@ -4,6 +4,7 @@ import App from './App';
 import './styles/theme.css';
 import './styles/window-layout.css';
 import { handleSpotifyCallback, initializeAuth } from './stores/authStore';
+import { restorePendingTrack } from './stores/playerStore';
 
 // Initialize Farcaster SDK and render app
 // The ready() call must happen before render to hide splash screen
@@ -13,6 +14,31 @@ const root = document.getElementById('root');
 const urlParams = new URLSearchParams(window.location.search);
 const spotifyCode = urlParams.get('code');
 const spotifyError = urlParams.get('error');
+const spotifyState = urlParams.get('state');
+
+// Parse state parameter to extract pending track data
+let pendingTrackData: any = null;
+console.log('🔍 DEBUG - OAuth callback URL params:', {
+  hasCode: !!spotifyCode,
+  hasError: !!spotifyError,
+  hasState: !!spotifyState
+});
+
+if (spotifyState) {
+  try {
+    console.log('🔍 DEBUG - Raw state parameter:', spotifyState);
+    const stateData = JSON.parse(atob(spotifyState));
+    console.log('🔍 DEBUG - Decoded state data:', stateData);
+    pendingTrackData = stateData.pendingTrack || null;
+    if (pendingTrackData) {
+      console.log('✅ Pending track data found in OAuth state:', pendingTrackData);
+    } else {
+      console.log('⚠️ No pending track data in state parameter');
+    }
+  } catch (error) {
+    console.error('❌ Failed to parse state parameter:', error);
+  }
+}
 
 // Check if this window is a popup (opened by window.open)
 const isPopup = window.opener && window.opener !== window;
@@ -21,12 +47,13 @@ if (spotifyCode) {
   console.log('Spotify authorization code detected');
 
   if (isPopup) {
-    // If we're in a popup, send the code to the parent window via postMessage
-    console.log('Sending auth code to parent window via postMessage');
+    // If we're in a popup, send the code AND pending data to parent window via postMessage
+    console.log('Sending auth code and pending data to parent window via postMessage');
     window.opener.postMessage(
       {
         type: 'spotify-auth-success',
-        code: spotifyCode
+        code: spotifyCode,
+        pendingTrackData: pendingTrackData
       },
       window.location.origin
     );
@@ -38,7 +65,15 @@ if (spotifyCode) {
     handleSpotifyCallback(spotifyCode).then((success) => {
       if (success) {
         console.log('Spotify authentication successful!');
-        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // KEEP pending track data in URL hash so it survives iframe reload
+        if (pendingTrackData) {
+          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + hashData);
+          console.log('✅ Stored pending track in URL hash:', hashData);
+        } else {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
       } else {
         console.error('Spotify authentication failed');
       }
@@ -76,6 +111,14 @@ window.addEventListener('message', (event) => {
     handleSpotifyCallback(data.code).then((success) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
+
+        // KEEP pending track data in URL hash so it survives iframe reload
+        if (data.pendingTrackData) {
+          console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
+          const hashData = `#pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
+          window.history.replaceState({}, document.title, window.location.pathname + hashData);
+          console.log('✅ Stored pending track in URL hash:', hashData);
+        }
       } else {
         console.error('Spotify authentication failed');
       }

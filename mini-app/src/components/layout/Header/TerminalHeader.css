@@ -27,8 +27,8 @@
 }
 
 .terminal-header--green {
-  border-bottom: 1px solid var(--neon-green);
-  box-shadow: 0 2px 8px rgba(0, 255, 65, 0.1);
+  border-bottom: 1px solid var(--neon-cyan);
+  box-shadow: 0 2px 8px rgba(4, 202, 244, 0.1);
 }
 
 /* Title Bar */

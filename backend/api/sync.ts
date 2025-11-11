@@ -158,4 +158,44 @@ app.post('/user/:fid/reactions', async (c) => {
   }
 })
 
+/**
+ * POST /api/sync/user/:fid/profile
+ * Sync profile data (username, display name, avatar) for a specific user
+ */
+app.post('/user/:fid/profile', async (c) => {
+  try {
+    const fid = parseInt(c.req.param('fid'))
+
+    if (isNaN(fid)) {
+      return c.json({
+        error: {
+          code: 'INVALID_PARAM',
+          message: 'Invalid FID parameter'
+        }
+      }, 400)
+    }
+
+    const syncEngine = getSyncEngine()
+
+    console.log(`[Sync API] Triggering profile sync for user: ${fid}`)
+
+    const result = await syncEngine.syncUserProfile(fid)
+
+    return c.json({
+      fid,
+      success: result.success,
+      user: result.user,
+      error: result.error
+    })
+  } catch (error) {
+    console.error('Trigger user profile sync error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to trigger user profile sync'
+      }
+    }, 500)
+  }
+})
+
 export default app

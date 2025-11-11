@@ -1,8 +1,10 @@
 import { Router, Route } from '@solidjs/router';
-import { Component, Show, JSX, onMount, lazy } from 'solid-js';
+import { Component, Show, JSX, onMount, lazy, createSignal } from 'solid-js';
 import MediaPlayer from './components/player/MediaPlayer';
-import { currentTrack } from './stores/playerStore';
+import { currentTrack, restorePendingTrack } from './stores/playerStore';
 import { initPlayerLayoutSync } from './utils/playerLayoutSync';
+import InviteGatePage from './pages/InviteGatePage';
+import { showInviteModal } from './stores/authStore';
 
 // Lazy load all page components for code splitting
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -16,18 +18,106 @@ const TrendingPage = lazy(() => import('./pages/TrendingPage'));
 
 // Root component that wraps all routes and provides player
 const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
+  const [debugInfo, setDebugInfo] = createSignal<string>('');
+
   // Initialize player layout synchronization on mount
   onMount(() => {
     initPlayerLayoutSync();
+
+    // Check URL hash for pending track data (survives iframe reload)
+    const hash = window.location.hash;
+    const hasPendingTrack = hash.includes('pending_track=');
+
+    let debugMsg = `📱 App Loaded After OAuth\n`;
+    debugMsg += `URL hash: ${hash ? 'YES' : 'NO'}\n`;
+    debugMsg += `Has pending_track: ${hasPendingTrack ? 'YES ✅' : 'NO ❌'}\n`;
+
+    let pendingData: any = null;
+    if (hasPendingTrack) {
+      try {
+        const match = hash.match(/pending_track=([^&]*)/);
+        if (match) {
+          const decoded = decodeURIComponent(match[1]);
+          pendingData = JSON.parse(decoded);
+          debugMsg += `Platform: ${pendingData.platformName || 'unknown'}\n`;
+          debugMsg += `Track ID: ${pendingData.platformId || 'unknown'}\n`;
+          debugMsg += `Feed: ${pendingData.feedId || 'unknown'}\n`;
+        }
+      } catch (e) {
+        debugMsg += `Parse error: ${e.message}\n`;
+      }
+    }
+
+    setDebugInfo(debugMsg);
+
+    console.log('🔍 DEBUG - App.tsx onMount checking URL hash');
+    console.log('🔍 DEBUG - Has pending track in hash:', hasPendingTrack);
+
+    if (pendingData) {
+      console.log('✅ App mounted - found pending track data in URL hash');
+      console.log('📦 Pending track data:', pendingData);
+
+      // Clear hash to prevent re-processing
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Wait for next frame to ensure everything is rendered
+      requestAnimationFrame(() => {
+        setTimeout(async () => {
+          console.log('🔄 Attempting to restore pending track after auth...');
+          setDebugInfo(prev => prev + 'Restoring...\n');
+          const restored = await restorePendingTrack(pendingData);
+          if (restored) {
+            console.log('✅ Successfully restored pending track after auth');
+            setDebugInfo(prev => prev + 'Restored: YES ✅');
+          } else {
+            console.log('❌ Failed to restore pending track');
+            setDebugInfo(prev => prev + 'Restored: FAILED ❌');
+          }
+
+          // Clear debug after 10 seconds
+          setTimeout(() => setDebugInfo(''), 10000);
+        }, 500);
+      });
+    } else {
+      console.log('ℹ️ No pending track data - normal app load');
+      // Clear debug after 5 seconds on normal load
+      setTimeout(() => setDebugInfo(''), 5000);
+    }
   });
 
   return (
     <>
-      {props.children}
+      {/* DEBUG BANNER - Shows state without console */}
+      <Show when={debugInfo()}>
+        <div style={{
+          position: 'fixed',
+          top: '0',
+          left: '0',
+          right: '0',
+          'background-color': 'rgba(0, 0, 0, 0.9)',
+          color: '#0f0',
+          'font-family': 'monospace',
+          'font-size': '12px',
+          padding: '10px',
+          'z-index': '99999',
+          'white-space': 'pre-wrap',
+          'border-bottom': '2px solid #0f0'
+        }}>
+          {debugInfo()}
+        </div>
+      </Show>
 
-      {/* Player - Fixed at bottom */}
-      <Show when={currentTrack()}>
-        <MediaPlayer />
+      {/* Show invite gate page if user needs beta access */}
+      <Show
+        when={!showInviteModal()}
+        fallback={<InviteGatePage />}
+      >
+        {props.children}
+
+        {/* Player - Fixed at bottom */}
+        <Show when={currentTrack()}>
+          <MediaPlayer />
+        </Show>
       </Show>
     </>
   );

@@ -46,25 +46,34 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const deviceName = persistentDeviceName;
   const setDeviceName = setPersistentDeviceName;
 
-  // Helper to extract Spotify track ID from URL, URI, or plain ID
-  const extractSpotifyTrackId = (sourceId: string): string | null => {
+  // Helper to extract Spotify ID and content type from URL, URI, or plain ID
+  const extractSpotifyInfo = (sourceId: string, contentType?: 'track' | 'album' | 'playlist'): { id: string; type: 'track' | 'album' | 'playlist' } | null => {
     if (!sourceId) return null;
 
-    // Already just an ID (alphanumeric)
-    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
-      return sourceId;
-    }
-
-    // Extract from URL (https://open.spotify.com/track/ID)
-    const urlMatch = sourceId.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+    // Extract from URL (https://open.spotify.com/{type}/ID)
+    const urlMatch = sourceId.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
     if (urlMatch) {
-      return urlMatch[1];
+      return {
+        id: urlMatch[2],
+        type: urlMatch[1] as 'track' | 'album' | 'playlist'
+      };
     }
 
-    // Extract from URI (spotify:track:ID)
-    const uriMatch = sourceId.match(/spotify:track:([a-zA-Z0-9]+)/);
+    // Extract from URI (spotify:{type}:ID)
+    const uriMatch = sourceId.match(/spotify:(track|album|playlist):([a-zA-Z0-9]+)/);
     if (uriMatch) {
-      return uriMatch[1];
+      return {
+        id: uriMatch[2],
+        type: uriMatch[1] as 'track' | 'album' | 'playlist'
+      };
+    }
+
+    // Plain ID - use contentType from track metadata or default to 'track'
+    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
+      return {
+        id: sourceId,
+        type: contentType || 'track'
+      };
     }
 
     return null;
@@ -94,10 +103,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       if (activeDevice) {
         // Device already active - just play the track
-        const success = await playTrackOnConnect(track.sourceId);
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           setDeviceName(activeDevice.name);
           setIsPlaying(true);
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           startPlaybackPolling();
           setIsConnecting(false);
@@ -108,10 +118,10 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       // Step 2: No active device - try to open Spotify
       setWaitingForDevice(true);
 
-      // Extract clean track ID from sourceId (handles URLs, URIs, or plain IDs)
-      const trackId = extractSpotifyTrackId(track.sourceId);
-      if (!trackId) {
-        console.error('Could not extract Spotify track ID from:', track.sourceId);
+      // Extract Spotify ID and content type from sourceId (handles URLs, URIs, or plain IDs)
+      const spotifyInfo = extractSpotifyInfo(track.sourceId, track.contentType);
+      if (!spotifyInfo) {
+        console.error('Could not extract Spotify info from:', track.sourceId);
         setWaitingForDevice(false);
         setConnectionFailed(true);
         setIsConnecting(false);
@@ -120,13 +130,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       try {
         // Try spotify: URI (with HTTPS fallback)
-        const spotifyUri = `spotify:track:${trackId}`;
+        const spotifyUri = `spotify:${spotifyInfo.type}:${spotifyInfo.id}`;
 
         try {
           await sdk.actions.openUrl(spotifyUri);
         } catch (uriError) {
           // Fallback to HTTPS URL
-          const spotifyUrl = `https://open.spotify.com/track/${trackId}`;
+          const spotifyUrl = `https://open.spotify.com/${spotifyInfo.type}/${spotifyInfo.id}`;
           await sdk.actions.openUrl(spotifyUrl);
         }
 
@@ -136,6 +146,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         if (result.success) {
           setDeviceName(result.deviceName || 'Spotify');
           setIsPlaying(true);
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           setWaitingForDevice(false);
           startPlaybackPolling();
@@ -156,8 +167,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
 
     // Fallback for browser mode: open in Spotify app/web
-    const spotifyUrl = `https://open.spotify.com/track/${track.sourceId}`;
-    window.open(spotifyUrl, '_blank');
+    const spotifyInfo = extractSpotifyInfo(track.sourceId, track.contentType);
+    if (spotifyInfo) {
+      const spotifyUrl = `https://open.spotify.com/${spotifyInfo.type}/${spotifyInfo.id}`;
+      window.open(spotifyUrl, '_blank');
+    }
   };
 
   // Manual sync function for when user opens Spotify themselves
@@ -175,10 +189,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     if (activeDevice) {
       console.log('Found active device:', activeDevice.name);
-      const success = await playTrackOnConnect(track.sourceId);
+      const success = await playTrackOnConnect(track.sourceId, track.contentType);
       if (success) {
         setDeviceName(activeDevice.name);
         setIsPlaying(true);
+        props.onPlaybackStarted?.(true); // Notify parent that playback has started
         setConnectReady(true);
         setWaitingForDevice(false);
         startPlaybackPolling();
@@ -357,21 +372,40 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     console.log('[SpotifyMedia] No active player to pause');
   };
 
-  const playTrackSDK = async (trackId: string, deviceIdValue: string) => {
+  const playTrackSDK = async (sourceId: string, deviceIdValue: string, contentType?: 'track' | 'album' | 'playlist') => {
     const token = spotifyAccessToken();
     if (!token) return;
 
+    // Extract Spotify ID and content type
+    const spotifyInfo = extractSpotifyInfo(sourceId, contentType);
+    if (!spotifyInfo) {
+      console.error('Could not extract Spotify info from:', sourceId);
+      handleTrackError('Invalid Spotify content', true);
+      return;
+    }
+
     try {
+      // Build proper request body based on content type
+      const contextUri = `spotify:${spotifyInfo.type}:${spotifyInfo.id}`;
+      const body = spotifyInfo.type === 'track'
+        ? {
+            device_id: deviceIdValue,
+            uris: [contextUri], // Single track uses uris array
+          }
+        : {
+            device_id: deviceIdValue,
+            context_uri: contextUri, // Albums/playlists use context_uri to play full collection
+          };
+
+      console.log(`Playing Spotify ${spotifyInfo.type}:`, spotifyInfo.id);
+
       const response = await fetch('https://api.spotify.com/v1/me/player/play', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          device_id: deviceIdValue,
-          uris: [`spotify:track:${trackId}`],
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -383,7 +417,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         }
       }
     } catch (error) {
-      console.error('Error playing Spotify track:', error);
+      console.error('Error playing Spotify content:', error);
       handleTrackError('Failed to start Spotify playback', true);
     }
   };
@@ -406,7 +440,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
 
     if (track && track.source === 'spotify' && track.sourceId && ready && device) {
-      playTrackSDK(track.sourceId, device);
+      playTrackSDK(track.sourceId, device, track.contentType);
     }
   });
 
@@ -419,10 +453,27 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     }
 
     console.log('Starting Spotify Connect playback polling (every 2s)');
+    let lastPlayingState = isPlaying();
+
     pollingInterval = window.setInterval(async () => {
       const state = await getPlaybackState();
       if (state) {
-        setIsPlaying(state.is_playing);
+        const currentPlayingState = state.is_playing;
+
+        // Only update and notify if state actually changed
+        if (currentPlayingState !== lastPlayingState) {
+          console.log('Playback state changed via polling:', lastPlayingState, '->', currentPlayingState);
+          setIsPlaying(currentPlayingState);
+          // Only notify when playback STARTS, not when it pauses
+          if (currentPlayingState === true) {
+            props.onPlaybackStarted?.(true);
+          }
+          lastPlayingState = currentPlayingState;
+        } else {
+          // State didn't change, just update silently
+          setIsPlaying(currentPlayingState);
+        }
+
         setCurrentTime(state.progress_ms / 1000);
         if (state.item) {
           setDuration(state.item.duration_ms / 1000);
@@ -447,9 +498,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   };
 
   // Play track using Spotify Connect (Farcaster only)
-  const playTrackConnect = async (trackId: string) => {
+  const playTrackConnect = async (trackId: string, contentType?: 'track' | 'album' | 'playlist') => {
     console.log('Playing track via Spotify Connect:', trackId);
-    const success = await playTrackOnConnect(trackId);
+    const success = await playTrackOnConnect(trackId, contentType);
     if (success) {
       console.log('Track started on Spotify Connect - starting polling');
       setConnectReady(true);
@@ -500,7 +551,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
       // Use untrack to avoid re-triggering on isPlaying changes
       untrack(async () => {
-        const success = await playTrackOnConnect(track.sourceId);
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           console.log('Track started on Spotify Connect - starting polling');
           setConnectReady(true);
@@ -531,6 +582,11 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     if (success) {
       setIsPlaying(newState);
+      // Only notify when STARTING playback, not when pausing
+      // Pausing should keep hasStartedPlayback=true so embed hides correctly
+      if (newState === true) {
+        props.onPlaybackStarted?.(true);
+      }
     } else {
       console.error('Failed to toggle Spotify Connect playback');
     }
@@ -684,11 +740,17 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
                     </Show>
                   }
                 >
-                  {/* Connected state */}
-                  <div class="flex flex-col items-center gap-1">
-                    <div class="text-green-400 text-xs font-semibold">✓ Connected to Spotify</div>
-                    <div class="text-white/60 text-xs">Now playing on: {deviceName()}</div>
-                  </div>
+                  {/* Connected state - clickable to pause */}
+                  <button
+                    onClick={() => {
+                      // Pause when clicked
+                      if (isPlaying()) {
+                        togglePlayConnect();
+                      }
+                    }}
+                    class="absolute inset-0 cursor-pointer"
+                    aria-label="Pause"
+                  ></button>
                 </Show>
               }
             >

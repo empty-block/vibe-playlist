@@ -1,10 +1,12 @@
-import { Component, createSignal, For, createResource, createMemo, createEffect, onMount } from 'solid-js';
+import { Component, createSignal, For, createResource, createMemo, createEffect, onMount, Show } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
-import { Track, playTrackFromFeed } from '../stores/playerStore';
+import AddTrackModal from '../components/library/AddTrackModal';
+import { Track, playTrackWithAuthCheck } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
 import { fetchHomeFeed } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
@@ -31,6 +33,7 @@ const HomePage: Component = () => {
   const [genres, setGenres] = createSignal<string[]>([]);
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0);
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
+  const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
 
   // Pagination state
   const [threads, setThreads] = createSignal<any[]>([]);
@@ -204,13 +207,25 @@ const HomePage: Component = () => {
     if (!track) return;
 
     const allTracks = getAllTracks();
-    playTrackFromFeed(track, allTracks, 'home');
+    playTrackWithAuthCheck(track, allTracks, 'home');
   };
 
   // Handle username click
   const handleUsernameClick = (fid: string, e: MouseEvent) => {
     e.stopPropagation();
     navigate(`/profile/${fid}`);
+  };
+
+  // Handle add track
+  const handleAddTrack = () => {
+    setShowAddTrackModal(true);
+  };
+
+  // Handle track submission
+  const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
+    console.log('Track submitted to home feed:', data);
+    setShowAddTrackModal(false);
+    // TODO: Implement actual track submission via Farcaster composer
   };
 
   // Count active filters
@@ -226,8 +241,22 @@ const HomePage: Component = () => {
   const qualityFilterText = createMemo(() => {
     const minLikes = qualityFilter();
     if (minLikes === 0) return '';
-    return ` • Quality filtered (${minLikes}+ ♥)`;
+    return `Quality filtered (${minLikes}+ ♥)`;
   });
+
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
 
   return (
     <div class="home-page">
@@ -235,27 +264,22 @@ const HomePage: Component = () => {
         <RetroWindow
           title="Home Feed"
           icon={
-            <svg width="16" height="16" viewBox="0 0 28 28" fill="none" style="image-rendering: pixelated;">
-              <path
-                d="M4 12L14 3L24 12V23C24 23.5523 23.5523 24 23 24H5C4.44772 24 4 23.5523 4 23V12Z"
-                stroke="currentColor"
-                stroke-width="2"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10 24V15H18V24"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+              <path d="M12 2 L2 11 L4 11 L4 22 L10 22 L10 16 L14 16 L14 22 L20 22 L20 11 L22 11 Z" />
             </svg>
           }
           variant="3d"
           contentPadding="0"
-          showThemeToggle={true}
+          showMenu={true}
+          menuItems={menuItems}
+          footer={
+            <div class="status-bar">
+              <span class="status-bar-section">{threads().length} tracks loaded</span>
+              <Show when={qualityFilterText()}>
+                <span class="status-bar-section">{qualityFilterText()}</span>
+              </Show>
+            </div>
+          }
         >
           <div class="channel-view-content">
             {/* Feed Section - includes filter bar so it scrolls with content */}
@@ -273,9 +297,10 @@ const HomePage: Component = () => {
                   onGenresChange={setGenres}
                   availablePlatforms={availablePlatforms}
                   availableGenres={availableGenres}
-                  activeFilterCount={activeFilterCount()}
                   filterDialogOpen={filterDialogOpen()}
                   onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleAddTrack}
                 />
               </div>
 
@@ -312,7 +337,7 @@ const HomePage: Component = () => {
               ) : (
                 <>
                   <For each={displayedThreads()}>
-                    {(thread: any) => (
+                    {(thread: any, index) => (
                       <TrackCard
                         author={{
                           username: thread.author.username,
@@ -343,7 +368,8 @@ const HomePage: Component = () => {
                         }}
                         castHash={thread.castHash}
                         onPlay={() => handleTrackPlay(thread)}
-                        onUsernameClick={(e) => handleUsernameClick(thread.author.fid, e)}
+                        onUsernameClick={handleUsernameClick}
+                        animationDelay={Math.min(index(), 20) * 50}
                       />
                     )}
                   </For>
@@ -374,6 +400,14 @@ const HomePage: Component = () => {
 
       {/* Bottom Navigation */}
       <MobileNavigation class="pb-safe" />
+
+      {/* Add Track Modal */}
+      <AddTrackModal
+        isOpen={showAddTrackModal()}
+        onClose={() => setShowAddTrackModal(false)}
+        onSubmit={handleTrackSubmit}
+        title="Share Track to Feed"
+      />
     </div>
   );
 };

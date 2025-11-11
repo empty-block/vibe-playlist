@@ -54,7 +54,8 @@ BEGIN
           'platform', ml.platform_name,
           'platformId', ml.platform_id,
           'url', ml.url,
-          'thumbnail', ml.og_image_url
+          'thumbnail', ml.og_image_url,
+          'musicType', ml.music_type
         )
       ) as music_data
     FROM cast_music_edges cme

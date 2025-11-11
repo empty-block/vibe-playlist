@@ -1,4 +1,4 @@
-import { Component, Show, JSX, createSignal, onMount, For } from 'solid-js';
+import { Component, Show, JSX, createSignal, onMount, createEffect, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import {
   currentTrack,
@@ -17,7 +17,7 @@ import {
   playerError
 } from '../../stores/playerStore';
 import { isInFarcasterSync } from '../../stores/farcasterStore';
-import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
+import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse, playerTransitions } from '../../utils/animations';
 import { skipToNextOnConnect, skipToPreviousOnConnect } from '../../services/spotifyConnect';
 import './player.css';
 
@@ -41,6 +41,23 @@ const Player: Component<PlayerProps> = (props) => {
   let shuffleButtonRef: HTMLButtonElement | undefined;
   let chatButtonRef: HTMLButtonElement | undefined;
   let statusIndicatorRef: HTMLDivElement | undefined;
+  let playerBarRef: HTMLDivElement | undefined;
+
+  // Track changes for animations
+  createEffect(() => {
+    const track = currentTrack();
+    if (track && playerBarRef) {
+      playerTransitions.trackChange(playerBarRef);
+    }
+  });
+
+  // Play/pause state changes for animations
+  createEffect(() => {
+    const playing = isPlaying();
+    if (playerBarRef) {
+      playerTransitions.stateChange(playerBarRef);
+    }
+  });
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -164,7 +181,7 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class="player-bar">
+      <div ref={playerBarRef} class="player-bar">
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
@@ -210,7 +227,7 @@ const Player: Component<PlayerProps> = (props) => {
               <div class="player-track-title">{currentTrack()?.title}</div>
               <div class="player-track-subtitle">{currentTrack()?.artist}</div>
               <div class="player-track-meta">
-                <span class="player-shared-by">shared by @{currentTrack()?.addedBy}</span>
+                <span class="player-shared-by">shared by {currentTrack()?.addedBy}</span>
                 {/* Show Songlink attribution when track was resolved from song.link or Apple Music */}
                 <Show when={currentTrack()?.originalSource === 'songlink' || currentTrack()?.originalSource === 'apple_music'}>
                   <span class="player-songlink-attribution" style="margin-left: 8px; opacity: 0.6; font-size: 0.85em;">
@@ -260,15 +277,6 @@ const Player: Component<PlayerProps> = (props) => {
               </button>
             </div>
           </div>
-          </Show>
-
-          {/* Animated Visualizer - only show when playing and player is ready */}
-          <Show when={isPlaying() && props.playerReady()}>
-            <div class="player-visualizer">
-              <For each={Array(16).fill(0)}>
-                {() => <div class="player-visualizer-bar"></div>}
-              </For>
-            </div>
           </Show>
         </div>
       </div>

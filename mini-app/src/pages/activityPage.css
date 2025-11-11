@@ -1,7 +1,7 @@
 /* Page Container - Background inherited from body */
 .activity-page {
   min-height: 100vh;
-  padding-bottom: 80px;
+  padding-bottom: 8px;
   display: flex;
   flex-direction: column;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
@@ -48,8 +48,8 @@ body:not(.theme-dark) .activity-page .retro-window {
 /* Windows 95 Window Container - Dark Mode */
 .theme-dark .activity-page .retro-window {
   background: #000000;
-  border: 3px solid #00ff00;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  border: 3px solid var(--border-emphasis);
+  box-shadow: 0 0 20px rgba(4, 202, 244, 0.3);
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
@@ -76,7 +76,7 @@ body:not(.theme-dark) .activity-page .title-bar {
 /* Title Bar - Dark Mode (black with green border bottom) */
 .theme-dark .activity-page .title-bar {
   background: #000000;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid var(--border-emphasis);
   padding: 3px 4px;
   display: flex;
   justify-content: space-between;
@@ -140,7 +140,7 @@ body:not(.theme-dark) .activity-page .control-btn:active {
   width: 18px;
   height: 16px;
   background: #000000;
-  border: 1px solid #00ff00;
+  border: 1px solid var(--border-accent);
   font-size: 11px;
   font-weight: bold;
   display: flex;
@@ -153,7 +153,7 @@ body:not(.theme-dark) .activity-page .control-btn:active {
 }
 
 .theme-dark .activity-page .control-btn:active {
-  background: #003300;
+  background: var(--structure-secondary);
   padding-top: 1px;
   padding-bottom: 1px;
 }
@@ -195,7 +195,7 @@ body:not(.theme-dark) .activity-page .status-bar {
 /* Status Bar - Dark Mode */
 .theme-dark .activity-page .status-bar {
   background: #000000;
-  border-top: 2px solid #00ff00;
+  border-top: 2px solid var(--border-emphasis);
   padding: 3px 4px;
   display: flex;
   gap: 16px;
@@ -223,7 +223,7 @@ body:not(.theme-dark) .activity-page .status-item {
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border: 1px solid #003300;
+  border: 1px solid var(--border-default);
   background: #001100;
 }
 
@@ -264,7 +264,7 @@ body:not(.theme-dark) .activity-page .action-button:active {
 /* Action Button - Dark Mode */
 .theme-dark .activity-page .action-button {
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   padding: 6px 16px;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   font-size: 11px;
@@ -277,7 +277,7 @@ body:not(.theme-dark) .activity-page .action-button:active {
 }
 
 .theme-dark .activity-page .action-button:active {
-  background: #003300;
+  background: var(--structure-secondary);
   padding-top: 8px;
   padding-bottom: 4px;
 }
@@ -309,7 +309,7 @@ body:not(.theme-dark) .activity-page .retry-btn:active {
 /* Retry Button - Dark Mode */
 .theme-dark .activity-page .retry-btn {
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   padding: 6px 16px;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   font-size: 11px;
@@ -319,7 +319,7 @@ body:not(.theme-dark) .activity-page .retry-btn:active {
 }
 
 .theme-dark .activity-page .retry-btn:active {
-  background: #003300;
+  background: var(--structure-secondary);
 }
 
 /* Scrollbar Styling */

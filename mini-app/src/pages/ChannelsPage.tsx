@@ -1,9 +1,9 @@
-import { Component, onMount, createMemo, createResource, Show, createSignal } from 'solid-js';
+import { Component, onMount, createMemo, createResource, Show, createSignal, createEffect } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import ChannelList from '../components/channels/ChannelList';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { fetchChannels } from '../services/api';
-import anime from 'animejs';
+import { staggeredFadeIn } from '../utils/animations';
 import './channelsPage.css';
 
 const ChannelsPage: Component = () => {
@@ -31,8 +31,11 @@ const ChannelsPage: Component = () => {
       threadId: ch.id // Using channel ID as threadId for now
     }));
 
-    console.log('[ChannelsPage] Transformed channels:', transformed.map(c => ({ name: c.name, iconUrl: c.iconUrl })));
-    return transformed;
+    // Sort by message count in descending order (highest first)
+    const sorted = transformed.sort((a, b) => b.messageCount - a.messageCount);
+
+    console.log('[ChannelsPage] Transformed channels:', sorted.map(c => ({ name: c.name, messageCount: c.messageCount })));
+    return sorted;
   });
 
   // Handle channel click - navigate to channel view with channel ID
@@ -41,17 +44,21 @@ const ChannelsPage: Component = () => {
     navigate(`/channels/${channelId}`);
   };
 
-  // Entrance animation on mount
-  onMount(() => {
-    const rows = document.querySelectorAll('.channel-row-group');
-    anime({
-      targets: rows,
-      opacity: [0, 1],
-      translateX: [-20, 0],
-      delay: anime.stagger(30),
-      duration: 400,
-      easing: 'easeOutQuad'
-    });
+  // Entrance animation - run after channels load and render
+  createEffect(() => {
+    // Track channels to trigger effect when they load
+    const channelsList = channels();
+
+    // Only animate if we have channels
+    if (channelsList.length > 0) {
+      // Small delay to ensure DOM is fully rendered
+      setTimeout(() => {
+        const channelItems = document.querySelectorAll('.channel-item');
+        if (channelItems.length > 0) {
+          staggeredFadeIn(channelItems);
+        }
+      }, 50);
+    }
   });
 
   return (

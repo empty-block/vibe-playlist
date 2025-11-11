@@ -1,6 +1,5 @@
 import { Component, Show, createSignal, onMount, onCleanup } from 'solid-js';
 import type { ChannelFeedSortOption } from '../../../../shared/types/channels';
-import './SortDropdown.css';
 
 interface SortDropdownProps {
   activeSort: ChannelFeedSortOption;
@@ -8,28 +7,22 @@ interface SortDropdownProps {
 }
 
 const SORT_OPTIONS: Array<{
-  value: Exclude<ChannelFeedSortOption, 'shuffle'>;
+  value: ChannelFeedSortOption;
   label: string;
 }> = [
   { value: 'recent', label: 'Recent' },
   { value: 'popular_24h', label: 'Popular 24h' },
   { value: 'popular_7d', label: 'Popular 7d' },
   { value: 'all_time', label: 'All Time' },
+  { value: 'shuffle', label: 'Shuffle' },
 ];
 
 export const SortDropdown: Component<SortDropdownProps> = (props) => {
   const [isOpen, setIsOpen] = createSignal(false);
   let dropdownRef: HTMLDivElement | undefined;
 
-  // Get label for current sort (exclude shuffle)
-  const currentLabel = () => {
-    if (props.activeSort === 'shuffle') return 'Recent';
-    const option = SORT_OPTIONS.find(opt => opt.value === props.activeSort);
-    return option?.label || 'Recent';
-  };
-
   // Handle sort selection
-  const handleSortSelect = (sort: Exclude<ChannelFeedSortOption, 'shuffle'>) => {
+  const handleSortSelect = (sort: ChannelFeedSortOption) => {
     props.onSortChange(sort);
     setIsOpen(false);
   };
@@ -52,13 +45,13 @@ export const SortDropdown: Component<SortDropdownProps> = (props) => {
   return (
     <div class="sort-dropdown-wrapper" ref={dropdownRef}>
       <button
-        class="sort-dropdown-btn"
+        class="filter-toggle-btn"
         onClick={() => setIsOpen(!isOpen())}
         aria-label="Sort options"
         aria-expanded={isOpen()}
       >
-        <span class="sort-icon">📊</span>
-        <span class="sort-label">Sort: {currentLabel()}</span>
+        <span class="filter-icon">📊</span>
+        Sort
         <span class="chevron">{isOpen() ? '▲' : '▼'}</span>
       </button>
 

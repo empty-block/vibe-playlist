@@ -17,6 +17,8 @@ interface ChannelFilterBarProps {
   availableGenres: string[];
   filterDialogOpen: boolean;
   onFilterDialogOpenChange: (open: boolean) => void;
+  showAddTrack?: boolean;
+  onAddTrack?: () => void;
 }
 
 export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
@@ -24,7 +26,7 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
   // Calculate number of active filters
   const activeFilterCount = () => {
     let count = 0;
-    // Don't count shuffle - it has its own button
+    // Don't count shuffle - it's now in the sort dropdown
     if (props.activeSort !== 'recent' && props.activeSort !== 'shuffle') count++;
     if (props.qualityFilter > 0) count++;
     if (props.musicSources.length > 0) count++;
@@ -54,18 +56,16 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         </Show>
       </button>
 
-      {/* Shuffle Button */}
-      <button
-        class={`shuffle-btn ${
-          props.activeSort === 'shuffle' ? 'shuffle-btn--active' : ''
-        }`}
-        onClick={() => {
-          console.log('[ChannelFilterBar] Shuffle clicked');
-          props.onSortChange('shuffle');
-        }}
-      >
-        🔀 Shuffle
-      </button>
+      {/* Add Track Button - Only shown when showAddTrack is true */}
+      <Show when={props.showAddTrack}>
+        <button
+          class="add-track-btn"
+          onClick={() => props.onAddTrack?.()}
+        >
+          <span class="add-icon">➕</span>
+          Add Track
+        </button>
+      </Show>
 
       {/* Filter Dialog */}
       <FilterDialog

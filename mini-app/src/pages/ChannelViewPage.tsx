@@ -5,7 +5,8 @@ import AddTrackModal from '../components/library/AddTrackModal';
 import RetroWindow from '../components/common/RetroWindow';
 import { TrackCard } from '../components/common/TrackCard/NEW';
 import { ChannelFilterBar } from '../components/channels/ChannelFilterBar';
-import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackFromFeed } from '../stores/playerStore';
+import { theme, toggleTheme } from '../stores/themeStore';
+import { setCurrentTrack, setIsPlaying, Track, currentTrack, isPlaying, playTrackWithAuthCheck } from '../stores/playerStore';
 import { fetchChannelFeed, fetchChannelDetails } from '../services/api';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
@@ -216,7 +217,7 @@ const ChannelViewPage: Component = () => {
   const playTrack = (track: Track) => {
     const feedTracks = getFeedTracks();
     const feedId = `channel-${channelId()}`;
-    playTrackFromFeed(track, feedTracks, feedId);
+    playTrackWithAuthCheck(track, feedTracks, feedId);
   };
 
   // Add track handler
@@ -272,6 +273,19 @@ const ChannelViewPage: Component = () => {
     navigate(`/profile/${fid}`);
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
 
   return (
     <div class="channel-view-page">
@@ -280,13 +294,8 @@ const ChannelViewPage: Component = () => {
           title={`${channelData()?.name || 'Channel'} - Channel Library`}
           icon={<span class="title-icon">📁</span>}
           variant="3d"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-          showThemeToggle={true}
-          onClose={handleClose}
-          onMinimize={() => setWindowMinimized(!windowMinimized())}
-          onMaximize={() => setWindowMaximized(!windowMaximized())}
+          showMenu={true}
+          menuItems={menuItems}
           contentPadding="0"
         >
           <div class="content">
@@ -332,11 +341,6 @@ const ChannelViewPage: Component = () => {
 
               {/* Action Bar with Filters */}
               <div class="action-bar">
-                <button class="action-button" onClick={handleAddTrack}>
-                  <span class="icon">➕</span>
-                  <span>Add Track</span>
-                </button>
-
                 <ChannelFilterBar
                   activeSort={activeSort()}
                   onSortChange={handleSortChange}
@@ -350,6 +354,8 @@ const ChannelViewPage: Component = () => {
                   availableGenres={availableGenres}
                   filterDialogOpen={filterDialogOpen()}
                   onFilterDialogOpenChange={setFilterDialogOpen}
+                  showAddTrack={true}
+                  onAddTrack={handleAddTrack}
                 />
               </div>
 
@@ -357,7 +363,7 @@ const ChannelViewPage: Component = () => {
               <div class="track-feed">
                 <Show when={displayedThreads().length > 0}>
                   <For each={displayedThreads()}>
-                    {(thread) => {
+                    {(thread, index) => {
                       const track = thread.music && thread.music[0] ? thread.music[0] : null;
 
                       return (
@@ -370,6 +376,7 @@ const ChannelViewPage: Component = () => {
                             stats={thread.stats}
                             onPlay={handleTrackPlay}
                             onUsernameClick={handleUsernameClick}
+                            animationDelay={Math.min(index(), 20) * 50}
                           />
                         </Show>
                       );

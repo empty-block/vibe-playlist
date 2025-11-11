@@ -36,7 +36,7 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
 
   return (
     <RetroPanel variant="3d" class="mb-6">
-      <h2 class="text-xl font-bold text-black mb-4 flex items-center gap-2">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
         <i class="fas fa-music"></i>
         What's the track?
       </h2>
