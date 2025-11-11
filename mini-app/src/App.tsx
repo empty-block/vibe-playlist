@@ -29,8 +29,18 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
     const pendingTrackParam = urlParams.get('pending_track');
 
     let debugMsg = `📱 App Loaded After OAuth\n`;
-    debugMsg += `Query params: ${window.location.search ? 'YES' : 'NO'}\n`;
+    debugMsg += `Full URL: ${window.location.href.substring(0, 80)}...\n`;
+    debugMsg += `Query string: ${window.location.search}\n`;
     debugMsg += `Has pending_track: ${pendingTrackParam ? 'YES ✅' : 'NO ❌'}\n`;
+
+    // Debug: show ALL query params
+    const allParams: string[] = [];
+    urlParams.forEach((value, key) => {
+      allParams.push(`${key}=${value.substring(0, 20)}...`);
+    });
+    if (allParams.length > 0) {
+      debugMsg += `All params: ${allParams.join(', ')}\n`;
+    }
 
     let pendingData: any = null;
     if (pendingTrackParam) {
