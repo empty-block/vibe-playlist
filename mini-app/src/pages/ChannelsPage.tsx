@@ -4,6 +4,7 @@ import ChannelList from '../components/channels/ChannelList';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import { fetchChannels } from '../services/api';
 import { staggeredFadeIn } from '../utils/animations';
+import { trackChannelClicked } from '../utils/analytics';
 import './channelsPage.css';
 
 const ChannelsPage: Component = () => {
@@ -41,6 +42,11 @@ const ChannelsPage: Component = () => {
   // Handle channel click - navigate to channel view with channel ID
   const handleChannelClick = (channelId: string) => {
     console.log(`Navigating to channel: ${channelId}`);
+
+    // Track channel click
+    const channelData = channels().find(c => c.id === channelId);
+    trackChannelClicked(channelId, channelData?.name, 'channels_list');
+
     navigate(`/channels/${channelId}`);
   };
 

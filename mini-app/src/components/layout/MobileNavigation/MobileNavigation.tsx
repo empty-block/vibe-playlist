@@ -4,6 +4,7 @@ import { A, useLocation } from '@solidjs/router';
 import { setCurrentSection, currentSection } from '../../../stores/navigationStore';
 import { navigationSections } from '../Sidebar/NavigationData';
 import { safeAreaInsets } from '../../../stores/safeAreaStore';
+import { trackNavButtonClicked } from '../../../utils/analytics';
 import './mobileNavigation.css';
 
 interface MobileNavigationProps {
@@ -16,6 +17,9 @@ const MobileNavigation: Component<MobileNavigationProps> = (props) => {
 
   // Update current section based on location
   const handleSectionClick = (sectionId: string) => {
+    // Track navigation button click
+    trackNavButtonClicked(sectionId as 'trending' | 'channels' | 'profile' | 'threads');
+
     setCurrentSection(sectionId);
     if (props.onNavigate) {
       props.onNavigate(sectionId);

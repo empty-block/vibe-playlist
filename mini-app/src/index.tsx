@@ -5,6 +5,7 @@ import './styles/theme.css';
 import './styles/window-layout.css';
 import { handleSpotifyCallback, initializeAuth } from './stores/authStore';
 import { restorePendingTrack } from './stores/playerStore';
+import { initAnalytics, trackAppOpened } from './utils/analytics';
 
 // Initialize Farcaster SDK and render app
 // The ready() call must happen before render to hide splash screen
@@ -132,6 +133,9 @@ window.addEventListener('message', (event) => {
 });
 
 if (root) {
+  // Initialize PostHog analytics
+  initAnalytics();
+
   // Initialize auth state from localStorage and wait for it to complete
   initializeAuth().then(() => {
     console.log('Auth initialization complete');
@@ -141,10 +145,24 @@ if (root) {
     sdk.actions.ready()
       .then(() => {
         console.log('Farcaster SDK ready called');
+
+        // Track app opened event
+        trackAppOpened({
+          is_farcaster_context: true,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       })
       .catch((error) => {
         console.log('Not in Farcaster context or SDK ready failed:', error);
+
+        // Track app opened in non-Farcaster context
+        trackAppOpened({
+          is_farcaster_context: false,
+          dev_mode: import.meta.env.DEV,
+        });
+
         // Still render the app for local development
         render(() => <App />, root);
       });
@@ -154,10 +172,22 @@ if (root) {
     sdk.actions.ready()
       .then(() => {
         console.log('Farcaster SDK ready called');
+
+        trackAppOpened({
+          is_farcaster_context: true,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       })
       .catch((error) => {
         console.log('Not in Farcaster context or SDK ready failed:', error);
+
+        trackAppOpened({
+          is_farcaster_context: false,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       });
   });

@@ -3,6 +3,7 @@ import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
 import { isSpotifyAuthenticated, initiateSpotifyAuth } from './authStore';
+import { trackTrackPlayed } from '../utils/analytics';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music' | 'tortoise';
 
@@ -288,6 +289,9 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   } else {
     setIsPlaying(true);
     console.log('Non-YouTube track loaded from feed - autoplaying');
+
+    // Track playback for non-YouTube tracks (YouTube tracked on manual play)
+    trackTrackPlayed(track.source, track.id, feedId);
   }
 };
 
