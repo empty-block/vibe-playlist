@@ -12,19 +12,18 @@
   --terminal-dim: #808080;
   --terminal-muted: #404040;
 
-  /* Neon colors (aggressive) */
-  --neon-green: #00ff41;
-  --neon-cyan: #00ffff;
-  --neon-blue: #0080ff;
+  /* Brand colors (refined) */
+  --neon-cyan: #04caf4;
+  --neon-blue: #3b00fd;
   --neon-magenta: #E73895;
-  --neon-yellow: #ffff00;
+  --neon-yellow: #d1f60a;
   --neon-red: #ff0040;
   --neon-orange: #ff8000;
 
   /* Activity type colors */
   --activity-share: var(--neon-blue);
   --activity-reply: var(--neon-cyan);
-  --activity-like: var(--neon-green);
+  --activity-like: var(--neon-magenta); /* Berry instead of green */
   --activity-error: var(--neon-red);
 
   /* Terminal font */
