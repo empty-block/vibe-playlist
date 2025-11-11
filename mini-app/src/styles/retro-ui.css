@@ -208,8 +208,8 @@
 }
 
 .retro-status-dot--online {
-  background: #00FF00;
-  box-shadow: 0 0 4px #00FF00;
+  background: #04caf4;
+  box-shadow: 0 0 4px #04caf4;
 }
 
 .retro-status-dot--offline {

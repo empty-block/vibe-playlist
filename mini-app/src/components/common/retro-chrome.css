@@ -73,7 +73,7 @@ body:not(.theme-dark) .retro-titlebar {
 
 /* Dark mode: Dark gradient with neon text */
 .theme-dark .retro-titlebar {
-  background: linear-gradient(90deg, #001a00, #003300);
+  background: linear-gradient(90deg, #0a1628, #1a0d2e);
   color: var(--text-lcd);
   border-bottom: 1px solid var(--border-accent);
   text-shadow: 0 0 5px var(--glow-accent);
@@ -102,7 +102,7 @@ body:not(.theme-dark) .retro-titlebar.retro-titlebar--hidden {
 .retro-titlebar__icon {
   width: 16px;
   height: 16px;
-  background: #00FF00;
+  background: #04caf4;
   border: 1px solid #000;
   flex-shrink: 0;
 }
@@ -203,7 +203,7 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
 
 /* Dark mode: neon glow on hover */
 .theme-dark .retro-titlebar__menu-button {
-  border-color: rgba(0, 255, 42, 0.3);
+  border-color: rgba(4, 202, 244, 0.3);
   color: var(--text-lcd);
 }
 

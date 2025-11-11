@@ -271,7 +271,7 @@ body:not(.theme-dark) .share-track-button:active {
   gap: 12px;
   flex-wrap: wrap;
   font-size: 11px;
-  color: var(--neon-green); /* Neon green for stats */
+  color: var(--neon-cyan); /* Cyan for stats */
   font-family: 'Courier New', monospace;
 }
 
@@ -744,7 +744,7 @@ body:not(.theme-dark) .track-meta {
   width: 60px;
   height: 60px;
   flex-shrink: 0;
-  background: var(--neon-green); /* Neon green play button */
+  background: var(--neon-cyan); /* Neon green play button */
   border: 2px solid #000000;
   cursor: pointer;
   display: flex;
@@ -757,7 +757,7 @@ body:not(.theme-dark) .track-meta {
 }
 
 .play-button:hover {
-  background: var(--neon-green);
+  background: var(--neon-cyan);
   filter: brightness(0.9);
   transform: scale(1.05);
 }

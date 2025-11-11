@@ -146,7 +146,7 @@ body:not(.theme-dark) .track-rank {
 
 /* Track Rank - Dark Mode */
 .theme-dark .track-rank {
-  color: var(--neon-green); /* Neon green */
+  color: var(--neon-cyan); /* Neon green */
 }
 
 /* Top 3 Rank - Golden Gradient (works in both themes) */
