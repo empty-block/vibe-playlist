@@ -3,6 +3,7 @@ import { createStore } from 'solid-js/store';
 import { mockDataService, mockPlaylists, mockPlaylistTracks, mockTrackSubmissions } from '../data/mockData';
 import { isInFarcasterSync } from './farcasterStore';
 import { isSpotifyAuthenticated, initiateSpotifyAuth } from './authStore';
+import { trackTrackPlayed } from '../utils/analytics';
 
 export type TrackSource = 'youtube' | 'spotify' | 'soundcloud' | 'bandcamp' | 'songlink' | 'apple_music' | 'tortoise';
 
@@ -288,6 +289,9 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   } else {
     setIsPlaying(true);
     console.log('Non-YouTube track loaded from feed - autoplaying');
+
+    // Track playback for non-YouTube tracks (YouTube tracked on manual play)
+    trackTrackPlayed(track.source, track.id, feedId);
   }
 };
 
@@ -299,7 +303,7 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
   // Extract platform info from track URL
   const platformName = track.source; // 'spotify', 'youtube', 'soundcloud'
-  const platformId = track.id; // Platform-specific track ID
+  const platformId = track.sourceId; // Platform-specific track ID (Spotify ID, YouTube video ID, etc.)
 
   const pendingData = {
     platformName,
@@ -352,16 +356,27 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       return false;
     }
 
-    // Convert API track to Track type
-    const track: Track = {
-      id: apiTrack.platformId || apiTrack.id,
+    console.log('📦 API Track Data:', {
+      platformId: apiTrack.platformId,
       title: apiTrack.title,
       artist: apiTrack.artist,
-      albumArt: apiTrack.thumbnail || apiTrack.albumArt,
+      thumbnail: apiTrack.thumbnail,
       url: apiTrack.url,
+      platform: apiTrack.platform,
+      fullApiResponse: apiTrack
+    });
+
+    // Convert API track to Track type
+    const track: Track = {
+      id: castHash || apiTrack.id, // Use castHash if available, fallback to API id
+      sourceId: apiTrack.platformId || platformId, // Spotify track ID, YouTube video ID, etc.
+      title: apiTrack.title,
+      artist: apiTrack.artist,
+      thumbnail: apiTrack.thumbnail || '', // Album art image URL
+      url: apiTrack.url || '', // Platform URL (spotify:track:xxx or youtube.com/watch?v=xxx)
       source: (apiTrack.platform || platformName) as TrackSource,
-      username: '', // Will be populated if needed
-      userAvatar: null,
+      addedBy: '', // Will be populated if needed
+      userAvatar: '',
       userFid: '',
       timestamp: apiTrack.timestamp || new Date().toISOString(),
       comment: '',
@@ -371,6 +386,15 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       duration: '',
       castHash: castHash || undefined
     };
+
+    console.log('🎨 Built Track Object:', {
+      id: track.id,
+      sourceId: track.sourceId,
+      title: track.title,
+      thumbnail: track.thumbnail,
+      thumbnailLength: track.thumbnail?.length,
+      url: track.url
+    });
 
     // Fetch feed data to get playlist context
     let feedTracks: Track[] = [];

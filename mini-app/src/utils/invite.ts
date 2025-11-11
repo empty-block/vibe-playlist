@@ -45,6 +45,12 @@ export async function checkInviteStatus(fid: string): Promise<InviteStatus> {
     }
 
     const data = await response.json();
+
+    // Dev mode bypass - always grant access in development
+    if (import.meta.env.DEV) {
+      return { hasAccess: true, devMode: true };
+    }
+
     return data;
   } catch (error) {
     console.error('Error checking invite status:', error);

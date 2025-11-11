@@ -5,6 +5,7 @@ import AnimatedButton from '../components/common/AnimatedButton';
 import { redeemInviteCode } from '../utils/invite';
 import { farcasterAuth } from '../stores/farcasterStore';
 import { setCurrentUser, setIsAuthenticated, setShowInviteModal } from '../stores/authStore';
+import { trackBetaCodeEntered } from '../utils/analytics';
 import './inviteGatePage.css';
 
 const InviteGatePage: Component = () => {
@@ -31,6 +32,9 @@ const InviteGatePage: Component = () => {
       const result = await redeemInviteCode(code, fid);
 
       if (result.success) {
+        // Track successful beta code redemption
+        trackBetaCodeEntered(true);
+
         // Success! Update auth state
         const effectiveDisplayName = auth.displayName || auth.username || 'User';
         const effectiveUsername = auth.username || 'dwr'; // Dev mode username
@@ -45,6 +49,10 @@ const InviteGatePage: Component = () => {
         setShowInviteModal(false);
         setInviteCode('');
       } else {
+        // Track failed beta code redemption
+        const errorCode = result.error?.code || 'unknown_error';
+        trackBetaCodeEntered(false, errorCode);
+
         // Show error
         const errorMessage = result.error?.message || 'Failed to redeem invite code';
         setError(errorMessage);

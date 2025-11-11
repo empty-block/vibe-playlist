@@ -1,6 +1,7 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
+import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable, currentPlaylistId } from '../../stores/playerStore';
 import { isInFarcasterSync } from '../../stores/farcasterStore';
+import { trackTrackPlayed } from '../../utils/analytics';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
@@ -176,10 +177,20 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       // Mark that user has interacted (either via YouTube controls or app controls)
       setUserHasInteracted(true);
       // Mark that playback has started at least once
+      const wasFirstPlay = !hasStartedPlayback();
       setHasStartedPlayback(true);
       if (props.onPlaybackStarted) {
         props.onPlaybackStarted(true);
       }
+
+      // Track YouTube playback on first play only
+      if (wasFirstPlay) {
+        const track = currentTrack();
+        if (track) {
+          trackTrackPlayed('youtube', track.id, currentPlaylistId() || 'unknown');
+        }
+      }
+
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);

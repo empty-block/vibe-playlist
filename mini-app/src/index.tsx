@@ -5,6 +5,7 @@ import './styles/theme.css';
 import './styles/window-layout.css';
 import { handleSpotifyCallback, initializeAuth } from './stores/authStore';
 import { restorePendingTrack } from './stores/playerStore';
+import { initAnalytics, trackAppOpened } from './utils/analytics';
 
 // Initialize Farcaster SDK and render app
 // The ready() call must happen before render to hide splash screen
@@ -62,20 +63,23 @@ if (spotifyCode) {
   } else {
     // If we're not in a popup (direct redirect), handle normally
     console.log('Exchanging code for token...');
+
+    // Store pending track IMMEDIATELY in sessionStorage before async token exchange
+    // This survives within the SAME session/page load (not iframe reload)
+    if (pendingTrackData) {
+      sessionStorage.setItem('spotify_pending_track', JSON.stringify(pendingTrackData));
+      console.log('✅ Stored pending track in sessionStorage for this page load');
+    }
+
     handleSpotifyCallback(spotifyCode).then((success) => {
       if (success) {
         console.log('Spotify authentication successful!');
-
-        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
-        if (pendingTrackData) {
-          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
-          console.log('✅ Stored pending track in query param:', queryParam);
-        } else {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
       } else {
         console.error('Spotify authentication failed');
+        // Clear on failure
+        sessionStorage.removeItem('spotify_pending_track');
       }
     });
   }
@@ -108,19 +112,19 @@ window.addEventListener('message', (event) => {
 
   if (data.type === 'spotify-auth-success' && data.code) {
     console.log('Received auth code from popup, exchanging for token...');
+
+    // Store pending track IMMEDIATELY in sessionStorage
+    if (data.pendingTrackData) {
+      sessionStorage.setItem('spotify_pending_track', JSON.stringify(data.pendingTrackData));
+      console.log('✅ Stored pending track from popup in sessionStorage');
+    }
+
     handleSpotifyCallback(data.code).then((success) => {
       if (success) {
         console.log('Spotify authentication successful via popup!');
-
-        // Use QUERY PARAM instead of hash - Safari strips hash on redirects!
-        if (data.pendingTrackData) {
-          console.log('📦 Storing pending track data from popup:', data.pendingTrackData);
-          const queryParam = `?pending_track=${encodeURIComponent(JSON.stringify(data.pendingTrackData))}`;
-          window.history.replaceState({}, document.title, window.location.pathname + queryParam);
-          console.log('✅ Stored pending track in query param:', queryParam);
-        }
       } else {
         console.error('Spotify authentication failed');
+        sessionStorage.removeItem('spotify_pending_track');
       }
     });
   } else if (data.type === 'spotify-auth-error') {
@@ -129,6 +133,9 @@ window.addEventListener('message', (event) => {
 });
 
 if (root) {
+  // Initialize PostHog analytics
+  initAnalytics();
+
   // Initialize auth state from localStorage and wait for it to complete
   initializeAuth().then(() => {
     console.log('Auth initialization complete');
@@ -138,10 +145,24 @@ if (root) {
     sdk.actions.ready()
       .then(() => {
         console.log('Farcaster SDK ready called');
+
+        // Track app opened event
+        trackAppOpened({
+          is_farcaster_context: true,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       })
       .catch((error) => {
         console.log('Not in Farcaster context or SDK ready failed:', error);
+
+        // Track app opened in non-Farcaster context
+        trackAppOpened({
+          is_farcaster_context: false,
+          dev_mode: import.meta.env.DEV,
+        });
+
         // Still render the app for local development
         render(() => <App />, root);
       });
@@ -151,10 +172,22 @@ if (root) {
     sdk.actions.ready()
       .then(() => {
         console.log('Farcaster SDK ready called');
+
+        trackAppOpened({
+          is_farcaster_context: true,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       })
       .catch((error) => {
         console.log('Not in Farcaster context or SDK ready failed:', error);
+
+        trackAppOpened({
+          is_farcaster_context: false,
+          dev_mode: import.meta.env.DEV,
+        });
+
         render(() => <App />, root);
       });
   });
