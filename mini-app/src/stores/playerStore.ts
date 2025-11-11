@@ -383,6 +383,15 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       castHash: castHash || undefined
     };
 
+    console.log('🎨 Built Track Object:', {
+      id: track.id,
+      sourceId: track.sourceId,
+      title: track.title,
+      thumbnail: track.thumbnail,
+      thumbnailLength: track.thumbnail?.length,
+      url: track.url
+    });
+
     // Fetch feed data to get playlist context
     let feedTracks: Track[] = [];
     try {

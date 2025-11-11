@@ -62,14 +62,16 @@ const RootLayout: Component<{ children?: JSX.Element }> = (props) => {
           const restored = await restorePendingTrack(pendingData);
           if (restored) {
             console.log('✅ Successfully restored pending track after auth');
-            setDebugInfo(prev => prev + 'Restored: YES ✅');
+            const track = currentTrack();
+            setDebugInfo(prev => prev + 'Restored: YES ✅\n' +
+              `Thumbnail: ${track?.thumbnail ? '✅ ' + track.thumbnail.substring(0, 40) + '...' : '❌ MISSING'}`);
           } else {
             console.log('❌ Failed to restore pending track');
             setDebugInfo(prev => prev + 'Restored: FAILED ❌');
           }
 
-          // Clear debug after 10 seconds
-          setTimeout(() => setDebugInfo(''), 10000);
+          // Clear debug after 15 seconds
+          setTimeout(() => setDebugInfo(''), 15000);
         }, 500);
       });
     } else {
