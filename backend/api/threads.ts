@@ -8,6 +8,7 @@ import {
 } from '../lib/api-utils'
 import { getNeynarService } from '../lib/neynar'
 import { verifyAuthMiddleware } from './auth'
+import { rateLimitMiddleware } from '../lib/rate-limit'
 
 const app = new Hono()
 
@@ -15,8 +16,9 @@ const app = new Hono()
  * POST /api/threads
  * Create a new thread with test data
  * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/', verifyAuthMiddleware, async (c) => {
+app.post('/', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const body = await c.req.json()
     const { text, trackUrls } = body
@@ -335,8 +337,9 @@ app.get('/', async (c) => {
  * POST /api/threads/:castHash/reply
  * Reply to a thread
  * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/:castHash/reply', verifyAuthMiddleware, async (c) => {
+app.post('/:castHash/reply', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const parentCastHash = c.req.param('castHash')
     const body = await c.req.json()

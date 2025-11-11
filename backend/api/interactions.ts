@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { getSupabaseClient } from '../lib/api-utils'
-import { addRateLimitHeaders } from '../lib/rate-limit'
+import { addRateLimitHeaders, rateLimitMiddleware } from '../lib/rate-limit'
 import { verifyAuthMiddleware } from './auth'
 
 const app = new Hono()
@@ -9,8 +9,9 @@ const app = new Hono()
  * POST /api/threads/:castHash/like
  * Like a thread or reply
  * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent vote manipulation
  */
-app.post('/:castHash/like', verifyAuthMiddleware, async (c) => {
+app.post('/:castHash/like', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const castHash = c.req.param('castHash')
 
@@ -89,8 +90,9 @@ app.post('/:castHash/like', verifyAuthMiddleware, async (c) => {
  * DELETE /api/threads/:castHash/like
  * Unlike a thread or reply
  * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent abuse
  */
-app.delete('/:castHash/like', verifyAuthMiddleware, async (c) => {
+app.delete('/:castHash/like', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const castHash = c.req.param('castHash')
 
