@@ -6,6 +6,8 @@ import './styles/window-layout.css';
 import { handleSpotifyCallback, initializeAuth } from './stores/authStore';
 import { restorePendingTrack } from './stores/playerStore';
 import { initAnalytics, trackAppOpened } from './utils/analytics';
+// Import theme store to initialize theme class on body immediately
+import { theme } from './stores/themeStore';
 
 // Initialize Farcaster SDK and render app
 // The ready() call must happen before render to hide splash screen
