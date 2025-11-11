@@ -143,11 +143,11 @@ export function formatMusic(musicLibraryData: any) {
 
   return {
     id: `${platform}-${musicLibraryData.platform_id}`,
-    title: musicLibraryData.title,
-    artist: musicLibraryData.artist,
+    title: musicLibraryData.title || musicLibraryData.og_title,
+    artist: musicLibraryData.artist || musicLibraryData.og_artist,
     platform: platform,
     platformId: musicLibraryData.platform_id,
     url: musicLibraryData.url,
-    thumbnail: musicLibraryData.thumbnail_url
+    thumbnail: musicLibraryData.og_image_url // Fixed: was thumbnail_url, actual column is og_image_url
   }
 }
