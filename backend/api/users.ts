@@ -10,6 +10,7 @@ import {
   formatMusic
 } from '../lib/api-utils'
 import { addRateLimitHeaders } from '../lib/rate-limit'
+import { getNeynarService } from '../lib/neynar'
 
 const app = new Hono()
 
@@ -36,6 +37,40 @@ app.get('/:fid', async (c) => {
           message: 'User not found'
         }
       }, 404)
+    }
+
+    // If profile data is missing or empty, fetch from Neynar and update database
+    if (!user.fname || !user.display_name || user.fname.trim() === '' || user.display_name.trim() === '') {
+      console.log(`[Users API] Profile data missing for FID ${fid}, fetching from Neynar...`)
+      try {
+        const neynar = getNeynarService()
+        const userData = await neynar.fetchUserByFid(parseInt(fid))
+
+        if (userData) {
+          // Update database with fresh profile data
+          const { error: updateError } = await supabase
+            .from('user_nodes')
+            .update({
+              fname: userData.username,
+              display_name: userData.display_name,
+              avatar_url: userData.pfp_url
+            })
+            .eq('node_id', fid)
+
+          if (updateError) {
+            console.error(`[Users API] Failed to update profile for FID ${fid}:`, updateError.message)
+          } else {
+            console.log(`[Users API] ✓ Updated profile for FID ${fid} (@${userData.username})`)
+            // Update local user object with fresh data
+            user.fname = userData.username
+            user.display_name = userData.display_name
+            user.avatar_url = userData.pfp_url
+          }
+        }
+      } catch (neynarError) {
+        console.error(`[Users API] Failed to fetch profile from Neynar for FID ${fid}:`, neynarError)
+        // Continue with existing (possibly empty) data
+      }
     }
 
     // Fetch activity stats - only count interactions where cast has music

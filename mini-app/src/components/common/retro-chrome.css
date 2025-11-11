@@ -57,6 +57,11 @@
   font-family: var(--font-main);
   user-select: none;
   min-height: 36px;
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-bottom 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* Light mode: Neon blue gradient */
@@ -66,12 +71,23 @@ body:not(.theme-dark) .retro-titlebar {
   color: #FFFFFF;
 }
 
-/* Dark mode: Dark blue gradient with cyan text */
+/* Dark mode: Dark gradient with neon text */
 .theme-dark .retro-titlebar {
-  background: linear-gradient(90deg, #0a0820, #1a0d2e);
+  background: linear-gradient(90deg, #001a00, #003300);
   color: var(--text-lcd);
   border-bottom: 1px solid var(--border-accent);
   text-shadow: 0 0 5px var(--glow-accent);
+}
+
+/* Title bar hiding on scroll */
+.retro-titlebar.retro-titlebar--hidden,
+.theme-light .retro-titlebar.retro-titlebar--hidden,
+.theme-dark .retro-titlebar.retro-titlebar--hidden,
+body:not(.theme-dark) .retro-titlebar.retro-titlebar--hidden {
+  transform: translateY(-100%);
+  margin-bottom: -48px; /* Collapse space - matches min-height + padding */
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Title bar text section */
@@ -304,7 +320,6 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   flex-direction: column;
   background: var(--bg-panel);
   position: relative;
-  overflow: hidden; /* Hide header/footer when they slide out of view */
 }
 
 /* Window with 3D borders */
@@ -336,36 +351,26 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
   background: rgba(0, 0, 0, 0.05);
   font-size: 10px;
   color: var(--text-secondary);
+  position: relative;
+  z-index: 10;
+  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              margin-top 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.retro-window__footer.retro-window__footer--hidden,
+.theme-dark .retro-window__footer.retro-window__footer--hidden,
+.theme-light .retro-window__footer.retro-window__footer--hidden,
+body:not(.theme-dark) .retro-window__footer.retro-window__footer--hidden {
+  transform: translateY(100%);
+  margin-top: -40px; /* Collapse space - approximate footer height */
+  opacity: 0;
+  pointer-events: none;
 }
 
 .theme-dark .retro-window__footer {
   background: #000000;
   color: var(--text-lcd);
-}
-
-/* Scroll-based header/footer hiding animations */
-.retro-titlebar {
-  position: relative;
-  z-index: 10;
-  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-              margin-bottom 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.retro-titlebar--hidden {
-  transform: translateY(-100%);
-  margin-bottom: -48px; /* Collapse space - matches min-height from line 59 */
-}
-
-.retro-window__footer {
-  position: relative;
-  z-index: 10;
-  transition: transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
-              margin-top 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.retro-window__footer--hidden {
-  transform: translateY(100%);
-  margin-top: -40px; /* Collapse space - approximate footer height */
 }
 
 /* ============================================

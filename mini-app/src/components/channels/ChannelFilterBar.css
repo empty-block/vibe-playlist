@@ -14,7 +14,8 @@
    RETRO FILTER BUTTONS (Windows 98 Style)
    ============================================ */
 
-.filter-dropdown-wrapper {
+.filter-dropdown-wrapper,
+.sort-dropdown-wrapper {
   position: relative;
 }
 
@@ -234,7 +235,8 @@ body:not(.theme-dark) .add-track-btn:active {
    DROPDOWN MENU (Windows 98 Style)
    ============================================ */
 
-.filter-dropdown-menu {
+.filter-dropdown-menu,
+.sort-dropdown-menu {
   position: absolute;
   top: calc(100% + 2px);
   left: 0;
@@ -247,7 +249,8 @@ body:not(.theme-dark) .add-track-btn:active {
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
-.dropdown-header {
+.filter-dropdown-menu .dropdown-header,
+.sort-dropdown-menu .dropdown-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -288,7 +291,8 @@ body:not(.theme-dark) .add-track-btn:active {
   padding: 3px 5px 1px 7px;
 }
 
-.dropdown-options {
+.filter-dropdown-menu .dropdown-options,
+.sort-dropdown-menu .dropdown-options {
   max-height: 240px;
   overflow-y: auto;
   padding: 4px;
@@ -384,7 +388,8 @@ body:not(.theme-dark) .add-track-btn:active {
    RADIO OPTIONS (Windows 98 Style)
    ============================================ */
 
-.dropdown-options--radio {
+.filter-dropdown-menu .dropdown-options--radio,
+.sort-dropdown-menu .dropdown-options--radio {
   padding: 4px;
 }
 
@@ -473,24 +478,33 @@ body:not(.theme-dark) .add-track-btn:active {
     font-size: 9px;
   }
 
-  .filter-dropdown-menu {
-    min-width: 160px;
-    max-width: 220px;
+  .filter-dropdown-menu,
+  .sort-dropdown-menu {
+    min-width: 200px;
+    max-width: 280px;
   }
 
-  .dropdown-header {
-    padding: 5px 6px;
-    font-size: 10px;
+  .filter-dropdown-menu .dropdown-header,
+  .sort-dropdown-menu .dropdown-header {
+    padding: 8px 10px;
+    font-size: 13px;
   }
 
   .checkbox-option,
   .radio-option {
-    padding: 3px 5px;
+    padding: 10px 12px;
+    margin-bottom: 4px;
   }
 
   .checkbox-option span,
   .radio-option span {
-    font-size: 10px;
+    font-size: 14px;
+  }
+
+  .checkbox-option input[type='checkbox'],
+  .radio-option input[type='radio'] {
+    width: 18px;
+    height: 18px;
   }
 }
 

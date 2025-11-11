@@ -24,10 +24,10 @@ body:not(.theme-dark) .profile-page {
 
 /* Profile Content Wrapper (inside RetroWindow) */
 .profile-content {
+  height: 100%;
+  overflow-y: auto;
   overflow-x: hidden;
   background: #FFFFFF;
-  /* overflow-y removed - scroll handled by .retro-window__content */
-  /* height removed - let content flow naturally for proper scroll detection */
 }
 
 .theme-dark .profile-content {
@@ -59,7 +59,7 @@ body:not(.theme-dark) .status-bar-section {
 
 /* Status Bar Sections - Dark Mode */
 .theme-dark .status-bar-section {
-  border: 1px solid var(--border-accent);
+  border: 1px solid #00ff00;
   padding: 2px 6px;
   background: #000000;
   color: #ffffff;
@@ -86,7 +86,7 @@ body:not(.theme-dark) .profile-header {
 /* Compact Profile Header - Dark Mode */
 .theme-dark .profile-header {
   background: #000000;
-  border-bottom: 2px solid var(--border-emphasis);
+  border-bottom: 2px solid #00ff00;
   margin: 0;
   padding: 16px;
 }
@@ -143,8 +143,8 @@ body:not(.theme-dark) .share-track-button:active {
 
 /* Share Track Button - Dark Mode */
 .theme-dark .share-track-button {
-  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
-  border: 2px solid #E73895;
+  background: #000000;
+  border: 2px solid #00ff00;
   color: #ffffff;
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -156,23 +156,19 @@ body:not(.theme-dark) .share-track-button:active {
   align-items: center;
   gap: 4px;
   transition: all 0.2s ease;
-  box-shadow: 0 0 8px rgba(231, 56, 149, 0.4);
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
 }
 
 .theme-dark .share-track-button:hover {
-  background: linear-gradient(135deg, #04caf4 0%, #6fd9ff 100%);
-  border-color: #04caf4;
+  background: #00ff00;
   color: #000000;
-  box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
+  box-shadow: 0 0 12px rgba(0, 255, 0, 0.6);
   transform: translateY(-1px);
 }
 
 .theme-dark .share-track-button:active {
-  background: linear-gradient(135deg, #c12e73 0%, #E73895 100%);
-  border-color: #E73895;
-  color: #ffffff;
   transform: translateY(0);
-  box-shadow: 0 0 10px rgba(231, 56, 149, 0.6);
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
 }
 
 .share-track-button .button-icon {
@@ -491,6 +487,29 @@ body:not(.theme-dark) .filter-option.active {
   text-align: left;
 }
 
+=======
+  justify-content: space-between;
+  color: #ffffff;
+  transition: background 0.1s ease;
+  min-height: 44px;
+}
+
+.theme-dark .filter-option:hover {
+  background: #002200;
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.2);
+}
+
+.theme-dark .filter-option.active {
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  color: #ffffff;
+  border-color: #E73895;
+}
+
+.filter-option .option-label {
+  flex: 1;
+  text-align: left;
+}
+
 .filter-option .option-count {
   opacity: 0.7;
   margin-left: 8px;
@@ -518,7 +537,7 @@ body:not(.theme-dark) .feed-header {
 .theme-dark .feed-header {
   background: #000000;
   padding: 8px 12px;
-  border: 2px solid var(--border-emphasis);
+  border: 2px solid #00ff00;
   margin-bottom: 12px;
   font-size: 13px;
   font-weight: bold;
@@ -554,7 +573,7 @@ body:not(.theme-dark) .profile-empty-state {
   text-align: center;
   color: #ffffff;
   background: #000000;
-  border: 2px solid var(--border-emphasis);
+  border: 2px solid #00ff00;
   margin-bottom: 20px;
 }
 
@@ -581,9 +600,9 @@ body:not(.theme-dark) .activity-card {
 /* Activity Card - Dark Mode */
 .theme-dark .activity-card {
   background: #1a1a1a;
-  border: 3px solid var(--border-emphasis);
+  border: 3px solid #00ff00;
   margin-bottom: 20px;
-  box-shadow: 0 0 15px rgba(4, 202, 244, 0.3);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
 }
 
 .activity-card:last-child {
@@ -610,7 +629,7 @@ body:not(.theme-dark) .activity-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid var(--border-emphasis);
+  border-bottom: 2px solid #00ff00;
 }
 
 .username {
@@ -767,8 +786,8 @@ body:not(.theme-dark) .comment-box {
   font-size: 13px;
   font-style: normal;
   line-height: 1.5;
-  border-top: 1px solid var(--border-default);
-  border-bottom: 1px solid var(--border-default);
+  border-top: 1px solid #003300;
+  border-bottom: 1px solid #003300;
   color: #ffffff;
 }
 
