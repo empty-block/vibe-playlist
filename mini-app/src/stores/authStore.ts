@@ -112,17 +112,20 @@ export const canPlayTrack = (source: string): boolean => {
 };
 
 // Spotify authentication functions
-export const initiateSpotifyAuth = async () => {
+export const initiateSpotifyAuth = async (pendingTrackData?: any) => {
   // Clean up any stale auth data before starting new auth flow
   localStorage.removeItem('spotify_auth_initiated');
   localStorage.removeItem('spotify_code_verifier');
 
-  const authURL = await getSpotifyAuthURL();
+  const authURL = await getSpotifyAuthURL(pendingTrackData);
 
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
 
   console.log('🔐 Opening Spotify auth URL:', authURL);
+  if (pendingTrackData) {
+    console.log('📦 Pending track data included in OAuth state:', pendingTrackData);
+  }
 
   // Try popup first for desktop
   const width = 600;

@@ -292,8 +292,8 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
 };
 
 /**
- * Store pending track context in URL hash (for Spotify auth redirect)
- * URL hash survives redirects and doesn't rely on localStorage in iframes
+ * Prepare pending track context for Spotify auth redirect
+ * Returns minimal data to be passed via OAuth state parameter
  * Only stores IDs - full track data will be fetched on return
  */
 export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: string) => {
@@ -309,46 +309,29 @@ export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: str
     timestamp: Date.now()
   };
 
-  // Encode minimal data in URL hash - this survives the redirect!
-  const encoded = encodeURIComponent(JSON.stringify(pendingData));
-  const currentUrl = new URL(window.location.href);
-  currentUrl.hash = `pending_track=${encoded}`;
-
-  // Update URL without reloading the page
-  window.history.replaceState(null, '', currentUrl.toString());
-
-  console.log('✅ Stored pending track IDs in URL hash:', {
+  console.log('✅ Prepared pending track data for OAuth state:', {
     platform: platformName,
     id: platformId,
     feedId
   });
-  console.log('✅ Hash will survive Spotify redirect');
+
+  // Return data to be passed via OAuth state parameter
+  return pendingData;
 };
 
 /**
- * Restore pending track after Spotify auth (if exists in URL hash)
+ * Restore pending track after Spotify auth (from OAuth state parameter)
  * Fetches full track data from API using stored IDs
  */
-export const restorePendingTrack = async (): Promise<boolean> => {
-  // Check URL hash for pending track data
-  const hash = window.location.hash;
-  if (!hash || !hash.includes('pending_track=')) {
-    console.log('ℹ️ No pending track in URL hash');
+export const restorePendingTrack = async (pendingData?: any): Promise<boolean> => {
+  // If no pending data provided, nothing to restore
+  if (!pendingData) {
+    console.log('ℹ️ No pending track data provided');
     return false;
   }
 
   try {
-    // Extract the encoded data from hash
-    const match = hash.match(/pending_track=([^&]*)/);
-    if (!match) return false;
-
-    const encoded = match[1];
-    const decoded = decodeURIComponent(encoded);
-    const { platformName, platformId, feedId, castHash, timestamp } = JSON.parse(decoded);
-
-    // Clear the hash from URL
-    const cleanUrl = window.location.href.split('#')[0];
-    window.history.replaceState(null, '', cleanUrl);
+    const { platformName, platformId, feedId, castHash, timestamp } = pendingData;
 
     // Check if data is stale (more than 5 minutes old)
     if (Date.now() - timestamp > 5 * 60 * 1000) {
@@ -434,9 +417,9 @@ export const playTrackWithAuthCheck = (track: Track, feedTracks: Track[], feedId
 
   // If it's a Spotify track and user is not authenticated, store for later and start auth
   if (track.source === 'spotify' && !isSpotifyAuthenticated()) {
-    console.log('🔐 Spotify track requires auth - storing for post-auth restoration');
-    storePendingTrack(track, feedTracks, feedId);
-    initiateSpotifyAuth();
+    console.log('🔐 Spotify track requires auth - preparing data for OAuth state parameter');
+    const pendingData = storePendingTrack(track, feedTracks, feedId);
+    initiateSpotifyAuth(pendingData);
     return;
   }
 
