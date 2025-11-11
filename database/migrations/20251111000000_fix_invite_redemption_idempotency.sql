@@ -1,41 +1,6 @@
--- Beta invite code system for mini-app access control
--- Creates tables for invite codes and redemption tracking
+-- Fix invite code redemption to be idempotent
+-- Allow re-entering the same code, only block using different codes
 
-CREATE TABLE invite_codes (
-  code TEXT PRIMARY KEY,
-  created_by_fid TEXT,
-  max_uses INTEGER DEFAULT 1,
-  current_uses INTEGER DEFAULT 0,
-  is_test_code BOOLEAN DEFAULT FALSE,
-  expires_at TIMESTAMP,
-  is_active BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE invite_redemptions (
-  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
-  invite_code TEXT NOT NULL REFERENCES invite_codes(code),
-  redeemed_by_fid TEXT NOT NULL,
-  redeemed_at TIMESTAMP DEFAULT NOW(),
-  ip_address TEXT,
-  UNIQUE(redeemed_by_fid)  -- One redemption per FID
-);
-
--- Indexes for performance
-CREATE INDEX idx_invite_codes_active ON invite_codes(is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_invite_codes_test ON invite_codes(is_test_code);
-CREATE INDEX idx_redemptions_fid ON invite_redemptions(redeemed_by_fid);
-CREATE INDEX idx_redemptions_code ON invite_redemptions(invite_code);
-
--- Table comments
-COMMENT ON TABLE invite_codes IS 'Beta invite codes for mini-app access control';
-COMMENT ON TABLE invite_redemptions IS 'Track which FIDs have redeemed invite codes (one per FID)';
-COMMENT ON COLUMN invite_codes.is_test_code IS 'Test codes have unlimited uses and do not count toward beta user metrics';
-COMMENT ON COLUMN invite_codes.max_uses IS 'Maximum number of times this code can be redeemed (999999 for test codes)';
-COMMENT ON COLUMN invite_redemptions.redeemed_by_fid IS 'Farcaster ID that redeemed this code';
-
--- Function to atomically redeem an invite code
 CREATE OR REPLACE FUNCTION redeem_invite_code(
   p_code TEXT,
   p_fid TEXT,
@@ -111,9 +76,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION redeem_invite_code IS 'Atomically redeem an invite code for a Farcaster ID with validation';
-
--- Grant permissions
-GRANT ALL ON invite_codes TO anon, authenticated;
-GRANT ALL ON invite_redemptions TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION redeem_invite_code TO anon, authenticated;
+COMMENT ON FUNCTION redeem_invite_code IS 'Atomically redeem an invite code for a Farcaster ID with validation. Idempotent - allows re-entering same code.';
