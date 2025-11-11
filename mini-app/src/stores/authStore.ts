@@ -2,6 +2,7 @@ import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
 import { farcasterAuth } from './farcasterStore';
 import { checkInviteStatus } from '../utils/invite';
+import { identifyUser, trackSpotifyAuthCompleted } from '../utils/analytics';
 
 // Current user state - now derived from Farcaster auth
 export const [currentUser, setCurrentUser] = createSignal<{
@@ -41,6 +42,14 @@ createEffect(async () => {
       });
       setIsAuthenticated(true);
       setShowInviteModal(false);
+
+      // Identify user in PostHog
+      identifyUser(auth.fid, {
+        username: effectiveUsername,
+        displayName: effectiveDisplayName,
+        pfpUrl: auth.pfpUrl || undefined,
+        isSpotifyAuthenticated: isSpotifyAuthenticated(),
+      });
     } else {
       // User needs to enter invite code
       setShowInviteModal(true);
@@ -195,7 +204,10 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     setIsSpotifyAuthenticated(true);
     localStorage.removeItem('spotify_auth_initiated');
     localStorage.removeItem('spotify_code_verifier');
-    
+
+    // Track successful Spotify authentication
+    trackSpotifyAuthCompleted(true);
+
     // Load Spotify SDK now that we're authenticated
     if (window.loadSpotifySDK) {
       window.loadSpotifySDK().catch(console.error);
@@ -204,6 +216,10 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Spotify auth error:', error);
+
+    // Track failed Spotify authentication
+    trackSpotifyAuthCompleted(false, error instanceof Error ? error.message : 'Unknown error');
+
     // Clean up on error
     localStorage.removeItem('spotify_auth_initiated');
     localStorage.removeItem('spotify_code_verifier');

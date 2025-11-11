@@ -24,7 +24,10 @@ export default defineConfig(() => {
       ),
       // Spotify configuration
       'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || ''),
-      'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev')
+      'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev'),
+      // PostHog analytics configuration
+      'import.meta.env.VITE_POSTHOG_API_KEY': JSON.stringify(process.env.VITE_POSTHOG_API_KEY || ''),
+      'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(process.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com')
     }
   };
 });

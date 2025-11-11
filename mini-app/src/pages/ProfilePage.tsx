@@ -18,6 +18,7 @@ import {
   loadMoreActivity
 } from '../stores/profileStore';
 import { useInfiniteScroll } from '../utils/useInfiniteScroll';
+import { trackProfileViewed, trackSortChanged, trackFilterToggled } from '../utils/analytics';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../shared/types/channels';
 import './profilePage.css';
 
@@ -56,6 +57,10 @@ const ProfilePage: Component = () => {
     const fid = userFid();
     if (fid) {
       loadUserProfile(fid);
+
+      // Track profile view
+      const user = profileUser();
+      trackProfileViewed(fid, user?.username, 'navigation');
     } else {
       console.log('[ProfilePage] Waiting for currentUser FID to be available...');
       // Set error to show loading state or message
@@ -180,6 +185,7 @@ const ProfilePage: Component = () => {
 
   // Handle sort change
   const handleSortChange = (newSort: ChannelFeedSortOption) => {
+    trackSortChanged(newSort, 'profile');
     setActiveSort(newSort);
     // Note: Profile page data is already loaded, this is just for UI state
     // If we wanted to apply actual sorting, we'd need to implement it in filteredContent
