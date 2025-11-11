@@ -26,7 +26,7 @@ body:not(.theme-dark) {
   --text-primary: #000000; /* Black text */
   --text-secondary: #808080; /* Gray text */
   --text-tertiary: #A0A0A0; /* Light gray text */
-  --text-lcd: #00FF00; /* Green LCD text */
+  --text-lcd: #04caf4; /* Cyan LCD text */
   --text-lcd-secondary: #00FFFF; /* Cyan LCD text */
 
   /* Accent Colors */
@@ -36,7 +36,6 @@ body:not(.theme-dark) {
 
   /* Neon Color Palette (90s inspired) */
   --neon-blue: #3b00fd;
-  --neon-green: #00f92a;
   --neon-cyan: #04caf4;
   --neon-pink: #E73895;
   --neon-magenta: #E73895; /* Alias for pink */
@@ -108,7 +107,6 @@ body:not(.theme-dark) {
 
   /* Neon Color Palette (90s inspired) - same in both themes */
   --neon-blue: #3b00fd;
-  --neon-green: #00f92a;
   --neon-cyan: #04caf4;
   --neon-pink: #E73895;
   --neon-magenta: #E73895; /* Alias for pink */

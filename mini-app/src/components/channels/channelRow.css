@@ -46,7 +46,7 @@ body:not(.theme-dark) .channel-item:focus {
   padding: 16px 12px;
   margin-bottom: 2px;
   cursor: pointer;
-  border: 2px solid #00ff00;
+  border: 2px solid #04caf4;
   background: #000000;
   transition: all 0.2s ease;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
@@ -61,8 +61,8 @@ body:not(.theme-dark) .channel-item:focus {
 .theme-dark .channel-item:hover {
   background: #1a1a1a !important;
   color: #ffffff;
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  border: 2px solid #04caf4;
+  box-shadow: 0 0 10px rgba(4, 202, 244, 0.3);
 }
 
 .theme-dark .channel-item:active {
@@ -70,7 +70,7 @@ body:not(.theme-dark) .channel-item:focus {
 }
 
 .theme-dark .channel-item:focus {
-  outline: 2px dotted #00ff00;
+  outline: 2px dotted #04caf4;
   outline-offset: -4px;
 }
 
@@ -205,8 +205,8 @@ body:not(.theme-dark) .channel-item:hover .user-badge {
 
 /* User Badge - Dark Mode */
 .theme-dark .user-badge {
-  background: #001100;
-  border: 1px solid #00ff00;
+  background: #001a1f;
+  border: 1px solid #04caf4;
   padding: 1px 5px;
   font-size: 10px;
   font-weight: bold;
@@ -216,9 +216,9 @@ body:not(.theme-dark) .channel-item:hover .user-badge {
 }
 
 .theme-dark .channel-item:hover .user-badge {
-  background: #00ff00;
+  background: #04caf4;
   color: #000000;
-  border: 1px solid #00ff00;
+  border: 1px solid #04caf4;
 }
 
 /* Channel Description - Multi-line with wrap - Light Mode */

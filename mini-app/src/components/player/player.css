@@ -47,7 +47,7 @@
 .player-titlebar-icon {
   width: 12px;
   height: 12px;
-  background: #00FF00;
+  background: #04caf4;
   border: 1px solid #000;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .player-time {
-  color: #00FF00;
+  color: #04caf4;
   font-family: 'Courier New', monospace;
   font-size: 11px;
   min-width: 40px;
@@ -163,8 +163,8 @@
   background: #001a00;
   border-top: 2px solid #000000;
   border-left: 2px solid #000000;
-  border-right: 2px solid #00FF00;
-  border-bottom: 2px solid #00FF00;
+  border-right: 2px solid #04caf4;
+  border-bottom: 2px solid #04caf4;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -172,13 +172,13 @@
 
 .player-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00FF00, #00CC00);
+  background: linear-gradient(90deg, #04caf4, #0399cc);
   transition: width 0.1s linear;
-  box-shadow: 0 0 8px #00FF00;
+  box-shadow: 0 0 8px #04caf4;
 }
 
 .player-progress-bar:hover .player-progress-fill {
-  box-shadow: 0 0 12px #00FF00;
+  box-shadow: 0 0 12px #04caf4;
 }
 
 /* Error Message */

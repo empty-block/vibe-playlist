@@ -12,19 +12,18 @@
   --terminal-dim: #808080;
   --terminal-muted: #404040;
 
-  /* Neon colors (aggressive) */
-  --neon-green: #00ff41;
-  --neon-cyan: #00ffff;
-  --neon-blue: #0080ff;
+  /* Brand colors (refined) */
+  --neon-cyan: #04caf4;
+  --neon-blue: #3b00fd;
   --neon-magenta: #E73895;
-  --neon-yellow: #ffff00;
+  --neon-yellow: #d1f60a;
   --neon-red: #ff0040;
   --neon-orange: #ff8000;
 
   /* Activity type colors */
   --activity-share: var(--neon-blue);
   --activity-reply: var(--neon-cyan);
-  --activity-like: var(--neon-green);
+  --activity-like: var(--neon-magenta); /* Berry instead of green */
   --activity-error: var(--neon-red);
 
   /* Terminal font */
@@ -152,7 +151,7 @@
 
 .terminal-activity-block--like {
   border-color: var(--activity-like);
-  box-shadow: 0 0 4px rgba(0, 255, 65, 0.1);
+  box-shadow: 0 0 4px rgba(4, 202, 244, 0.1);
 }
 
 .terminal-activity-block--track {
@@ -206,7 +205,7 @@
 .terminal-activity-block--like .terminal-block-header {
   color: var(--activity-like);
   text-shadow: 0 0 2px var(--activity-like);
-  background: rgba(0, 255, 65, 0.03);
+  background: rgba(4, 202, 244, 0.03);
 }
 
 .terminal-activity-block--track .terminal-block-header {
@@ -240,9 +239,9 @@
 }
 
 .meta-arrow {
-  color: var(--neon-green);
+  color: var(--neon-cyan);
   margin-right: 4px;
-  text-shadow: 0 0 2px var(--neon-green);
+  text-shadow: 0 0 2px var(--neon-cyan);
 }
 
 .meta-type {
@@ -268,7 +267,7 @@
 }
 
 .info-status {
-  color: var(--neon-green);
+  color: var(--neon-cyan);
   font-weight: 600;
 }
 
@@ -455,8 +454,8 @@
 
 .terminal-action-btn:active {
   transform: scale(0.95);
-  color: var(--neon-green);
-  text-shadow: 0 0 3px var(--neon-green);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 3px var(--neon-cyan);
 }
 
 .action-icon {
@@ -472,8 +471,8 @@
 /* Play button (right-aligned) */
 .terminal-play-btn {
   background: transparent;
-  border: 1px solid var(--neon-green);
-  color: var(--neon-green);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
   font-family: var(--font-terminal);
   font-size: 11px;
   font-weight: 700;
@@ -481,20 +480,20 @@
   padding: 6px 12px;
   margin-left: auto;
   transition: all 200ms ease;
-  text-shadow: 0 0 2px var(--neon-green);
-  box-shadow: 0 0 4px rgba(0, 255, 65, 0.1);
+  text-shadow: 0 0 2px var(--neon-cyan);
+  box-shadow: 0 0 4px rgba(4, 202, 244, 0.1);
 }
 
 .terminal-play-btn:hover {
-  background: rgba(0, 255, 65, 0.05);
-  box-shadow: 0 0 6px rgba(0, 255, 65, 0.15);
+  background: rgba(4, 202, 244, 0.05);
+  box-shadow: 0 0 6px rgba(4, 202, 244, 0.15);
 }
 
 .terminal-play-btn:active {
-  background: rgba(0, 255, 65, 0.1);
+  background: rgba(4, 202, 244, 0.1);
   box-shadow:
-    0 0 4px rgba(0, 255, 65, 0.4),
-    0 0 8px rgba(0, 255, 65, 0.15);
+    0 0 4px rgba(4, 202, 244, 0.4),
+    0 0 8px rgba(4, 202, 244, 0.15);
 }
 
 .play-icon {
@@ -568,7 +567,7 @@
 }
 
 .engagement-label {
-  color: var(--neon-green);
+  color: var(--neon-cyan);
   font-weight: 600;
 }
 
@@ -579,8 +578,8 @@
 }
 
 .engagement-bar-filled {
-  color: var(--neon-green);
-  text-shadow: 0 0 2px var(--neon-green);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 2px var(--neon-cyan);
 }
 
 .engagement-bar-empty {
@@ -604,9 +603,9 @@
 }
 
 .node-indicator {
-  color: var(--neon-green);
+  color: var(--neon-cyan);
   font-size: 8px;
-  text-shadow: 0 0 2px var(--neon-green);
+  text-shadow: 0 0 2px var(--neon-cyan);
 }
 
 .node-username {
@@ -654,24 +653,24 @@
 
 /* Playing state */
 .terminal-activity-block--playing {
-  border-color: var(--neon-green);
+  border-color: var(--neon-cyan);
   box-shadow:
-    0 0 4px var(--neon-green),
-    0 0 8px rgba(0, 255, 65, 0.15);
+    0 0 4px var(--neon-cyan),
+    0 0 8px rgba(4, 202, 244, 0.15);
   animation: playing-pulse 2s ease-in-out infinite;
 }
 
 @keyframes playing-pulse {
   0%, 100% {
     box-shadow:
-      0 0 4px var(--neon-green),
-      0 0 8px rgba(0, 255, 65, 0.15);
+      0 0 4px var(--neon-cyan),
+      0 0 8px rgba(4, 202, 244, 0.15);
   }
   50% {
     box-shadow:
-      0 0 8px var(--neon-green),
-      0 0 16px rgba(0, 255, 65, 0.4),
-      0 0 24px rgba(0, 255, 65, 0.1);
+      0 0 8px var(--neon-cyan),
+      0 0 16px rgba(4, 202, 244, 0.4),
+      0 0 24px rgba(4, 202, 244, 0.1);
   }
 }
 

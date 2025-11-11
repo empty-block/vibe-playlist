@@ -59,7 +59,7 @@ body:not(.theme-dark) .status-bar-section {
 
 /* Status Bar Sections - Dark Mode */
 .theme-dark .status-bar-section {
-  border: 1px solid #00ff00;
+  border: 1px solid var(--border-emphasis);
   padding: 2px 6px;
   background: #000000;
   color: #ffffff;
@@ -86,7 +86,7 @@ body:not(.theme-dark) .profile-header {
 /* Compact Profile Header - Dark Mode */
 .theme-dark .profile-header {
   background: #000000;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid var(--border-emphasis);
   margin: 0;
   padding: 16px;
 }
@@ -144,7 +144,7 @@ body:not(.theme-dark) .share-track-button:active {
 /* Share Track Button - Dark Mode */
 .theme-dark .share-track-button {
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   color: #ffffff;
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -156,19 +156,19 @@ body:not(.theme-dark) .share-track-button:active {
   align-items: center;
   gap: 4px;
   transition: all 0.2s ease;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .theme-dark .share-track-button:hover {
-  background: #00ff00;
+  background: linear-gradient(135deg, #04caf4 0%, #6fd9ff 100%);
   color: #000000;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.6);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.6);
   transform: translateY(-1px);
 }
 
 .theme-dark .share-track-button:active {
   transform: translateY(0);
-  box-shadow: 0 0 6px rgba(0, 255, 0, 0.4);
+  box-shadow: 0 0 6px rgba(4, 202, 244, 0.4);
 }
 
 .share-track-button .button-icon {
@@ -220,8 +220,8 @@ body:not(.theme-dark) .share-track-button:active {
 }
 
 .theme-dark .profile-avatar {
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
+  border: 2px solid var(--border-emphasis);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4);
 }
 
 .profile-avatar-fallback {
@@ -242,8 +242,8 @@ body:not(.theme-dark) .share-track-button:active {
 }
 
 .theme-dark .profile-avatar-fallback {
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.4);
+  border: 2px solid var(--border-emphasis);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.4);
 }
 
 .profile-info {
@@ -271,7 +271,7 @@ body:not(.theme-dark) .share-track-button:active {
   gap: 12px;
   flex-wrap: wrap;
   font-size: 11px;
-  color: var(--neon-green); /* Neon green for stats */
+  color: var(--neon-cyan); /* Cyan for stats */
   font-family: 'Courier New', monospace;
 }
 
@@ -298,8 +298,8 @@ body:not(.theme-dark) .share-track-button:active {
 
 .theme-dark .activity-filter-dropdown-wrapper {
   background: #000000;
-  border-bottom: 2px solid #00ff00;
-  border-top: 2px solid #00ff00;
+  border-bottom: 2px solid var(--border-emphasis);
+  border-top: 2px solid var(--border-emphasis);
 }
 
 /* Dropdown Button - Light Mode */
@@ -339,7 +339,7 @@ body:not(.theme-dark) .activity-filter-dropdown-btn:active {
   width: 100%;
   padding: 10px 16px;
   background: #001100;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   font-weight: 600;
@@ -349,18 +349,18 @@ body:not(.theme-dark) .activity-filter-dropdown-btn:active {
   gap: 8px;
   color: #ffffff;
   transition: background 0.1s ease;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
   min-height: 44px;
 }
 
 .theme-dark .activity-filter-dropdown-btn:hover {
   background: #002200;
-  box-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 12px rgba(4, 202, 244, 0.5);
 }
 
 .theme-dark .activity-filter-dropdown-btn:active {
   background: #000800;
-  box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.3);
+  box-shadow: inset 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
 .activity-filter-dropdown-btn .filter-icon {
@@ -413,8 +413,8 @@ body:not(.theme-dark) .activity-filter-dropdown-menu {
   left: 8px;
   right: 8px;
   background: #000000;
-  border: 2px solid #00ff00;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+  border: 2px solid var(--border-emphasis);
+  box-shadow: 0 0 15px rgba(4, 202, 244, 0.4);
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -473,13 +473,36 @@ body:not(.theme-dark) .filter-option.active {
 
 .theme-dark .filter-option:hover {
   background: #002200;
-  box-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.2);
 }
 
 .theme-dark .filter-option.active {
-  background: #00ff00;
-  color: #000000;
-  border-color: #00ff00;
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  color: #ffffff;
+  border-color: #E73895;
+}
+
+.filter-option .option-label {
+  flex: 1;
+  text-align: left;
+}
+
+=======
+  justify-content: space-between;
+  color: #ffffff;
+  transition: background 0.1s ease;
+  min-height: 44px;
+}
+
+.theme-dark .filter-option:hover {
+  background: #002200;
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.2);
+}
+
+.theme-dark .filter-option.active {
+  background: linear-gradient(135deg, #E73895 0%, #ff6bb5 100%);
+  color: #ffffff;
+  border-color: #E73895;
 }
 
 .filter-option .option-label {
@@ -514,7 +537,7 @@ body:not(.theme-dark) .feed-header {
 .theme-dark .feed-header {
   background: #000000;
   padding: 8px 12px;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   margin-bottom: 12px;
   font-size: 13px;
   font-weight: bold;
@@ -550,7 +573,7 @@ body:not(.theme-dark) .profile-empty-state {
   text-align: center;
   color: #ffffff;
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   margin-bottom: 20px;
 }
 
@@ -577,9 +600,9 @@ body:not(.theme-dark) .activity-card {
 /* Activity Card - Dark Mode */
 .theme-dark .activity-card {
   background: #1a1a1a;
-  border: 3px solid #00ff00;
+  border: 3px solid var(--border-emphasis);
   margin-bottom: 20px;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 15px rgba(4, 202, 244, 0.3);
 }
 
 .activity-card:last-child {
@@ -606,7 +629,7 @@ body:not(.theme-dark) .activity-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid #00ff00;
+  border-bottom: 2px solid var(--border-emphasis);
 }
 
 .username {
@@ -721,7 +744,7 @@ body:not(.theme-dark) .track-meta {
   width: 60px;
   height: 60px;
   flex-shrink: 0;
-  background: var(--neon-green); /* Neon green play button */
+  background: var(--neon-cyan); /* Neon green play button */
   border: 2px solid #000000;
   cursor: pointer;
   display: flex;
@@ -734,7 +757,7 @@ body:not(.theme-dark) .track-meta {
 }
 
 .play-button:hover {
-  background: var(--neon-green);
+  background: var(--neon-cyan);
   filter: brightness(0.9);
   transform: scale(1.05);
 }
