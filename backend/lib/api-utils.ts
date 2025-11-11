@@ -138,11 +138,14 @@ export function formatAuthor(author: any, fid: string) {
  * Format music data for API responses
  */
 export function formatMusic(musicLibraryData: any) {
+  // Handle both platform and platform_name (database inconsistency)
+  const platform = musicLibraryData.platform_name || musicLibraryData.platform
+
   return {
-    id: `${musicLibraryData.platform}-${musicLibraryData.platform_id}`,
+    id: `${platform}-${musicLibraryData.platform_id}`,
     title: musicLibraryData.title,
     artist: musicLibraryData.artist,
-    platform: musicLibraryData.platform,
+    platform: platform,
     platformId: musicLibraryData.platform_id,
     url: musicLibraryData.url,
     thumbnail: musicLibraryData.thumbnail_url
