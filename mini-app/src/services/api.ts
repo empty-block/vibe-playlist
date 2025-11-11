@@ -44,6 +44,20 @@ async function apiFetch<T>(endpoint: string, options?: RequestInit, retries = 2)
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: { message: 'Request failed' } }));
+
+        // Handle specific error cases
+        if (response.status === 401) {
+          throw new ApiError(401, 'Authentication required. Please log in with Farcaster.');
+        }
+        if (response.status === 403) {
+          throw new ApiError(403, 'Access denied. You don\'t have permission for this action.');
+        }
+        if (response.status === 429) {
+          const resetTime = response.headers.get('X-RateLimit-Reset');
+          const retryAfter = resetTime ? new Date(parseInt(resetTime) * 1000).toLocaleTimeString() : 'later';
+          throw new ApiError(429, `Rate limit exceeded. Please try again after ${retryAfter}.`);
+        }
+
         throw new ApiError(
           response.status,
           errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`
@@ -103,12 +117,11 @@ export async function fetchThread(castHash: string): Promise<ApiThreadDetailResp
 
 /**
  * Create a new thread
+ * Note: userId is extracted from JWT token by backend, not sent in body
  */
 export async function createThread(data: {
   text: string;
-  userId: string;
   trackUrls?: string[];
-  farcasterToken?: string;
 }): Promise<any> {
   return apiFetch('/api/threads', {
     method: 'POST',
@@ -118,12 +131,12 @@ export async function createThread(data: {
 
 /**
  * Reply to a thread
+ * Note: userId is extracted from JWT token by backend, not sent in body
  */
 export async function replyToThread(
   castHash: string,
   data: {
     text: string;
-    userId: string;
     trackUrls?: string[];
   }
 ): Promise<any> {
@@ -245,6 +258,26 @@ export async function fetchTrack(platform: string, platformId: string): Promise<
 
   const endpoint = `/api/music/track?${queryParams.toString()}`;
   return apiFetch<{ track: any }>(endpoint);
+}
+
+/**
+ * Like a thread or reply
+ * Note: userId is extracted from JWT token by backend, not sent in body
+ */
+export async function likePost(castHash: string): Promise<{ success: boolean }> {
+  return apiFetch(`/api/threads/${castHash}/like`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * Unlike a thread or reply
+ * Note: userId is extracted from JWT token by backend, not sent in body
+ */
+export async function unlikePost(castHash: string): Promise<{ success: boolean }> {
+  return apiFetch(`/api/threads/${castHash}/like`, {
+    method: 'DELETE',
+  });
 }
 
 export { ApiError };

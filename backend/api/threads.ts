@@ -7,23 +7,30 @@ import {
   decodeCursor
 } from '../lib/api-utils'
 import { getNeynarService } from '../lib/neynar'
+import { verifyAuthMiddleware } from './auth'
+import { rateLimitMiddleware } from '../lib/rate-limit'
 
 const app = new Hono()
 
 /**
  * POST /api/threads
  * Create a new thread with test data
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/', async (c) => {
+app.post('/', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const body = await c.req.json()
-    const { text, trackUrls, userId } = body
+    const { text, trackUrls } = body
 
-    if (!text || !userId) {
+    // SECURITY: Get userId from JWT (verified by middleware), not from request body
+    const userId = c.get('fid')
+
+    if (!text) {
       return c.json({
         error: {
           code: 'INVALID_REQUEST',
-          message: 'Missing required fields: text and userId'
+          message: 'Missing required field: text'
         }
       }, 400)
     }
@@ -329,18 +336,23 @@ app.get('/', async (c) => {
 /**
  * POST /api/threads/:castHash/reply
  * Reply to a thread
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/:castHash/reply', async (c) => {
+app.post('/:castHash/reply', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const parentCastHash = c.req.param('castHash')
     const body = await c.req.json()
-    const { text, trackUrls, userId } = body
+    const { text, trackUrls } = body
 
-    if (!text || !userId) {
+    // SECURITY: Get userId from JWT (verified by middleware), not from request body
+    const userId = c.get('fid')
+
+    if (!text) {
       return c.json({
         error: {
           code: 'INVALID_REQUEST',
-          message: 'Missing required fields: text and userId'
+          message: 'Missing required field: text'
         }
       }, 400)
     }

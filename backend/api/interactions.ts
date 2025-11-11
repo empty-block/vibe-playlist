@@ -1,27 +1,23 @@
 import { Hono } from 'hono'
 import { getSupabaseClient } from '../lib/api-utils'
-import { addRateLimitHeaders } from '../lib/rate-limit'
+import { addRateLimitHeaders, rateLimitMiddleware } from '../lib/rate-limit'
+import { verifyAuthMiddleware } from './auth'
 
 const app = new Hono()
 
 /**
  * POST /api/threads/:castHash/like
  * Like a thread or reply
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent vote manipulation
  */
-app.post('/:castHash/like', async (c) => {
+app.post('/:castHash/like', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const castHash = c.req.param('castHash')
-    const body = await c.req.json()
-    const { userId } = body
 
-    if (!userId) {
-      return c.json({
-        error: {
-          code: 'INVALID_REQUEST',
-          message: 'Missing required field: userId'
-        }
-      }, 400)
-    }
+    // CRITICAL SECURITY FIX: Get userId from JWT, not request body
+    // This prevents users from liking as other users
+    const userId = c.get('fid')
 
     const supabase = getSupabaseClient()
 
@@ -93,21 +89,16 @@ app.post('/:castHash/like', async (c) => {
 /**
  * DELETE /api/threads/:castHash/like
  * Unlike a thread or reply
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent abuse
  */
-app.delete('/:castHash/like', async (c) => {
+app.delete('/:castHash/like', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const castHash = c.req.param('castHash')
-    const body = await c.req.json()
-    const { userId } = body
 
-    if (!userId) {
-      return c.json({
-        error: {
-          code: 'INVALID_REQUEST',
-          message: 'Missing required field: userId'
-        }
-      }, 400)
-    }
+    // CRITICAL SECURITY FIX: Get userId from JWT, not request body
+    // This prevents users from unliking as other users
+    const userId = c.get('fid')
 
     const supabase = getSupabaseClient()
 

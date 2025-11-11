@@ -1,44 +1,20 @@
 import { Hono } from 'hono'
 import { customAlphabet } from 'nanoid'
 import { getSupabaseClient } from '../lib/api-utils'
-import { addRateLimitHeaders } from '../lib/rate-limit'
+import { addRateLimitHeaders, rateLimitMiddleware } from '../lib/rate-limit'
+import { verifyAdminMiddleware } from '../lib/auth-helpers'
 
 const app = new Hono()
 
 // Generate invite codes without confusing characters (0, O, I, 1, l)
 const nanoid = customAlphabet('23456789ABCDEFGHJKLMNPQRSTUVWXYZ', 8)
 
-// Helper to check if user is admin
-function isAdmin(fid: string | null): boolean {
-  if (!fid) return false
-  const adminFids = process.env.ADMIN_FIDS?.split(',').map(f => f.trim()) || []
-  return adminFids.includes(fid)
-}
-
-// Helper to get FID from request (from Farcaster auth header or body)
-function getFidFromRequest(c: any): string | null {
-  // Try to get from Authorization header (Farcaster token)
-  const authHeader = c.req.header('Authorization')
-  if (authHeader) {
-    // Parse Farcaster JWT token (simplified - you may need to properly verify)
-    try {
-      const token = authHeader.replace('Bearer ', '')
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      return payload.fid?.toString() || null
-    } catch (e) {
-      // If parsing fails, continue to try body
-    }
-  }
-
-  // Try to get from request body
-  return c.req.json().then((body: any) => body.fid || null).catch(() => null)
-}
-
 /**
  * POST /api/invites/verify
  * Verify if an invite code is valid without redeeming it
+ * Rate limited to prevent brute force attacks
  */
-app.post('/verify', async (c) => {
+app.post('/verify', rateLimitMiddleware, async (c) => {
   try {
     const body = await c.req.json()
     const { code } = body
@@ -122,8 +98,9 @@ app.post('/verify', async (c) => {
 /**
  * POST /api/invites/redeem
  * Redeem an invite code for a Farcaster ID
+ * Rate limited to prevent abuse
  */
-app.post('/redeem', async (c) => {
+app.post('/redeem', rateLimitMiddleware, async (c) => {
   try {
     const body = await c.req.json()
     const { code, fid } = body
@@ -250,21 +227,15 @@ app.post('/check-status', async (c) => {
 /**
  * POST /api/invites/create
  * Admin only: Generate new invite codes
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/create', async (c) => {
+app.post('/create', verifyAdminMiddleware, async (c) => {
   try {
     const body = await c.req.json()
-    const { count = 1, isTest = false, adminFid } = body
+    const { count = 1, isTest = false } = body
 
-    // Check admin authorization
-    if (!isAdmin(adminFid)) {
-      return c.json({
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Admin access required'
-        }
-      }, 403)
-    }
+    // SECURITY: Get adminFid from JWT (verified by middleware), not from request body
+    const adminFid = c.get('fid')
 
     if (!count || count < 1 || count > 1000) {
       return c.json({
@@ -325,20 +296,11 @@ app.post('/create', async (c) => {
 /**
  * GET /api/invites/stats
  * Admin only: Get invite code statistics
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.get('/stats', async (c) => {
+app.get('/stats', verifyAdminMiddleware, async (c) => {
   try {
-    const adminFid = c.req.query('adminFid')
-
-    // Check admin authorization
-    if (!isAdmin(adminFid || null)) {
-      return c.json({
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Admin access required'
-        }
-      }, 403)
-    }
+    // SECURITY: Admin already verified by middleware, no need to check FID from query
 
     const supabase = getSupabaseClient()
 
