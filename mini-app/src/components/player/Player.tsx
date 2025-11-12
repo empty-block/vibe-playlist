@@ -37,6 +37,14 @@ const Player: Component<PlayerProps> = (props) => {
   let statusIndicatorRef: HTMLDivElement | undefined;
   let playerBarRef: HTMLDivElement | undefined;
 
+  // Handle avatar click to navigate to user profile
+  const handleAvatarClick = () => {
+    const fid = currentTrack()?.userFid;
+    if (fid) {
+      navigate(`/profile/${fid}`);
+    }
+  };
+
   // Reset currentTrackHasPlayed when track changes
   createEffect(() => {
     const track = currentTrack();
@@ -176,7 +184,10 @@ const Player: Component<PlayerProps> = (props) => {
             <div class="player-track-header">
               {/* User avatar */}
               <Show when={currentTrack()?.userAvatar} fallback={
-                <div class="player-user-avatar-fallback">
+                <div
+                  class="player-user-avatar-fallback"
+                  onClick={handleAvatarClick}
+                >
                   {currentTrack()?.addedBy?.charAt(0).toUpperCase() || '?'}
                 </div>
               }>
@@ -184,6 +195,7 @@ const Player: Component<PlayerProps> = (props) => {
                   src={currentTrack()?.userAvatar}
                   alt={currentTrack()?.addedBy}
                   class="player-user-avatar"
+                  onClick={handleAvatarClick}
                 />
               </Show>
 
