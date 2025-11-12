@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
-import { farcasterAuth } from './farcasterStore';
+import { farcasterAuth, farcasterLoading } from './farcasterStore';
 import { checkInviteStatus } from '../utils/invite';
 import { identifyUser, trackSpotifyAuthCompleted } from '../utils/analytics';
 
@@ -22,6 +22,12 @@ export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
 // Sync currentUser with Farcaster auth state and check invite access
 createEffect(async () => {
   const auth = farcasterAuth();
+
+  // CRITICAL: Wait for Farcaster SDK to finish initializing
+  // Without this check, we'd show "open in Farcaster" even when user IS in Farcaster
+  if (farcasterLoading()) {
+    return; // Don't check auth until SDK initialization completes
+  }
 
   if (auth.isAuthenticated && auth.fid) {
     // Check if user has invite access
@@ -57,27 +63,11 @@ createEffect(async () => {
       setCurrentUser(null);
     }
   } else {
-    // For local development without Farcaster context, use mock data
-    // But still check invite access
-    setInviteCheckPending(true);
-    const inviteStatus = await checkInviteStatus('3'); // Mock FID
-    setInviteCheckPending(false);
-
-    if (inviteStatus.hasAccess) {
-      setCurrentUser({
-        fid: '3',
-        username: 'dwr',
-        avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
-        displayName: 'Dan Romero (Dev Mode)'
-      });
-      setIsAuthenticated(true);
-      setShowInviteModal(false);
-    } else {
-      // Even in dev mode, require invite code if bypass is disabled
-      setShowInviteModal(true);
-      setIsAuthenticated(false);
-      setCurrentUser(null);
-    }
+    // No Farcaster context - show invite modal requiring Farcaster
+    // Guest users must open in Farcaster app to access JAMZY
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    setShowInviteModal(true);
   }
 });
 
