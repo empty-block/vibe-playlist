@@ -486,7 +486,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           playNextTrack();
         }
       }
-    }, 2000); // Poll every 2 seconds
+    }, 500); // Poll every 500ms for responsive UI
   };
 
   const stopPlaybackPolling = () => {
@@ -578,17 +578,20 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     console.log('Toggling Spotify Connect playback:', playing ? 'pause' : 'play');
 
     const newState = !playing;
+
+    // Optimistic UI update - immediately update state for instant feedback
+    setIsPlaying(newState);
+    if (newState === true) {
+      props.onPlaybackStarted?.(true);
+    }
+
+    // Then call API - polling will correct if needed
     const success = await togglePlaybackOnConnect(newState);
 
-    if (success) {
-      setIsPlaying(newState);
-      // Only notify when STARTING playback, not when pausing
-      // Pausing should keep hasStartedPlayback=true so embed hides correctly
-      if (newState === true) {
-        props.onPlaybackStarted?.(true);
-      }
-    } else {
-      console.error('Failed to toggle Spotify Connect playback');
+    if (!success) {
+      // Revert on failure
+      console.error('Failed to toggle Spotify Connect playback - reverting state');
+      setIsPlaying(playing);
     }
   };
 
