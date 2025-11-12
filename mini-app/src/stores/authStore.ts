@@ -48,27 +48,11 @@ createEffect(async () => {
       setCurrentUser(null);
     }
   } else {
-    // For local development without Farcaster context, use mock data
-    // But still check invite access
-    setInviteCheckPending(true);
-    const inviteStatus = await checkInviteStatus('3'); // Mock FID
-    setInviteCheckPending(false);
-
-    if (inviteStatus.hasAccess) {
-      setCurrentUser({
-        fid: '3',
-        username: 'dwr',
-        avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
-        displayName: 'Dan Romero (Dev Mode)'
-      });
-      setIsAuthenticated(true);
-      setShowInviteModal(false);
-    } else {
-      // Even in dev mode, require invite code if bypass is disabled
-      setShowInviteModal(true);
-      setIsAuthenticated(false);
-      setCurrentUser(null);
-    }
+    // No Farcaster context - show invite modal requiring Farcaster
+    // Guest users must open in Farcaster app to access JAMZY
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    setShowInviteModal(true);
   }
 });
 
