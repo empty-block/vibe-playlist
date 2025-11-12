@@ -83,13 +83,33 @@ const ThreadViewPage: Component = () => {
 
   // Reply submission
   const handleReplySubmit = async (data: { songUrl: string; comment: string }) => {
-    // TODO: Call API to create reply
-    console.log('Reply submitted:', data);
+    try {
+      // Import SDK dynamically
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
 
-    // Close modal
-    setShowAddReplyModal(false);
+      // Open native Farcaster composer with pre-filled reply
+      const result = await sdk.actions.composeCast({
+        text: data.comment || '',
+        embeds: data.songUrl ? [data.songUrl] : [],
+        parent: params.id // Reply to this thread's root cast
+      });
 
-    // TODO: Refresh thread to show new reply
+      console.log('[ThreadViewPage] Reply compose result:', result);
+
+      if (result?.cast) {
+        // User posted the reply successfully
+        console.log('[ThreadViewPage] Reply posted with hash:', result.cast.hash);
+
+        // TODO: Optionally refresh thread to show new reply
+        // Could call fetchThread again or wait for backend sync
+      }
+
+      // Close modal
+      setShowAddReplyModal(false);
+    } catch (error) {
+      console.error('[ThreadViewPage] Failed to compose reply:', error);
+      // Keep modal open on error so user can retry
+    }
   };
 
   // Username click handler
