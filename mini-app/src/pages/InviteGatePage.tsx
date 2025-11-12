@@ -93,9 +93,6 @@ const InviteGatePage: Component = () => {
           <div class="invite-gate-content">
             <div class="invite-welcome-section">
               <h2 class="invite-welcome-heading">Welcome to Jamzy!</h2>
-              <p class="invite-welcome-text">
-                You're about to enter the beta for the most social way to discover music.
-              </p>
               <Show when={isLoading} fallback={
                 <Show when={!isGuest} fallback={
                   <p class="invite-welcome-subtext" style="color: #ff6b9d; font-weight: 600;">
@@ -148,12 +145,9 @@ const InviteGatePage: Component = () => {
             <div class="invite-footer-section">
               <Show when={!isGuest} fallback={
                 <p class="invite-footer-text">
-                  JAMZY is a Farcaster mini app. Open this link in Warpcast or another Farcaster client to access.
+                  JAMZY is a Farcaster mini app. Open this link in Farcaster or another client to access.
                 </p>
               }>
-                <p class="invite-footer-text">
-                  Need an invite? Check your DMs or hit up the Jamzy channel on Farcaster.
-                </p>
               </Show>
             </div>
           </div>
