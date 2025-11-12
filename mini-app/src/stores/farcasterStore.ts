@@ -221,16 +221,21 @@ export const farcasterFetch = async (
       return fetch(url, options);
     }
 
-    // Get token and add to headers manually (more reliable than SDK fetch)
-    const token = await sdk.quickAuth.getToken();
-    if (token) {
-      const headers = new Headers(options?.headers);
-      headers.set('Authorization', `Bearer ${token}`);
-      return fetch(url, { ...options, headers });
-    }
-
-    // No token, use regular fetch
+    // For now, just use regular fetch
+    // TODO: Re-enable when backend auth is implemented and we want direct API writes
+    // The Quick Auth token is available via sdk.quickAuth.getToken() when needed
     return fetch(url, options);
+
+    // Get token and add to headers manually (more reliable than SDK fetch)
+    // const token = await sdk.quickAuth.getToken();
+    // if (token) {
+    //   const headers = new Headers(options?.headers);
+    //   headers.set('Authorization', `Bearer ${token}`);
+    //   return fetch(url, { ...options, headers });
+    // }
+
+    // // No token, use regular fetch
+    // return fetch(url, options);
   } catch (error) {
     // If anything fails, fall back to regular fetch
     console.log('farcasterFetch error, using regular fetch:', error);
