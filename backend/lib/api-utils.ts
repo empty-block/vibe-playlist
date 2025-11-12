@@ -3,6 +3,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 /**
  * Shared Supabase client factory
  * Eliminates duplication across API files
+ * Uses anon key for user-facing operations
  */
 export function getSupabaseClient(): SupabaseClient {
   // Default to production if SUPABASE_ENV isn't set (for Cloudflare Workers)
@@ -15,6 +16,26 @@ export function getSupabaseClient(): SupabaseClient {
   const supabaseKey = isLocal
     ? process.env.SUPABASE_LOCAL_KEY!
     : (process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)!
+
+  return createClient(supabaseUrl, supabaseKey)
+}
+
+/**
+ * Supabase service role client factory
+ * For backend operations that need to bypass RLS
+ * ONLY use for trusted backend operations (sync workers, AI processing, etc.)
+ */
+export function getSupabaseServiceClient(): SupabaseClient {
+  const isLocal = process.env.SUPABASE_ENV === 'local'
+
+  const supabaseUrl = isLocal
+    ? process.env.SUPABASE_LOCAL_URL!
+    : process.env.SUPABASE_URL!
+
+  // Always use service role key to bypass RLS
+  const supabaseKey = isLocal
+    ? process.env.SUPABASE_LOCAL_SERVICE_ROLE_KEY!
+    : process.env.SUPABASE_SERVICE_ROLE_KEY!
 
   return createClient(supabaseUrl, supabaseKey)
 }

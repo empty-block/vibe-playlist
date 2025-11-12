@@ -1,5 +1,5 @@
 import { getSyncEngine } from './sync-engine'
-import { getSupabaseClient } from './api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from './api-utils'
 
 /**
  * Sync all active channels periodically (cron job)
@@ -20,6 +20,7 @@ export async function syncAllChannels(): Promise<{
   errors: string[]
 }> {
   const supabase = getSupabaseClient()
+  const supabaseService = getSupabaseServiceClient() // For RLS-protected tables
   const syncEngine = getSyncEngine()
 
   // Get all active, visible channels with sync intervals
@@ -50,8 +51,8 @@ export async function syncAllChannels(): Promise<{
     try {
       const syncInterval = channel.sync_interval_minutes || 5 // Default to 5 min
 
-      // Get last sync time for this channel
-      const { data: syncStatus } = await supabase
+      // Get last sync time for this channel (use service client for RLS-protected table)
+      const { data: syncStatus } = await supabaseService
         .from('channel_sync_status')
         .select('last_sync_at')
         .eq('channel_id', channel.id)
