@@ -44,8 +44,9 @@ app.use('/*', cors({
   origin: (origin) => {
     // Allowed production domains
     const allowedOrigins = [
-      'https://jamzy-miniapp.pages.dev',
-      'https://*.jamzy-miniapp.pages.dev',  // Preview deployments
+      'https://jamzy.fun',                      // Production domain
+      'https://jamzy-miniapp.pages.dev',        // Cloudflare default domain
+      'https://*.jamzy-miniapp.pages.dev',      // Preview deployments
     ]
 
     // Local dev: allow all origins
