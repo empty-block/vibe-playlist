@@ -534,10 +534,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     const track = currentTrack();
     const hasDevice = deviceName(); // Device already connected from previous track
     const connecting = isConnecting(); // Skip during initial connection
+    // Read isPlaying without tracking it - we only want this effect to run when track/device changes, not on play/pause
+    const playing = untrack(() => isPlaying());
 
     console.log('[Auto-play Effect] Triggered with:', {
       trackId: track?.sourceId,
       trackSource: track?.source,
+      isPlaying: playing,
       hasDevice: !!hasDevice,
       deviceName: hasDevice,
       connecting,
@@ -556,12 +559,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    // Only auto-play if we have a connected device AND not currently connecting
+    // Only auto-play if we have a connected device AND not currently connecting AND isPlaying is true
     // This prevents double-play on first track while enabling auto-play for subsequent tracks
-    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting) {
+    // Also respects the play/pause state - won't auto-play if user hasn't clicked play
+    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting && playing) {
       console.log('[Auto-play Effect] ✅ All conditions met - auto-playing:', track.sourceId);
 
-      // Use untrack to avoid re-triggering on isPlaying changes
+      // Use untrack to avoid re-triggering the effect during async operations
       untrack(async () => {
         const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
@@ -575,7 +579,14 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         }
       });
     } else {
-      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play');
+      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play', {
+        hasTrack: !!track,
+        isSpotify: track?.source === 'spotify',
+        hasSourceId: !!track?.sourceId,
+        hasDevice: !!hasDevice,
+        notConnecting: !connecting,
+        shouldPlay: playing
+      });
     }
   });
 
