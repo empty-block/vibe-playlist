@@ -3,7 +3,6 @@ import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
 import { trackCardEntrance } from '../../../../utils/animations';
-import { likePost, unlikePost } from '../../../../services/api';
 
 const MAX_TEXT_LENGTH = 200;
 
@@ -57,9 +56,6 @@ const formatTimeAgo = (timestamp: string) => {
 const TrackCard: Component<TrackCardProps> = (props) => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = createSignal(false);
-  const [isLiked, setIsLiked] = createSignal(false);
-  const [likeCount, setLikeCount] = createSignal(props.stats.likes || 0);
-  const [isLiking, setIsLiking] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
@@ -85,7 +81,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     }
   };
 
-  // Like/unlike a cast via API
+  // Open cast in Farcaster client for like/recast
   const handleLikeClick = async (e: MouseEvent) => {
     e.stopPropagation();
     if (!props.castHash) {
@@ -93,40 +89,15 @@ const TrackCard: Component<TrackCardProps> = (props) => {
       return;
     }
 
-    // Prevent double-clicking
-    if (isLiking()) return;
-
     try {
-      setIsLiking(true);
-      const wasLiked = isLiked();
-
-      // Optimistic UI update
-      setIsLiked(!wasLiked);
-      setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
-
-      // Call API
-      if (wasLiked) {
-        await unlikePost(props.castHash);
-      } else {
-        await likePost(props.castHash);
-      }
-    } catch (error: any) {
-      console.error('[TrackCard] Failed to like/unlike:', error);
-
-      // Revert optimistic update on error
-      setIsLiked(!isLiked());
-      setLikeCount(prev => isLiked() ? prev - 1 : prev + 1);
-
-      // Show user-friendly error message
-      if (error.status === 401) {
-        alert('Please sign in with Farcaster to like posts');
-      } else if (error.status === 429) {
-        alert('Too many requests. Please wait a moment and try again.');
-      } else {
-        alert('Failed to like post. Please try again.');
-      }
-    } finally {
-      setIsLiking(false);
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      // viewCast takes an object with hash property
+      console.log('[TrackCard] Opening cast with hash:', props.castHash);
+      await sdk.actions.viewCast({
+        hash: props.castHash
+      });
+    } catch (error) {
+      console.error('[TrackCard] Failed to open cast:', error);
     }
   };
 
@@ -229,15 +200,11 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         <div
           class="stat-box clickable"
           onClick={handleLikeClick}
-          style={{
-            cursor: props.castHash ? 'pointer' : 'default',
-            color: isLiked() ? 'var(--neon-pink)' : 'inherit',
-            opacity: isLiking() ? '0.6' : '1'
-          }}
-          title={props.castHash ? (isLiked() ? 'Unlike' : 'Like') : ''}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'Open in Farcaster to like' : ''}
         >
-          <span>{isLiked() ? '♥' : '♡'}</span>
-          <span class="count">{likeCount()}</span>
+          <span>♥</span>
+          <span class="count">{props.stats.likes || 0}</span>
           <span class="label">likes</span>
         </div>
         <div class="stat-box">

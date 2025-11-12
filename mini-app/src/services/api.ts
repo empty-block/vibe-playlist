@@ -260,24 +260,4 @@ export async function fetchTrack(platform: string, platformId: string): Promise<
   return apiFetch<{ track: any }>(endpoint);
 }
 
-/**
- * Like a thread or reply
- * Note: userId is extracted from JWT token by backend, not sent in body
- */
-export async function likePost(castHash: string): Promise<{ success: boolean }> {
-  return apiFetch(`/api/threads/${castHash}/like`, {
-    method: 'POST',
-  });
-}
-
-/**
- * Unlike a thread or reply
- * Note: userId is extracted from JWT token by backend, not sent in body
- */
-export async function unlikePost(castHash: string): Promise<{ success: boolean }> {
-  return apiFetch(`/api/threads/${castHash}/like`, {
-    method: 'DELETE',
-  });
-}
-
 export { ApiError };
