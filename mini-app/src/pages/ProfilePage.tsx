@@ -441,26 +441,6 @@ const ProfilePage: Component = () => {
                 </div>
               </div>
 
-              {/* Feed Controls - Sort/Filter/Add Track */}
-              <div class="action-bar" style="margin-bottom: 12px;">
-                <ChannelFilterBar
-                  activeSort={activeSort()}
-                  onSortChange={handleSortChange}
-                  qualityFilter={qualityFilter()}
-                  onQualityFilterChange={setQualityFilter}
-                  musicSources={musicSources()}
-                  onMusicSourcesChange={setMusicSources}
-                  genres={genres()}
-                  onGenresChange={setGenres}
-                  availablePlatforms={availablePlatforms}
-                  availableGenres={availableGenres}
-                  filterDialogOpen={filterDialogOpen()}
-                  onFilterDialogOpenChange={setFilterDialogOpen}
-                  showAddTrack={true}
-                  onAddTrack={handleShareTrack}
-                />
-              </div>
-
               {/* Activity Filter Dropdown */}
               <div class="activity-filter-dropdown-wrapper">
                 <button
