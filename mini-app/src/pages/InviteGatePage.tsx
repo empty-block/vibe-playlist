@@ -21,9 +21,14 @@ const InviteGatePage: Component = () => {
       return;
     }
 
-    // Get FID from Farcaster auth, or use dev mode FID
+    // Get FID from Farcaster auth - must be authenticated
     const auth = farcasterAuth();
-    const fid = auth.fid || '3'; // Fallback to dev mode FID
+    const fid = auth.fid;
+
+    if (!fid) {
+      setError('Please open JAMZY in the Farcaster app to redeem your code');
+      return;
+    }
 
     setIsSubmitting(true);
     setError(null);
@@ -71,6 +76,9 @@ const InviteGatePage: Component = () => {
     }
   };
 
+  const auth = farcasterAuth();
+  const isGuest = !auth.fid;
+
   return (
     <div class="invite-gate-page">
       <div class="invite-gate-container">
@@ -87,45 +95,59 @@ const InviteGatePage: Component = () => {
               <p class="invite-welcome-text">
                 You're about to enter the beta for the most social way to discover music.
               </p>
-              <p class="invite-welcome-subtext">
-                Enter your invite code below to unlock access.
-              </p>
-            </div>
-
-            <div class="invite-form-section">
-              <div onKeyPress={handleKeyPress}>
-                <TextInput
-                  value={inviteCode()}
-                  onInput={setInviteCode}
-                  placeholder="JAMZY-XXXXXXXX"
-                  label="Invite Code"
-                  disabled={isSubmitting()}
-                />
-              </div>
-
-              <Show when={error()}>
-                <div class="invite-error-message">
-                  <span class="invite-error-icon">⚠️</span>
-                  <p class="invite-error-text">{error()}</p>
-                </div>
+              <Show when={!isGuest} fallback={
+                <p class="invite-welcome-subtext" style="color: #ff6b9d; font-weight: 600;">
+                  ⚠️ Please open this link in the Farcaster app to continue.
+                </p>
+              }>
+                <p class="invite-welcome-subtext">
+                  Enter your invite code below to unlock access.
+                </p>
               </Show>
-
-              <div class="invite-submit-wrapper">
-                <AnimatedButton
-                  onClick={handleSubmit}
-                  disabled={isSubmitting()}
-                  animationType="social"
-                  class="invite-submit-btn"
-                >
-                  {isSubmitting() ? 'Verifying...' : 'Enter Jamzy'}
-                </AnimatedButton>
-              </div>
             </div>
+
+            <Show when={!isGuest}>
+              <div class="invite-form-section">
+                <div onKeyPress={handleKeyPress}>
+                  <TextInput
+                    value={inviteCode()}
+                    onInput={setInviteCode}
+                    placeholder="JAMZY-XXXXXXXX"
+                    label="Invite Code"
+                    disabled={isSubmitting()}
+                  />
+                </div>
+
+                <Show when={error()}>
+                  <div class="invite-error-message">
+                    <span class="invite-error-icon">⚠️</span>
+                    <p class="invite-error-text">{error()}</p>
+                  </div>
+                </Show>
+
+                <div class="invite-submit-wrapper">
+                  <AnimatedButton
+                    onClick={handleSubmit}
+                    disabled={isSubmitting()}
+                    animationType="social"
+                    class="invite-submit-btn"
+                  >
+                    {isSubmitting() ? 'Verifying...' : 'Enter Jamzy'}
+                  </AnimatedButton>
+                </div>
+              </div>
+            </Show>
 
             <div class="invite-footer-section">
-              <p class="invite-footer-text">
-                Need an invite? Check your DMs or hit up the Jamzy channel on Farcaster.
-              </p>
+              <Show when={!isGuest} fallback={
+                <p class="invite-footer-text">
+                  JAMZY is a Farcaster mini app. Open this link in Warpcast or another Farcaster client to access.
+                </p>
+              }>
+                <p class="invite-footer-text">
+                  Need an invite? Check your DMs or hit up the Jamzy channel on Farcaster.
+                </p>
+              </Show>
             </div>
           </div>
         </RetroWindow>
