@@ -3,6 +3,7 @@ import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
 import { trackCardEntrance } from '../../../../utils/animations';
+import { triggerImpact } from '../../../../utils/haptics';
 
 const MAX_TEXT_LENGTH = 200;
 
@@ -120,6 +121,21 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     }
   };
 
+  // Handle track selection with haptic feedback
+  const handleTrackSelect = async () => {
+    // Trigger haptic feedback first for immediate tactile response
+    await triggerImpact('light');
+    props.onPlay({
+      id: props.track.id,
+      title: props.track.title,
+      artist: props.track.artist,
+      thumbnail: props.track.thumbnail,
+      source: props.track.platform,
+      url: props.track.url,
+      sourceId: props.track.platformId
+    });
+  };
+
   return (
     <div ref={cardRef} class="terminal-track-card activity-card">
       {/* Navy header bar */}
@@ -172,15 +188,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         </div>
         <button
           class="open-button"
-          onClick={() => props.onPlay({
-            id: props.track.id,
-            title: props.track.title,
-            artist: props.track.artist,
-            thumbnail: props.track.thumbnail,
-            source: props.track.platform,
-            url: props.track.url,
-            sourceId: props.track.platformId
-          })}
+          onClick={handleTrackSelect}
           title="Open track in player"
         >
           ▼
