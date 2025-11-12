@@ -327,6 +327,27 @@ const ProfilePage: Component = () => {
     }
   ];
 
+  // Show back button when viewing someone else's profile or when there's browser history
+  const showBackButton = () => {
+    // Check if we have a route parameter (viewing someone else's profile)
+    if (params.fid) {
+      return true;
+    }
+    // Otherwise, check if there's browser history to go back to
+    return window.history.length > 1;
+  };
+
+  // Handle back navigation
+  const handleBack = () => {
+    // Try to go back in browser history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Fallback to home if no history
+      navigate('/');
+    }
+  };
+
   return (
     <div class="profile-page">
       <div class="page-window-container">
@@ -339,6 +360,8 @@ const ProfilePage: Component = () => {
             </svg>
           }
           variant="3d"
+          showBack={showBackButton()}
+          onBack={handleBack}
           showMenu={true}
           menuItems={menuItems}
           contentPadding="0"
@@ -416,26 +439,6 @@ const ProfilePage: Component = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Feed Controls - Sort/Filter/Add Track */}
-              <div class="action-bar" style="margin-bottom: 12px;">
-                <ChannelFilterBar
-                  activeSort={activeSort()}
-                  onSortChange={handleSortChange}
-                  qualityFilter={qualityFilter()}
-                  onQualityFilterChange={setQualityFilter}
-                  musicSources={musicSources()}
-                  onMusicSourcesChange={setMusicSources}
-                  genres={genres()}
-                  onGenresChange={setGenres}
-                  availablePlatforms={availablePlatforms}
-                  availableGenres={availableGenres}
-                  filterDialogOpen={filterDialogOpen()}
-                  onFilterDialogOpenChange={setFilterDialogOpen}
-                  showAddTrack={true}
-                  onAddTrack={handleShareTrack}
-                />
               </div>
 
               {/* Activity Filter Dropdown */}

@@ -287,6 +287,17 @@ const ChannelViewPage: Component = () => {
     }
   ];
 
+  // Handle back navigation
+  const handleBack = () => {
+    // Try to go back in browser history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Fallback to channels list if no history
+      navigate('/channels');
+    }
+  };
+
   return (
     <div class="channel-view-page">
       <div class="page-window-container">
@@ -294,6 +305,8 @@ const ChannelViewPage: Component = () => {
           title={`${channelData()?.name || 'Channel'} - Channel Library`}
           icon={<span class="title-icon">📁</span>}
           variant="3d"
+          showBack={true}
+          onBack={handleBack}
           showMenu={true}
           menuItems={menuItems}
           contentPadding="0"
