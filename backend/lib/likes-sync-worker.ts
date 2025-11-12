@@ -1,5 +1,5 @@
 import { getSyncEngine } from './sync-engine'
-import { getSupabaseClient } from './api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from './api-utils'
 import { getNeynarService } from './neynar'
 
 /**
@@ -52,6 +52,7 @@ export async function syncReactionsForTier(
 ): Promise<SyncResult> {
   const startTime = Date.now()
   const supabase = getSupabaseClient()
+  const supabaseService = getSupabaseServiceClient() // For RLS-protected tables
   const syncEngine = getSyncEngine()
   const neynar = getNeynarService()
 
@@ -143,9 +144,9 @@ export async function syncReactionsForTier(
       const batch = batches[i]
 
       try {
-        // 5. Get tracking data for this batch
+        // 5. Get tracking data for this batch (use service client for RLS-protected table)
         const castHashes = batch.map(c => c.node_id)
-        const { data: trackingData } = await supabase
+        const { data: trackingData } = await supabaseService
           .from('cast_likes_sync_status')
           .select('cast_hash, likes_count_at_sync, recasts_count_at_sync')
           .in('cast_hash', castHashes)
@@ -250,7 +251,7 @@ export async function syncReactionsForTier(
           updated_at: new Date().toISOString()
         }))
 
-        const { error: trackingError } = await supabase
+        const { error: trackingError } = await supabaseService
           .from('cast_likes_sync_status')
           .upsert(trackingUpdates)
 

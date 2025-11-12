@@ -1,5 +1,5 @@
 import { getNeynarService } from './neynar'
-import { getSupabaseClient } from './api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from './api-utils'
 import { processMusicUrl, linkMusicToCast } from './music-metadata-extractor'
 import { isMusicUrl } from './url-parser'
 
@@ -12,6 +12,7 @@ import { isMusicUrl } from './url-parser'
 export class SyncEngine {
   private neynar = getNeynarService()
   private supabase = getSupabaseClient()
+  private supabaseService = getSupabaseServiceClient() // Service role client for RLS-protected tables
   private processedParentCasts = new Set<string>() // Cache for parent casts processed in this sync session
 
   /**
@@ -637,8 +638,8 @@ export class SyncEngine {
       success: boolean
     }
   ): Promise<void> {
-    // Upsert to sync_status table (we'll create this in migration)
-    const { error } = await this.supabase
+    // Use service role client to bypass RLS
+    const { error } = await this.supabaseService
       .from('channel_sync_status')
       .upsert({
         channel_id: channelId,

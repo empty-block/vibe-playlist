@@ -12,7 +12,7 @@
 
 import { parseArgs } from 'util'
 import { getNeynarService } from '../lib/neynar'
-import { getSupabaseClient } from '../lib/api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from '../lib/api-utils'
 import { getSyncEngine } from '../lib/sync-engine'
 
 interface BackfillOptions {
@@ -34,6 +34,7 @@ interface Checkpoint {
 class BackfillService {
   private neynar = getNeynarService()
   private supabase = getSupabaseClient()
+  private supabaseService = getSupabaseServiceClient() // Service role client for RLS-protected tables
   private syncEngine = getSyncEngine()
 
   /**
@@ -258,7 +259,7 @@ class BackfillService {
    * Load checkpoint for a channel
    */
   private async loadCheckpoint(channelId: string): Promise<Checkpoint | null> {
-    const { data, error } = await this.supabase
+    const { data, error } = await this.supabaseService
       .from('backfill_checkpoints')
       .select('*')
       .eq('channel_id', channelId)
@@ -276,7 +277,7 @@ class BackfillService {
    * Save checkpoint for a channel
    */
   private async saveCheckpoint(checkpoint: Checkpoint): Promise<void> {
-    const { error } = await this.supabase
+    const { error } = await this.supabaseService
       .from('backfill_checkpoints')
       .upsert(checkpoint, {
         onConflict: 'channel_id'

@@ -6,7 +6,7 @@
  * TASK-650: Queue-based async AI processing
  */
 
-import { getSupabaseClient } from './api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from './api-utils'
 import { extractMusicMetadata, type MusicContext, type ExtractedMusic } from './ai-music-extractor'
 
 export interface QueueItem {
@@ -158,7 +158,7 @@ async function updateQueueStatus(
   items: Array<{ platform_name: string; platform_id: string }>,
   status: 'pending' | 'processing' | 'completed' | 'failed'
 ): Promise<void> {
-  const supabase = getSupabaseClient()
+  const supabaseService = getSupabaseServiceClient() // Use service client for RLS-protected table
 
   for (const item of items) {
     const updateData: any = {
@@ -171,7 +171,7 @@ async function updateQueueStatus(
       updateData.processed_at = new Date().toISOString()
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseService
       .from('music_ai_queue')
       .update(updateData)
       .eq('platform_name', item.platform_name)
@@ -190,9 +190,9 @@ async function markItemCompleted(
   platform_name: string,
   platform_id: string
 ): Promise<void> {
-  const supabase = getSupabaseClient()
+  const supabaseService = getSupabaseServiceClient() // Use service client for RLS-protected table
 
-  const { error } = await supabase
+  const { error } = await supabaseService
     .from('music_ai_queue')
     .update({
       status: 'completed',
@@ -215,10 +215,10 @@ async function markItemFailed(
   platform_id: string,
   errorMessage: string
 ): Promise<void> {
-  const supabase = getSupabaseClient()
+  const supabaseService = getSupabaseServiceClient() // Use service client for RLS-protected table
 
   // Get current retry count
-  const { data: queueItem } = await supabase
+  const { data: queueItem } = await supabaseService
     .from('music_ai_queue')
     .select('retry_count')
     .eq('platform_name', platform_name)
@@ -231,7 +231,7 @@ async function markItemFailed(
   // If under max retries, set back to pending for retry
   const status = retryCount < maxRetries ? 'pending' : 'failed'
 
-  const { error } = await supabase
+  const { error } = await supabaseService
     .from('music_ai_queue')
     .update({
       status,
