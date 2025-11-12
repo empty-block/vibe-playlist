@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import path from 'path';
 
 export default defineConfig(() => {
   return {
     plugins: [solidPlugin()],
+    envDir: path.resolve(__dirname, '..'), // Load .env from parent directory
     server: {
       host: 'localhost',
       port: 3002,
@@ -27,7 +29,9 @@ export default defineConfig(() => {
       'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev'),
       // PostHog analytics configuration
       'import.meta.env.VITE_POSTHOG_API_KEY': JSON.stringify(process.env.VITE_POSTHOG_API_KEY || ''),
-      'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(process.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com')
+      'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(process.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com'),
+      // Beta invite bypass for local development
+      'import.meta.env.VITE_BYPASS_INVITE_GATE': JSON.stringify('true') // Hardcoded for debugging
     }
   };
 });

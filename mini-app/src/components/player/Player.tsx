@@ -30,11 +30,25 @@ interface PlayerProps {
 const Player: Component<PlayerProps> = (props) => {
   const navigate = useNavigate();
   const [isTouchDevice, setIsTouchDevice] = createSignal(false);
+  const [currentTrackHasPlayed, setCurrentTrackHasPlayed] = createSignal(false);
 
   let playButtonRef: HTMLButtonElement | undefined;
   let chatButtonRef: HTMLButtonElement | undefined;
   let statusIndicatorRef: HTMLDivElement | undefined;
   let playerBarRef: HTMLDivElement | undefined;
+
+  // Reset currentTrackHasPlayed when track changes
+  createEffect(() => {
+    const track = currentTrack();
+    setCurrentTrackHasPlayed(false);
+  });
+
+  // Track when current track starts playing
+  createEffect(() => {
+    if (isPlaying()) {
+      setCurrentTrackHasPlayed(true);
+    }
+  });
 
   // Track changes for animations
   createEffect(() => {
@@ -119,14 +133,15 @@ const Player: Component<PlayerProps> = (props) => {
     <Show when={currentTrack()}>
       <div ref={playerBarRef} class="player-bar">
         <div class="player-content">
-          {/* Media Container - show when playing */}
-          <Show when={isPlaying() && props.hasStartedPlayback?.()}>
-            <div class="player-audio-container">
-              <div class="player-audio-embed" classList={{
-                'player-video-embed': currentTrack()?.source === 'youtube'
-              }}>
-                {props.mediaComponent}
-              </div>
+          {/* Media Container - hide with CSS when paused (keep in DOM for player to stay ready) */}
+          <div class="player-audio-container" classList={{
+            'player-audio-container--hidden': !isPlaying() && currentTrackHasPlayed()
+          }}>
+            <div class="player-audio-embed" classList={{
+              'player-video-embed': currentTrack()?.source === 'youtube'
+            }}>
+              {props.mediaComponent}
+            </div>
               {/* Progress Bar - show for all sources */}
               <Show when={isSeekable()}>
                 <div class="player-progress-container">
@@ -145,8 +160,7 @@ const Player: Component<PlayerProps> = (props) => {
                   <div class="player-time">{formatTime(duration())}</div>
                 </div>
               </Show>
-            </div>
-          </Show>
+          </div>
 
           {/* Error Message Display */}
           <Show when={playerError()}>
@@ -156,8 +170,8 @@ const Player: Component<PlayerProps> = (props) => {
           </Show>
 
           {/* Track Info Panel - Green LCD style with integrated controls */}
-          {/* Always show when playback has started */}
-          <Show when={props.hasStartedPlayback?.()}>
+          {/* Always show when there's a current track */}
+          <Show when={currentTrack()}>
             <div class="player-track-info">
             <div class="player-track-metadata">
               <div class="player-track-title">{currentTrack()?.title}</div>
