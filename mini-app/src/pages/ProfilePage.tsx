@@ -50,7 +50,16 @@ const ProfilePage: Component = () => {
   let sentinelRef: HTMLDivElement | undefined;
 
   // Get FID from route params or use current user's FID
-  const userFid = () => params.fid || currentUser()?.fid || '';
+  const userFid = () => {
+    const fid = params.fid || currentUser()?.fid || '';
+    console.log('[ProfilePage] userFid computed:', {
+      paramsFid: params.fid,
+      currentUserFid: currentUser()?.fid,
+      currentUserUsername: currentUser()?.username,
+      resultFid: fid
+    });
+    return fid;
+  };
 
   // Load profile data on mount, but only if we have a valid FID
   onMount(() => {

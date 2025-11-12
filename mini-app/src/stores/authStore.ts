@@ -21,14 +21,16 @@ export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
 
 // Sync currentUser with Farcaster auth state and check invite access
 createEffect(async () => {
-  // Bypass invite gate if explicitly configured (for local development)
+  // Bypass invite gate if explicitly configured (for local development ONLY)
+  // CRITICAL: This should NEVER be enabled in production/deployed versions
   if (import.meta.env.VITE_BYPASS_INVITE_GATE === 'true') {
     console.log('[Auth] Bypassing invite gate and Farcaster auth (VITE_BYPASS_INVITE_GATE=true)');
+    console.warn('[Auth] WARNING: Using guest user for local dev only - DO NOT deploy with this enabled!');
     setCurrentUser({
-      fid: '3', // Default dev FID
-      username: 'dev-user',
-      avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
-      displayName: 'Dev User',
+      fid: 'local-dev-guest', // Guest user for local dev only - not a real FID
+      username: 'local-dev-guest',
+      avatar: null,
+      displayName: 'Local Dev Guest',
     });
     setIsAuthenticated(true);
     setShowInviteModal(false);
