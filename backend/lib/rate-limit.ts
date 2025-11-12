@@ -33,8 +33,8 @@ function cleanupOldEntries() {
   }
 }
 
-// Run cleanup every 5 minutes
-setInterval(cleanupOldEntries, 5 * 60 * 1000)
+// Note: Cleanup happens on-demand during rate limit checks instead of setInterval
+// (setInterval is not allowed in Cloudflare Workers global scope)
 
 /**
  * Get client IP address from request
