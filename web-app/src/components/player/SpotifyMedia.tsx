@@ -21,6 +21,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   let player: any;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
+  const [isToggling, setIsToggling] = createSignal(false);
   
   // Always use compact size for bottom bar
 
@@ -118,12 +119,19 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
   const togglePlay = async () => {
     console.log('Spotify togglePlay called');
-    
+
+    // Prevent rapid successive calls
+    if (isToggling()) {
+      console.log('Toggle already in progress, ignoring');
+      return;
+    }
+
     if (!playerReady()) {
       console.log('Spotify player not ready');
       return;
     }
 
+    setIsToggling(true);
     try {
       if (isPlaying()) {
         await player.pause();
@@ -134,6 +142,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       }
     } catch (error) {
       console.error('Error toggling Spotify playback:', error);
+    } finally {
+      // Reset toggle lock after a short delay
+      setTimeout(() => setIsToggling(false), 300);
     }
   };
 
@@ -221,7 +232,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         }
       } else {
         console.log('Successfully started Spotify playback');
-        setIsPlaying(true);
+        // Note: setIsPlaying is handled by player_state_changed listener
       }
     } catch (error) {
       console.error('Error playing Spotify track:', error);

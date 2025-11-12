@@ -33,6 +33,8 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
   const [sdkFailed, setSdkFailed] = createSignal(false);
+  const [isTogglingSDK, setIsTogglingSDK] = createSignal(false);
+  const [isTogglingConnect, setIsTogglingConnect] = createSignal(false);
 
   // Farcaster Spotify Connect state (local to this component instance)
   const [waitingForDevice, setWaitingForDevice] = createSignal(false);
@@ -106,7 +108,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           setDeviceName(activeDevice.name);
-          setIsPlaying(true);
+          // Note: isPlaying will be set by polling (startPlaybackPolling)
           props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           startPlaybackPolling();
@@ -145,7 +147,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
         if (result.success) {
           setDeviceName(result.deviceName || 'Spotify');
-          setIsPlaying(true);
+          // Note: isPlaying will be set by polling (startPlaybackPolling)
           props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           setWaitingForDevice(false);
@@ -192,7 +194,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       const success = await playTrackOnConnect(track.sourceId, track.contentType);
       if (success) {
         setDeviceName(activeDevice.name);
-        setIsPlaying(true);
+        // Note: isPlaying will be set by polling (startPlaybackPolling)
         props.onPlaybackStarted?.(true); // Notify parent that playback has started
         setConnectReady(true);
         setWaitingForDevice(false);
@@ -322,7 +324,14 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   };
 
   const togglePlaySDK = async () => {
+    // Prevent rapid successive calls
+    if (isTogglingSDK()) {
+      console.log('Toggle SDK already in progress, ignoring');
+      return;
+    }
     if (!playerReady()) return;
+
+    setIsTogglingSDK(true);
     try {
       if (isPlaying()) {
         await player.pause();
@@ -331,6 +340,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       }
     } catch (error) {
       console.error('Error toggling Spotify playback:', error);
+    } finally {
+      // Reset toggle lock after a short delay
+      setTimeout(() => setIsTogglingSDK(false), 300);
     }
   };
 
@@ -569,11 +581,17 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
   // Toggle play/pause using Spotify Connect (Farcaster only)
   const togglePlayConnect = async () => {
+    // Prevent rapid successive calls
+    if (isTogglingConnect()) {
+      console.log('Toggle Connect already in progress, ignoring');
+      return;
+    }
     if (!connectReady()) {
       console.warn('Connect API not ready yet');
       return;
     }
 
+    setIsTogglingConnect(true);
     const playing = isPlaying();
     console.log('Toggling Spotify Connect playback:', playing ? 'pause' : 'play');
 
@@ -585,13 +603,18 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       props.onPlaybackStarted?.(true);
     }
 
-    // Then call API - polling will correct if needed
-    const success = await togglePlaybackOnConnect(newState);
+    try {
+      // Then call API - polling will correct if needed
+      const success = await togglePlaybackOnConnect(newState);
 
-    if (!success) {
-      // Revert on failure
-      console.error('Failed to toggle Spotify Connect playback - reverting state');
-      setIsPlaying(playing);
+      if (!success) {
+        // Revert on failure
+        console.error('Failed to toggle Spotify Connect playback - reverting state');
+        setIsPlaying(playing);
+      }
+    } finally {
+      // Reset toggle lock after a short delay
+      setTimeout(() => setIsTogglingConnect(false), 300);
     }
   };
 
