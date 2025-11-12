@@ -173,17 +173,32 @@ const Player: Component<PlayerProps> = (props) => {
           {/* Always show when there's a current track */}
           <Show when={currentTrack()}>
             <div class="player-track-info">
-            <div class="player-track-metadata">
-              <div class="player-track-title">{currentTrack()?.title}</div>
-              <div class="player-track-subtitle">{currentTrack()?.artist}</div>
-              <div class="player-track-meta">
-                <span class="player-shared-by">shared by {currentTrack()?.addedBy}</span>
-                {/* Show Songlink attribution when track was resolved from song.link or Apple Music */}
-                <Show when={currentTrack()?.originalSource === 'songlink' || currentTrack()?.originalSource === 'apple_music'}>
-                  <span class="player-songlink-attribution" style="margin-left: 8px; opacity: 0.6; font-size: 0.85em;">
-                    • via Songlink
-                  </span>
-                </Show>
+            <div class="player-track-header">
+              {/* User avatar */}
+              <Show when={currentTrack()?.userAvatar} fallback={
+                <div class="player-user-avatar-fallback">
+                  {currentTrack()?.addedBy?.charAt(0).toUpperCase() || '?'}
+                </div>
+              }>
+                <img
+                  src={currentTrack()?.userAvatar}
+                  alt={currentTrack()?.addedBy}
+                  class="player-user-avatar"
+                />
+              </Show>
+
+              {/* Track metadata */}
+              <div class="player-track-metadata">
+                <div class="player-track-title">{currentTrack()?.title}</div>
+                <div class="player-track-subtitle">{currentTrack()?.artist}</div>
+                <div class="player-track-meta">
+                  {/* Show Songlink attribution when track was resolved from song.link or Apple Music */}
+                  <Show when={currentTrack()?.originalSource === 'songlink' || currentTrack()?.originalSource === 'apple_music'}>
+                    <span class="player-songlink-attribution" style="opacity: 0.6; font-size: 0.85em;">
+                      • via Songlink
+                    </span>
+                  </Show>
+                </div>
               </div>
             </div>
 
