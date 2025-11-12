@@ -101,6 +101,25 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     }
   };
 
+  // Open cast in Farcaster to view replies (and optionally add one)
+  const handleReplyClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    if (!props.castHash) {
+      console.log('[TrackCard] No castHash available for reply');
+      return;
+    }
+
+    try {
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      console.log('[TrackCard] Opening cast to view replies:', props.castHash);
+      await sdk.actions.viewCast({
+        hash: props.castHash
+      });
+    } catch (error) {
+      console.error('[TrackCard] Failed to open cast:', error);
+    }
+  };
+
   return (
     <div ref={cardRef} class="terminal-track-card activity-card">
       {/* Navy header bar */}
@@ -207,7 +226,12 @@ const TrackCard: Component<TrackCardProps> = (props) => {
           <span class="count">{props.stats.likes || 0}</span>
           <span class="label">likes</span>
         </div>
-        <div class="stat-box">
+        <div
+          class="stat-box clickable"
+          onClick={handleReplyClick}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'View replies in Farcaster' : ''}
+        >
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
           <span class="label">replies</span>
