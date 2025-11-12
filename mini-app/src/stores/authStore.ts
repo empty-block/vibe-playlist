@@ -21,6 +21,20 @@ export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
 
 // Sync currentUser with Farcaster auth state and check invite access
 createEffect(async () => {
+  // Bypass invite gate if explicitly configured (for local development)
+  if (import.meta.env.VITE_BYPASS_INVITE_GATE === 'true') {
+    console.log('[Auth] Bypassing invite gate and Farcaster auth (VITE_BYPASS_INVITE_GATE=true)');
+    setCurrentUser({
+      fid: '3', // Default dev FID
+      username: 'dev-user',
+      avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
+      displayName: 'Dev User',
+    });
+    setIsAuthenticated(true);
+    setShowInviteModal(false);
+    return;
+  }
+
   const auth = farcasterAuth();
 
   // CRITICAL: Wait for Farcaster SDK to finish initializing
