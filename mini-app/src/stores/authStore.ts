@@ -1,31 +1,98 @@
-import { createSignal } from 'solid-js';
+import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
+import { farcasterAuth } from './farcasterStore';
+import { checkInviteStatus } from '../utils/invite';
+import { identifyUser, trackSpotifyAuthCompleted } from '../utils/analytics';
 
-// Current user state (mock for now - would come from Farcaster in real app)
-export const [currentUser, setCurrentUser] = createSignal({
-  fid: '326181',
-  username: 'hendrix_69',
-  avatar: 'https://cdn-p.smehost.net/sites/7072b26066004910853871410c44e9f1/wp-content/uploads/2017/12/171207_hendrix-bsots_525px.jpg',
-  displayName: 'Jimi'
+// Current user state - now derived from Farcaster auth
+export const [currentUser, setCurrentUser] = createSignal<{
+  fid: string;
+  username: string;
+  avatar: string | null;
+  displayName: string;
+} | null>(null);
+
+// General authentication state - derived from Farcaster
+export const [isAuthenticated, setIsAuthenticated] = createSignal(false);
+
+// Invite code modal state
+export const [showInviteModal, setShowInviteModal] = createSignal(false);
+export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
+
+// Sync currentUser with Farcaster auth state and check invite access
+createEffect(async () => {
+  const auth = farcasterAuth();
+
+  if (auth.isAuthenticated && auth.fid) {
+    // Check if user has invite access
+    setInviteCheckPending(true);
+    const inviteStatus = await checkInviteStatus(auth.fid);
+    setInviteCheckPending(false);
+
+    if (inviteStatus.hasAccess) {
+      // User has access (either redeemed code or dev mode)
+      const effectiveDisplayName = auth.displayName || auth.username || 'User';
+      const effectiveUsername = auth.username || 'unknown';
+
+      setCurrentUser({
+        fid: auth.fid,
+        username: effectiveUsername,
+        avatar: auth.pfpUrl,
+        displayName: effectiveDisplayName,
+      });
+      setIsAuthenticated(true);
+      setShowInviteModal(false);
+
+      // Identify user in PostHog
+      identifyUser(auth.fid, {
+        username: effectiveUsername,
+        displayName: effectiveDisplayName,
+        pfpUrl: auth.pfpUrl || undefined,
+        isSpotifyAuthenticated: isSpotifyAuthenticated(),
+      });
+    } else {
+      // User needs to enter invite code
+      setShowInviteModal(true);
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
+  } else {
+    // For local development without Farcaster context, use mock data
+    // But still check invite access
+    setInviteCheckPending(true);
+    const inviteStatus = await checkInviteStatus('3'); // Mock FID
+    setInviteCheckPending(false);
+
+    if (inviteStatus.hasAccess) {
+      setCurrentUser({
+        fid: '3',
+        username: 'dwr',
+        avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
+        displayName: 'Dan Romero (Dev Mode)'
+      });
+      setIsAuthenticated(true);
+      setShowInviteModal(false);
+    } else {
+      // Even in dev mode, require invite code if bypass is disabled
+      setShowInviteModal(true);
+      setIsAuthenticated(false);
+      setCurrentUser(null);
+    }
+  }
 });
-
-// General authentication state (mock - for demo purposes)
-// In real app this would check Farcaster authentication
-// DEFAULT TO TRUE FOR DEVELOPMENT
-export const [isAuthenticated, setIsAuthenticated] = createSignal(
-  localStorage.getItem('demo_authenticated') !== 'false' // Default to true unless explicitly set to false
-);
-
-// Demo function to toggle authentication for testing
-export const toggleDemoAuth = () => {
-  const newState = !isAuthenticated();
-  setIsAuthenticated(newState);
-  localStorage.setItem('demo_authenticated', newState.toString());
-};
 
 // Spotify authentication state
 export const [isSpotifyAuthenticated, setIsSpotifyAuthenticated] = createSignal(false);
-export const [spotifyAccessToken, setSpotifyAccessToken] = createSignal<string | null>(null);
+
+// Wrap setSpotifyAccessToken to add logging
+const [_spotifyAccessToken, _setSpotifyAccessToken] = createSignal<string | null>(null);
+export const spotifyAccessToken = _spotifyAccessToken;
+export const setSpotifyAccessToken = (token: string | null) => {
+  console.log('setSpotifyAccessToken called with:', token ? `token (${token.substring(0, 20)}...)` : 'null');
+  console.trace('Token setter call stack');
+  _setSpotifyAccessToken(token);
+};
+
 export const [spotifyUser, setSpotifyUser] = createSignal<any>(null);
 export const [spotifyAuthLoading, setSpotifyAuthLoading] = createSignal(false);
 
@@ -54,18 +121,38 @@ export const canPlayTrack = (source: string): boolean => {
 };
 
 // Spotify authentication functions
-export const initiateSpotifyAuth = async () => {
+export const initiateSpotifyAuth = async (pendingTrackData?: any) => {
   // Clean up any stale auth data before starting new auth flow
   localStorage.removeItem('spotify_auth_initiated');
   localStorage.removeItem('spotify_code_verifier');
-  
-  const authURL = await getSpotifyAuthURL();
-  
+
+  const authURL = await getSpotifyAuthURL(pendingTrackData);
+
   // Store the current state to handle redirect
   localStorage.setItem('spotify_auth_initiated', 'true');
-  
-  // Redirect to Spotify authorization
-  window.location.href = authURL;
+
+  console.log('🔐 Opening Spotify auth URL:', authURL);
+  if (pendingTrackData) {
+    console.log('📦 Pending track data included in OAuth state:', pendingTrackData);
+  }
+
+  // Try popup first for desktop
+  const width = 600;
+  const height = 700;
+  const left = window.screen.width / 2 - width / 2;
+  const top = window.screen.height / 2 - height / 2;
+
+  const popup = window.open(
+    authURL,
+    'spotify-auth',
+    `width=${width},height=${height},left=${left},top=${top}`
+  );
+
+  if (!popup) {
+    console.error('Failed to open popup - falling back to redirect');
+    // Fallback to redirect if popup is blocked (common on mobile/iframe)
+    window.location.href = authURL;
+  }
 };
 
 // Exchange authorization code for access token using PKCE
@@ -117,7 +204,10 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     setIsSpotifyAuthenticated(true);
     localStorage.removeItem('spotify_auth_initiated');
     localStorage.removeItem('spotify_code_verifier');
-    
+
+    // Track successful Spotify authentication
+    trackSpotifyAuthCompleted(true);
+
     // Load Spotify SDK now that we're authenticated
     if (window.loadSpotifySDK) {
       window.loadSpotifySDK().catch(console.error);
@@ -126,6 +216,10 @@ export const handleSpotifyCallback = async (code: string): Promise<boolean> => {
     return true;
   } catch (error) {
     console.error('Spotify auth error:', error);
+
+    // Track failed Spotify authentication
+    trackSpotifyAuthCompleted(false, error instanceof Error ? error.message : 'Unknown error');
+
     // Clean up on error
     localStorage.removeItem('spotify_auth_initiated');
     localStorage.removeItem('spotify_code_verifier');

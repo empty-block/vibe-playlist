@@ -4,7 +4,7 @@ import { ThreadCard } from '../components/common/TrackCard/NEW';
 import { ThreadFilterBar } from '../components/threads/ThreadFilterBar';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
-import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed, TrackSource } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackWithAuthCheck, TrackSource } from '../stores/playerStore';
 import { Thread } from '../data/mockThreads';
 import { sortThreads, SortType } from '../utils/threadSorting';
 import { fetchThreads } from '../services/api';
@@ -42,7 +42,7 @@ const ThreadsPage: Component = () => {
   const playTrack = (track: Track) => {
     const threadTracks = getThreadTracks();
     const feedId = `threads-${sortBy()}`;
-    playTrackFromFeed(track, threadTracks, feedId);
+    playTrackWithAuthCheck(track, threadTracks, feedId);
   };
 
   const likeTrack = (track: Track) => {

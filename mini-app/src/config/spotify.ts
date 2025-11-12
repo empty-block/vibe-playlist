@@ -38,25 +38,32 @@ export const generateCodeVerifier = (): string => {
 };
 
 // Generate Spotify authorization URL using PKCE flow (recommended for browser apps)
-export const getSpotifyAuthURL = async (): Promise<string> => {
+export const getSpotifyAuthURL = async (pendingTrackData?: any): Promise<string> => {
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
-  
+
   // Store verifier for token exchange
   localStorage.setItem('spotify_code_verifier', codeVerifier);
-  
+
+  // Build state parameter: include CSRF token + optional pending track data
+  const stateData = {
+    csrf: generateRandomString(16),
+    ...(pendingTrackData && { pendingTrack: pendingTrackData })
+  };
+  const stateParam = btoa(JSON.stringify(stateData));
+
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: SPOTIFY_CONFIG.CLIENT_ID,
     scope: SPOTIFY_CONFIG.SCOPES,
     redirect_uri: SPOTIFY_CONFIG.REDIRECT_URI,
-    state: generateRandomString(16),
+    state: stateParam,
     code_challenge_method: 'S256',
     code_challenge: codeChallenge
   });
 
   const authURL = `${SPOTIFY_CONFIG.ACCOUNTS_BASE_URL}/authorize?${params.toString()}`;
-  
+
   return authURL;
 };
 

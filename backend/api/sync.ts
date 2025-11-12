@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { getSyncEngine } from '../lib/sync-engine'
+import { verifyAdminMiddleware } from '../lib/auth-helpers'
 
 const app = new Hono()
 
@@ -43,8 +44,9 @@ app.get('/status/:channelId', async (c) => {
 /**
  * POST /api/sync/trigger/:channelId
  * Manually trigger a sync for a specific channel
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/trigger/:channelId', async (c) => {
+app.post('/trigger/:channelId', verifyAdminMiddleware, async (c) => {
   try {
     const channelId = c.req.param('channelId')
     const forceFullSync = c.req.query('forceFullSync') === 'true'
@@ -80,8 +82,9 @@ app.post('/trigger/:channelId', async (c) => {
 /**
  * POST /api/sync/replies/:castHash
  * Manually trigger reply sync for a specific cast
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/replies/:castHash', async (c) => {
+app.post('/replies/:castHash', verifyAdminMiddleware, async (c) => {
   try {
     const castHash = c.req.param('castHash')
     const channelId = c.req.query('channelId') || 'unknown'
@@ -112,8 +115,9 @@ app.post('/replies/:castHash', async (c) => {
 /**
  * POST /api/sync/user/:fid/reactions
  * Trigger sync of reactions (likes/recasts) for a specific user
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/user/:fid/reactions', async (c) => {
+app.post('/user/:fid/reactions', verifyAdminMiddleware, async (c) => {
   try {
     const fid = parseInt(c.req.param('fid'))
     const type = (c.req.query('type') || 'likes') as 'likes' | 'recasts' | 'all'
@@ -153,6 +157,47 @@ app.post('/user/:fid/reactions', async (c) => {
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to trigger user reactions sync'
+      }
+    }, 500)
+  }
+})
+
+/**
+ * POST /api/sync/user/:fid/profile
+ * Sync profile data (username, display name, avatar) for a specific user
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
+ */
+app.post('/user/:fid/profile', verifyAdminMiddleware, async (c) => {
+  try {
+    const fid = parseInt(c.req.param('fid'))
+
+    if (isNaN(fid)) {
+      return c.json({
+        error: {
+          code: 'INVALID_PARAM',
+          message: 'Invalid FID parameter'
+        }
+      }, 400)
+    }
+
+    const syncEngine = getSyncEngine()
+
+    console.log(`[Sync API] Triggering profile sync for user: ${fid}`)
+
+    const result = await syncEngine.syncUserProfile(fid)
+
+    return c.json({
+      fid,
+      success: result.success,
+      user: result.user,
+      error: result.error
+    })
+  } catch (error) {
+    console.error('Trigger user profile sync error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to trigger user profile sync'
       }
     }, 500)
   }

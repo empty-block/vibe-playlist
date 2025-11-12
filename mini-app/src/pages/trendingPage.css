@@ -4,7 +4,7 @@
 /* Page Container - Background inherited from body */
 .trending-page {
   min-height: 100vh;
-  padding-bottom: 80px; /* Space for mobile navigation */
+  padding-bottom: 8px; /* Space for mobile navigation */
   display: flex;
   flex-direction: column;
 }
@@ -54,7 +54,7 @@ body:not(.theme-dark) .section-header {
   margin-bottom: 12px;
   padding: 8px 10px;
   background: #000000;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
 }
 
 /* Section Title - Light Mode */
@@ -62,7 +62,7 @@ body:not(.theme-dark) .section-header {
 body:not(.theme-dark) .section-title {
   font-size: 11px;
   font-weight: bold;
-  color: #000080;
+  color: var(--neon-blue);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -71,7 +71,7 @@ body:not(.theme-dark) .section-title {
 .theme-dark .section-title {
   font-size: 11px;
   font-weight: bold;
-  color: #00ff00;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -120,25 +120,36 @@ body:not(.theme-dark) .track-item:hover {
   padding: 10px;
   margin-bottom: 8px;
   background: #1a1a1a;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .theme-dark .track-item:hover {
   background: #222222;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 10px rgba(4, 202, 244, 0.3);
 }
 
-/* Track Rank - Golden Gradient for Top 3 */
+/* Track Rank - Theme-aware */
 .track-rank {
   font-size: 20px;
   font-weight: bold;
-  color: #000080;
   min-width: 32px;
   text-align: center;
 }
 
+/* Track Rank - Light Mode */
+.theme-light .track-rank,
+body:not(.theme-dark) .track-rank {
+  color: var(--neon-blue);
+}
+
+/* Track Rank - Dark Mode */
+.theme-dark .track-rank {
+  color: var(--neon-cyan); /* Neon green */
+}
+
+/* Top 3 Rank - Golden Gradient (works in both themes) */
 .track-rank.top-3 {
   background: linear-gradient(45deg, #FFD700, #FFA500);
   -webkit-background-clip: text;
@@ -172,51 +183,81 @@ body:not(.theme-dark) .track-item:hover {
   min-width: 0;
 }
 
-/* Black Text for Titles */
-.track-title {
+/* Track Title - Theme-aware with higher specificity */
+.trending-page .track-item .track-info .track-title {
   font-weight: bold;
   font-size: 14px;
-  color: #000000;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Normal Colored Text for Artists */
-.track-artist {
+/* Track Title - Light Mode */
+.theme-light .trending-page .track-item .track-info .track-title,
+body:not(.theme-dark) .trending-page .track-item .track-info .track-title {
+  color: #000000;
+}
+
+/* Track Title - Dark Mode */
+.theme-dark .trending-page .track-item .track-info .track-title {
+  color: #ffffff; /* White text in dark mode */
+}
+
+/* Track Artist - Theme-aware with higher specificity */
+.trending-page .track-item .track-info .track-artist {
   font-size: 12px;
-  color: #555555;
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Submitted By Text */
+/* Track Artist - Light Mode */
+.theme-light .trending-page .track-item .track-info .track-artist,
+body:not(.theme-dark) .trending-page .track-item .track-info .track-artist {
+  color: #555555;
+}
+
+/* Track Artist - Dark Mode */
+.theme-dark .trending-page .track-item .track-info .track-artist {
+  color: var(--accent-tertiary); /* Neon magenta in dark mode */
+}
+
+/* Submitted By Text - Theme-aware */
 .track-submitted {
   font-size: 11px;
-  color: #666666;
   margin-top: 4px;
 }
 
+/* Submitted By - Light Mode */
+.theme-light .track-submitted,
+body:not(.theme-dark) .track-submitted {
+  color: #666666;
+}
+
+/* Submitted By - Dark Mode */
+.theme-dark .track-submitted {
+  color: #888888;
+}
+
 .submitted-username {
-  color: #000080;
+  color: #E73895;
   font-weight: 600;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .submitted-username:hover {
-  color: #1084D0;
+  color: #E73895;
   text-decoration: underline;
 }
 
 .theme-dark .submitted-username {
-  color: #00ff00;
+  color: #E73895;
 }
 
 .theme-dark .submitted-username:hover {
-  color: #00ffaa;
+  color: #E73895;
 }
 
 .track-stats {
@@ -254,10 +295,10 @@ body:not(.theme-dark) .status-bar-section {
 
 /* Status Bar Sections - Dark Mode */
 .theme-dark .status-bar-section {
-  border: 1px solid #00ff00;
+  border: 1px solid var(--border-accent);
   padding: 2px 6px;
   background: #000000;
-  color: #00ff00;
+  color: #ffffff;
   font-size: 10px;
 }
 

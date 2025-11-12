@@ -54,9 +54,13 @@ app.get('/trending', async (c) => {
         timeframeDays = 1
         velocityDays = 1
         break
+      case '2d':
+        timeframeDays = 2
+        velocityDays = 1  // Use 1 day for velocity to strongly favor recent engagement
+        break
       case '7d':
         timeframeDays = 7
-        velocityDays = 3
+        velocityDays = 1
         break
       case '30d':
         timeframeDays = 30
@@ -67,7 +71,7 @@ app.get('/trending', async (c) => {
         velocityDays = 30
         break
       default:
-        timeframeDays = 1
+        timeframeDays = 2
         velocityDays = 1
     }
 
@@ -115,6 +119,71 @@ app.get('/trending', async (c) => {
     })
   } catch (error) {
     console.error('Get trending music error:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error'
+      }
+    }, 500)
+  }
+})
+
+/**
+ * GET /api/music/track?platform=spotify&id=abc123
+ * Get a single track by platform and platform_id
+ */
+app.get('/track', async (c) => {
+  try {
+    const platform = c.req.query('platform')
+    const platformId = c.req.query('id')
+
+    if (!platform || !platformId) {
+      return c.json({
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'Missing required parameters: platform and id'
+        }
+      }, 400)
+    }
+
+    const supabase = getSupabaseClient()
+
+    // Fetch track from music_library
+    const { data: track, error } = await supabase
+      .from('music_library')
+      .select('*')
+      .eq('platform_name', platform)
+      .eq('platform_id', platformId)
+      .single()
+
+    if (error || !track) {
+      return c.json({
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Track not found'
+        }
+      }, 404)
+    }
+
+    // Debug: Log raw database response
+    console.log('🔍 [music.ts] Raw DB track data:', {
+      platform_name: track.platform_name,
+      platform_id: track.platform_id,
+      title: track.title,
+      thumbnail_url: track.thumbnail_url,
+      allKeys: Object.keys(track)
+    })
+
+    // Format track using the utility function
+    const formattedTrack = formatMusic(track)
+
+    console.log('🔍 [music.ts] Formatted track:', formattedTrack)
+
+    return c.json({
+      track: formattedTrack
+    })
+  } catch (error) {
+    console.error('Get track error:', error)
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',

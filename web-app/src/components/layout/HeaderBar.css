@@ -48,6 +48,10 @@
   overflow-y: auto;
   padding: 16px;
   padding-bottom: 24px;
+  /* Enable smooth scrolling for better UX */
+  scroll-behavior: smooth;
+  /* Improve scroll performance */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Desktop Layout with sidebar */
@@ -88,16 +92,18 @@
     bottom: 72px; /* Mobile nav only - player is outside now */
   }
 
-  /* Add padding to content wrapper to prevent overlap with player */
+  /* Add generous padding to content wrapper to prevent overlap with player */
   .main-content.has-player .content-wrapper {
-    padding-bottom: 136px !important; /* Player height (120px) + spacing (16px) */
+    /* Mobile player can vary from 200-300px, add generous bottom space */
+    padding-bottom: 320px !important; /* Mobile player max height (~280px) + generous spacing (40px) */
   }
 }
 
 /* Player space adjustment - Desktop/Tablet */
 @media (min-width: 768px) {
   .main-content.has-player .content-wrapper {
-    padding-bottom: 156px; /* Desktop player height (140px) + spacing */
+    /* Desktop player height (140px) + generous spacing (64px) for comfortable scrolling */
+    padding-bottom: 204px !important;
   }
 }
 
@@ -274,4 +280,52 @@
     rgba(255, 255, 255, 0.02) 4px
   );
   pointer-events: none;
+}
+
+/* ==========================================
+   PLAYER-AWARE WINDOW & PANEL ADJUSTMENTS
+   ========================================== */
+
+/* Window panels and containers should never be obscured by player */
+.win95-panel {
+  /* Allow proper scrolling within panels */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* When player is showing, ensure window components have proper bottom spacing */
+.win95-panel.has-player {
+  /* Reduce max-height to accommodate player without cutting off content */
+  max-height: calc(100vh - 140px - 72px - 2rem); /* viewport - player - margins */
+}
+
+/* Mobile adjustments for win95-panel with player */
+@media (max-width: 767px) {
+  .win95-panel.has-player {
+    /* Account for mobile player (variable height) and mobile nav */
+    max-height: calc(100vh - 280px - 72px - 2rem); /* viewport - player max - mobile nav - margins */
+  }
+}
+
+/* Ensure all scrollable content areas within panels have proper padding */
+.win95-panel > div[class*="overflow"],
+.win95-panel > div[style*="overflow"] {
+  /* Add extra bottom padding for comfortable scrolling */
+  padding-bottom: 24px;
+}
+
+/* Library and other major layout containers */
+.library-container,
+.page-container,
+.content-grid {
+  /* Ensure these containers don't extend behind the player */
+  position: relative;
+}
+
+/* Grid and flex containers should account for player */
+.main-content.has-player .library-container,
+.main-content.has-player .page-container,
+.main-content.has-player .content-grid {
+  /* Additional bottom margin for breathing room above player */
+  margin-bottom: var(--space-8, 32px);
 }

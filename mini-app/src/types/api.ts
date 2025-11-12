@@ -11,10 +11,11 @@ export interface ApiThreadMusic {
   id: string;
   title: string;
   artist: string;
-  platform: 'youtube' | 'spotify';
+  platform: 'youtube' | 'spotify' | 'soundcloud';
   platformId: string;
   url: string;
   thumbnail?: string;
+  musicType?: 'song' | 'album' | 'playlist'; // From database music_type field
 }
 
 export interface ApiThreadStats {
@@ -64,6 +65,15 @@ export function transformApiAuthor(apiAuthor: ApiThreadAuthor): ThreadAuthor {
 }
 
 export function transformApiMusic(apiMusic: ApiThreadMusic): ThreadTrack {
+  // Map database music_type to player contentType
+  const mapMusicTypeToContentType = (musicType?: string): 'track' | 'album' | 'playlist' | undefined => {
+    if (!musicType) return undefined;
+    if (musicType === 'song') return 'track';
+    if (musicType === 'album') return 'album';
+    if (musicType === 'playlist') return 'playlist';
+    return 'track'; // Default to track for unknown types
+  };
+
   return {
     id: apiMusic.id,
     title: apiMusic.title,
@@ -72,6 +82,7 @@ export function transformApiMusic(apiMusic: ApiThreadMusic): ThreadTrack {
     source: apiMusic.platform,
     sourceId: apiMusic.platformId,
     thumbnail: apiMusic.thumbnail || '',
+    contentType: mapMusicTypeToContentType(apiMusic.musicType),
     likes: 0,
     comments: 0,
     timestamp: new Date().toISOString(),

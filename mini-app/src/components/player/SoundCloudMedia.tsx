@@ -5,6 +5,7 @@ interface SoundCloudMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPause?: (pauseFn: () => void) => void;
 }
 
 declare global {
@@ -62,6 +63,9 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
       if (props.onSeek) {
         props.onSeek((time: number) => seekToPosition(time));
       }
+      if (props.onPause) {
+        props.onPause(() => pauseSoundCloud());
+      }
 
       // Enable seeking
       setIsSeekable(true);
@@ -101,6 +105,22 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
         setDuration(duration / 1000); // Convert ms to seconds
       });
     });
+  };
+
+  const pauseSoundCloud = () => {
+    console.log('[SoundCloudMedia] Pause requested');
+
+    if (!playerReady() || !widget) {
+      console.log('[SoundCloudMedia] No active widget to pause');
+      return;
+    }
+
+    try {
+      console.log('[SoundCloudMedia] Pausing SoundCloud widget');
+      widget.pause();
+    } catch (error) {
+      console.error('Error pausing SoundCloud widget:', error);
+    }
   };
 
   const togglePlay = () => {

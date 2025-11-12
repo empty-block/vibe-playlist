@@ -1,17 +1,18 @@
 import { Component, createSignal, For, createMemo, Show, createResource } from 'solid-js';
-import { useParams, A } from '@solidjs/router';
+import { useParams, useNavigate, A } from '@solidjs/router';
 import { ThreadCard } from '../components/common/TrackCard/NEW';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import TerminalHeader from '../components/layout/Header/TerminalHeader';
 import ThreadActionsBar from '../components/thread/ThreadActionsBar';
 import AddTrackModal from '../components/library/AddTrackModal';
-import { setCurrentTrack, setIsPlaying, Track, playTrackFromFeed } from '../stores/playerStore';
+import { setCurrentTrack, setIsPlaying, Track, playTrackWithAuthCheck } from '../stores/playerStore';
 import { fetchThread } from '../services/api';
 import { transformApiThreadDetail } from '../types/api';
 import './threadView.css';
 
 const ThreadViewPage: Component = () => {
   const params = useParams();
+  const navigate = useNavigate();
 
   // Fetch thread from API
   const [threadData] = createResource(() => params.id, fetchThread);
@@ -57,7 +58,7 @@ const ThreadViewPage: Component = () => {
   const playTrack = (track: Track) => {
     const threadTracks = getThreadTracks();
     const feedId = `thread-${params.id}`;
-    playTrackFromFeed(track, threadTracks, feedId);
+    playTrackWithAuthCheck(track, threadTracks, feedId);
   };
 
   const likeTrack = (track: Track) => {
@@ -89,6 +90,12 @@ const ThreadViewPage: Component = () => {
     setShowAddReplyModal(false);
 
     // TODO: Refresh thread to show new reply
+  };
+
+  // Username click handler
+  const handleUsernameClick = (fid: string, username: string, e: Event) => {
+    e.stopPropagation();
+    navigate(`/profile/${fid}`);
   };
 
   return (
@@ -134,6 +141,7 @@ const ThreadViewPage: Component = () => {
               threadId={thread()!.id}
               threadText={thread()!.initialPost.text}
               creatorUsername={thread()!.initialPost.author.username}
+              creatorFid={thread()!.initialPost.author.fid}
               creatorAvatar={thread()!.initialPost.author.pfpUrl}
               timestamp={thread()!.initialPost.timestamp}
               replyCount={thread()!.replyCount}
@@ -148,6 +156,7 @@ const ThreadViewPage: Component = () => {
                 sourceId: thread()!.initialPost.track.sourceId
               } : undefined}
               onTrackPlay={playTrack}
+              onUsernameClick={handleUsernameClick}
             />
           </div>
 
@@ -179,6 +188,7 @@ const ThreadViewPage: Component = () => {
                       threadId={reply.castHash}
                       threadText={reply.text}
                       creatorUsername={reply.author.username}
+                      creatorFid={reply.author.fid}
                       creatorAvatar={reply.author.pfpUrl}
                       timestamp={reply.timestamp}
                       replyCount={0}
@@ -193,6 +203,7 @@ const ThreadViewPage: Component = () => {
                         sourceId: reply.track.sourceId
                       }}
                       onTrackPlay={playTrack}
+                      onUsernameClick={handleUsernameClick}
                     />
                   </div>
                 )}

@@ -1,28 +1,36 @@
 import { Hono } from 'hono'
 import { generateMockCastHash } from '../lib/test-data'
-import { extractAndStoreMusicMetadata } from '../lib/music-extraction'
+import { processMusicUrl, linkMusicToCast } from '../lib/music-metadata-extractor'
 import {
   getSupabaseClient,
   encodeCursor,
   decodeCursor
 } from '../lib/api-utils'
+import { getNeynarService } from '../lib/neynar'
+import { verifyAuthMiddleware } from './auth'
+import { rateLimitMiddleware } from '../lib/rate-limit'
 
 const app = new Hono()
 
 /**
  * POST /api/threads
  * Create a new thread with test data
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/', async (c) => {
+app.post('/', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const body = await c.req.json()
-    const { text, trackUrls, userId } = body
+    const { text, trackUrls } = body
 
-    if (!text || !userId) {
+    // SECURITY: Get userId from JWT (verified by middleware), not from request body
+    const userId = c.get('fid')
+
+    if (!text) {
       return c.json({
         error: {
           code: 'INVALID_REQUEST',
-          message: 'Missing required fields: text and userId'
+          message: 'Missing required field: text'
         }
       }, 400)
     }
@@ -68,12 +76,41 @@ app.post('/', async (c) => {
       console.error('Error creating interaction edge:', edgeError)
     }
 
-    // If trackUrls provided, extract music metadata (fire-and-forget)
+    // If trackUrls provided, process through modern pipeline (same as sync engine)
     const musicProcessing = !!(trackUrls && trackUrls.length > 0)
     if (musicProcessing) {
-      extractAndStoreMusicMetadata(castHash, trackUrls).catch(err =>
-        console.error('Background music extraction error:', err)
-      )
+      // Process each track URL through OpenGraph → music_library → AI queue
+      for (let i = 0; i < trackUrls.length; i++) {
+        processMusicUrl(trackUrls[i]).then(result => {
+          if (result.success) {
+            linkMusicToCast(castHash, result.platform_name, result.platform_id, i)
+              .catch(err => console.error('Error linking music to cast:', err))
+          }
+        }).catch(err => console.error('Music processing error:', err))
+      }
+    }
+
+    // Post to Farcaster via Neynar (if configured)
+    let farcasterCastHash: string | null = null
+    const signerUuid = process.env.NEYNAR_SIGNER_UUID
+
+    if (signerUuid && signerUuid !== 'CHANGEME') {
+      try {
+        const neynarService = getNeynarService()
+        const farcasterResponse = await neynarService.publishCast({
+          signerUuid,
+          text,
+          channelId: 'jamzy', // Post to jamzy channel (may not exist yet)
+          embeds: trackUrls || undefined
+        })
+        farcasterCastHash = farcasterResponse.hash
+        console.log('Successfully posted to Farcaster:', farcasterCastHash)
+      } catch (farcasterError) {
+        // Don't fail the request if Farcaster posting fails
+        console.error('Failed to post to Farcaster (non-blocking):', farcasterError)
+      }
+    } else {
+      console.log('Neynar signer not configured, skipping Farcaster posting')
     }
 
     // Fetch user info for response
@@ -98,7 +135,8 @@ app.post('/', async (c) => {
         replies: 0,
         recasts: 0
       },
-      musicProcessing
+      musicProcessing,
+      farcasterCastHash // Include Farcaster hash if successfully posted
     })
   } catch (error) {
     console.error('Create thread error:', error)
@@ -298,18 +336,23 @@ app.get('/', async (c) => {
 /**
  * POST /api/threads/:castHash/reply
  * Reply to a thread
+ * REQUIRES AUTHENTICATION - userId is extracted from JWT
+ * Rate limited to prevent spam
  */
-app.post('/:castHash/reply', async (c) => {
+app.post('/:castHash/reply', verifyAuthMiddleware, rateLimitMiddleware, async (c) => {
   try {
     const parentCastHash = c.req.param('castHash')
     const body = await c.req.json()
-    const { text, trackUrls, userId } = body
+    const { text, trackUrls } = body
 
-    if (!text || !userId) {
+    // SECURITY: Get userId from JWT (verified by middleware), not from request body
+    const userId = c.get('fid')
+
+    if (!text) {
       return c.json({
         error: {
           code: 'INVALID_REQUEST',
-          message: 'Missing required fields: text and userId'
+          message: 'Missing required field: text'
         }
       }, 400)
     }
@@ -373,12 +416,18 @@ app.post('/:castHash/reply', async (c) => {
       console.error('Error creating AUTHORED edge:', authoredEdgeError)
     }
 
-    // If trackUrls provided, extract music metadata (fire-and-forget)
+    // If trackUrls provided, process through modern pipeline (same as sync engine)
     const musicProcessing = !!(trackUrls && trackUrls.length > 0)
     if (musicProcessing) {
-      extractAndStoreMusicMetadata(replyCastHash, trackUrls).catch(err =>
-        console.error('Background music extraction error:', err)
-      )
+      // Process each track URL through OpenGraph → music_library → AI queue
+      for (let i = 0; i < trackUrls.length; i++) {
+        processMusicUrl(trackUrls[i]).then(result => {
+          if (result.success) {
+            linkMusicToCast(replyCastHash, result.platform_name, result.platform_id, i)
+              .catch(err => console.error('Error linking music to cast:', err))
+          }
+        }).catch(err => console.error('Music processing error:', err))
+      }
     }
 
     // Fetch user info for response

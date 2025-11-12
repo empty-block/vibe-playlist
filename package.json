@@ -4,15 +4,16 @@
   "description": "Retro-themed music playlist SPA with vanilla JS and Bun server",
   "type": "module",
   "scripts": {
-    "dev": "cd web-app && bun --bun vite",
-    "dev:web": "cd web-app && bun --bun vite",
-    "dev:miniapp": "cd mini-app && bun --bun vite & bun run dev:server",
-    "dev:server": "bun run --watch backend/server.ts",
+    "postinstall": "cd web-app && bun install && cd ../mini-app && bun install && cd ../backend && bun install",
+    "dev": "cd web-app && bun run dev",
+    "dev:web": "cd web-app && bun run dev",
+    "dev:miniapp": "(cd mini-app && bun run dev) & (cd backend && bun run dev)",
+    "dev:server": "cd backend && bun run dev",
     "dev:full": "bun run dev:web & bun run dev:server",
-    "build": "cd web-app && vite build",
-    "build:web": "cd web-app && vite build",
-    "build:miniapp": "cd mini-app && vite build",
-    "preview": "cd web-app && vite preview",
+    "build": "cd web-app && bun run build",
+    "build:web": "cd web-app && bun run build",
+    "build:miniapp": "cd mini-app && bun run build",
+    "preview": "cd web-app && bun run preview",
     "start": "bun run backend/server.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
@@ -21,25 +22,16 @@
     "data:run": "cd data/pipelines && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist POLARS_SKIP_CPU_CHECK=1 arch -arm64 ../../venv/bin/python -m flow",
     "data:import": "cd data/pipelines/data_importer && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
     "data:parser": "cd data/pipelines/cast_music_parser && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
-    "data:graph": "cd data/pipelines/graph_analysis && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow"
+    "data:graph": "cd data/pipelines/graph_analysis && PYTHONPATH=/Users/nmadd/Dropbox/code/vibes/vibes-playlist arch -arm64 ../../../venv/bin/python -m flow",
+    "deploy": "./deploy-all.sh",
+    "deploy:backend": "./deploy-backend.sh",
+    "deploy:miniapp": "./deploy-miniapp.sh",
+    "backfill": "bun run backend/scripts/backfill-channel.ts",
+    "reset-invite": "bun run backend/scripts/reset-test-access.ts"
   },
   "devDependencies": {
-    "@rollup/rollup-darwin-x64": "^4.52.3",
-    "@types/bun": "^1.3.0",
-    "babel-preset-solid": "^1.9.6",
-    "typescript": "^5.3.3",
-    "vite": "^7.0.6",
-    "vite-plugin-solid": "^2.11.8"
-  },
-  "dependencies": {
     "@anthropic-ai/claude-code": "^2.0.0",
-    "@anthropic-ai/sdk": "^0.67.0",
-    "@neynar/nodejs-sdk": "^3.34.0",
-    "@solidjs/router": "^0.15.3",
-    "@supabase/supabase-js": "^2.57.4",
-    "animejs": "3.2.1",
-    "hono": "^4.9.10",
-    "open-graph-scraper": "^6.10.0",
-    "solid-js": "^1.9.7"
-  }
+    "bun-types": "^1.3.1"
+  },
+  "dependencies": {}
 }

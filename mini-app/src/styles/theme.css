@@ -26,18 +26,37 @@ body:not(.theme-dark) {
   --text-primary: #000000; /* Black text */
   --text-secondary: #808080; /* Gray text */
   --text-tertiary: #A0A0A0; /* Light gray text */
-  --text-lcd: #00FF00; /* Green LCD text */
+  --text-lcd: #04caf4; /* Cyan LCD text */
   --text-lcd-secondary: #00FFFF; /* Cyan LCD text */
 
   /* Accent Colors */
-  --accent-primary: #000080; /* Dark blue (Win95) */
+  --accent-primary: #3b00fd; /* Neon blue */
   --accent-secondary: #00FFFF; /* Cyan */
-  --accent-tertiary: #FF00FF; /* Magenta */
+  --accent-tertiary: #E73895; /* Berry red */
+
+  /* Neon Color Palette (90s inspired) */
+  --neon-blue: #3b00fd;
+  --neon-cyan: #04caf4;
+  --neon-pink: #E73895;
+  --neon-magenta: #E73895; /* Alias for pink */
+  --neon-magenta-bright: #E73895;
+  --neon-yellow: #d1f60a;
+
+  /* Gradient Definitions */
+  --gradient-page-bg: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Blue to Cyan */
+  --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Neon blue to cyan */
+  --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
+  --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
+
+  /* Typography */
+  --font-display: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  --light-text: #A0A0A0;
+  --muted-text: #A0A0A0;
 
   /* Interactive States */
   --hover-bg: #E0E0E8;
   --active-bg: #A0A0A8;
-  --focus-outline: #000080;
+  --focus-outline: #3b00fd;
 
   /* Shadows */
   --shadow-subtle: rgba(0, 0, 0, 0.1);
@@ -47,45 +66,77 @@ body:not(.theme-dark) {
 }
 
 /* ============================================
-   DARK MODE (v6 Cyberpunk Terminal)
+   DARK MODE (Refined Brand Cyberpunk)
    ============================================ */
 .theme-dark {
-  /* Background Colors */
+  /* Background Colors - Blue-tinted darks */
   --bg-page: #008080; /* Keep cyan background */
-  --bg-window: #000000; /* Pure black window */
-  --bg-card: #1a1a1a; /* Dark gray cards */
-  --bg-panel: #1a1a1a; /* Dark panel background */
+  --bg-window: #0f0820; /* Deep blue-black */
+  --bg-card: #1a0d2e; /* Blue-purple surface */
+  --bg-panel: #1a0d2e; /* Blue-purple panel */
   --bg-lcd: #000000; /* LCD display (black) */
 
-  /* Border Colors - Neon Green Terminal Style */
-  --border-raised-light: #00ff00; /* Neon green */
-  --border-raised-dark: #003300; /* Dark green */
-  --border-sunken-light: #003300; /* Dark green */
-  --border-sunken-dark: #00ff00; /* Neon green */
-  --border-accent: #00ff00; /* Neon green accent */
+  /* Structural Colors - Derived from brand blue */
+  --structure-primary: #1a0d2e; /* Deep blue-purple */
+  --structure-secondary: #0a1628; /* Deep blue-black */
+  --structure-tertiary: #1e293b; /* Slate blue-gray */
+
+  /* Border Colors - Subtle brand-tinted (not green!) */
+  --border-raised-light: rgba(4, 202, 244, 0.3); /* Subtle cyan */
+  --border-raised-dark: rgba(59, 0, 253, 0.2); /* Subtle blue */
+  --border-sunken-light: rgba(59, 0, 253, 0.15); /* Subtle blue */
+  --border-sunken-dark: rgba(4, 202, 244, 0.25); /* Subtle cyan */
+  --border-accent: rgba(59, 0, 253, 0.15); /* Default: subtle blue tint */
+
+  /* Border Emphasis Levels */
+  --border-default: rgba(59, 0, 253, 0.15); /* Subtle blue tint */
+  --border-emphasis: rgba(4, 202, 244, 0.25); /* Cyan for interactive */
+  --border-active: rgba(231, 56, 149, 0.3); /* Berry for selected */
 
   /* Text Colors */
-  --text-primary: #FFFFFF; /* White text */
-  --text-secondary: #888888; /* Gray text */
-  --text-tertiary: #666666; /* Darker gray */
-  --text-lcd: #00FF00; /* Green LCD text (same) */
-  --text-lcd-secondary: #00FFFF; /* Cyan LCD text (same) */
+  --text-primary: #f8fafc; /* Off-white */
+  --text-secondary: #94a3b8; /* Light blue-gray */
+  --text-tertiary: #64748b; /* Medium blue-gray */
+  --text-lcd: #04caf4; /* Cyan LCD text (special displays) */
+  --text-lcd-secondary: #3b00fd; /* Blue LCD text (special displays) */
 
-  /* Accent Colors */
-  --accent-primary: #00ff00; /* Neon green */
-  --accent-secondary: #00FFFF; /* Cyan (same) */
-  --accent-tertiary: #E010E0; /* Magenta (from v6) */
+  /* Brand Accent Colors - IDENTICAL to light mode */
+  --accent-primary: #3b00fd; /* Brand blue */
+  --accent-secondary: #04caf4; /* Brand cyan */
+  --accent-tertiary: #E73895; /* Brand berry red */
 
-  /* Interactive States */
-  --hover-bg: #222222;
-  --active-bg: #002200; /* Dark green */
-  --focus-outline: #00ff00;
+  /* Neon Color Palette (90s inspired) - same in both themes */
+  --neon-blue: #3b00fd;
+  --neon-cyan: #04caf4;
+  --neon-pink: #E73895;
+  --neon-magenta: #E73895; /* Alias for pink */
+  --neon-magenta-bright: #E73895;
+  --neon-yellow: #d1f60a;
 
-  /* Shadows & Glows */
-  --shadow-subtle: rgba(0, 255, 0, 0.1);
-  --shadow-medium: rgba(0, 255, 0, 0.2);
-  --shadow-strong: rgba(0, 255, 0, 0.3);
-  --glow-accent: rgba(0, 255, 0, 0.3); /* Neon green glow */
+  /* Gradient Definitions - Brand consistency */
+  --gradient-page-bg: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Blue to Cyan */
+  --gradient-header: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%); /* Brand: blue to cyan */
+  --gradient-avatar: linear-gradient(135deg, #E73895, #04caf4); /* Berry red to cyan */
+  --gradient-gold: linear-gradient(45deg, #FFD700, #FFA500); /* Gold to orange */
+
+  /* Typography */
+  --font-display: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  --light-text: #94a3b8; /* Light blue-gray */
+  --muted-text: #64748b; /* Medium blue-gray */
+
+  /* Interactive States - Cyan energy */
+  --hover-bg: #251447; /* Lighter blue-purple */
+  --active-bg: rgba(4, 202, 244, 0.1); /* Cyan tint */
+  --focus-outline: #04caf4; /* Cyan focus */
+
+  /* Shadows & Glows - Cyan glow, not green */
+  --shadow-subtle: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.5);
+  --glow-accent: rgba(4, 202, 244, 0.3); /* Cyan glow */
+  --glow-subtle: rgba(4, 202, 244, 0.15);
+  --glow-medium: rgba(4, 202, 244, 0.25);
+  --glow-strong: rgba(4, 202, 244, 0.4);
 }
 
 /* ============================================
@@ -126,7 +177,7 @@ body:not(.theme-dark) {
    ============================================ */
 body {
   /* Same gradient background for ALL pages in both themes */
-  background: linear-gradient(135deg, #00f92a 0%, #04caf4 100%);
+  background: var(--gradient-page-bg);
   min-height: 100vh;
   transition: background-color var(--transition-medium),
               color var(--transition-medium);

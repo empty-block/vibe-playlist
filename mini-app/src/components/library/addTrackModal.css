@@ -1,14 +1,36 @@
-/* AddTrack Modal Specific Styles */
+/* ==========================================
+   ADD TRACK MODAL - RETRO AESTHETIC
+   Light & Dark Mode Support
+   ========================================== */
+
+/* ==========================================
+   BASE MODAL STYLING
+   ========================================== */
+
+.add-track-modal {
+  border-radius: 0 !important;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-interface, -apple-system, sans-serif) !important;
+}
+
+/* Dark Mode (Default) */
 .add-track-modal {
   background: var(--darker-bg, #0f0f0f) !important;
   border: 3px solid var(--neon-cyan, #04caf4) !important;
-  border-radius: 0 !important;
   box-shadow:
     0 0 20px rgba(4, 202, 244, 0.4),
     inset 0 0 20px rgba(4, 202, 244, 0.1) !important;
-  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
-  position: relative;
-  overflow: hidden;
+}
+
+/* Light Mode */
+.theme-light .add-track-modal {
+  background: linear-gradient(to bottom, #f5f5f5, #e8e8e8) !important;
+  border: 3px solid #808080 !important;
+  box-shadow:
+    inset 1px 1px 0px #ffffff,
+    inset -1px -1px 0px #c0c0c0,
+    0 4px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .modal-content-wrapper {
@@ -17,118 +39,263 @@
   min-height: 300px;
 }
 
-.terminal-header {
-  background: rgba(4, 202, 244, 0.1);
-  border-bottom: 2px solid var(--neon-cyan, #04caf4);
-  padding: 12px 20px;
-  font-size: 12px;
-  color: var(--neon-cyan, #04caf4);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+/* ==========================================
+   RETRO WINDOW TITLE BAR
+   ========================================== */
+
+.retro-titlebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 2px solid;
+  user-select: none;
 }
 
-.terminal-path-container {
+/* Dark Mode Title Bar */
+.retro-titlebar {
+  background: linear-gradient(to bottom,
+    rgba(4, 202, 244, 0.2),
+    rgba(4, 202, 244, 0.1)
+  );
+  border-bottom-color: var(--neon-cyan, #04caf4);
+}
+
+/* Light Mode Title Bar */
+.theme-light .retro-titlebar {
+  background: linear-gradient(to bottom, #0a246a, #1084d0);
+  border-bottom-color: #0a1e5c;
+}
+
+/* Title Bar Left Section */
+.titlebar-left {
   display: flex;
   align-items: center;
+  gap: 8px;
+}
+
+.titlebar-icon {
+  font-size: 14px;
+}
+
+/* Dark Mode Icon */
+.titlebar-icon {
+  color: var(--neon-cyan, #04caf4);
+}
+
+/* Light Mode Icon */
+.theme-light .titlebar-icon {
+  color: #ffffff;
+}
+
+.titlebar-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Dark Mode Title */
+.titlebar-title {
+  color: var(--light-text, #ffffff);
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+}
+
+/* Light Mode Title */
+.theme-light .titlebar-title {
+  color: #ffffff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Title Bar Controls */
+.titlebar-controls {
+  display: flex;
   gap: 4px;
+  flex-shrink: 0;
 }
 
-.terminal-prefix {
-  color: var(--neon-green, #00f92a);
+.titlebar-button {
+  width: 28px;
+  height: 24px;
+  border-radius: 0;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
 }
 
-.terminal-path {
-  color: var(--neon-orange, #ff8f00);
-}
-
-.cursor-blink {
+/* Dark Mode Buttons */
+.titlebar-button {
+  background: rgba(4, 202, 244, 0.15);
+  border: 1px solid var(--neon-cyan, #04caf4);
   color: var(--neon-cyan, #04caf4);
-  animation: cursor-blink 1s infinite;
-  z-index: 1;
-  position: relative;
 }
 
-@keyframes cursor-blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+.titlebar-button:hover:not(:disabled) {
+  background: rgba(4, 202, 244, 0.3);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.4);
 }
 
-.terminal-close-button {
-  background: transparent !important;
-  border: 1px solid var(--neon-cyan, #04caf4) !important;
-  color: var(--neon-cyan, #04caf4) !important;
-  padding: 4px 8px !important;
-  font-size: 10px !important;
-  font-family: 'JetBrains Mono', monospace !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  border-radius: 0 !important;
-  line-height: 1 !important;
+.titlebar-button:active:not(:disabled) {
+  background: rgba(4, 202, 244, 0.4);
+  transform: translate(1px, 1px);
 }
 
-.terminal-close-button:hover {
-  background: rgba(4, 202, 244, 0.2) !important;
-  color: var(--neon-green, #00f92a) !important;
-  border-color: var(--neon-green, #00f92a) !important;
+.titlebar-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.modal-footer {
-  border-top: 1px solid rgba(4, 202, 244, 0.3);
-  padding: 12px 20px;
-  background: rgba(15, 15, 15, 0.8);
+/* Light Mode Buttons */
+.theme-light .titlebar-button {
+  background: linear-gradient(to bottom, #f5f5f5, #d0d0d0);
+  border: 1px outset #e0e0e0;
+  color: #333;
 }
 
-.terminal-status {
-  font-size: 10px;
-  color: var(--neon-cyan, #04caf4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: center;
-  opacity: 0.7;
+.theme-light .titlebar-button:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #fff, #e0e0e0);
+  box-shadow:
+    inset 1px 1px 0px #ffffff,
+    0 0 8px rgba(16, 132, 208, 0.3);
 }
 
-/* Override SongInputForm styles for modal context */
-.add-track-modal .retro-panel {
+.theme-light .titlebar-button:active:not(:disabled) {
+  background: linear-gradient(to bottom, #d0d0d0, #c0c0c0);
+  border: 1px inset #e0e0e0;
+  box-shadow: inset -1px -1px 0px #ffffff;
+}
+
+.theme-light .titlebar-button:disabled {
+  opacity: 0.5;
+  color: #999;
+}
+
+/* Close Button Special Styling */
+.close-btn {
+  font-size: 16px;
+}
+
+/* Dark Mode Close */
+.close-btn {
+  color: var(--neon-pink, #f906d6);
+  border-color: var(--neon-pink, #f906d6);
+  background: rgba(249, 6, 214, 0.15);
+}
+
+.close-btn:hover:not(:disabled) {
+  background: rgba(249, 6, 214, 0.3);
+  box-shadow: 0 0 12px rgba(249, 6, 214, 0.5);
+}
+
+/* Light Mode Close */
+.theme-light .close-btn {
+  background: linear-gradient(to bottom, #ff6b6b, #ff5252);
+  border: 1px outset #ff8a80;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .close-btn:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #ff8a80, #ff6b6b);
+  box-shadow:
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    0 0 12px rgba(255, 107, 107, 0.6);
+}
+
+.theme-light .close-btn:active:not(:disabled) {
+  background: linear-gradient(to bottom, #ff5252, #ff1744);
+  border: 1px inset #ff8a80;
+}
+
+/* ==========================================
+   MODAL FORM CONTENT
+   ========================================== */
+
+.modal-form-content {
+  padding: 24px;
+}
+
+/* Dark Mode Form */
+.modal-form-content {
+  background: transparent;
+}
+
+/* Light Mode Form */
+.theme-light .modal-form-content {
+  background: #f5f5f5;
+}
+
+/* ==========================================
+   FORM OVERRIDES FOR SONGINPUTFORM
+   ========================================== */
+
+/* Remove win95-panel background in modal context */
+.add-track-modal .win95-panel {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 24px !important;
+  padding: 0 !important;
   margin-bottom: 0 !important;
 }
 
-.add-track-modal .retro-panel,
-.add-track-modal .retro-panel * {
-  color: var(--light-text, #ffffff) !important;
-}
-
-.add-track-modal .retro-panel h2 {
-  color: var(--neon-cyan, #04caf4) !important;
-  background: transparent !important;
-  border: none !important;
-  font-family: 'JetBrains Mono', monospace !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
+/* Form Title */
+.add-track-modal .win95-panel h2 {
+  font-family: var(--font-display, 'JetBrains Mono', monospace) !important;
+  font-size: 16px !important;
   margin-bottom: 20px !important;
-  font-size: 14px !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.add-track-modal .retro-panel h2 i {
-  color: var(--neon-green, #00f92a) !important;
+/* Dark Mode Form Title */
+.add-track-modal .win95-panel h2 {
+  color: var(--neon-cyan, #04caf4) !important;
+  text-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
 }
 
-/* Target TextInput components directly by element */
+/* Light Mode Form Title */
+.theme-light .add-track-modal .win95-panel h2 {
+  color: #0a246a !important;
+  text-shadow: none;
+}
+
+.add-track-modal .win95-panel h2 i {
+  font-size: 14px;
+}
+
+/* Dark Mode Title Icon */
+.add-track-modal .win95-panel h2 i {
+  color: var(--neon-green, var(--accent-secondary)) !important;
+}
+
+/* Light Mode Title Icon */
+.theme-light .add-track-modal .win95-panel h2 i {
+  color: #1084d0 !important;
+}
+
+/* ==========================================
+   INPUT FIELD STYLING
+   ========================================== */
+
+.add-track-modal input[type="text"],
+.add-track-modal textarea {
+  border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+  font-family: var(--font-interface, -apple-system, sans-serif) !important;
+}
+
+/* Dark Mode Inputs */
 .add-track-modal input[type="text"],
 .add-track-modal textarea {
   background: rgba(13, 13, 13, 0.8) !important;
   border: 2px solid rgba(4, 202, 244, 0.3) !important;
   color: var(--light-text, #ffffff) !important;
-  font-family: 'JetBrains Mono', monospace !important;
-  transition: all 0.3s ease !important;
-  border-radius: 0 !important;
 }
 
 .add-track-modal input[type="text"]:focus,
@@ -139,34 +306,79 @@
   outline: none !important;
 }
 
-.add-track-modal label {
-  color: var(--neon-cyan, #04caf4) !important;
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 12px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  margin-bottom: 6px !important;
-  font-weight: normal !important;
+/* Light Mode Inputs */
+.theme-light .add-track-modal input[type="text"],
+.theme-light .add-track-modal textarea {
+  background: #ffffff !important;
+  border: 2px inset #d0d0d0 !important;
+  color: #333 !important;
+  box-shadow: inset -1px -1px 0px #ffffff !important;
 }
 
+.theme-light .add-track-modal input[type="text"]:focus,
+.theme-light .add-track-modal textarea:focus {
+  border-color: #1084d0 !important;
+  box-shadow:
+    inset -1px -1px 0px #ffffff,
+    0 0 8px rgba(16, 132, 208, 0.3) !important;
+  outline: none !important;
+}
+
+.theme-light .add-track-modal input[type="text"]::placeholder,
+.theme-light .add-track-modal textarea::placeholder {
+  color: #999 !important;
+}
+
+/* ==========================================
+   LABEL STYLING
+   ========================================== */
+
+.add-track-modal label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+/* Dark Mode Labels */
+.add-track-modal label {
+  color: var(--neon-cyan, #04caf4) !important;
+}
+
+/* Light Mode Labels */
+.theme-light .add-track-modal label {
+  color: #333 !important;
+}
+
+/* ==========================================
+   SUBMIT BUTTON STYLING
+   ========================================== */
+
+.add-track-modal .animated-button {
+  border-radius: 0 !important;
+  font-weight: 600 !important;
+  padding: 12px 32px !important;
+  transition: all 0.2s ease !important;
+  font-family: var(--font-interface, -apple-system, sans-serif) !important;
+  font-size: 15px !important;
+}
+
+/* Dark Mode Button */
 .add-track-modal .animated-button {
   background: linear-gradient(135deg, var(--neon-blue, #3b00fd), var(--neon-cyan, #04caf4)) !important;
   border: none !important;
   color: var(--light-text, #ffffff) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
-  font-weight: bold !important;
-  padding: 12px 32px !important;
-  transition: all 0.3s ease !important;
-  border-radius: 0 !important;
-  font-family: 'JetBrains Mono', monospace !important;
 }
 
 .add-track-modal .animated-button:hover:not(:disabled) {
   box-shadow:
-    0 0 16px rgba(4, 202, 244, 0.4),
+    0 0 16px rgba(4, 202, 244, 0.5),
     0 4px 20px rgba(4, 202, 244, 0.3) !important;
   transform: translateY(-2px) !important;
+}
+
+.add-track-modal .animated-button:active:not(:disabled) {
+  transform: translateY(0) !important;
 }
 
 .add-track-modal .animated-button:disabled {
@@ -175,34 +387,106 @@
   opacity: 0.5 !important;
 }
 
-/* Mobile optimizations */
+/* Light Mode Button */
+.theme-light .add-track-modal .animated-button {
+  background: linear-gradient(to bottom, #1084d0, #0a5c99) !important;
+  border: 1px outset #66b3e0 !important;
+  color: #ffffff !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .add-track-modal .animated-button:hover:not(:disabled) {
+  background: linear-gradient(to bottom, #2094e0, #1084d0) !important;
+  box-shadow:
+    inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    0 0 12px rgba(16, 132, 208, 0.5),
+    0 4px 12px rgba(16, 132, 208, 0.3) !important;
+}
+
+.theme-light .add-track-modal .animated-button:active:not(:disabled) {
+  background: linear-gradient(to bottom, #0a5c99, #084578) !important;
+  border: 1px inset #66b3e0 !important;
+  box-shadow: inset -1px -1px 0px rgba(255, 255, 255, 0.2) !important;
+}
+
+.theme-light .add-track-modal .animated-button:disabled {
+  background: linear-gradient(to bottom, #c0c0c0, #a0a0a0) !important;
+  border: 1px outset #d0d0d0 !important;
+  color: #808080 !important;
+  opacity: 1 !important;
+}
+
+/* ==========================================
+   MOBILE OPTIMIZATIONS
+   ========================================== */
+
 @media (max-width: 767px) {
-  .terminal-header {
-    padding: 8px 16px;
-    font-size: 10px;
+  .retro-titlebar {
+    padding: 6px 12px;
   }
 
-  .add-track-modal .retro-panel {
-    padding: 20px 16px !important;
+  .titlebar-title {
+    font-size: 13px;
   }
 
-  .add-track-modal .text-input input,
-  .add-track-modal .text-input textarea {
+  .titlebar-button {
+    width: 32px;
+    height: 28px;
+    font-size: 15px;
+  }
+
+  .modal-form-content {
+    padding: 20px 16px;
+  }
+
+  .add-track-modal input[type="text"],
+  .add-track-modal textarea {
     font-size: 16px !important; /* Prevent zoom on iOS */
     padding: 12px 16px !important;
   }
 
   .add-track-modal .animated-button {
     width: 100% !important;
-    padding: 16px !important;
-    font-size: 14px !important;
+    padding: 14px !important;
+    font-size: 16px !important;
   }
+}
 
-  .modal-footer {
-    padding: 8px 16px;
-  }
+/* ==========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================== */
 
-  .terminal-status {
-    font-size: 9px;
+/* Focus states for keyboard navigation */
+.titlebar-button:focus-visible {
+  outline: 2px solid var(--neon-cyan, #04caf4);
+  outline-offset: 2px;
+}
+
+.theme-light .titlebar-button:focus-visible {
+  outline-color: #1084d0;
+}
+
+.add-track-modal input:focus-visible,
+.add-track-modal textarea:focus-visible,
+.add-track-modal button:focus-visible {
+  outline: 2px solid var(--neon-cyan, #04caf4);
+  outline-offset: 2px;
+}
+
+.theme-light .add-track-modal input:focus-visible,
+.theme-light .add-track-modal textarea:focus-visible,
+.theme-light .add-track-modal button:focus-visible {
+  outline-color: #1084d0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .add-track-modal *,
+  .titlebar-button,
+  .add-track-modal input,
+  .add-track-modal textarea,
+  .add-track-modal .animated-button {
+    transition: none !important;
+    animation: none !important;
   }
 }

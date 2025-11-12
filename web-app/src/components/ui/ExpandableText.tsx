@@ -1,6 +1,7 @@
 import { Component, createSignal, Show, onMount, onCleanup } from 'solid-js';
 import anime from 'animejs';
 import { expandText, rotateExpandIcon } from '../../utils/animations';
+import { stripUrls } from '../../utils/textUtils';
 import './ExpandableText.css';
 
 interface ExpandableTextProps {
@@ -56,8 +57,10 @@ const ExpandableText: Component<ExpandableTextProps> = (props) => {
   };
   
   // Check if truncation is needed when component mounts
+  // Use displayText (after URL stripping) to determine truncation
   onMount(() => {
-    if (props.text.length > maxLength()) {
+    const textAfterStripping = stripUrls(props.text);
+    if (textAfterStripping.length > maxLength()) {
       setNeedsTruncation(true);
     }
   });
@@ -75,19 +78,21 @@ const ExpandableText: Component<ExpandableTextProps> = (props) => {
     }
   });
   
-  const truncatedText = () => truncateText(props.text, maxLength());
-  
+  // Strip URLs from text for display while preserving original in database
+  const displayText = () => stripUrls(props.text);
+  const truncatedDisplayText = () => truncateText(displayText(), maxLength());
+
   return (
     <div class="expandable-text">
       {/* Collapsed state */}
       <Show when={!isExpanded()}>
-        <div 
+        <div
           ref={textRef}
           class={`expandable-text-collapsed ${props.className || ''} ${needsTruncation() ? 'clickable' : ''}`}
           onClick={needsTruncation() ? toggleExpansion : undefined}
           style={{ cursor: needsTruncation() ? 'pointer' : 'default' }}
         >
-          {needsTruncation() ? truncatedText() : props.text}
+          {needsTruncation() ? truncatedDisplayText() : displayText()}
           <Show when={needsTruncation() && showToggle()}>
             <button
               onClick={(e) => { e.stopPropagation(); toggleExpansion(); }}
@@ -104,15 +109,15 @@ const ExpandableText: Component<ExpandableTextProps> = (props) => {
       
       {/* Expanded state */}
       <Show when={isExpanded()}>
-        <div 
+        <div
           ref={expandedRef}
           class={`expandable-text-expanded ${props.expandedClassName || props.className || ''} clickable`}
-          aria-live="polite" 
+          aria-live="polite"
           aria-atomic="true"
           onClick={toggleExpansion}
           style={{ cursor: 'pointer' }}
         >
-          {props.text}
+          {displayText()}
           <Show when={showToggle()}>
             <button
               onClick={(e) => { e.stopPropagation(); toggleExpansion(); }}

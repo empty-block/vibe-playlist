@@ -58,7 +58,7 @@ export function parseMusicUrl(url: string): ParsedMusicUrl | null {
       }
       // music.youtube.com: https://music.youtube.com/watch?v=dQw4w9WgXcQ
       else if (hostname.includes('music.youtube.com')) {
-        videoId = searchParams.get('v') || pathname.match(/\/watch\/([^/?]+)/)?.[1]
+        videoId = searchParams.get('v') || pathname.match(/\/watch\/([^/?]+)/)?.[1] || null
       }
 
       if (videoId) {
@@ -166,6 +166,30 @@ export function parseMusicUrl(url: string): ParsedMusicUrl | null {
         return {
           platform_name: 'hypem',
           platform_id: match[1],
+          url
+        }
+      }
+    }
+
+    // Tortoise (Farcaster-native music platform)
+    if (hostname.includes('tortoise.studio')) {
+      // URL formats:
+      // - https://tortoise.studio/song/seams-of-dreams
+      // - https://tortoise.studio/?id=1afdf5c4-aa1c-4030-a457-8da92d51322f
+      const songMatch = pathname.match(/\/song\/([^/?]+)/)
+      if (songMatch) {
+        return {
+          platform_name: 'tortoise',
+          platform_id: songMatch[1],
+          url
+        }
+      }
+
+      const idParam = searchParams.get('id')
+      if (idParam) {
+        return {
+          platform_name: 'tortoise',
+          platform_id: idParam,
           url
         }
       }

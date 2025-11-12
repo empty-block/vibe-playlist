@@ -1,6 +1,7 @@
 import { Component, Show } from 'solid-js';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../../shared/types/channels';
 import { FilterDialog } from './FilterDialog';
+import { SortDropdown } from './SortDropdown';
 import './ChannelFilterBar.css';
 
 interface ChannelFilterBarProps {
@@ -16,6 +17,8 @@ interface ChannelFilterBarProps {
   availableGenres: string[];
   filterDialogOpen: boolean;
   onFilterDialogOpenChange: (open: boolean) => void;
+  showAddTrack?: boolean;
+  onAddTrack?: () => void;
 }
 
 export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
@@ -23,7 +26,7 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
   // Calculate number of active filters
   const activeFilterCount = () => {
     let count = 0;
-    // Don't count shuffle - it has its own button
+    // Don't count shuffle - it's now in the sort dropdown
     if (props.activeSort !== 'recent' && props.activeSort !== 'shuffle') count++;
     if (props.qualityFilter > 0) count++;
     if (props.musicSources.length > 0) count++;
@@ -33,18 +36,11 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
 
   return (
     <div class="channel-filter-bar-container">
-      {/* Shuffle Button */}
-      <button
-        class={`shuffle-btn ${
-          props.activeSort === 'shuffle' ? 'shuffle-btn--active' : ''
-        }`}
-        onClick={() => {
-          console.log('[ChannelFilterBar] Shuffle clicked');
-          props.onSortChange('shuffle');
-        }}
-      >
-        🔀 Shuffle
-      </button>
+      {/* Sort Dropdown */}
+      <SortDropdown
+        activeSort={props.activeSort}
+        onSortChange={props.onSortChange}
+      />
 
       {/* Filter Button with Badge */}
       <button
@@ -53,11 +49,23 @@ export const ChannelFilterBar: Component<ChannelFilterBarProps> = (props) => {
         }`}
         onClick={() => props.onFilterDialogOpenChange(true)}
       >
+        <span class="filter-icon">🔍</span>
         Filter
         <Show when={activeFilterCount() > 0}>
           <span class="filter-badge">{activeFilterCount()}</span>
         </Show>
       </button>
+
+      {/* Add Track Button - Only shown when showAddTrack is true */}
+      <Show when={props.showAddTrack}>
+        <button
+          class="add-track-btn"
+          onClick={() => props.onAddTrack?.()}
+        >
+          <span class="add-icon">➕</span>
+          Add Track
+        </button>
+      </Show>
 
       {/* Filter Dialog */}
       <FilterDialog

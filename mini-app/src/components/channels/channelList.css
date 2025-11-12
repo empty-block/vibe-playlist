@@ -6,7 +6,7 @@
   width: 16px;
   height: 16px;
   background: #FFFFFF;
-  border: 1px solid #000080;
+  border: 1px solid var(--neon-blue);
 }
 
 /* Channels Container - Scrollable - Light Mode */
@@ -30,7 +30,7 @@ body:not(.theme-dark) .channels-container {
   height: 100%;
   background: #000000;
   margin: 3px;
-  border: 2px solid #00ff00;
+  border: 2px solid var(--border-emphasis);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 8px;
@@ -58,7 +58,7 @@ body:not(.theme-dark) .search-section {
 .theme-dark .search-section {
   padding: 8px;
   background: #000000;
-  border-top: 2px solid #00ff00;
+  border-top: 2px solid var(--border-emphasis);
 }
 
 .search-container {
@@ -81,7 +81,7 @@ body:not(.theme-dark) .search-label {
 .theme-dark .search-label {
   font-size: 11px;
   font-weight: bold;
-  color: #00ff00;
+  color: #ffffff;
   white-space: nowrap;
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
 }
@@ -111,11 +111,11 @@ body:not(.theme-dark) .search-input {
 .theme-dark .search-input {
   width: 100%;
   padding: 3px 4px;
-  border: 1px solid #00ff00;
+  border: 1px solid var(--border-accent);
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
   font-size: 11px;
   background: #001100;
-  color: #00ff00;
+  color: #ffffff;
   outline: none;
 }
 

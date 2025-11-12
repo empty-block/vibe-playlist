@@ -1,7 +1,7 @@
 import { Component, For, Show } from 'solid-js';
 import type { Track } from '../HomePage';
 import { HeroTrackCard } from '../../common/TrackCard/NEW';
-import { setCurrentTrack, setIsPlaying } from '../../../stores/playerStore';
+import { playTrack } from '../../../stores/playerStore';
 import type { Track as PlayerTrack } from '../../../stores/playerStore';
 
 interface NewTracksSectionProps {
@@ -12,7 +12,7 @@ interface NewTracksSectionProps {
 export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
   const newTracks = () => props.tracks.filter(track => track.isNew);
 
-  const handleTrackClick = (track: Track) => {
+  const handleTrackClick = async (track: Track) => {
     console.log('Playing track:', track.title);
     // Convert HomePage Track to PlayerTrack format
     const playerTrack: PlayerTrack = {
@@ -29,8 +29,7 @@ export const NewTracksSection: Component<NewTracksSectionProps> = (props) => {
       replies: 0,
       recasts: 0
     };
-    setCurrentTrack(playerTrack);
-    setIsPlaying(true);
+    await playTrack(playerTrack);
   };
 
   const handleKeyPress = (e: KeyboardEvent, track: Track) => {

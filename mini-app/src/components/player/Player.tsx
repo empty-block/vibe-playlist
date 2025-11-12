@@ -1,4 +1,4 @@
-import { Component, Show, JSX, createSignal, onMount, For } from 'solid-js';
+import { Component, Show, JSX, createSignal, onMount, createEffect, For } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import {
   currentTrack,
@@ -16,8 +16,9 @@ import {
   playPreviousTrack,
   playerError
 } from '../../stores/playerStore';
-import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse } from '../../utils/animations';
-import RetroTitleBar from '../common/RetroTitleBar';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
+import { playbackButtonHover, stateButtonHover, shuffleToggle, repeatToggle, statusPulse, playerTransitions } from '../../utils/animations';
+import { skipToNextOnConnect, skipToPreviousOnConnect } from '../../services/spotifyConnect';
 import './player.css';
 
 interface PlayerProps {
@@ -27,6 +28,7 @@ interface PlayerProps {
   currentTime?: () => number;
   duration?: () => number;
   onSeek?: (time: number) => void;
+  hasStartedPlayback?: () => boolean;
 }
 
 const Player: Component<PlayerProps> = (props) => {
@@ -39,6 +41,23 @@ const Player: Component<PlayerProps> = (props) => {
   let shuffleButtonRef: HTMLButtonElement | undefined;
   let chatButtonRef: HTMLButtonElement | undefined;
   let statusIndicatorRef: HTMLDivElement | undefined;
+  let playerBarRef: HTMLDivElement | undefined;
+
+  // Track changes for animations
+  createEffect(() => {
+    const track = currentTrack();
+    if (track && playerBarRef) {
+      playerTransitions.trackChange(playerBarRef);
+    }
+  });
+
+  // Play/pause state changes for animations
+  createEffect(() => {
+    const playing = isPlaying();
+    if (playerBarRef) {
+      playerTransitions.stateChange(playerBarRef);
+    }
+  });
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -46,13 +65,39 @@ const Player: Component<PlayerProps> = (props) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSkipPrevious = () => {
+  const handleSkipPrevious = async () => {
     console.log('Skip to previous track');
+
+    // If in Farcaster with Spotify, use Connect API
+    const track = currentTrack();
+    if (isInFarcasterSync() && track?.source === 'spotify') {
+      console.log('Using Spotify Connect API for skip previous');
+      const success = await skipToPreviousOnConnect();
+      if (!success) {
+        console.error('Spotify Connect skip previous failed');
+      }
+      return;
+    }
+
+    // Otherwise use normal skip logic
     playPreviousTrack();
   };
 
-  const handleSkipNext = () => {
+  const handleSkipNext = async () => {
     console.log('Skip to next track');
+
+    // If in Farcaster with Spotify, use Connect API
+    const track = currentTrack();
+    if (isInFarcasterSync() && track?.source === 'spotify') {
+      console.log('Using Spotify Connect API for skip next');
+      const success = await skipToNextOnConnect();
+      if (!success) {
+        console.error('Spotify Connect skip next failed');
+      }
+      return;
+    }
+
+    // Otherwise use normal skip logic
     playNextTrack();
   };
 
@@ -68,9 +113,22 @@ const Player: Component<PlayerProps> = (props) => {
     console.log('Shuffle:', newShuffleState ? 'ON' : 'OFF');
   };
 
-  const handleChatToggle = () => {
-    console.log('Open chat for track:', currentTrack()?.id);
-    // TODO: Navigate to track's conversation thread or open chat sidebar
+  const handleChatToggle = async () => {
+    const track = currentTrack();
+    if (!track?.castHash) {
+      console.log('[Player] No castHash available for track:', track?.id);
+      return;
+    }
+
+    try {
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      console.log('[Player] Opening cast with hash:', track.castHash);
+      await sdk.actions.viewCast({
+        hash: track.castHash
+      });
+    } catch (error) {
+      console.error('[Player] Failed to open cast:', error);
+    }
   };
 
   const handleArtistClick = () => {
@@ -123,19 +181,11 @@ const Player: Component<PlayerProps> = (props) => {
 
   return (
     <Show when={currentTrack()}>
-      <div class="player-bar">
-        {/* Retro Title Bar */}
-        <RetroTitleBar
-          title="Now Playing"
-          showMinimize={true}
-          showMaximize={true}
-          showClose={true}
-        />
-
+      <div ref={playerBarRef} class="player-bar">
         <div class="player-content">
           {/* Media Container - all sources now show in consistent layout */}
           <div class="player-audio-container" classList={{
-            'player-audio-container--hidden': !isPlaying()
+            'player-audio-container--hidden': !isPlaying() && props.hasStartedPlayback?.()
           }}>
             <div class="player-audio-embed" classList={{
               'player-video-embed': currentTrack()?.source === 'youtube'
@@ -170,12 +220,20 @@ const Player: Component<PlayerProps> = (props) => {
           </Show>
 
           {/* Track Info Panel - Green LCD style with integrated controls */}
-          <div class="player-track-info">
+          {/* Only show when paused AND has started playback */}
+          <Show when={!isPlaying() && props.hasStartedPlayback?.()}>
+            <div class="player-track-info">
             <div class="player-track-metadata">
               <div class="player-track-title">{currentTrack()?.title}</div>
               <div class="player-track-subtitle">{currentTrack()?.artist}</div>
               <div class="player-track-meta">
-                <span class="player-shared-by">shared by @{currentTrack()?.addedBy}</span>
+                <span class="player-shared-by">shared by {currentTrack()?.addedBy}</span>
+                {/* Show Songlink attribution when track was resolved from song.link or Apple Music */}
+                <Show when={currentTrack()?.originalSource === 'songlink' || currentTrack()?.originalSource === 'apple_music'}>
+                  <span class="player-songlink-attribution" style="margin-left: 8px; opacity: 0.6; font-size: 0.85em;">
+                    • via Songlink
+                  </span>
+                </Show>
               </div>
             </div>
 
@@ -208,16 +266,17 @@ const Player: Component<PlayerProps> = (props) => {
               >
                 ⏭
               </button>
+              <button
+                ref={chatButtonRef!}
+                onClick={handleChatToggle}
+                class="player-control player-control--reply"
+                disabled={!currentTrack()?.castHash}
+                title={currentTrack()?.castHash ? 'Reply in Farcaster' : 'No conversation available'}
+              >
+                💬
+              </button>
             </div>
           </div>
-
-          {/* Animated Visualizer - only show when playing and player is ready */}
-          <Show when={isPlaying() && props.playerReady()}>
-            <div class="player-visualizer">
-              <For each={Array(16).fill(0)}>
-                {() => <div class="player-visualizer-bar"></div>}
-              </For>
-            </div>
           </Show>
         </div>
       </div>

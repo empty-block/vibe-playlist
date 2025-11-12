@@ -1,5 +1,11 @@
-import { Component, Show } from 'solid-js';
+import { Component, Show, createSignal, onMount } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
+import { stripUrls } from '../../../../utils/textUtils';
+import { trackCardEntrance } from '../../../../utils/animations';
+import { likePost, unlikePost } from '../../../../services/api';
+
+const MAX_TEXT_LENGTH = 200;
 
 interface TrackCardProps {
   author: {
@@ -18,13 +24,17 @@ interface TrackCardProps {
   };
   text?: string;
   timestamp: string;
+  channelId?: string;
+  channelName?: string;
   stats: {
     likes: number;
     replies: number;
     recasts: number;
   };
+  castHash?: string; // For opening cast in Farcaster to like/recast
   onPlay: (track: any) => void;
   onUsernameClick?: (fid: string, e: MouseEvent) => void;
+  animationDelay?: number; // For staggered entrance animations
 }
 
 // Format time ago helper
@@ -32,19 +42,35 @@ const formatTimeAgo = (timestamp: string) => {
   const date = new Date(timestamp);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffHours < 1) return 'now';
+  if (diffMinutes < 1) return 'now';
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-  return `${Math.floor(diffDays / 30)}m ago`;
+  return `${Math.floor(diffDays / 30)}mo ago`;
 };
 
 const TrackCard: Component<TrackCardProps> = (props) => {
+  const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = createSignal(false);
+  const [isLiked, setIsLiked] = createSignal(false);
+  const [likeCount, setLikeCount] = createSignal(props.stats.likes || 0);
+  const [isLiking, setIsLiking] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
+
+  let cardRef: HTMLDivElement | undefined;
+
+  // Apply entrance animation on mount
+  onMount(() => {
+    if (cardRef) {
+      trackCardEntrance.fadeIn(cardRef, props.animationDelay || 0);
+    }
+  });
 
   const handleUsernameClick = (e: MouseEvent) => {
     if (props.onUsernameClick) {
@@ -52,13 +78,69 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     }
   };
 
+  const handleChannelClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    if (props.channelId) {
+      navigate(`/channels/${props.channelId}`);
+    }
+  };
+
+  // Like/unlike a cast via API
+  const handleLikeClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    if (!props.castHash) {
+      console.log('[TrackCard] No castHash available');
+      return;
+    }
+
+    // Prevent double-clicking
+    if (isLiking()) return;
+
+    try {
+      setIsLiking(true);
+      const wasLiked = isLiked();
+
+      // Optimistic UI update
+      setIsLiked(!wasLiked);
+      setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
+
+      // Call API
+      if (wasLiked) {
+        await unlikePost(props.castHash);
+      } else {
+        await likePost(props.castHash);
+      }
+    } catch (error: any) {
+      console.error('[TrackCard] Failed to like/unlike:', error);
+
+      // Revert optimistic update on error
+      setIsLiked(!isLiked());
+      setLikeCount(prev => isLiked() ? prev - 1 : prev + 1);
+
+      // Show user-friendly error message
+      if (error.status === 401) {
+        alert('Please sign in with Farcaster to like posts');
+      } else if (error.status === 429) {
+        alert('Too many requests. Please wait a moment and try again.');
+      } else {
+        alert('Failed to like post. Please try again.');
+      }
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
   return (
-    <div class="activity-card">
+    <div ref={cardRef} class="terminal-track-card activity-card">
       {/* Navy header bar */}
       <div class="activity-header">
         <div class="user-info">
           <Show when={props.author.pfpUrl} fallback={
-            <div class="user-avatar-fallback">
+            <div
+              class="user-avatar-fallback"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+            >
               {props.author.username.charAt(0).toUpperCase()}
             </div>
           }>
@@ -66,15 +148,23 @@ const TrackCard: Component<TrackCardProps> = (props) => {
               src={props.author.pfpUrl}
               alt={props.author.username}
               class="user-avatar"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
             />
           </Show>
-          <span
-            class="username"
-            onClick={handleUsernameClick}
-            style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
-          >
-            {props.author.username}
-          </span>
+          <div class="user-text">
+            <span
+              class="username"
+              onClick={handleUsernameClick}
+              style={{ cursor: props.onUsernameClick ? 'pointer' : 'default' }}
+            >
+              {props.author.username}
+            </span>
+            <Show when={props.channelId && props.channelName && props.channelName !== props.channelId && props.channelId !== 'unknown'}>
+              <span class="channel-separator">•</span>
+              <span class="channel-link" onClick={handleChannelClick}>{props.channelId}</span>
+            </Show>
+          </div>
         </div>
         <span class="timestamp">{formatTimeAgo(props.timestamp)}</span>
       </div>
@@ -89,10 +179,9 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         <div class="track-info">
           <div class="track-title">{props.track.title}</div>
           <div class="track-artist">{props.track.artist}</div>
-          <div class="track-meta">via {props.track.platform}</div>
         </div>
         <button
-          class="play-button"
+          class="open-button"
           onClick={() => props.onPlay({
             id: props.track.id,
             title: props.track.title,
@@ -102,31 +191,74 @@ const TrackCard: Component<TrackCardProps> = (props) => {
             url: props.track.url,
             sourceId: props.track.platformId
           })}
+          title="Open track in player"
         >
-          {isTrackPlaying() ? '⏸' : '▶'}
+          ▼
         </button>
       </div>
 
       {/* Comment if present */}
       <Show when={props.text && props.text.trim()}>
-        <div class="comment-box">
-          {props.text}
-        </div>
+        {(() => {
+          const cleanText = stripUrls(props.text!);
+          const isLongText = cleanText.length > MAX_TEXT_LENGTH;
+
+          return (
+            <div class="comment-box">
+              <Show
+                when={isLongText && !isExpanded()}
+                fallback={<>{cleanText}</>}
+              >
+                {cleanText.substring(0, MAX_TEXT_LENGTH)}...
+              </Show>
+              <Show when={isLongText}>
+                <button
+                  class="show-more-btn"
+                  onClick={() => setIsExpanded(!isExpanded())}
+                >
+                  {isExpanded() ? 'Show less' : 'Show more'}
+                </button>
+              </Show>
+            </div>
+          );
+        })()}
       </Show>
 
       {/* Stats row */}
       <div class="stats-row">
-        <div class="stat-box">
-          <span>♥</span>
-          <span class="count">{props.stats.likes || 0}</span>
+        <div
+          class="stat-box clickable"
+          onClick={handleLikeClick}
+          style={{
+            cursor: props.castHash ? 'pointer' : 'default',
+            color: isLiked() ? 'var(--neon-pink)' : 'inherit',
+            opacity: isLiking() ? '0.6' : '1'
+          }}
+          title={props.castHash ? (isLiked() ? 'Unlike' : 'Like') : ''}
+        >
+          <span>{isLiked() ? '♥' : '♡'}</span>
+          <span class="count">{likeCount()}</span>
+          <span class="label">likes</span>
         </div>
         <div class="stat-box">
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
+          <span class="label">replies</span>
         </div>
-        <div class="stat-box">
-          <span>🔄</span>
-          <span class="count">{props.stats.recasts || 0}</span>
+        <div class="music-source">
+          via {(() => {
+            const platform = (props.track.platform || 'unknown').toLowerCase();
+            if (platform === 'youtube' || platform === 'youtube_music') return 'YouTube';
+            if (platform === 'spotify') return 'Spotify';
+            if (platform === 'soundcloud') return 'SoundCloud';
+            if (platform === 'apple_music') return 'Apple Music';
+            if (platform === 'audius') return 'Audius';
+            if (platform === 'bandcamp') return 'Bandcamp';
+            if (platform === 'tidal') return 'Tidal';
+            if (platform === 'tortoise') return 'Tortoise';
+            // Capitalize first letter for unknown platforms
+            return platform.charAt(0).toUpperCase() + platform.slice(1);
+          })()}
         </div>
       </div>
     </div>

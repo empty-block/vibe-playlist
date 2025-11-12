@@ -8,6 +8,7 @@
   /* Layout Constants */
   --nav-height: 64px;
   --spacing-container: 32px; /* Top + bottom breathing room (16px each, following 8px system) */
+  --player-bar-height: 0px; /* Dynamic: Set via JS when player is active */
 
   /* Responsive Width System */
   --window-width-mobile: 95%;      /* 320-640px: Edge-to-edge feel with small margins */
@@ -28,16 +29,19 @@
  * Handles all responsive sizing, centering, and height calculations
  */
 .page-window-container {
-  margin: 16px auto;
+  margin: 16px auto 2px auto;
   width: var(--window-width-mobile);
   max-width: var(--window-max-width-compact);
 
-  /* Dynamic viewport height - handles mobile browser chrome */
-  height: calc(100dvh - var(--nav-height) - var(--spacing-container));
+  /* Dynamic viewport height - handles mobile browser chrome and player bar */
+  height: calc(100dvh - var(--nav-height) - var(--spacing-container) - var(--player-bar-height));
 
   /* Ensure RetroWindow fills container */
   display: flex;
   flex-direction: column;
+
+  /* Smooth height transitions when player appears/disappears */
+  transition: height 0.3s ease-out;
 }
 
 /* Tablet: Wider with standard max-width */
@@ -58,9 +62,9 @@
 /* Ultra-small mobile: Tighter margins */
 @media (max-width: 360px) {
   .page-window-container {
-    margin: 8px auto;
+    margin: 8px auto 2px auto;
     width: calc(100% - 16px);
-    height: calc(100dvh - var(--nav-height) - 24px);
+    height: calc(100dvh - var(--nav-height) - 24px - var(--player-bar-height));
   }
 }
 
@@ -112,6 +116,14 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+
+  /* Add bottom padding when player is visible to prevent content from being hidden */
+  padding-bottom: 8px;
+}
+
+/* Additional bottom padding for feed sections to ensure last items are fully visible */
+.page-window-container .feed-section {
+  padding-bottom: 2px;
 }
 
 /* ============================================
@@ -136,7 +148,12 @@
  */
 @media (max-width: 640px) {
   .page-window-container {
-    margin: 10px auto;
+    margin: 10px auto 2px auto;
+  }
+
+  /* Slightly reduce feed padding on mobile to maximize visible content */
+  .page-window-container .feed-section {
+    padding-bottom: 2px;
   }
 }
 

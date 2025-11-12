@@ -1,10 +1,14 @@
 import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
-import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable } from '../../stores/playerStore';
+import { currentTrack, isPlaying, setIsPlaying, playNextTrack, setCurrentTime, setDuration, setIsSeekable, currentPlaylistId } from '../../stores/playerStore';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
+import { trackTrackPlayed } from '../../utils/analytics';
 
 interface YouTubeMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPlaybackStarted?: (hasStarted: boolean) => void;
+  onPause?: (pauseFn: () => void) => void;
 }
 
 declare global {
@@ -19,6 +23,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let playerContainer: HTMLDivElement | undefined;
   let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
+  const [userHasInteracted, setUserHasInteracted] = createSignal(false);
+  const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
   // Always use compact size for bottom bar
 
@@ -75,7 +81,8 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           iv_load_policy: 3,
           autohide: 0,
           origin: window.location.origin,
-          enablejsapi: 1
+          enablejsapi: 1,
+          playsinline: 1 // Required for iOS WebViews
         },
         events: {
           onReady: onPlayerReady,
@@ -97,10 +104,24 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     setPlayerReady(true);
     props.onPlayerReady(true);
 
+    // Set Permissions-Policy on the YouTube iframe to prevent warnings
+    const iframe = playerContainer?.querySelector('iframe');
+    if (iframe) {
+      // Explicitly permit what YouTube needs and deny what it doesn't
+      iframe.setAttribute('allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; ' +
+        'geolocation \'none\'; microphone \'none\'; camera \'none\''
+      );
+      console.log('Set Permissions-Policy on YouTube iframe');
+    }
+
     // Provide toggle and seek functions to parent
     props.onTogglePlay(() => togglePlay());
     if (props.onSeek) {
       props.onSeek((time: number) => seekToPosition(time));
+    }
+    if (props.onPause) {
+      props.onPause(() => pauseYouTube());
     }
 
     // Enable seeking for YouTube
@@ -153,6 +174,23 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
       setIsPlaying(true);
+      // Mark that user has interacted (either via YouTube controls or app controls)
+      setUserHasInteracted(true);
+      // Mark that playback has started at least once
+      const wasFirstPlay = !hasStartedPlayback();
+      setHasStartedPlayback(true);
+      if (props.onPlaybackStarted) {
+        props.onPlaybackStarted(true);
+      }
+
+      // Track YouTube playback on first play only
+      if (wasFirstPlay) {
+        const track = currentTrack();
+        if (track) {
+          trackTrackPlayed('youtube', track.id, currentPlaylistId() || 'unknown');
+        }
+      }
+
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
@@ -163,31 +201,73 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     }
   };
 
-  // Cleanup interval on unmount
+  // Cleanup interval and player on unmount
   onCleanup(() => {
+    console.log('YouTubeMedia cleanup - destroying player');
+
+    // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
     }
+
+    // Destroy YouTube player to prevent memory leaks and API errors
+    if (player) {
+      try {
+        player.destroy();
+        console.log('YouTube player destroyed successfully');
+      } catch (error) {
+        console.warn('Error destroying YouTube player:', error);
+      }
+      player = null;
+    }
   });
   
+  const pauseYouTube = () => {
+    console.log('[YouTubeMedia] Pause requested');
+
+    if (!player || !playerReady()) {
+      console.log('[YouTubeMedia] No active player to pause');
+      return;
+    }
+
+    try {
+      console.log('[YouTubeMedia] Pausing YouTube video');
+      player.pauseVideo();
+    } catch (error) {
+      console.error('Error pausing YouTube video:', error);
+    }
+  };
+
   const togglePlay = () => {
-    console.log('togglePlay called:', { 
-      hasPlayer: !!player, 
-      playerReady: playerReady(), 
-      isPlaying: isPlaying() 
+    console.log('togglePlay called:', {
+      hasPlayer: !!player,
+      playerReady: playerReady(),
+      isPlaying: isPlaying(),
+      playerState: player ? player.getPlayerState() : 'no player',
+      userHasInteracted: userHasInteracted()
     });
-    
+
     if (!player || !playerReady()) {
       console.log('Player not ready or not available');
       return;
     }
-    
+
     try {
+      const state = player.getPlayerState();
+      console.log('Current player state:', state);
+
       if (isPlaying()) {
-        console.log('Pausing video');
+        console.log('Pausing video via pauseVideo()');
         player.pauseVideo();
       } else {
-        console.log('Playing video');
+        console.log('Playing video via playVideo()');
+        // User clicking our play button IS a valid user interaction
+        // Mark interaction before playing to prevent any race conditions
+        const farcasterCheck = isInFarcasterSync();
+        if (farcasterCheck === true) {
+          setUserHasInteracted(true);
+        }
+        // playVideo() is a void function, not a Promise
         player.playVideo();
       }
     } catch (error) {
@@ -197,15 +277,14 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   
   createEffect(() => {
     const track = currentTrack();
-    console.log('YouTubeMedia createEffect triggered:', { 
-      track: track?.title, 
+    console.log('[YouTubeMedia] createEffect triggered:', {
+      track: track?.title,
       source: track?.source,
       sourceId: track?.sourceId,
-      fullTrack: track,
-      playerReady: playerReady(), 
-      hasPlayer: !!player 
+      playerReady: playerReady(),
+      hasPlayer: !!player
     });
-    
+
     if (track && player && playerReady() && track.source === 'youtube' && track.sourceId) {
       // Extract YouTube video ID from URL if sourceId is a full URL
       const getVideoId = (url: string) => {
@@ -214,24 +293,35 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
           /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
         ];
-        
+
         for (const pattern of patterns) {
           const match = url.match(pattern);
           if (match) return match[1];
         }
         return url; // Return as-is if no pattern matches
       };
-      
+
       const videoId = getVideoId(track.sourceId);
-      console.log('Loading YouTube video:', track.title, 'Original sourceId:', track.sourceId, 'Extracted videoId:', videoId);
-      
+      console.log('[YouTubeMedia] Loading YouTube video:', track.title, 'videoId:', videoId);
+
       try {
-        player.loadVideoById({
+        // Reset playback flags for new track
+        setHasStartedPlayback(false);
+        if (props.onPlaybackStarted) {
+          props.onPlaybackStarted(false);
+        }
+
+        // Always cue video without autoplay - user must click play button
+        console.log('[YouTubeMedia] Cuing video (two-click pattern):', videoId);
+        player.cueVideoById({
           videoId: videoId,
           startSeconds: 0
         });
+
+        // Set playing to false so play button is shown
+        setIsPlaying(false);
       } catch (error) {
-        console.error('Error loading video:', error);
+        console.error('[YouTubeMedia] Error loading video:', error);
       }
     }
   });

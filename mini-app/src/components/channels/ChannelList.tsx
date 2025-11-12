@@ -1,11 +1,15 @@
 import { Component, For, createSignal } from 'solid-js';
 import ChannelRow, { ChannelRowProps } from './ChannelRow';
 import RetroWindow from '../common/RetroWindow';
+import { theme, toggleTheme } from '../../stores/themeStore';
 import './channelList.css';
 
 export interface ChannelListProps {
   channels: (Omit<ChannelRowProps, 'onClick'> & { threadId: string })[];
   onChannelClick: (channelId: string, threadId: string) => void;
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
 }
 
 const ChannelList: Component<ChannelListProps> = (props) => {
@@ -22,14 +26,31 @@ const ChannelList: Component<ChannelListProps> = (props) => {
     );
   };
 
+  // Menu items for hamburger dropdown
+  const menuItems = [
+    {
+      label: () => `Theme: ${theme() === 'light' ? 'Light' : 'Dark'}`,
+      icon: () => theme() === 'light' ? '☀️' : '🌙',
+      onClick: () => toggleTheme()
+    },
+    {
+      label: 'Feedback',
+      icon: '💬',
+      onClick: () => alert('Feedback form coming soon! For now, please share your thoughts in the /jamzy channel.')
+    }
+  ];
+
   return (
     <RetroWindow
       title="Music Channels"
-      icon={<div class="title-icon"></div>}
+      icon={
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
+          <path d="M3 5 L3 3 L10 3 L11 5 L21 5 L21 19 L3 19 Z" />
+        </svg>
+      }
       variant="3d"
-      showMinimize={true}
-      showMaximize={true}
-      showClose={true}
+      showMenu={true}
+      menuItems={menuItems}
       contentPadding="0"
       footer={
         <div class="search-section">
@@ -60,6 +81,7 @@ const ChannelList: Component<ChannelListProps> = (props) => {
               topic={channel.topic}
               messageCount={channel.messageCount}
               colorHex={channel.colorHex}
+              iconUrl={channel.iconUrl}
               isEven={index() % 2 === 1}
               onClick={() => props.onChannelClick(channel.id, channel.threadId)}
             />

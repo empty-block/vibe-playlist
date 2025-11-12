@@ -1,5 +1,6 @@
 import { Component, For, Show } from 'solid-js';
 import type { ChannelFeedSortOption, MusicPlatform } from '../../../../shared/types/channels';
+import BaseModal from '../common/Modal/BaseModal';
 import './FilterDialog.css';
 
 interface FilterDialogProps {
@@ -17,19 +18,10 @@ interface FilterDialogProps {
   availableGenres: string[];
 }
 
-const SORT_OPTIONS: Array<{
-  value: ChannelFeedSortOption;
-  label: string;
-}> = [
-  { value: 'recent', label: 'Recent' },
-  { value: 'popular_24h', label: 'Popular (24h)' },
-  { value: 'popular_7d', label: 'Popular (7d)' },
-  { value: 'all_time', label: 'All Time' },
-];
-
-const QUALITY_OPTIONS = [
+const ENGAGEMENT_OPTIONS = [
   { value: 0, label: 'All Posts' },
   { value: 3, label: '3+ Likes' },
+  { value: 10, label: '10+ Likes' },
 ];
 
 const PLATFORM_LABELS: Record<MusicPlatform, string> = {
@@ -62,7 +54,6 @@ export const FilterDialog: Component<FilterDialogProps> = (props) => {
   };
 
   const handleClearAll = () => {
-    props.onSortChange('recent');
     props.onQualityFilterChange(0);
     props.onMusicSourcesChange([]);
     props.onGenresChange([]);
@@ -70,126 +61,93 @@ export const FilterDialog: Component<FilterDialogProps> = (props) => {
 
   const hasActiveFilters = () => {
     return (
-      props.activeSort !== 'recent' ||
       props.qualityFilter > 0 ||
       props.musicSources.length > 0 ||
       props.genres.length > 0
     );
   };
 
-  // Close on backdrop click
-  const handleBackdropClick = (e: MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      props.onClose();
-    }
-  };
-
   return (
-    <Show when={props.isOpen}>
-      <div class="filter-dialog-backdrop" onClick={handleBackdropClick}>
-        <div class="filter-dialog-window">
-          {/* Title Bar */}
-          <div class="filter-dialog-titlebar">
-            <span class="filter-dialog-title">Filter Options</span>
-            <button class="filter-dialog-close-btn" onClick={props.onClose}>
-              ✕
-            </button>
+    <BaseModal
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      title="Filter Options"
+      size="md"
+      className="filter-dialog-modal"
+      showCloseButton={true}
+    >
+      {/* Content */}
+      <div class="filter-dialog-content">
+        {/* Engagement Filter Section */}
+        <div class="filter-section">
+          <div class="filter-section-header">Engagement Filter</div>
+          <div class="filter-section-options">
+            <For each={ENGAGEMENT_OPTIONS}>
+              {(option) => (
+                <label class="filter-radio-option">
+                  <input
+                    type="radio"
+                    name="engagement"
+                    checked={props.qualityFilter === option.value}
+                    onChange={() => props.onQualityFilterChange(option.value)}
+                  />
+                  <span>{option.label}</span>
+                </label>
+              )}
+            </For>
           </div>
+        </div>
 
-          {/* Content */}
-          <div class="filter-dialog-content">
-            {/* Sort By Section */}
-            <div class="filter-section">
-              <div class="filter-section-header">Sort By</div>
-              <div class="filter-section-options">
-                <For each={SORT_OPTIONS}>
-                  {(option) => (
-                    <label class="filter-radio-option">
-                      <input
-                        type="radio"
-                        name="sort"
-                        checked={props.activeSort === option.value}
-                        onChange={() => props.onSortChange(option.value)}
-                      />
-                      <span>{option.label}</span>
-                    </label>
-                  )}
-                </For>
-              </div>
-            </div>
-
-            {/* Quality Section */}
-            <div class="filter-section">
-              <div class="filter-section-header">Quality Filter</div>
-              <div class="filter-section-options">
-                <For each={QUALITY_OPTIONS}>
-                  {(option) => (
-                    <label class="filter-radio-option">
-                      <input
-                        type="radio"
-                        name="quality"
-                        checked={props.qualityFilter === option.value}
-                        onChange={() => props.onQualityFilterChange(option.value)}
-                      />
-                      <span>{option.label}</span>
-                    </label>
-                  )}
-                </For>
-              </div>
-            </div>
-
-            {/* Music Sources Section */}
-            <div class="filter-section">
-              <div class="filter-section-header">Music Sources</div>
-              <div class="filter-section-options filter-section-options--checkboxes">
-                <For each={props.availablePlatforms}>
-                  {(platform) => (
-                    <label class="filter-checkbox-option">
-                      <input
-                        type="checkbox"
-                        checked={props.musicSources.includes(platform)}
-                        onChange={() => handleSourceToggle(platform)}
-                      />
-                      <span>{PLATFORM_LABELS[platform]}</span>
-                    </label>
-                  )}
-                </For>
-              </div>
-            </div>
-
-            {/* Genres Section */}
-            <div class="filter-section">
-              <div class="filter-section-header">Genres</div>
-              <div class="filter-section-options filter-section-options--checkboxes">
-                <For each={props.availableGenres}>
-                  {(genre) => (
-                    <label class="filter-checkbox-option">
-                      <input
-                        type="checkbox"
-                        checked={props.genres.includes(genre)}
-                        onChange={() => handleGenreToggle(genre)}
-                      />
-                      <span>{genre}</span>
-                    </label>
-                  )}
-                </For>
-              </div>
-            </div>
+        {/* Music Sources Section */}
+        <div class="filter-section">
+          <div class="filter-section-header">Music Sources</div>
+          <div class="filter-section-options filter-section-options--checkboxes">
+            <For each={props.availablePlatforms}>
+              {(platform) => (
+                <label class="filter-checkbox-option">
+                  <input
+                    type="checkbox"
+                    checked={props.musicSources.includes(platform)}
+                    onChange={() => handleSourceToggle(platform)}
+                  />
+                  <span>{PLATFORM_LABELS[platform]}</span>
+                </label>
+              )}
+            </For>
           </div>
+        </div>
 
-          {/* Footer with Clear All */}
-          <div class="filter-dialog-footer">
-            <Show when={hasActiveFilters()}>
-              <button class="filter-clear-all-btn" onClick={handleClearAll}>
-                Clear All Filters
-              </button>
-            </Show>
-            <button class="filter-apply-btn" onClick={props.onClose}>
-              Done
-            </button>
+        {/* Genres Section */}
+        <div class="filter-section">
+          <div class="filter-section-header">Genres</div>
+          <div class="filter-section-options filter-section-options--checkboxes">
+            <For each={props.availableGenres}>
+              {(genre) => (
+                <label class="filter-checkbox-option">
+                  <input
+                    type="checkbox"
+                    checked={props.genres.includes(genre)}
+                    onChange={() => handleGenreToggle(genre)}
+                  />
+                  <span>{genre}</span>
+                </label>
+              )}
+            </For>
           </div>
         </div>
       </div>
-    </Show>
+
+      {/* Footer with Clear All */}
+      <div class="filter-dialog-footer">
+        <Show when={hasActiveFilters()}>
+          <button class="filter-clear-all-btn" onClick={handleClearAll}>
+            Clear All Filters
+          </button>
+        </Show>
+        <button class="filter-apply-btn" onClick={props.onClose}>
+          Done
+        </button>
+      </div>
+    </BaseModal>
   );
 };

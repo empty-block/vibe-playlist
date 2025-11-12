@@ -1,18 +1,29 @@
--- Function: get_channel_feed
--- Get paginated feed of threads for a specific channel
--- Similar to get_threads_feed but filtered by channel
+-- Function: get_channel_feed (UPDATED)
+-- Get paginated feed of threads for a specific channel with sorting and filtering
+-- Similar to get_home_feed but filtered by channel
+--
+-- Changes (2025-11-03):
+-- - Added sort_by parameter (recent, popular_24h, popular_7d, all_time)
+-- - Added min_likes parameter for engagement filtering
+-- - Added p_music_sources parameter for platform filtering
+-- - Added p_genres parameter for genre filtering
 --
 -- Usage:
 --   SELECT * FROM get_channel_feed('hip-hop');
 --   SELECT * FROM get_channel_feed('hip-hop', 25);
 --   SELECT * FROM get_channel_feed('hip-hop', 25, '2025-10-13 10:00:00'::timestamp);
+--   SELECT * FROM get_channel_feed('hip-hop', 50, NULL, NULL, FALSE, 'popular_7d', 3);
 
 CREATE OR REPLACE FUNCTION get_channel_feed(
   p_channel_id TEXT,
   limit_count INTEGER DEFAULT 50,
   cursor_timestamp TIMESTAMP DEFAULT NULL,
   cursor_id TEXT DEFAULT NULL,
-  music_only BOOLEAN DEFAULT FALSE
+  music_only BOOLEAN DEFAULT FALSE,
+  sort_by TEXT DEFAULT 'recent',           -- NEW
+  min_likes INTEGER DEFAULT 0,              -- NEW
+  p_music_sources TEXT[] DEFAULT NULL,      -- NEW
+  p_genres TEXT[] DEFAULT NULL              -- NEW
 )
 RETURNS TABLE(
   cast_hash TEXT,
@@ -37,6 +48,11 @@ BEGIN
     limit_count := 50;
   END IF;
 
+  -- Validate sort_by parameter
+  IF sort_by NOT IN ('recent', 'popular_24h', 'popular_7d', 'all_time') THEN
+    sort_by := 'recent';
+  END IF;
+
   RETURN QUERY
   WITH channel_threads AS (
     SELECT
@@ -52,8 +68,9 @@ BEGIN
         SELECT 1 FROM cast_music_edges
         WHERE cast_id = cn.node_id
       ))
-    ORDER BY cn.created_at DESC
-    LIMIT limit_count
+      -- Time-based filter for popular sorts
+      AND (sort_by != 'popular_24h' OR cn.created_at > NOW() - INTERVAL '24 hours')
+      AND (sort_by != 'popular_7d' OR cn.created_at > NOW() - INTERVAL '7 days')
   ),
   thread_music AS (
     SELECT
@@ -69,7 +86,8 @@ BEGIN
           'platformId', ml.platform_id,
           'url', ml.url,
           -- Use OpenGraph image for thumbnail
-          'thumbnail', ml.og_image_url
+          'thumbnail', ml.og_image_url,
+          'musicType', ml.music_type
         )
         ORDER BY cme.embed_index NULLS LAST
       ) as music_data
@@ -77,6 +95,10 @@ BEGIN
     INNER JOIN music_library ml ON cme.music_platform_id = ml.platform_id
       AND cme.music_platform_name = ml.platform_name
     WHERE cme.cast_id IN (SELECT node_id FROM channel_threads)
+      -- Filter by music source if specified
+      AND (p_music_sources IS NULL OR ml.platform_name = ANY(p_music_sources))
+      -- Filter by genres if specified (array overlap operator)
+      AND (p_genres IS NULL OR ml.genres && p_genres)
     GROUP BY cme.cast_id
   ),
   thread_stats AS (
@@ -96,25 +118,53 @@ BEGIN
     WHERE cn.parent_cast_hash IN (SELECT node_id FROM channel_threads)
       AND cn.parent_cast_hash IS NOT NULL
     GROUP BY cn.parent_cast_hash
+  ),
+  threads_with_stats AS (
+    SELECT
+      t.node_id,
+      t.cast_text,
+      t.created_at,
+      t.author_fid,
+      COALESCE(ts.likes, 0) as likes_count,
+      COALESCE(ts.recasts, 0) as recasts_count,
+      COALESCE(tr.reply_count, 0) as replies_count,
+      -- Calculate engagement score for sorting
+      (COALESCE(ts.likes, 0) + COALESCE(tr.reply_count, 0) * 2) as engagement_score
+    FROM channel_threads t
+    LEFT JOIN thread_stats ts ON t.node_id = ts.cast_id
+    LEFT JOIN thread_replies tr ON t.node_id = tr.parent_cast_hash
+    -- Apply quality filter (min likes)
+    WHERE (COALESCE(ts.likes, 0) + COALESCE(ts.recasts, 0)) >= min_likes
+    -- Only include threads that have music if music_sources or genres filters are applied
+    AND (
+      (p_music_sources IS NULL AND p_genres IS NULL)
+      OR t.node_id IN (SELECT cast_id FROM thread_music)
+    )
   )
   SELECT
-    t.node_id::TEXT as cast_hash,
-    t.cast_text::TEXT,
-    t.created_at,
-    t.author_fid::TEXT,
+    tws.node_id::TEXT as cast_hash,
+    tws.cast_text::TEXT,
+    tws.created_at,
+    tws.author_fid::TEXT,
     COALESCE(u.fname, 'unknown')::TEXT as author_username,
     COALESCE(u.display_name, 'Unknown User')::TEXT as author_display_name,
     u.avatar_url::TEXT as author_avatar_url,
     COALESCE(tm.music_data, '[]'::jsonb) as music,
-    COALESCE(ts.likes, 0) as likes_count,
-    COALESCE(ts.recasts, 0) as recasts_count,
-    COALESCE(tr.reply_count, 0) as replies_count
-  FROM channel_threads t
-  LEFT JOIN user_nodes u ON t.author_fid = u.node_id
-  LEFT JOIN thread_music tm ON t.node_id = tm.cast_id
-  LEFT JOIN thread_stats ts ON t.node_id = ts.cast_id
-  LEFT JOIN thread_replies tr ON t.node_id = tr.parent_cast_hash
-  ORDER BY t.created_at DESC;
+    tws.likes_count,
+    tws.recasts_count,
+    tws.replies_count
+  FROM threads_with_stats tws
+  LEFT JOIN user_nodes u ON tws.author_fid = u.node_id
+  LEFT JOIN thread_music tm ON tws.node_id = tm.cast_id
+  ORDER BY
+    CASE
+      WHEN sort_by = 'recent' THEN tws.created_at
+    END DESC,
+    CASE
+      WHEN sort_by IN ('popular_24h', 'popular_7d', 'all_time') THEN tws.engagement_score
+    END DESC NULLS LAST,
+    tws.created_at DESC  -- Secondary sort by time for consistency
+  LIMIT limit_count;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -123,4 +173,4 @@ GRANT EXECUTE ON FUNCTION get_channel_feed TO authenticated;
 GRANT EXECUTE ON FUNCTION get_channel_feed TO anon;
 
 -- Add helpful comment
-COMMENT ON FUNCTION get_channel_feed IS 'Returns paginated feed of threads for a specific channel with all related data (music, stats, replies).';
+COMMENT ON FUNCTION get_channel_feed IS 'Returns paginated feed of threads for a specific channel with all related data (music, stats, replies). Supports sorting (recent, popular_24h, popular_7d, all_time) and filtering (min_likes, music_sources, genres).';

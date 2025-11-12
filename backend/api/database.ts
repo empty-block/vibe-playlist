@@ -2,18 +2,29 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type { LibraryQuery, Track, ArtistData, GenreData } from '../../shared/types/library'
 
 export class DatabaseService {
-  private supabase: SupabaseClient
+  private _supabase: SupabaseClient | null = null
+
+  // Lazy initialization for Cloudflare Workers compatibility
+  private get supabase(): SupabaseClient {
+    if (!this._supabase) {
+      // Default to production if SUPABASE_ENV isn't set (for Cloudflare Workers)
+      const isLocal = process.env.SUPABASE_ENV === 'local'
+
+      const supabaseUrl = isLocal
+        ? process.env.SUPABASE_LOCAL_URL!
+        : process.env.SUPABASE_URL!
+
+      const supabaseKey = isLocal
+        ? process.env.SUPABASE_LOCAL_KEY!
+        : (process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)!
+
+      this._supabase = createClient(supabaseUrl, supabaseKey)
+    }
+    return this._supabase
+  }
 
   constructor() {
-    const supabaseUrl = process.env.SUPABASE_ENV === 'local' 
-      ? process.env.SUPABASE_LOCAL_URL! 
-      : process.env.SUPABASE_URL!
-    
-    const supabaseKey = process.env.SUPABASE_ENV === 'local'
-      ? process.env.SUPABASE_LOCAL_KEY!
-      : process.env.SUPABASE_KEY!
-
-    this.supabase = createClient(supabaseUrl, supabaseKey)
+    // Empty constructor - initialization happens lazily on first use
   }
 
   async queryLibrary(query: LibraryQuery): Promise<{ tracks: Track[], hasMore: boolean, nextCursor?: string }> {

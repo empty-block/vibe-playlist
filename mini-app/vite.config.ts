@@ -7,16 +7,27 @@ export default defineConfig(() => {
     server: {
       host: 'localhost',
       port: 3002,
-      hmr: false,
+      hmr: true,
     },
     build: {
       target: 'esnext'
     },
     define: {
-      // Default to local backend, can override with VITE_API_URL env var
+      // API URL configuration
+      // Production: uses Cloudflare Worker
+      // Local dev: uses localhost
       'import.meta.env.VITE_API_URL': JSON.stringify(
-        process.env.VITE_API_URL || 'http://localhost:4201'
-      )
+        process.env.VITE_API_URL ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://jamzy-backend.ncmaddrey.workers.dev'
+          : 'http://localhost:4201')
+      ),
+      // Spotify configuration
+      'import.meta.env.VITE_SPOTIFY_CLIENT_ID': JSON.stringify(process.env.VITE_SPOTIFY_CLIENT_ID || ''),
+      'import.meta.env.VITE_SPOTIFY_REDIRECT_URI': JSON.stringify(process.env.VITE_SPOTIFY_REDIRECT_URI || 'https://dev.jamzy-miniapp.pages.dev'),
+      // PostHog analytics configuration
+      'import.meta.env.VITE_POSTHOG_API_KEY': JSON.stringify(process.env.VITE_POSTHOG_API_KEY || ''),
+      'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(process.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com')
     }
   };
 });

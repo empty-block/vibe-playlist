@@ -348,7 +348,7 @@
   }
 
   .username {
-    color: var(--neon-cyan);
+    color: #E73895;
     font-weight: 500;
   }
 
@@ -360,17 +360,17 @@
     padding: 0 0 0 var(--space-2);
   }
 
-  /* Control Buttons - Smaller Touch Targets */
+  /* Control Buttons - Mobile Touch Targets (44px minimum) */
   .controlButton {
-    width: 40px; /* Smaller */
-    height: 40px;
+    width: 44px;
+    height: 44px;
     font-size: 16px;
   }
 
   .playButton {
-    width: 52px; /* Smaller but prominent */
-    height: 52px;
-    font-size: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
   }
 
   /* Show YouTube embed on mobile */

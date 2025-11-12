@@ -173,6 +173,64 @@ export class NeynarService {
   }
 
   /**
+   * Publish a cast to Farcaster
+   *
+   * @param params - Cast parameters
+   * @param params.signerUuid - The UUID of the signer (user authorization)
+   * @param params.text - The text content of the cast
+   * @param params.channelId - Optional channel to post to (e.g., 'jamzy', 'hip-hop')
+   * @param params.embeds - Optional array of URLs to embed (e.g., music links)
+   * @param params.parent - Optional parent cast hash for replies
+   * @returns Cast response with hash and other metadata
+   */
+  async publishCast(params: {
+    signerUuid: string
+    text: string
+    channelId?: string
+    embeds?: string[]
+    parent?: string
+  }): Promise<{
+    hash: string
+    author: { fid: number; username: string }
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      // Prepare cast request body
+      const castBody: any = {
+        signer_uuid: params.signerUuid,
+        text: params.text
+      }
+
+      // Add channel if specified
+      if (params.channelId) {
+        castBody.channel_id = params.channelId
+      }
+
+      // Add embeds if specified (music URLs, etc.)
+      if (params.embeds && params.embeds.length > 0) {
+        castBody.embeds = params.embeds.map((url) => ({ url }))
+      }
+
+      // Add parent for replies
+      if (params.parent) {
+        castBody.parent = params.parent
+      }
+
+      // Publish cast via Neynar API
+      const response = await this.client.publishCast(castBody as any)
+
+      return {
+        hash: response.hash,
+        author: {
+          fid: response.author.fid,
+          username: response.author.username
+        }
+      }
+    })
+  }
+
+  /**
    * Fetch reactions (likes and recasts) for a specific cast
    *
    * @param castHash - The cast hash identifier
@@ -185,10 +243,12 @@ export class NeynarService {
       types?: ('likes' | 'recasts')[]
       limit?: number
       viewerFid?: number
+      cursor?: string
     }
   ): Promise<{
     likes: any[]
     recasts: any[]
+    nextCursor?: string
   }> {
     await this.throttle()
 
@@ -200,7 +260,8 @@ export class NeynarService {
         hash: castHash,
         types: types as any,
         limit,
-        viewerFid: options?.viewerFid
+        viewerFid: options?.viewerFid,
+        cursor: options?.cursor
       })
 
       // The API returns reactions as a flat array with reaction_type field
@@ -209,7 +270,11 @@ export class NeynarService {
       const likes = reactions.filter((r: any) => r.reaction_type === 'like')
       const recasts = reactions.filter((r: any) => r.reaction_type === 'recast')
 
-      return { likes, recasts }
+      return {
+        likes,
+        recasts,
+        nextCursor: response.next?.cursor || undefined
+      }
     })
   }
 
@@ -250,6 +315,79 @@ export class NeynarService {
         reactions: response.reactions || [],
         nextCursor: response.next?.cursor || undefined
       }
+    })
+  }
+
+  /**
+   * Fetch channel details by channel ID
+   *
+   * @param channelId - The channel ID (e.g., 'hip-hop', 'jazz')
+   * @returns Channel metadata including description, images, and creation date
+   */
+  async fetchChannelDetails(channelId: string): Promise<{
+    id: string
+    name: string
+    description: string
+    image_url: string
+    lead_fid?: number
+    created_at: number
+  }> {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const response = await this.client.lookupChannel({
+        id: channelId,
+        type: 'id'
+      })
+
+      const createdAt = response.channel.created_at
+      const createdAtNumber = typeof createdAt === 'string' ? parseInt(createdAt, 10) : (createdAt || 0)
+
+      return {
+        id: response.channel.id,
+        name: response.channel.name || '',
+        description: response.channel.description || '',
+        image_url: response.channel.image_url || '',
+        lead_fid: response.channel.lead?.fid,
+        created_at: createdAtNumber
+      }
+    })
+  }
+
+  /**
+   * Fetch multiple channels by their IDs (bulk fetch)
+   *
+   * @param channelIds - Array of channel IDs
+   * @returns Array of channel metadata objects
+   */
+  async fetchBulkChannelDetails(channelIds: string[]): Promise<
+    Array<{
+      id: string
+      name: string
+      description: string
+      image_url: string
+      lead_fid?: number
+      created_at: number
+    }>
+  > {
+    await this.throttle()
+
+    return this.retryWithBackoff(async () => {
+      const response = await this.client.fetchBulkChannels({ ids: channelIds })
+
+      return (response.channels || []).map((channel: any) => {
+        const createdAt = channel.created_at
+        const createdAtNumber = typeof createdAt === 'string' ? parseInt(createdAt, 10) : (createdAt || 0)
+
+        return {
+          id: channel.id,
+          name: channel.name || '',
+          description: channel.description || '',
+          image_url: channel.image_url || '',
+          lead_fid: channel.lead?.fid,
+          created_at: createdAtNumber
+        }
+      })
     })
   }
 }

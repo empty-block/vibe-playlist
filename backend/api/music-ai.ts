@@ -9,18 +9,20 @@
 import { Hono } from 'hono'
 import { processBatch, getQueueStats, getFailedItems } from '../lib/ai-queue-processor'
 import { getWorker } from '../lib/ai-worker'
+import { verifyAdminMiddleware } from '../lib/auth-helpers'
 
 const app = new Hono()
 
 /**
  * POST /api/music-ai/process
  * Trigger manual AI processing of queued items
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  *
  * Query params:
  * - limit: number of items to process (default: 20)
  * - model: Claude model to use (default: claude-3-5-haiku-20241022)
  */
-app.post('/process', async (c) => {
+app.post('/process', verifyAdminMiddleware, async (c) => {
   try {
     const limit = parseInt(c.req.query('limit') || '20')
     const model = c.req.query('model') || 'claude-3-5-haiku-20241022'
@@ -176,8 +178,9 @@ app.get('/worker/status', (c) => {
 /**
  * POST /api/music-ai/worker/pause
  * Pause the background worker
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/worker/pause', (c) => {
+app.post('/worker/pause', verifyAdminMiddleware, (c) => {
   try {
     const worker = getWorker()
     worker.pause()
@@ -198,8 +201,9 @@ app.post('/worker/pause', (c) => {
 /**
  * POST /api/music-ai/worker/resume
  * Resume the background worker
+ * REQUIRES ADMIN AUTHENTICATION - only FID 326181
  */
-app.post('/worker/resume', (c) => {
+app.post('/worker/resume', verifyAdminMiddleware, (c) => {
   try {
     const worker = getWorker()
     worker.resume()

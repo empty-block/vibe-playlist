@@ -1,0 +1,29 @@
+name = "jamzy-backend"
+main = "server.ts"
+compatibility_date = "2024-10-24"
+
+# Node.js compatibility for imports and APIs
+compatibility_flags = ["nodejs_compat"]
+
+# Cron Triggers
+[triggers]
+crons = [
+  "*/1 * * * *"  # Run AI worker and channel sync every 1 minute
+]
+
+# Environment Variables
+# Set these using: wrangler secret put <NAME>
+# or via Cloudflare Dashboard
+[vars]
+AI_WORKER_BATCH_SIZE = "20"
+NODE_ENV = "production"
+
+# Secrets (set via CLI or Dashboard):
+# - SUPABASE_URL
+# - SUPABASE_SERVICE_ROLE_KEY
+# - NEYNAR_API_KEY
+# - ANTHROPIC_API_KEY
+
+# Build configuration
+[build]
+command = ""

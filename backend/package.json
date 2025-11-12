@@ -1,0 +1,24 @@
+{
+  "name": "jamzy-backend",
+  "version": "2.0.0",
+  "description": "Jamzy Backend API",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --env-file=../.env --watch server.ts",
+    "start": "bun run --env-file=../.env server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.67.0",
+    "@farcaster/quick-auth": "^0.0.8",
+    "@neynar/nodejs-sdk": "^3.34.0",
+    "@supabase/supabase-js": "^2.57.4",
+    "hono": "^4.9.10",
+    "nanoid": "^5.1.6",
+    "open-graph-scraper": "^6.10.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -70,6 +70,13 @@
   font-family: var(--font-display);
   position: relative;
   overflow-x: hidden;
+  /* Ensure proper padding at bottom when player is visible */
+  padding-bottom: 0;
+}
+
+/* When player is showing, add extra bottom space for comfortable scrolling */
+.home-container.has-player {
+  padding-bottom: 24px;
 }
 
 /* =================== SPLASH CONTENT =================== */

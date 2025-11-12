@@ -41,8 +41,20 @@ const createProfileStore = () => {
         timestamp: thread.timestamp
       }));
 
-      // Combine authored and interaction activity, sort by timestamp
-      const combinedActivity = [...authoredActivity, ...activityResponse.activity]
+      // Combine authored and interaction activity, deduplicate by castHash, sort by timestamp
+      const allActivity = [...authoredActivity, ...activityResponse.activity];
+
+      // Deduplicate: prefer AUTHORED over LIKED/RECASTED for the same cast
+      const seenCasts = new Set<string>();
+      const combinedActivity = allActivity
+        .filter(activity => {
+          const castHash = activity.cast.castHash;
+          if (seenCasts.has(castHash)) {
+            return false; // Skip duplicate
+          }
+          seenCasts.add(castHash);
+          return true;
+        })
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
       // Update activity silently - UI will reactively update
@@ -107,8 +119,20 @@ const createProfileStore = () => {
         timestamp: thread.timestamp
       }));
 
-      // Combine authored and interaction activity, sort by timestamp
-      const combinedActivity = [...authoredActivity, ...activityResponse.activity]
+      // Combine authored and interaction activity, deduplicate by castHash, sort by timestamp
+      const allActivity = [...authoredActivity, ...activityResponse.activity];
+
+      // Deduplicate: prefer AUTHORED over LIKED/RECASTED for the same cast
+      const seenCasts = new Set<string>();
+      const combinedActivity = allActivity
+        .filter(activity => {
+          const castHash = activity.cast.castHash;
+          if (seenCasts.has(castHash)) {
+            return false; // Skip duplicate
+          }
+          seenCasts.add(castHash);
+          return true;
+        })
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
       setProfileUser(profileResponse);
@@ -151,12 +175,28 @@ const createProfileStore = () => {
         timestamp: thread.timestamp
       }));
 
-      // Combine authored and interaction activity, sort by timestamp
-      const newActivity = [...authoredActivity, ...activityResponse.activity]
+      // Combine authored and interaction activity, deduplicate by castHash, sort by timestamp
+      const allNewActivity = [...authoredActivity, ...activityResponse.activity];
+
+      // Deduplicate within new activity batch
+      const seenCasts = new Set<string>();
+      const newActivity = allNewActivity
+        .filter(activity => {
+          const castHash = activity.cast.castHash;
+          if (seenCasts.has(castHash)) {
+            return false; // Skip duplicate
+          }
+          seenCasts.add(castHash);
+          return true;
+        })
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-      // Append new activity to existing ones
-      setActivity(prev => [...prev, ...newActivity]);
+      // Append new activity to existing ones, check for duplicates with existing data
+      setActivity(prev => {
+        const existingCastHashes = new Set(prev.map(a => a.cast.castHash));
+        const uniqueNewActivity = newActivity.filter(a => !existingCastHashes.has(a.cast.castHash));
+        return [...prev, ...uniqueNewActivity];
+      });
       setNextCursor(threadsResponse.nextCursor);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load more activity';

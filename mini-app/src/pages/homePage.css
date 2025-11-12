@@ -1,0 +1,383 @@
+/* Home Page - Windows 95 CD-005 Design */
+/* Reuses most styles from channelViewPage.css */
+/* Only contains home-specific overrides */
+
+.home-page {
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  line-height: 1.4;
+  min-height: 100vh;
+  padding-bottom: 8px; /* Small gap to show background */
+}
+
+/* Light Mode Text Color */
+.theme-light .home-page,
+body:not(.theme-dark) .home-page {
+  color: #000;
+}
+
+/* Dark Mode Text Color */
+.theme-dark .home-page {
+  color: #FFFFFF;
+}
+
+/* Home Header - Simpler than channel header */
+.home-header {
+  background: linear-gradient(135deg, #3b00fd 0%, #04caf4 100%);
+  padding: 20px 16px;
+  border-bottom: 4px solid #000000;
+}
+
+.home-header-content {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.home-icon-large {
+  font-size: 48px;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.home-header-text {
+  flex: 1;
+}
+
+.home-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+  margin-bottom: 4px;
+}
+
+.home-description {
+  font-size: 13px;
+  color: #e0e0e0;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode header */
+.theme-dark .home-header {
+  background: linear-gradient(135deg, #000000 0%, #001a1a 100%);
+  border-bottom: 2px solid var(--border-emphasis);
+}
+
+.theme-dark .home-title {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(4, 202, 244, 0.5);
+}
+
+.theme-dark .home-description {
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+/* Channel view content - reuse from ChannelViewPage */
+.channel-view-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.feed-section {
+  flex: 1;
+  padding: 8px;
+  /* Additional bottom padding handled by window-layout.css */
+  /* overflow-y removed - scroll handled by .retro-window__content */
+}
+
+/* Loading State */
+.loading-state {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #808080;
+}
+
+/* Error State */
+.error-state {
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #ff0000;
+  background: #ffe0e0;
+  border: 2px solid #ff0000;
+  margin: 8px;
+}
+
+/* Empty State */
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  margin: 8px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: #808080;
+  margin-bottom: 8px;
+}
+
+.empty-state p strong {
+  font-weight: bold;
+  color: #000000;
+}
+
+/* Dark mode overrides */
+.theme-dark .error-state {
+  background: #1a0000;
+  border-color: #ff0000;
+  color: #ff6666;
+}
+
+.theme-dark .empty-state {
+  background: #000000;
+  border: 2px solid var(--border-emphasis);
+}
+
+.theme-dark .empty-state p {
+  color: #ffffff;
+}
+
+.theme-dark .loading-state {
+  color: #ffffff;
+}
+
+/* User text - username and channel inline */
+.user-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--neon-magenta);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+
+.channel-separator {
+  opacity: 0.7;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+/* Track card channel info - more specific to override channelRow.css */
+.activity-card .channel-info,
+.terminal-track-card .channel-info {
+  font-size: 12px;
+  opacity: 0.9;
+  display: inline !important;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  flex-direction: initial !important;
+  flex: initial !important;
+}
+
+.activity-card .channel-link,
+.terminal-track-card .channel-link {
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bold;
+  color: var(--neon-cyan);
+  display: inline !important;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.theme-light .channel-link,
+body:not(.theme-dark) .channel-link {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.theme-dark .channel-link {
+  color: var(--neon-cyan);
+}
+
+.channel-link:hover {
+  opacity: 0.8;
+}
+
+/* Loading More Indicator */
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  font-size: 13px;
+  color: #808080;
+}
+
+.loading-spinner {
+  font-size: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.theme-dark .loading-more {
+  color: #ffffff;
+}
+
+/* End of Feed Message */
+.end-of-feed {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: #808080;
+  font-style: italic;
+}
+
+.theme-dark .end-of-feed {
+  color: #ffffff;
+  opacity: 0.7;
+}
+
+/* Status Bar */
+.status-bar {
+  padding: 4px 8px;
+  background: #c0c0c0;
+  border-top: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  font-size: 11px;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.status-bar-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  color: #ffffff;
+  line-height: 1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.theme-dark .status-bar {
+  background: #000000;
+  border-top: 2px solid var(--border-emphasis);
+  color: #ffffff;
+}
+
+.theme-dark .status-indicator {
+  color: #ffffff;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .home-page {
+    padding-bottom: 8px;
+  }
+
+  .home-header {
+    padding: 16px 12px;
+  }
+
+  .home-icon-large {
+    font-size: 40px;
+  }
+
+  .home-title {
+    font-size: 20px;
+  }
+
+  .home-description {
+    font-size: 12px;
+  }
+
+  .feed-section {
+    padding: 6px;
+  }
+
+  .status-bar {
+    gap: 8px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+
+  .status-bar-section {
+    gap: 3px;
+  }
+
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 90px;
+  }
+}
+
+/* Ultra-mobile (very small phones) */
+@media (max-width: 360px) {
+  .home-header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .home-icon-large {
+    font-size: 36px;
+  }
+
+  .home-title {
+    font-size: 18px;
+  }
+
+  .home-description {
+    font-size: 11px;
+  }
+
+  .status-bar {
+    gap: 6px;
+  }
+
+  .activity-card .channel-link,
+  .terminal-track-card .channel-link {
+    max-width: 70px;
+  }
+
+  .channel-shared-text {
+    font-size: 10px;
+  }
+}

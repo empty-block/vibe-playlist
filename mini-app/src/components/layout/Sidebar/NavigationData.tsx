@@ -2,7 +2,7 @@ import { Component } from 'solid-js';
 
 // Navigation section types
 export type SectionColor = 'blue' | 'cyan' | 'green' | 'pink' | 'magenta';
-export type SectionId = 'channels' | 'activity' | 'profile' | 'library' | 'stats';
+export type SectionId = 'home' | 'channels' | 'trending' | 'activity' | 'profile' | 'library' | 'stats';
 
 // SVG Icon Components
 export interface IconProps {
@@ -280,12 +280,19 @@ export interface SidebarSection {
 // Shared navigation configuration - single source of truth
 export const navigationSections: readonly SidebarSection[] = [
   {
+    id: 'home',
+    href: '/home',
+    label: 'Home',
+    icon: HomeIcon,
+    color: 'blue',
+    isPrimary: true
+  },
+  {
     id: 'channels',
     href: '/channels',
     label: 'Channels',
     icon: ChannelsIcon,
-    color: 'magenta',
-    isPrimary: true
+    color: 'magenta'
   },
   {
     id: 'trending',

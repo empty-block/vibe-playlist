@@ -1,11 +1,21 @@
-import { Component, createEffect, onMount, createSignal, onCleanup } from 'solid-js';
+import { Component, Show, createSignal, createEffect, onMount, onCleanup, untrack } from 'solid-js';
 import { currentTrack, isPlaying, setIsPlaying, setCurrentTime, setDuration, setIsSeekable, playNextTrack, handleTrackError } from '../../stores/playerStore';
-import { spotifyAccessToken } from '../../stores/authStore';
+import { isInFarcasterSync } from '../../stores/farcasterStore';
+import { spotifyAccessToken, isSpotifyAuthenticated } from '../../stores/authStore';
+import SpotifyLoginPrompt from './SpotifyLoginPrompt';
+import { playTrackOnConnect, getPlaybackState, togglePlaybackOnConnect, seekOnConnect, waitForActiveDevice, getAvailableDevices } from '../../services/spotifyConnect';
+import sdk from '@farcaster/miniapp-sdk';
+
+// Persistent Spotify Connect state (survives component remounts)
+// This is necessary because SpotifyMedia remounts on every track change
+const [persistentDeviceName, setPersistentDeviceName] = createSignal<string>('');
+const [persistentConnectReady, setPersistentConnectReady] = createSignal(false);
 
 interface SpotifyMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPause?: (pauseFn: () => void) => void;
 }
 
 declare global {
@@ -18,32 +28,212 @@ declare global {
 }
 
 const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
+  // Browser Web Playback SDK state
   let player: any;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
-  
-  // Always use compact size for bottom bar
+  const [sdkFailed, setSdkFailed] = createSignal(false);
 
-  // Load SDK when token is available
+  // Farcaster Spotify Connect state (local to this component instance)
+  const [waitingForDevice, setWaitingForDevice] = createSignal(false);
+  const [connectionFailed, setConnectionFailed] = createSignal(false);
+  const [isConnecting, setIsConnecting] = createSignal(false); // Prevent auto-play during initial connection
+  let pollingInterval: number | undefined;
+
+  // Use persistent signals for state that needs to survive remounts
+  const connectReady = persistentConnectReady;
+  const setConnectReady = setPersistentConnectReady;
+  const deviceName = persistentDeviceName;
+  const setDeviceName = setPersistentDeviceName;
+
+  // Helper to extract Spotify ID and content type from URL, URI, or plain ID
+  const extractSpotifyInfo = (sourceId: string, contentType?: 'track' | 'album' | 'playlist'): { id: string; type: 'track' | 'album' | 'playlist' } | null => {
+    if (!sourceId) return null;
+
+    // Extract from URL (https://open.spotify.com/{type}/ID)
+    const urlMatch = sourceId.match(/spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+    if (urlMatch) {
+      return {
+        id: urlMatch[2],
+        type: urlMatch[1] as 'track' | 'album' | 'playlist'
+      };
+    }
+
+    // Extract from URI (spotify:{type}:ID)
+    const uriMatch = sourceId.match(/spotify:(track|album|playlist):([a-zA-Z0-9]+)/);
+    if (uriMatch) {
+      return {
+        id: uriMatch[2],
+        type: uriMatch[1] as 'track' | 'album' | 'playlist'
+      };
+    }
+
+    // Plain ID - use contentType from track metadata or default to 'track'
+    if (/^[a-zA-Z0-9]+$/.test(sourceId)) {
+      return {
+        id: sourceId,
+        type: contentType || 'track'
+      };
+    }
+
+    return null;
+  };
+
+  const openInSpotify = async () => {
+    const track = currentTrack();
+    if (!track?.sourceId) return;
+
+    // Verify authentication before using Connect API
+    if (!isSpotifyAuthenticated()) {
+      console.error('Cannot start playback - user not authenticated');
+      handleTrackError('Please login to Spotify first', false);
+      return;
+    }
+
+    // In Farcaster mobile, use hybrid approach: try deep link + Connect API
+    if (isInFarcasterSync()) {
+      // Set connecting state
+      setIsConnecting(true);
+      setConnectionFailed(false);
+      setWaitingForDevice(false);
+
+      // Step 1: Check for existing active devices first
+      const devices = await getAvailableDevices();
+      const activeDevice = devices.find((d: any) => d.is_active);
+
+      if (activeDevice) {
+        // Device already active - just play the track
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
+        if (success) {
+          setDeviceName(activeDevice.name);
+          setIsPlaying(true);
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
+          setConnectReady(true);
+          startPlaybackPolling();
+          setIsConnecting(false);
+          return;
+        }
+      }
+
+      // Step 2: No active device - try to open Spotify
+      setWaitingForDevice(true);
+
+      // Extract Spotify ID and content type from sourceId (handles URLs, URIs, or plain IDs)
+      const spotifyInfo = extractSpotifyInfo(track.sourceId, track.contentType);
+      if (!spotifyInfo) {
+        console.error('Could not extract Spotify info from:', track.sourceId);
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+        setIsConnecting(false);
+        return;
+      }
+
+      try {
+        // Try spotify: URI (with HTTPS fallback)
+        const spotifyUri = `spotify:${spotifyInfo.type}:${spotifyInfo.id}`;
+
+        try {
+          await sdk.actions.openUrl(spotifyUri);
+        } catch (uriError) {
+          // Fallback to HTTPS URL
+          const spotifyUrl = `https://open.spotify.com/${spotifyInfo.type}/${spotifyInfo.id}`;
+          await sdk.actions.openUrl(spotifyUrl);
+        }
+
+        // Wait for device to become active (10 seconds)
+        const result = await waitForActiveDevice(5, 2000);
+
+        if (result.success) {
+          setDeviceName(result.deviceName || 'Spotify');
+          setIsPlaying(true);
+          props.onPlaybackStarted?.(true); // Notify parent that playback has started
+          setConnectReady(true);
+          setWaitingForDevice(false);
+          startPlaybackPolling();
+          setIsConnecting(false);
+        } else {
+          setWaitingForDevice(false);
+          setConnectionFailed(true);
+          setIsConnecting(false);
+        }
+      } catch (error) {
+        console.error('Error opening Spotify:', error);
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+        setIsConnecting(false);
+      }
+
+      return;
+    }
+
+    // Fallback for browser mode: open in Spotify app/web
+    const spotifyInfo = extractSpotifyInfo(track.sourceId, track.contentType);
+    if (spotifyInfo) {
+      const spotifyUrl = `https://open.spotify.com/${spotifyInfo.type}/${spotifyInfo.id}`;
+      window.open(spotifyUrl, '_blank');
+    }
+  };
+
+  // Manual sync function for when user opens Spotify themselves
+  const manualSyncSpotify = async () => {
+    const track = currentTrack();
+    if (!track?.sourceId) return;
+
+    console.log('Manual sync requested...');
+    setConnectionFailed(false);
+    setWaitingForDevice(true);
+
+    // Check for active devices
+    const devices = await getAvailableDevices();
+    const activeDevice = devices.find((d: any) => d.is_active);
+
+    if (activeDevice) {
+      console.log('Found active device:', activeDevice.name);
+      const success = await playTrackOnConnect(track.sourceId, track.contentType);
+      if (success) {
+        setDeviceName(activeDevice.name);
+        setIsPlaying(true);
+        props.onPlaybackStarted?.(true); // Notify parent that playback has started
+        setConnectReady(true);
+        setWaitingForDevice(false);
+        startPlaybackPolling();
+        setIsConnecting(false);
+      } else {
+        setWaitingForDevice(false);
+        setConnectionFailed(true);
+      }
+    } else {
+      console.log('No active device found during manual sync');
+      setWaitingForDevice(false);
+      setConnectionFailed(true);
+    }
+  };
+
+  // Load SDK when authenticated (browser only)
   createEffect(() => {
-    const token = spotifyAccessToken();
-    if (token && !window.Spotify && !window.spotifySDKReady) {
-      console.log('Loading Spotify SDK for authenticated user...');
-      window.loadSpotifySDK().catch(console.error);
+    if (!isInFarcasterSync() && isSpotifyAuthenticated()) {
+      const token = spotifyAccessToken();
+      if (token && !window.Spotify && !window.spotifySDKLoading) {
+        console.log('Loading Spotify SDK for browser playback...');
+        window.loadSpotifySDK().catch(console.error);
+      }
     }
   });
 
+  // Initialize Web Playback SDK (browser only)
   onMount(() => {
-    console.log('SpotifyMedia onMount called');
+    if (isInFarcasterSync()) return; // Skip SDK for Farcaster
+
+    console.log('SpotifyMedia onMount - browser mode');
 
     const handleSDKReady = () => {
       console.log('Spotify SDK ready event received');
-      initializeSpotifyPlayer();
+      initializeWebPlaybackSDK();
     };
 
-    if (window.spotifySDKReady && window.Spotify) {
+    if (window.spotifySDKReady && window.Spotify && isSpotifyAuthenticated()) {
       console.log('Spotify SDK already loaded and ready');
-      initializeSpotifyPlayer();
+      initializeWebPlaybackSDK();
     } else {
       console.log('Waiting for Spotify SDK to be ready...');
       window.addEventListener('spotify-sdk-ready', handleSDKReady);
@@ -51,19 +241,15 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
     onCleanup(() => {
       window.removeEventListener('spotify-sdk-ready', handleSDKReady);
+      if (player) {
+        player.disconnect();
+      }
     });
   });
 
-  const initializeSpotifyPlayer = () => {
+  const initializeWebPlaybackSDK = () => {
     const token = spotifyAccessToken();
-    if (!token || !window.Spotify) {
-      console.log('No Spotify token or SDK available');
-      return;
-    }
-
-    // Prevent multiple initializations
-    if (player) {
-      console.log('Spotify player already initialized, skipping...');
+    if (!token || !window.Spotify || player) {
       return;
     }
 
@@ -80,48 +266,38 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     // Error handling
     player.addListener('initialization_error', ({ message }: any) => {
       console.error('Spotify initialization error:', message);
-      handleTrackError('Spotify player initialization failed', false);
+      setSdkFailed(true);
     });
 
     player.addListener('authentication_error', ({ message }: any) => {
       console.error('Spotify authentication error:', message);
-      handleTrackError('Spotify authentication failed. Please reconnect your account.', false);
+      setSdkFailed(true);
     });
 
     player.addListener('account_error', ({ message }: any) => {
       console.error('Spotify account error:', message);
-      handleTrackError('Spotify account error. Premium subscription may be required.', true);
+      handleTrackError('Spotify Premium required', true);
     });
 
     player.addListener('playback_error', ({ message }: any) => {
       console.error('Spotify playback error:', message);
-      handleTrackError('Spotify playback failed. Skipping track...', true);
+      handleTrackError('Spotify playback failed', true);
     });
 
     // Playback status updates
     player.addListener('player_state_changed', (state: any) => {
-      console.log('Spotify player state changed:', state);
       if (state) {
         setIsPlaying(!state.paused);
-
-        // Update progress tracking
         if (state.position !== undefined) {
-          setCurrentTime(state.position / 1000); // Convert ms to seconds
+          setCurrentTime(state.position / 1000);
         }
         if (state.duration !== undefined) {
-          setDuration(state.duration / 1000); // Convert ms to seconds
+          setDuration(state.duration / 1000);
         }
-
-        // Spotify SDK supports seeking
         setIsSeekable(true);
 
-        // Check if track has finished (position near end and paused)
-        const trackEnded = state.paused &&
-                          state.duration > 0 &&
-                          state.position >= state.duration - 1000; // Within 1 second of end
-
+        const trackEnded = state.paused && state.duration > 0 && state.position >= state.duration - 1000;
         if (trackEnded) {
-          console.log('Spotify track finished, playing next track');
           playNextTrack();
         }
       }
@@ -133,71 +309,95 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       setDeviceId(device_id);
       setPlayerReady(true);
       props.onPlayerReady(true);
-
-      // Provide toggle and seek functions to parent
-      props.onTogglePlay(() => togglePlay());
+      props.onTogglePlay(() => togglePlaySDK());
       if (props.onSeek) {
-        props.onSeek((time: number) => seekToPosition(time));
+        props.onSeek((time: number) => seekSDK(time));
+      }
+      if (props.onPause) {
+        props.onPause(() => pauseSpotify());
       }
     });
 
-    // Connect to the player!
-    player.connect().then((success: boolean) => {
-      if (success) {
-        console.log('Successfully connected to Spotify Web Playback SDK');
-      } else {
-        console.error('Failed to connect to Spotify Web Playback SDK');
-      }
-    });
+    player.connect();
   };
 
-  const togglePlay = async () => {
-    console.log('Spotify togglePlay called');
-
-    if (!playerReady()) {
-      console.log('Spotify player not ready');
-      return;
-    }
-
+  const togglePlaySDK = async () => {
+    if (!playerReady()) return;
     try {
       if (isPlaying()) {
         await player.pause();
-        console.log('Paused Spotify playback');
       } else {
         await player.resume();
-        console.log('Resumed Spotify playback');
       }
     } catch (error) {
       console.error('Error toggling Spotify playback:', error);
     }
   };
 
-  const seekToPosition = async (timeInSeconds: number) => {
-    console.log('Spotify seek to:', timeInSeconds);
-
-    if (!playerReady()) {
-      console.log('Spotify player not ready for seeking');
-      return;
-    }
-
+  const seekSDK = async (timeInSeconds: number) => {
+    if (!playerReady()) return;
     try {
-      const positionMs = Math.floor(timeInSeconds * 1000);
-      await player.seek(positionMs);
-      console.log('Seeked to position:', positionMs, 'ms');
+      await player.seek(Math.floor(timeInSeconds * 1000));
     } catch (error) {
-      console.error('Error seeking in Spotify track:', error);
+      console.error('Error seeking:', error);
     }
   };
 
-  const playSpotifyTrack = async (trackId: string, deviceIdValue: string) => {
+  const pauseSpotify = async () => {
+    console.log('[SpotifyMedia] Pause requested');
+
+    // Browser SDK mode
+    if (!isInFarcasterSync() && player && playerReady()) {
+      console.log('[SpotifyMedia] Pausing Browser SDK player');
+      try {
+        await player.pause();
+      } catch (err) {
+        console.error('Failed to pause Spotify SDK player:', err);
+      }
+      return;
+    }
+
+    // Farcaster Connect mode
+    if (isInFarcasterSync() && connectReady()) {
+      console.log('[SpotifyMedia] Pausing Spotify Connect');
+      stopPlaybackPolling();
+      try {
+        await togglePlaybackOnConnect(false);
+      } catch (err) {
+        console.error('Failed to pause Spotify on Connect:', err);
+      }
+      return;
+    }
+
+    console.log('[SpotifyMedia] No active player to pause');
+  };
+
+  const playTrackSDK = async (sourceId: string, deviceIdValue: string, contentType?: 'track' | 'album' | 'playlist') => {
     const token = spotifyAccessToken();
-    if (!token) {
-      console.error('No Spotify access token available');
+    if (!token) return;
+
+    // Extract Spotify ID and content type
+    const spotifyInfo = extractSpotifyInfo(sourceId, contentType);
+    if (!spotifyInfo) {
+      console.error('Could not extract Spotify info from:', sourceId);
+      handleTrackError('Invalid Spotify content', true);
       return;
     }
 
     try {
-      console.log('Starting Spotify playback for track:', trackId, 'on device:', deviceIdValue);
+      // Build proper request body based on content type
+      const contextUri = `spotify:${spotifyInfo.type}:${spotifyInfo.id}`;
+      const body = spotifyInfo.type === 'track'
+        ? {
+            device_id: deviceIdValue,
+            uris: [contextUri], // Single track uses uris array
+          }
+        : {
+            device_id: deviceIdValue,
+            context_uri: contextUri, // Albums/playlists use context_uri to play full collection
+          };
+
+      console.log(`Playing Spotify ${spotifyInfo.type}:`, spotifyInfo.id);
 
       const response = await fetch('https://api.spotify.com/v1/me/player/play', {
         method: 'PUT',
@@ -205,66 +405,372 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          device_id: deviceIdValue,
-          uris: [`spotify:track:${trackId}`],
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Spotify playback error:', response.status, errorData);
-
         if (response.status === 403 && errorData.error?.reason === 'PREMIUM_REQUIRED') {
-          handleTrackError('Spotify Premium required. Skipping to next track...', true);
-        } else if (response.status === 404) {
-          handleTrackError('Spotify track not found or unavailable in your region', true);
+          handleTrackError('Spotify Premium required', true);
         } else {
           handleTrackError(`Spotify playback error: ${response.status}`, true);
         }
-        return;
       }
-
-      console.log('Successfully started Spotify playback');
-      // Don't set isPlaying here - wait for player_state_changed event
     } catch (error) {
-      console.error('Error playing Spotify track:', error);
+      console.error('Error playing Spotify content:', error);
       handleTrackError('Failed to start Spotify playback', true);
     }
   };
 
+  // Play track when ready (browser only)
   createEffect(() => {
+    if (isInFarcasterSync()) return;
+
     const track = currentTrack();
     const ready = playerReady();
     const device = deviceId();
 
-    console.log('SpotifyMedia createEffect triggered:', {
-      track: track?.title,
-      source: track?.source,
-      sourceId: track?.sourceId,
-      playerReady: ready,
-      deviceId: device,
-      allConditionsMet: !!(track && track.source === 'spotify' && track.sourceId && ready && device)
-    });
+    // If track switched to non-Spotify source, pause the player
+    if (track && track.source !== 'spotify' && player && ready) {
+      console.log('[Browser SDK] Track switched to non-Spotify source, pausing player');
+      player.pause().catch((err: any) =>
+        console.error('Failed to pause Spotify SDK player:', err)
+      );
+      return;
+    }
 
     if (track && track.source === 'spotify' && track.sourceId && ready && device) {
-      console.log('✅ All conditions met - Loading Spotify track:', track.title, track.sourceId);
-      playSpotifyTrack(track.sourceId, device);
-    } else {
-      console.log('❌ Waiting for conditions:', {
-        hasTrack: !!track,
-        isSpotifySource: track?.source === 'spotify',
-        hasSourceId: !!track?.sourceId,
-        playerReady: ready,
-        hasDeviceId: !!device
-      });
+      playTrackSDK(track.sourceId, device, track.contentType);
     }
   });
 
+  // === FARCASTER SPOTIFY CONNECT LOGIC ===
+
+  // Start playback state polling for Farcaster
+  const startPlaybackPolling = () => {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+    }
+
+    console.log('Starting Spotify Connect playback polling (every 2s)');
+    let lastPlayingState = isPlaying();
+
+    pollingInterval = window.setInterval(async () => {
+      const state = await getPlaybackState();
+      if (state) {
+        const currentPlayingState = state.is_playing;
+
+        // Only update and notify if state actually changed
+        if (currentPlayingState !== lastPlayingState) {
+          console.log('Playback state changed via polling:', lastPlayingState, '->', currentPlayingState);
+          setIsPlaying(currentPlayingState);
+          // Only notify when playback STARTS, not when it pauses
+          if (currentPlayingState === true) {
+            props.onPlaybackStarted?.(true);
+          }
+          lastPlayingState = currentPlayingState;
+        } else {
+          // State didn't change, just update silently
+          setIsPlaying(currentPlayingState);
+        }
+
+        setCurrentTime(state.progress_ms / 1000);
+        if (state.item) {
+          setDuration(state.item.duration_ms / 1000);
+        }
+        setIsSeekable(true);
+
+        // Check if track ended
+        if (state.item && state.progress_ms >= state.item.duration_ms - 1000) {
+          console.log('Track ended - playing next');
+          playNextTrack();
+        }
+      }
+    }, 2000); // Poll every 2 seconds
+  };
+
+  const stopPlaybackPolling = () => {
+    if (pollingInterval) {
+      console.log('Stopping Spotify Connect playback polling');
+      clearInterval(pollingInterval);
+      pollingInterval = undefined;
+    }
+  };
+
+  // Play track using Spotify Connect (Farcaster only)
+  const playTrackConnect = async (trackId: string, contentType?: 'track' | 'album' | 'playlist') => {
+    console.log('Playing track via Spotify Connect:', trackId);
+    const success = await playTrackOnConnect(trackId, contentType);
+    if (success) {
+      console.log('Track started on Spotify Connect - starting polling');
+      setConnectReady(true);
+      startPlaybackPolling();
+    } else {
+      console.error('Failed to start track on Spotify Connect');
+      handleTrackError('Could not play on Spotify - make sure Spotify is open', false);
+    }
+  };
+
+  // Auto-play track changes when device is already connected (Farcaster only)
+  // This effect only watches trackId changes, not play/pause state
+  createEffect(() => {
+    if (!isInFarcasterSync()) {
+      console.log('[Auto-play Effect] Not in Farcaster, skipping');
+      return;
+    }
+
+    const track = currentTrack();
+    const hasDevice = deviceName(); // Device already connected from previous track
+    const connecting = isConnecting(); // Skip during initial connection
+
+    console.log('[Auto-play Effect] Triggered with:', {
+      trackId: track?.sourceId,
+      trackSource: track?.source,
+      hasDevice: !!hasDevice,
+      deviceName: hasDevice,
+      connecting,
+    });
+
+    // If track switched to non-Spotify source, stop Spotify playback
+    if (track && track.source !== 'spotify') {
+      console.log('[Auto-play Effect] 🛑 Track switched to non-Spotify source, pausing Spotify');
+      stopPlaybackPolling();
+      // Pause Spotify playback using Connect API
+      if (connectReady()) {
+        togglePlaybackOnConnect(false).catch(err =>
+          console.error('Failed to pause Spotify on track switch:', err)
+        );
+      }
+      return;
+    }
+
+    // Only auto-play if we have a connected device AND not currently connecting
+    // This prevents double-play on first track while enabling auto-play for subsequent tracks
+    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting) {
+      console.log('[Auto-play Effect] ✅ All conditions met - auto-playing:', track.sourceId);
+
+      // Use untrack to avoid re-triggering on isPlaying changes
+      untrack(async () => {
+        const success = await playTrackOnConnect(track.sourceId, track.contentType);
+        if (success) {
+          console.log('Track started on Spotify Connect - starting polling');
+          setConnectReady(true);
+          startPlaybackPolling();
+        } else {
+          // Device might have gone inactive - fallback to openInSpotify flow
+          console.warn('playTrackConnect failed - falling back to openInSpotify');
+          await openInSpotify();
+        }
+      });
+    } else {
+      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play');
+    }
+  });
+
+  // Toggle play/pause using Spotify Connect (Farcaster only)
+  const togglePlayConnect = async () => {
+    if (!connectReady()) {
+      console.warn('Connect API not ready yet');
+      return;
+    }
+
+    const playing = isPlaying();
+    console.log('Toggling Spotify Connect playback:', playing ? 'pause' : 'play');
+
+    const newState = !playing;
+    const success = await togglePlaybackOnConnect(newState);
+
+    if (success) {
+      setIsPlaying(newState);
+      // Only notify when STARTING playback, not when pausing
+      // Pausing should keep hasStartedPlayback=true so embed hides correctly
+      if (newState === true) {
+        props.onPlaybackStarted?.(true);
+      }
+    } else {
+      console.error('Failed to toggle Spotify Connect playback');
+    }
+  };
+
+  // Setup Connect API controls for Farcaster
+  onMount(() => {
+    if (!isInFarcasterSync()) return;
+
+    console.log('SpotifyMedia onMount - Farcaster mode (Spotify Connect)');
+
+    // We're ready for Connect API immediately
+    setConnectReady(true);
+    props.onPlayerReady(true);
+
+    // Wire up toggle play to use Spotify Connect API
+    props.onTogglePlay(() => togglePlayConnect());
+
+    // Wire up seek if provided
+    if (props.onSeek) {
+      props.onSeek(async (time: number) => {
+        await seekOnConnect(time * 1000);
+      });
+    }
+
+    // Wire up pause if provided
+    if (props.onPause) {
+      props.onPause(() => pauseSpotify());
+    }
+
+    onCleanup(() => {
+      stopPlaybackPolling();
+    });
+  });
+
   return (
-    <div class="bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center">
-      <i class="fab fa-spotify text-green-400 text-6xl sm:text-8xl"></i>
-    </div>
+    <Show
+      when={isInFarcasterSync()}
+      fallback={
+        // Browser: Show login prompt or Web Playback SDK player
+        <Show
+          when={isSpotifyAuthenticated()}
+          fallback={<SpotifyLoginPrompt />}
+        >
+          <Show
+            when={!sdkFailed()}
+            fallback={
+              // SDK failed - show fallback button
+              <div class="relative bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex flex-col items-center justify-center">
+                <Show when={currentTrack()?.thumbnail}>
+                  <img
+                    src={currentTrack()?.thumbnail}
+                    alt={currentTrack()?.title}
+                    class="absolute inset-0 w-full h-full object-cover opacity-50"
+                  />
+                </Show>
+                <div class="relative z-10 flex flex-col items-center justify-center gap-4 p-4 text-center">
+                  <i class="fab fa-spotify text-green-400 text-5xl"></i>
+                  <div class="text-white">
+                    <div class="font-bold text-sm line-clamp-1">{currentTrack()?.title}</div>
+                    <div class="text-xs opacity-75 line-clamp-1">{currentTrack()?.artist}</div>
+                  </div>
+                  <button
+                    onClick={openInSpotify}
+                    class="bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-sm transition-colors flex items-center gap-2"
+                  >
+                    <i class="fab fa-spotify"></i>
+                    Play on Spotify
+                  </button>
+                </div>
+              </div>
+            }
+          >
+            {/* Web Playback SDK player UI */}
+            <div class="bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex items-center justify-center">
+              <i class="fab fa-spotify text-green-400 text-6xl sm:text-8xl"></i>
+            </div>
+          </Show>
+        </Show>
+      }
+    >
+      {/* Farcaster: Show login prompt or "Play on Spotify" button with states */}
+      <Show
+        when={isSpotifyAuthenticated()}
+        fallback={<SpotifyLoginPrompt />}
+      >
+        <div class="relative bg-gradient-to-br from-green-900 to-black rounded overflow-hidden w-56 h-44 sm:w-80 sm:h-52 flex flex-col items-center justify-center">
+          <Show when={currentTrack()?.thumbnail}>
+            <img
+              src={currentTrack()?.thumbnail}
+              alt={currentTrack()?.title}
+              class="absolute inset-0 w-full h-full object-cover opacity-50"
+            />
+          </Show>
+
+          <div class="relative z-10 flex flex-col items-center justify-center gap-3 p-4 text-center">
+            <i class="fab fa-spotify text-green-400 text-5xl"></i>
+
+            <div class="text-white">
+              <div class="font-bold text-sm line-clamp-1">{currentTrack()?.title}</div>
+              <div class="text-xs opacity-75 line-clamp-1">{currentTrack()?.artist}</div>
+            </div>
+
+            {/* Show different states - use fallback pattern for clarity */}
+            <Show
+              when={waitingForDevice()}
+              fallback={
+                <Show
+                  when={connectReady() && deviceName()}
+                  fallback={
+                    <Show
+                      when={connectionFailed()}
+                      fallback={
+                        /* Default state - show Play on Spotify button */
+                        <>
+                          <button
+                            onClick={openInSpotify}
+                            class="bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-sm transition-colors flex items-center gap-2"
+                          >
+                            <i class="fab fa-spotify"></i>
+                            Play on Spotify
+                          </button>
+                          <div class="text-xs text-white/60">
+                            Opens in your Spotify mobile app
+                          </div>
+                        </>
+                      }
+                    >
+                      {/* Failed state with manual sync instructions */}
+                      <div class="flex flex-col items-center gap-2 px-4">
+                        <div class="text-white text-xs font-semibold">📱 Open Spotify & Play</div>
+                        <div class="text-white/70 text-[11px] text-center leading-tight">
+                          1. Open your Spotify app<br/>
+                          2. Start playing any track<br/>
+                          3. Tap the button below
+                        </div>
+                        <button
+                          onClick={manualSyncSpotify}
+                          class="mt-1 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded-full text-xs transition-colors flex items-center gap-1.5"
+                        >
+                          <i class="fab fa-spotify"></i>
+                          I'm Playing in Spotify
+                        </button>
+                        <button
+                          onClick={openInSpotify}
+                          class="bg-white/10 hover:bg-white/20 text-white/70 font-medium py-1 px-3 rounded-full text-[10px] transition-colors"
+                        >
+                          Try opening Spotify again
+                        </button>
+                      </div>
+                    </Show>
+                  }
+                >
+                  {/* Connected state - clickable to pause */}
+                  <button
+                    onClick={() => {
+                      // Pause when clicked
+                      if (isPlaying()) {
+                        togglePlayConnect();
+                      }
+                    }}
+                    class="absolute inset-0 cursor-pointer"
+                    aria-label="Pause"
+                  ></button>
+                </Show>
+              }
+            >
+              {/* Waiting for device state */}
+              <div class="flex flex-col items-center gap-2">
+                <div class="text-white text-sm font-semibold">⏳ Waiting for Spotify...</div>
+                <div class="text-white/70 text-xs">Opening track in Spotify app</div>
+                <div class="text-white/70 text-xs">Controls will appear when playback starts</div>
+                {/* Loading animation */}
+                <div class="flex gap-1 mt-2">
+                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0s"></div>
+                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                  <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                </div>
+              </div>
+            </Show>
+          </div>
+        </div>
+      </Show>
+    </Show>
   );
 };
 
