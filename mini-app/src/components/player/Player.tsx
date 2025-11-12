@@ -15,6 +15,7 @@ import {
   playerError
 } from '../../stores/playerStore';
 import { playbackButtonHover, statusPulse, playerTransitions } from '../../utils/animations';
+import { triggerImpact } from '../../utils/haptics';
 import './player.css';
 
 interface PlayerProps {
@@ -105,12 +106,18 @@ const Player: Component<PlayerProps> = (props) => {
 
   const handleProgressClick = (event: MouseEvent) => {
     if (!isSeekable() || !props.onSeek) return;
-    
+
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const percentage = ((event.clientX - rect.left) / rect.width) * 100;
     const targetTime = (duration() * percentage) / 100;
-    
+
     props.onSeek(targetTime);
+  };
+
+  const handlePlayPauseClick = async () => {
+    // Trigger haptic feedback first for immediate tactile response
+    await triggerImpact('light');
+    props.onTogglePlay();
   };
 
 
@@ -218,7 +225,7 @@ const Player: Component<PlayerProps> = (props) => {
             <div class="player-controls">
               <button
                 ref={playButtonRef!}
-                onClick={props.onTogglePlay}
+                onClick={handlePlayPauseClick}
                 class="player-control player-control--play"
                 disabled={!props.playerReady()}
                 title={isPlaying() ? 'Pause' : 'Play'}
