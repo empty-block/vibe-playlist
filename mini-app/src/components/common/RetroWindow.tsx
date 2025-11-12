@@ -16,6 +16,12 @@ export interface RetroWindowProps {
    */
   variant?: '3d' | 'neon';
 
+  /** Show back button in title bar */
+  showBack?: boolean;
+
+  /** Back button click handler */
+  onBack?: () => void;
+
   /** Show minimize button in title bar */
   showMinimize?: boolean;
 
@@ -104,6 +110,8 @@ const RetroWindow: Component<RetroWindowProps> = (props) => {
   const titleBarProps: RetroTitleBarProps = {
     title: props.title,
     icon: props.icon,
+    showBack: props.showBack,
+    onBack: props.onBack,
     showMinimize: props.showMinimize,
     showMaximize: props.showMaximize,
     showClose: props.showClose,

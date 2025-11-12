@@ -8,6 +8,12 @@ export interface RetroTitleBarProps {
   /** Optional icon element */
   icon?: JSX.Element;
 
+  /** Show back button */
+  showBack?: boolean;
+
+  /** Back button click handler */
+  onBack?: () => void;
+
   /** Show minimize button */
   showMinimize?: boolean;
 
@@ -71,6 +77,11 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
     props.onClose?.();
   };
 
+  const handleBack = (e: MouseEvent) => {
+    e.stopPropagation();
+    props.onBack?.();
+  };
+
   const toggleMenu = (e: MouseEvent) => {
     e.stopPropagation();
     setIsMenuOpen(!isMenuOpen());
@@ -99,9 +110,20 @@ const RetroTitleBar: Component<RetroTitleBarProps> = (props) => {
 
   return (
     <div
-      class={`retro-titlebar ${props.class || ''}`}
+      class={`retro-titlebar ${props.showBack ? 'retro-titlebar--with-back' : ''} ${props.class || ''}`}
       ref={props.ref}
     >
+      <Show when={props.showBack}>
+        <button
+          class="retro-titlebar__back-button"
+          onClick={handleBack}
+          aria-label="Go back"
+          type="button"
+        >
+          ←
+        </button>
+      </Show>
+
       <div class="retro-titlebar__text">
         <Show when={props.icon} fallback={<div class="retro-titlebar__icon" />}>
           {props.icon}
