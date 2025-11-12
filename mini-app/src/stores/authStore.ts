@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from 'solid-js';
 import { getSpotifyAuthURL, SPOTIFY_CONFIG } from '../config/spotify';
-import { farcasterAuth } from './farcasterStore';
+import { farcasterAuth, farcasterLoading } from './farcasterStore';
 import { checkInviteStatus } from '../utils/invite';
 import { identifyUser, trackSpotifyAuthCompleted } from '../utils/analytics';
 
@@ -22,6 +22,12 @@ export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
 // Sync currentUser with Farcaster auth state and check invite access
 createEffect(async () => {
   const auth = farcasterAuth();
+
+  // CRITICAL: Wait for Farcaster SDK to finish initializing
+  // Without this check, we'd show "open in Farcaster" even when user IS in Farcaster
+  if (farcasterLoading()) {
+    return; // Don't check auth until SDK initialization completes
+  }
 
   if (auth.isAuthenticated && auth.fid) {
     // Check if user has invite access

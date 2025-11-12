@@ -3,7 +3,7 @@ import RetroWindow from '../components/common/RetroWindow';
 import TextInput from '../components/common/TextInput';
 import AnimatedButton from '../components/common/AnimatedButton';
 import { redeemInviteCode } from '../utils/invite';
-import { farcasterAuth } from '../stores/farcasterStore';
+import { farcasterAuth, farcasterLoading } from '../stores/farcasterStore';
 import { setCurrentUser, setIsAuthenticated, setShowInviteModal } from '../stores/authStore';
 import { trackBetaCodeEntered } from '../utils/analytics';
 import './inviteGatePage.css';
@@ -77,6 +77,7 @@ const InviteGatePage: Component = () => {
   };
 
   const auth = farcasterAuth();
+  const isLoading = farcasterLoading();
   const isGuest = !auth.fid;
 
   return (
@@ -95,18 +96,24 @@ const InviteGatePage: Component = () => {
               <p class="invite-welcome-text">
                 You're about to enter the beta for the most social way to discover music.
               </p>
-              <Show when={!isGuest} fallback={
-                <p class="invite-welcome-subtext" style="color: #ff6b9d; font-weight: 600;">
-                  ⚠️ Please open this link in the Farcaster app to continue.
-                </p>
+              <Show when={isLoading} fallback={
+                <Show when={!isGuest} fallback={
+                  <p class="invite-welcome-subtext" style="color: #ff6b9d; font-weight: 600;">
+                    ⚠️ Please open this link in the Farcaster app to continue.
+                  </p>
+                }>
+                  <p class="invite-welcome-subtext">
+                    Enter your invite code below to unlock access.
+                  </p>
+                </Show>
               }>
-                <p class="invite-welcome-subtext">
-                  Enter your invite code below to unlock access.
+                <p class="invite-welcome-subtext" style="color: #04caf4; font-weight: 600;">
+                  Initializing...
                 </p>
               </Show>
             </div>
 
-            <Show when={!isGuest}>
+            <Show when={!isLoading && !isGuest}>
               <div class="invite-form-section">
                 <div onKeyPress={handleKeyPress}>
                   <TextInput
