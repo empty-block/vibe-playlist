@@ -81,9 +81,6 @@ const InviteCodeModal: Component<InviteCodeModalProps> = (props) => {
     >
       <div class="invite-modal-content">
         <div class="invite-welcome-text">
-          <p class="invite-welcome-primary">
-            Welcome to Jamzy! You're about to enter the beta for the most social way to discover music.
-          </p>
           <p class="invite-welcome-secondary">
             Enter your invite code below to unlock access.
           </p>
@@ -121,9 +118,6 @@ const InviteCodeModal: Component<InviteCodeModalProps> = (props) => {
         </div>
 
         <div class="invite-footer">
-          <p class="invite-footer-text">
-            Need an invite? Check your DMs or hit up the Jamzy channel on Farcaster.
-          </p>
         </div>
       </div>
     </BaseModal>
