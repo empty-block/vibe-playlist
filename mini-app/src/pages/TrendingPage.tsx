@@ -1,4 +1,4 @@
-import { Component, createSignal, For, onMount } from 'solid-js';
+import { Component, createSignal, createMemo, For, onMount } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import MobileNavigation from '../components/layout/MobileNavigation/MobileNavigation';
 import RetroWindow from '../components/common/RetroWindow';
@@ -76,6 +76,14 @@ const TrendingPage: Component = () => {
     loadTrendingData();
   });
 
+  // Filter out songlink and apple_music tracks
+  const filteredTracks = createMemo(() => {
+    return tracks().filter(track => {
+      const platform = track.platform;
+      return platform !== 'songlink' && platform !== 'apple_music';
+    });
+  });
+
   // Format the last updated timestamp
   const updatedTimeAgo = () => {
     const updated = lastUpdated();
@@ -84,7 +92,7 @@ const TrendingPage: Component = () => {
 
   // Convert trending tracks to Track array for playlist context
   const getTrendingTracks = (): Track[] => {
-    return tracks().map(track => ({
+    return filteredTracks().map(track => ({
       id: track.id,
       title: track.title,
       artist: track.artist,
@@ -171,13 +179,13 @@ const TrendingPage: Component = () => {
           contentPadding="0"
           footer={
             <div class="status-bar">
-              <span class="status-bar-section">{tracks().length} tracks</span>
+              <span class="status-bar-section">{filteredTracks().length} tracks</span>
               <span class="status-bar-section">Updated: {updatedTimeAgo()}</span>
             </div>
           }
         >
           <div class="window-content-inner" classList={{ minimized: window1Minimized() }}>
-            {isLoading() && tracks().length === 0 ? (
+            {isLoading() && filteredTracks().length === 0 ? (
               <div class="loading-state">
                 Loading trending tracks...
               </div>
@@ -185,12 +193,12 @@ const TrendingPage: Component = () => {
               <div class="error-state">
                 Error: {error()}
               </div>
-            ) : tracks().length === 0 ? (
+            ) : filteredTracks().length === 0 ? (
               <div class="empty-state">
                 No trending tracks yet
               </div>
             ) : (
-              <For each={tracks()}>
+              <For each={filteredTracks()}>
                 {(track, index) => (
                   <AnimatedTrackItem
                     track={track}

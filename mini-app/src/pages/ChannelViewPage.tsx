@@ -175,14 +175,21 @@ const ChannelViewPage: Component = () => {
   const displayedThreads = createMemo(() => {
     const currentThreads = threads();
 
+    // Filter out songlink and apple_music tracks
+    const filteredThreads = currentThreads.filter(thread => {
+      if (!thread.music || thread.music.length === 0) return true;
+      const platform = thread.music[0].platform;
+      return platform !== 'songlink' && platform !== 'apple_music';
+    });
+
     // Apply shuffle if active
     if (activeSort() === 'shuffle') {
       const seed = shuffleSeed();
       console.log('[ChannelViewPage] Shuffling with seed:', seed);
-      return shuffleArray(currentThreads);
+      return shuffleArray(filteredThreads);
     }
 
-    return currentThreads;
+    return filteredThreads;
   });
 
   // Convert feed data to Track array for playlist context
