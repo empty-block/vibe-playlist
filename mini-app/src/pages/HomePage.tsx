@@ -34,6 +34,8 @@ const HomePage: Component = () => {
   const [shuffleSeed, setShuffleSeed] = createSignal<number>(0);
   const [filterDialogOpen, setFilterDialogOpen] = createSignal(false);
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [submitError, setSubmitError] = createSignal<string | null>(null);
 
   // Pagination state
   const [threads, setThreads] = createSignal<any[]>([]);
@@ -223,9 +225,44 @@ const HomePage: Component = () => {
 
   // Handle track submission
   const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
-    console.log('Track submitted to home feed:', data);
-    setShowAddTrackModal(false);
-    // TODO: Implement actual track submission via Farcaster composer
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Import SDK dynamically
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+
+      // Open native Farcaster composer with pre-filled data
+      const result = await sdk.actions.composeCast({
+        text: data.comment || 'Check out this track! 🎵',
+        embeds: [data.songUrl],
+        channelKey: 'music' // Post to music channel
+      });
+
+      console.log('[HomePage] Compose cast result:', result);
+
+      if (result?.cast) {
+        // User posted the cast successfully
+        console.log('[HomePage] Cast posted with hash:', result.cast.hash);
+
+        // Close modal
+        setShowAddTrackModal(false);
+
+        // Reload feed to show new post (may take a moment to sync)
+        setTimeout(() => {
+          loadFeed(true);
+        }, 2000);
+      } else {
+        // User cancelled the cast
+        console.log('[HomePage] User cancelled the cast');
+        setSubmitError('Cast was cancelled');
+      }
+    } catch (error) {
+      console.error('[HomePage] Error opening composer:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to open cast composer');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Count active filters

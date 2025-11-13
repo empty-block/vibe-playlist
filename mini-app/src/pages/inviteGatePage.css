@@ -116,6 +116,30 @@
   font-weight: 600;
 }
 
+/* Divider Section */
+.invite-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0 16px 0;
+}
+
+.invite-divider::before,
+.invite-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color, #333);
+}
+
+.invite-divider-text {
+  padding: 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #999999);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Footer Section */
 .invite-footer-section {
   text-align: center;

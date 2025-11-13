@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { customAlphabet } from 'nanoid'
-import { getSupabaseClient } from '../lib/api-utils'
+import { getSupabaseClient, getSupabaseServiceClient } from '../lib/api-utils'
 import { addRateLimitHeaders, rateLimitMiddleware } from '../lib/rate-limit'
 import { verifyAdminMiddleware } from '../lib/auth-helpers'
 
@@ -154,6 +154,130 @@ app.post('/redeem', rateLimitMiddleware, async (c) => {
     })
   } catch (error) {
     console.error('Error redeeming invite code:', error)
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Internal server error'
+      }
+    }, 500)
+  }
+})
+
+/**
+ * POST /api/invites/redeem-guest
+ * Redeem a TESTING CODE ONLY for guest (browser) users
+ * Rate limited by IP to prevent abuse
+ * Only accepts codes where is_test_code = true
+ */
+app.post('/redeem-guest', rateLimitMiddleware, async (c) => {
+  try {
+    const body = await c.req.json()
+    const { code, browserFingerprint } = body
+
+    if (!code || !browserFingerprint) {
+      return c.json({
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'Missing invite code or browser fingerprint'
+        }
+      }, 400)
+    }
+
+    // Get IP address for logging and rate limiting
+    const ipAddress = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
+    const userAgent = c.req.header('user-agent') || 'unknown'
+
+    // Use service client to bypass RLS for reading invite codes
+    const supabase = getSupabaseServiceClient()
+
+    // CRITICAL: Check if code exists and is_test_code = true
+    const { data: codeData, error: codeError } = await supabase
+      .from('invite_codes')
+      .select('code, current_uses, max_uses, is_active, is_test_code, expires_at')
+      .eq('code', code)
+      .single()
+
+    if (codeError || !codeData) {
+      console.log('[Guest Redeem] Invalid code:', code, ipAddress)
+      return c.json({
+        success: false,
+        error: {
+          code: 'INVALID_CODE',
+          message: 'Invalid invite code'
+        }
+      }, 200)
+    }
+
+    // SECURITY: Only allow testing codes for guest redemption
+    if (!codeData.is_test_code) {
+      console.warn('[Guest Redeem] SECURITY: Attempted guest redemption with non-test code:', code, ipAddress)
+      return c.json({
+        success: false,
+        error: {
+          code: 'INVALID_CODE',
+          message: 'This code cannot be used for guest access'
+        }
+      }, 200)
+    }
+
+    // Check if code is still active
+    if (!codeData.is_active) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'INACTIVE_CODE',
+          message: 'This invite code is no longer active'
+        }
+      }, 200)
+    }
+
+    // Check if code has expired
+    if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'EXPIRED_CODE',
+          message: 'This invite code has expired'
+        }
+      }, 200)
+    }
+
+    // Check if code has uses remaining
+    if (codeData.current_uses >= codeData.max_uses) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'CODE_EXHAUSTED',
+          message: 'This invite code has already been used'
+        }
+      }, 200)
+    }
+
+    // Generate guest session ID
+    const guestSessionId = `${browserFingerprint}_${Date.now()}`
+
+    // Log guest redemption (optional: store in database for analytics)
+    console.log('[Guest Redeem] SUCCESS:', {
+      code,
+      guestSessionId,
+      ipAddress,
+      userAgent,
+      timestamp: new Date().toISOString()
+    })
+
+    // Increment code usage count
+    await supabase
+      .from('invite_codes')
+      .update({ current_uses: codeData.current_uses + 1 })
+      .eq('code', code)
+
+    addRateLimitHeaders(c)
+    return c.json({
+      success: true,
+      sessionId: guestSessionId
+    })
+  } catch (error) {
+    console.error('Error redeeming guest code:', error)
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',
