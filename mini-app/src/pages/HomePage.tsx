@@ -157,14 +157,21 @@ const HomePage: Component = () => {
   const displayedThreads = createMemo(() => {
     const currentThreads = threads();
 
+    // Filter out songlink and apple_music tracks
+    const filteredThreads = currentThreads.filter(thread => {
+      if (!thread.music || thread.music.length === 0) return true;
+      const platform = thread.music[0].platform;
+      return platform !== 'songlink' && platform !== 'apple_music';
+    });
+
     // Apply shuffle if active
     if (activeSort() === 'shuffle') {
       // Include shuffleSeed in dependency to trigger new shuffle
       const _ = shuffleSeed();
-      return shuffleArray(currentThreads);
+      return shuffleArray(filteredThreads);
     }
 
-    return currentThreads;
+    return filteredThreads;
   });
 
   // Convert API thread to Track object for player

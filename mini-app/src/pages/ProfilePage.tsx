@@ -142,20 +142,24 @@ const ProfilePage: Component = () => {
   const filteredContent = createMemo(() => {
     const filter = currentFilter();
 
+    let content;
     if (filter === 'shared') {
-      return sharedTracks();
+      content = sharedTracks();
+    } else if (filter === 'likes') {
+      content = likedTracks();
+    } else if (filter === 'replies') {
+      content = repliedTracks();
+    } else {
+      // 'all' - all activity sorted by timestamp
+      content = activity().filter(a => a.cast.music && a.cast.music.length > 0);
     }
 
-    if (filter === 'likes') {
-      return likedTracks();
-    }
-
-    if (filter === 'replies') {
-      return repliedTracks();
-    }
-
-    // 'all' - all activity sorted by timestamp
-    return activity().filter(a => a.cast.music && a.cast.music.length > 0);
+    // Filter out songlink and apple_music tracks
+    return content.filter(a => {
+      if (!a.cast.music || a.cast.music.length === 0) return true;
+      const platform = a.cast.music[0].platform;
+      return platform !== 'songlink' && platform !== 'apple_music';
+    });
   });
 
   // Convert filtered activity to Track array for playlist context

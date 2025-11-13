@@ -28,7 +28,13 @@ const ThreadsPage: Component = () => {
 
   // Sorted threads based on filter
   const sortedThreads = createMemo(() => {
-    return sortThreads(threads(), sortBy());
+    // Filter out songlink and apple_music tracks
+    const filteredThreads = threads().filter(thread => {
+      if (!thread.initialPost?.track) return true;
+      const source = thread.initialPost.track.source;
+      return source !== 'songlink' && source !== 'apple_music';
+    });
+    return sortThreads(filteredThreads, sortBy());
   });
 
   // Convert threads to Track array for playlist context
