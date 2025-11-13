@@ -4,12 +4,13 @@ import { farcasterAuth, farcasterLoading } from './farcasterStore';
 import { checkInviteStatus } from '../utils/invite';
 import { identifyUser, trackSpotifyAuthCompleted } from '../utils/analytics';
 
-// Current user state - now derived from Farcaster auth
+// Current user state - now derived from Farcaster auth or guest session
 export const [currentUser, setCurrentUser] = createSignal<{
   fid: string;
   username: string;
   avatar: string | null;
   displayName: string;
+  isGuest?: boolean; // True for guest users (browser-only, testing codes)
 } | null>(null);
 
 // General authentication state - derived from Farcaster
@@ -19,16 +20,94 @@ export const [isAuthenticated, setIsAuthenticated] = createSignal(false);
 export const [showInviteModal, setShowInviteModal] = createSignal(false);
 export const [inviteCheckPending, setInviteCheckPending] = createSignal(false);
 
+// Guest session management functions - MUST be defined before createEffect
+const initializeGuestSession = () => {
+  const guestToken = localStorage.getItem('guest_access_token');
+  const guestSessionId = localStorage.getItem('guest_session_id');
+  const guestCode = localStorage.getItem('guest_code_used');
+
+  if (guestToken && guestSessionId) {
+    console.log('[Auth] Found guest session, initializing guest user');
+    setCurrentUser({
+      fid: `guest-${guestSessionId}`,
+      username: 'Guest',
+      avatar: null,
+      displayName: 'Guest User',
+      isGuest: true,
+    });
+    setIsAuthenticated(true);
+    setShowInviteModal(false);
+
+    // Identify guest user in analytics
+    identifyUser(`guest-${guestSessionId}`, {
+      username: 'Guest',
+      displayName: 'Guest User',
+      isGuest: true,
+      guestCode: guestCode || undefined,
+    });
+
+    return true;
+  }
+  return false;
+};
+
+export const createGuestSession = (sessionId: string, code: string) => {
+  const token = `guest_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+
+  localStorage.setItem('guest_access_token', token);
+  localStorage.setItem('guest_session_id', sessionId);
+  localStorage.setItem('guest_code_used', code);
+
+  setCurrentUser({
+    fid: `guest-${sessionId}`,
+    username: 'Guest',
+    avatar: null,
+    displayName: 'Guest User',
+    isGuest: true,
+  });
+  setIsAuthenticated(true);
+  setShowInviteModal(false);
+
+  // Identify guest user in analytics
+  identifyUser(`guest-${sessionId}`, {
+    username: 'Guest',
+    displayName: 'Guest User',
+    isGuest: true,
+    guestCode: code,
+  });
+
+  console.log('[Auth] Guest session created:', sessionId);
+};
+
+export const clearGuestSession = () => {
+  localStorage.removeItem('guest_access_token');
+  localStorage.removeItem('guest_session_id');
+  localStorage.removeItem('guest_code_used');
+
+  setCurrentUser(null);
+  setIsAuthenticated(false);
+
+  console.log('[Auth] Guest session cleared');
+};
+
 // Sync currentUser with Farcaster auth state and check invite access
 createEffect(async () => {
-  // Bypass invite gate if explicitly configured (for local development)
+  // Check for existing guest session first
+  if (initializeGuestSession()) {
+    console.log('[Auth] Guest session already exists, skipping Farcaster check');
+    return;
+  }
+
+  // Bypass invite gate if explicitly configured (for local development ONLY)
+  // CRITICAL: This should NEVER be enabled in production/deployed versions
   if (import.meta.env.VITE_BYPASS_INVITE_GATE === 'true') {
     console.log('[Auth] Bypassing invite gate and Farcaster auth (VITE_BYPASS_INVITE_GATE=true)');
+    console.warn('[Auth] WARNING: Using guest user for local dev only - DO NOT deploy with this enabled!');
     setCurrentUser({
-      fid: '3', // Default dev FID
-      username: 'dev-user',
-      avatar: 'https://i.imgur.com/qQrY7wZ.jpg',
-      displayName: 'Dev User',
+      fid: 'local-dev-guest', // Guest user for local dev only - not a real FID
+      username: 'local-dev-guest',
+      avatar: null,
+      displayName: 'Local Dev Guest',
     });
     setIsAuthenticated(true);
     setShowInviteModal(false);

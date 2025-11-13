@@ -31,7 +31,7 @@ export default defineConfig(() => {
       'import.meta.env.VITE_POSTHOG_API_KEY': JSON.stringify(process.env.VITE_POSTHOG_API_KEY || ''),
       'import.meta.env.VITE_POSTHOG_HOST': JSON.stringify(process.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com'),
       // Beta invite bypass for local development
-      'import.meta.env.VITE_BYPASS_INVITE_GATE': JSON.stringify('true') // Hardcoded for debugging
+      'import.meta.env.VITE_BYPASS_INVITE_GATE': JSON.stringify(process.env.VITE_BYPASS_INVITE_GATE || 'false')
     }
   };
 });
