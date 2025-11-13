@@ -17,8 +17,10 @@ declare global {
 const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
   let widget: any;
   let iframeElement: HTMLIFrameElement | undefined;
+  let loadTimeoutId: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [currentTrackId, setCurrentTrackId] = createSignal<string>('');
+  const [isLoadingTrack, setIsLoadingTrack] = createSignal(false);
 
   // Load SoundCloud Widget API
   onMount(() => {
@@ -88,8 +90,13 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
     });
 
     widget.bind(window.SC.Widget.Events.ERROR, () => {
-      console.error('SoundCloud playback error');
-      handleTrackError('SoundCloud track unavailable. Skipping...', true);
+      // Ignore errors during initialization or loading
+      // SoundCloud Widget API sometimes fires spurious ERROR events that resolve on their own
+      if (isLoadingTrack()) {
+        console.warn('SoundCloud error during track load (ignored - waiting for final state)');
+      } else {
+        console.warn('SoundCloud error during initialization (ignored)');
+      }
     });
 
     widget.bind(window.SC.Widget.Events.PLAY_PROGRESS, (data: any) => {
@@ -152,31 +159,119 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
     widget.seekTo(positionMs);
   };
 
-  const loadTrack = (trackIdOrUrl: string) => {
-    if (!widget || !playerReady()) {
-      console.log('SoundCloud widget not ready to load track');
+  const loadTrack = async (trackIdOrUrl: string) => {
+    if (!widget) {
+      console.warn('SoundCloud widget not initialized, cannot load track');
+      return;
+    }
+
+    if (!playerReady()) {
+      console.warn('SoundCloud widget not ready, waiting...');
+      // Wait for widget to be ready before loading
+      const checkReady = setInterval(() => {
+        if (playerReady()) {
+          clearInterval(checkReady);
+          loadTrack(trackIdOrUrl); // Retry once ready
+        }
+      }, 100);
+      // Timeout after 5 seconds
+      setTimeout(() => clearInterval(checkReady), 5000);
       return;
     }
 
     // Handle various SoundCloud URL formats from database
     let trackUrl: string;
     if (trackIdOrUrl.startsWith('http')) {
-      // Already a full URL (from database 'url' column)
-      trackUrl = trackIdOrUrl;
+      // Check if it's a shortened URL that needs resolving
+      if (trackIdOrUrl.includes('on.soundcloud.com/')) {
+        console.log('Resolving shortened SoundCloud URL:', trackIdOrUrl);
+        try {
+          // Use SoundCloud's oEmbed API to get the API URL
+          const oembedUrl = `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(trackIdOrUrl)}`;
+          const response = await fetch(oembedUrl);
+          const data = await response.json();
+
+          // Extract the API URL from the HTML iframe src
+          // The oEmbed response contains an iframe with the player URL
+          if (data && data.html) {
+            const urlMatch = data.html.match(/url=([^&"]+)/);
+            if (urlMatch) {
+              trackUrl = decodeURIComponent(urlMatch[1]);
+              console.log('Resolved to API URL:', trackUrl);
+            } else {
+              // Fallback to the original URL
+              trackUrl = trackIdOrUrl;
+            }
+          } else {
+            // Fallback to the original URL
+            trackUrl = trackIdOrUrl;
+          }
+        } catch (error) {
+          console.warn('Failed to resolve shortened URL, using original:', error);
+          trackUrl = trackIdOrUrl;
+        }
+      } else {
+        // Already a full canonical URL
+        trackUrl = trackIdOrUrl;
+      }
     } else if (trackIdOrUrl.includes('/')) {
       // Path format like "artist/track-name" (from database 'platform_id')
       trackUrl = `https://soundcloud.com/${trackIdOrUrl}`;
     } else {
       // Short code like "9TR1vylR2yvlrM3lwC" (from database 'platform_id')
-      trackUrl = `https://on.soundcloud.com/${trackIdOrUrl}`;
+      // Try to resolve it first
+      const shortUrl = `https://on.soundcloud.com/${trackIdOrUrl}`;
+      try {
+        console.log('Resolving short code:', shortUrl);
+        const oembedUrl = `https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(shortUrl)}`;
+        const response = await fetch(oembedUrl);
+        const data = await response.json();
+
+        // Extract the API URL from the HTML iframe src
+        if (data && data.html) {
+          const urlMatch = data.html.match(/url=([^&"]+)/);
+          if (urlMatch) {
+            trackUrl = decodeURIComponent(urlMatch[1]);
+            console.log('Resolved short code to API URL:', trackUrl);
+          } else {
+            trackUrl = shortUrl;
+          }
+        } else {
+          trackUrl = shortUrl;
+        }
+      } catch (error) {
+        console.warn('Failed to resolve short code, using short URL:', error);
+        trackUrl = shortUrl;
+      }
     }
 
     console.log('Loading SoundCloud track:', trackUrl);
+    setIsLoadingTrack(true);
+
+    // Clear any existing timeout
+    if (loadTimeoutId !== undefined) {
+      clearTimeout(loadTimeoutId);
+    }
+
+    // Set a timeout to handle genuine failures (10 seconds)
+    loadTimeoutId = setTimeout(() => {
+      if (isLoadingTrack()) {
+        console.error('SoundCloud track failed to load (timeout)');
+        handleTrackError('SoundCloud track unavailable. Skipping...', true);
+        setIsLoadingTrack(false);
+      }
+    }, 10000) as unknown as number;
 
     widget.load(trackUrl, {
       auto_play: true,
       callback: () => {
         console.log('SoundCloud track loaded successfully');
+        setIsLoadingTrack(false);
+        // Clear the timeout since we loaded successfully
+        if (loadTimeoutId !== undefined) {
+          clearTimeout(loadTimeoutId);
+          loadTimeoutId = undefined;
+        }
         // Update duration after load
         widget.getDuration((duration: number) => {
           setDuration(duration / 1000);
@@ -187,48 +282,39 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
 
   createEffect(() => {
     const track = currentTrack();
+    const isReady = playerReady(); // Explicitly track playerReady as a dependency
+
     console.log('SoundCloudMedia createEffect triggered:', {
       track: track?.title,
       source: track?.source,
       sourceId: track?.sourceId,
-      playerReady: playerReady()
+      url: track?.url,
+      playerReady: isReady
     });
 
-    if (track && track.source === 'soundcloud' && track.sourceId && playerReady()) {
+    if (track && track.source === 'soundcloud' && isReady) {
+      // Prefer full URL over sourceId for more reliable playback
+      const trackIdentifier = track.url || track.sourceId;
+
+      if (!trackIdentifier) {
+        console.error('SoundCloud track missing both url and sourceId:', track.title);
+        return;
+      }
+
       // Only load if it's a different track
-      if (currentTrackId() !== track.sourceId) {
-        console.log('Loading new SoundCloud track:', track.title, track.sourceId);
-        setCurrentTrackId(track.sourceId);
-        loadTrack(track.sourceId);
+      if (currentTrackId() !== trackIdentifier) {
+        console.log('Loading new SoundCloud track:', track.title, 'using:', trackIdentifier);
+        setCurrentTrackId(trackIdentifier);
+        loadTrack(trackIdentifier);
       }
     }
   });
 
   // Get initial track URL for iframe src
+  // NOTE: We don't load a specific track here because we need to resolve shortened URLs asynchronously
+  // The actual track will be loaded via widget.load() after the widget is ready
   const getInitialIframeSrc = () => {
-    const track = currentTrack();
-    if (track && track.source === 'soundcloud' && track.sourceId) {
-      // Handle various SoundCloud URL formats from database
-      let trackUrl: string;
-      if (track.sourceId.startsWith('http')) {
-        // Already a full URL (from database 'url' column)
-        trackUrl = track.sourceId;
-      } else if (track.sourceId.includes('/')) {
-        // Path format like "artist/track-name" (from database 'platform_id')
-        trackUrl = `https://soundcloud.com/${track.sourceId}`;
-      } else {
-        // Short code like "9TR1vylR2yvlrM3lwC" (from database 'platform_id')
-        trackUrl = `https://on.soundcloud.com/${track.sourceId}`;
-      }
-
-      // URL encode the track URL
-      const encodedUrl = encodeURIComponent(trackUrl);
-      // Use compact visual player that shows only the current track
-      // visual=false gives us the compact player without artwork
-      // This respects SoundCloud's attribution requirements while being minimal
-      return `https://w.soundcloud.com/player/?url=${encodedUrl}&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false`;
-    }
-    // Default empty player
+    // Always start with an empty player - we'll load the track via widget.load() after initialization
     return 'https://w.soundcloud.com/player/?url=&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false';
   };
 
