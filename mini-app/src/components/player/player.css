@@ -105,7 +105,7 @@
   flex-direction: column;
   gap: 8px;
   max-height: 500px;
-  transition: max-height 0.3s ease-out, margin-bottom 0.3s ease-out, opacity 0.2s ease-out, padding 0.3s ease-out;
+  transition: max-height 0.1s ease-out, margin-bottom 0.1s ease-out, opacity 0.1s ease-out, padding 0.1s ease-out;
   opacity: 1;
   overflow: hidden;
 }
@@ -220,6 +220,56 @@
   gap: 12px;
 }
 
+/* Container for avatar + track metadata */
+.player-track-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* User avatar styles */
+.player-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.player-user-avatar:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.player-user-avatar-fallback {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: #ffffff;
+  color: #000;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.player-user-avatar-fallback:hover {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
 .player-track-metadata {
   flex: 1;
   min-width: 0; /* Allow text to shrink */
@@ -265,10 +315,6 @@
   padding: 2px 6px;
   font-weight: bold;
   border: 1px solid #000;
-}
-
-.player-shared-by {
-  color: #00FFFF;
 }
 
 .player-control {
@@ -393,6 +439,13 @@
     font-size: 9px;
   }
 
+  .player-user-avatar,
+  .player-user-avatar-fallback {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
   .player-controls {
     gap: 3px;
   }
@@ -414,6 +467,13 @@
   .player-track-info {
     padding: 5px;
     gap: 8px;
+  }
+
+  .player-user-avatar,
+  .player-user-avatar-fallback {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
 
   .player-track-title {

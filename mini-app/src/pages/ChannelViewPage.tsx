@@ -32,6 +32,8 @@ const ChannelViewPage: Component = () => {
 
   // Modal state
   const [showAddTrackModal, setShowAddTrackModal] = createSignal(false);
+  const [isSubmitting, setIsSubmitting] = createSignal(false);
+  const [submitError, setSubmitError] = createSignal<string | null>(null);
 
   // Filter and sort state
   const [activeSort, setActiveSort] = createSignal<ChannelFeedSortOption>('recent');
@@ -227,8 +229,44 @@ const ChannelViewPage: Component = () => {
 
   // Track submission
   const handleTrackSubmit = async (data: { songUrl: string; comment: string }) => {
-    console.log('Track submitted to channel:', data);
-    setShowAddTrackModal(false);
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Import SDK dynamically
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+
+      // Open native Farcaster composer with pre-filled data
+      const result = await sdk.actions.composeCast({
+        text: data.comment || 'Check out this track! 🎵',
+        embeds: [data.songUrl],
+        channelKey: channelId() // Post to current channel
+      });
+
+      console.log('[ChannelViewPage] Compose cast result:', result);
+
+      if (result?.cast) {
+        // User posted the cast successfully
+        console.log('[ChannelViewPage] Cast posted with hash:', result.cast.hash);
+
+        // Close modal
+        setShowAddTrackModal(false);
+
+        // Reload feed to show new post (may take a moment to sync)
+        setTimeout(() => {
+          loadFeed(true);
+        }, 2000);
+      } else {
+        // User cancelled the cast
+        console.log('[ChannelViewPage] User cancelled the cast');
+        setSubmitError('Cast was cancelled');
+      }
+    } catch (error) {
+      console.error('[ChannelViewPage] Error opening composer:', error);
+      setSubmitError(error instanceof Error ? error.message : 'Failed to open cast composer');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Play all tracks
@@ -287,6 +325,17 @@ const ChannelViewPage: Component = () => {
     }
   ];
 
+  // Handle back navigation
+  const handleBack = () => {
+    // Try to go back in browser history
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      // Fallback to channels list if no history
+      navigate('/channels');
+    }
+  };
+
   return (
     <div class="channel-view-page">
       <div class="page-window-container">
@@ -294,6 +343,8 @@ const ChannelViewPage: Component = () => {
           title={`${channelData()?.name || 'Channel'} - Channel Library`}
           icon={<span class="title-icon">📁</span>}
           variant="3d"
+          showBack={true}
+          onBack={handleBack}
           showMenu={true}
           menuItems={menuItems}
           contentPadding="0"

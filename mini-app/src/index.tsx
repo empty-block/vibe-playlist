@@ -145,8 +145,17 @@ if (root) {
     // Call ready() and then render
     // This is done synchronously to ensure ready() is called ASAP
     sdk.actions.ready()
-      .then(() => {
+      .then(async () => {
         console.log('Farcaster SDK ready called');
+
+        // Enable Farcaster back navigation integration
+        // This automatically shows/hides the back button based on browser history
+        try {
+          await sdk.back.enableWebNavigation();
+          console.log('Farcaster back navigation enabled');
+        } catch (error) {
+          console.log('Farcaster back navigation not available:', error);
+        }
 
         // Track app opened event
         trackAppOpened({
@@ -172,8 +181,16 @@ if (root) {
     console.error('Auth initialization failed:', error);
     // Still proceed to render even if auth init fails
     sdk.actions.ready()
-      .then(() => {
+      .then(async () => {
         console.log('Farcaster SDK ready called');
+
+        // Enable Farcaster back navigation integration
+        try {
+          await sdk.back.enableWebNavigation();
+          console.log('Farcaster back navigation enabled');
+        } catch (error) {
+          console.log('Farcaster back navigation not available:', error);
+        }
 
         trackAppOpened({
           is_farcaster_context: true,

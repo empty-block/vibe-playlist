@@ -267,6 +267,93 @@ body:not(.theme-dark) .retro-titlebar__menu-button {
 }
 
 /* ============================================
+   BACK BUTTON
+   ============================================ */
+
+/* Back button: mirrors hamburger menu styling */
+.retro-titlebar__back-button {
+  /* Match hamburger menu sizing for consistent tap targets */
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  line-height: 0;
+  font-weight: normal;
+
+  /* Transparent background to sit on gradient */
+  background: transparent;
+
+  /* Subtle dotted border for retro aesthetic */
+  border: 1px dotted rgba(255, 255, 255, 0.3);
+
+  /* Center the arrow icon */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+
+  /* Smooth transitions */
+  transition: all 0.15s ease;
+
+  /* Cursor indicates interactivity */
+  cursor: pointer;
+
+  /* Prevent blue highlight on tap (mobile) */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Light mode: white arrow with subtle border */
+.theme-light .retro-titlebar__back-button,
+body:not(.theme-dark) .retro-titlebar__back-button {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Hover state: solidify border */
+.retro-titlebar__back-button:hover {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.6);
+  border-width: 1px;
+}
+
+/* Active state: pressed appearance */
+.retro-titlebar__back-button:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Dark mode: neon glow on hover */
+.theme-dark .retro-titlebar__back-button {
+  border-color: rgba(4, 202, 244, 0.3);
+  color: var(--text-lcd);
+}
+
+.theme-dark .retro-titlebar__back-button:hover {
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 8px rgba(4, 202, 244, 0.3);
+}
+
+/* Layout modifier: when back button is present, use three-column layout */
+.retro-titlebar--with-back {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+/* When back button present: center the title section */
+.retro-titlebar--with-back .retro-titlebar__text {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Ensure controls stay right-aligned in grid layout */
+.retro-titlebar--with-back .retro-titlebar__controls {
+  grid-column: 3;
+}
+
+/* ============================================
    RETRO PANEL
    ============================================ */
 
@@ -517,6 +604,17 @@ body:not(.theme-dark) .retro-window__footer.retro-window__footer--hidden {
     font-size: 20px;
   }
 
+  /* Mobile: Keep back button prominent */
+  .retro-titlebar__back-button {
+    width: 48px;
+    height: 44px;
+    font-size: 22px;
+  }
+
+  .retro-titlebar--with-back {
+    grid-template-columns: 48px 1fr auto;
+  }
+
   .retro-button {
     padding: 8px 12px;
     font-size: 13px;
@@ -551,6 +649,18 @@ body:not(.theme-dark) .retro-window__footer.retro-window__footer--hidden {
     width: 48px;
     height: 44px;
     font-size: 19px;
+  }
+
+  /* Very small screens: maintain usability for back button */
+  .retro-titlebar__back-button {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .retro-titlebar--with-back {
+    grid-template-columns: 44px 1fr auto;
+    gap: 4px;
   }
 
   .retro-button {

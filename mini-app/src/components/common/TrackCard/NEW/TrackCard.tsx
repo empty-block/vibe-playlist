@@ -3,7 +3,7 @@ import { useNavigate } from '@solidjs/router';
 import { currentTrack, isPlaying } from '../../../../stores/playerStore';
 import { stripUrls } from '../../../../utils/textUtils';
 import { trackCardEntrance } from '../../../../utils/animations';
-import { likePost, unlikePost } from '../../../../services/api';
+import { triggerImpact } from '../../../../utils/haptics';
 
 const MAX_TEXT_LENGTH = 200;
 
@@ -57,9 +57,6 @@ const formatTimeAgo = (timestamp: string) => {
 const TrackCard: Component<TrackCardProps> = (props) => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = createSignal(false);
-  const [isLiked, setIsLiked] = createSignal(false);
-  const [likeCount, setLikeCount] = createSignal(props.stats.likes || 0);
-  const [isLiking, setIsLiking] = createSignal(false);
   const isCurrentTrack = () => currentTrack()?.id === props.track.id;
   const isTrackPlaying = () => isCurrentTrack() && isPlaying();
 
@@ -85,7 +82,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
     }
   };
 
-  // Like/unlike a cast via API
+  // Open cast in Farcaster client for like/recast
   const handleLikeClick = async (e: MouseEvent) => {
     e.stopPropagation();
     if (!props.castHash) {
@@ -93,41 +90,50 @@ const TrackCard: Component<TrackCardProps> = (props) => {
       return;
     }
 
-    // Prevent double-clicking
-    if (isLiking()) return;
+    try {
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      // viewCast takes an object with hash property
+      console.log('[TrackCard] Opening cast with hash:', props.castHash);
+      await sdk.actions.viewCast({
+        hash: props.castHash
+      });
+    } catch (error) {
+      console.error('[TrackCard] Failed to open cast:', error);
+    }
+  };
+
+  // Open cast in Farcaster to view replies (and optionally add one)
+  const handleReplyClick = async (e: MouseEvent) => {
+    e.stopPropagation();
+    if (!props.castHash) {
+      console.log('[TrackCard] No castHash available for reply');
+      return;
+    }
 
     try {
-      setIsLiking(true);
-      const wasLiked = isLiked();
-
-      // Optimistic UI update
-      setIsLiked(!wasLiked);
-      setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
-
-      // Call API
-      if (wasLiked) {
-        await unlikePost(props.castHash);
-      } else {
-        await likePost(props.castHash);
-      }
-    } catch (error: any) {
-      console.error('[TrackCard] Failed to like/unlike:', error);
-
-      // Revert optimistic update on error
-      setIsLiked(!isLiked());
-      setLikeCount(prev => isLiked() ? prev - 1 : prev + 1);
-
-      // Show user-friendly error message
-      if (error.status === 401) {
-        alert('Please sign in with Farcaster to like posts');
-      } else if (error.status === 429) {
-        alert('Too many requests. Please wait a moment and try again.');
-      } else {
-        alert('Failed to like post. Please try again.');
-      }
-    } finally {
-      setIsLiking(false);
+      const { default: sdk } = await import('@farcaster/miniapp-sdk');
+      console.log('[TrackCard] Opening cast to view replies:', props.castHash);
+      await sdk.actions.viewCast({
+        hash: props.castHash
+      });
+    } catch (error) {
+      console.error('[TrackCard] Failed to open cast:', error);
     }
+  };
+
+  // Handle track selection with haptic feedback
+  const handleTrackSelect = async () => {
+    // Trigger haptic feedback first for immediate tactile response
+    await triggerImpact('light');
+    props.onPlay({
+      id: props.track.id,
+      title: props.track.title,
+      artist: props.track.artist,
+      thumbnail: props.track.thumbnail,
+      source: props.track.platform,
+      url: props.track.url,
+      sourceId: props.track.platformId
+    });
   };
 
   return (
@@ -182,15 +188,7 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         </div>
         <button
           class="open-button"
-          onClick={() => props.onPlay({
-            id: props.track.id,
-            title: props.track.title,
-            artist: props.track.artist,
-            thumbnail: props.track.thumbnail,
-            source: props.track.platform,
-            url: props.track.url,
-            sourceId: props.track.platformId
-          })}
+          onClick={handleTrackSelect}
           title="Open track in player"
         >
           ▼
@@ -229,18 +227,19 @@ const TrackCard: Component<TrackCardProps> = (props) => {
         <div
           class="stat-box clickable"
           onClick={handleLikeClick}
-          style={{
-            cursor: props.castHash ? 'pointer' : 'default',
-            color: isLiked() ? 'var(--neon-pink)' : 'inherit',
-            opacity: isLiking() ? '0.6' : '1'
-          }}
-          title={props.castHash ? (isLiked() ? 'Unlike' : 'Like') : ''}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'Open in Farcaster to like' : ''}
         >
-          <span>{isLiked() ? '♥' : '♡'}</span>
-          <span class="count">{likeCount()}</span>
+          <span>♥</span>
+          <span class="count">{props.stats.likes || 0}</span>
           <span class="label">likes</span>
         </div>
-        <div class="stat-box">
+        <div
+          class="stat-box clickable"
+          onClick={handleReplyClick}
+          style={{ cursor: props.castHash ? 'pointer' : 'default' }}
+          title={props.castHash ? 'View replies in Farcaster' : ''}
+        >
           <span>💬</span>
           <span class="count">{props.stats.replies || 0}</span>
           <span class="label">replies</span>

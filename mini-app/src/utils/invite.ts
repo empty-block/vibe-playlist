@@ -26,6 +26,12 @@ export interface RedemptionResult {
  * Check if a Farcaster ID has invite access
  */
 export async function checkInviteStatus(fid: string): Promise<InviteStatus> {
+  // Bypass invite gate if explicitly configured (for local development)
+  if (import.meta.env.VITE_BYPASS_INVITE_GATE === 'true') {
+    console.log('[Invite] Bypassing invite gate (VITE_BYPASS_INVITE_GATE=true)');
+    return { hasAccess: true, devMode: true };
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/invites/check-status`, {
       method: 'POST',

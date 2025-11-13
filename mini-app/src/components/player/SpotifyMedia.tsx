@@ -33,6 +33,8 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [deviceId, setDeviceId] = createSignal<string>('');
   const [sdkFailed, setSdkFailed] = createSignal(false);
+  const [isTogglingSDK, setIsTogglingSDK] = createSignal(false);
+  const [isTogglingConnect, setIsTogglingConnect] = createSignal(false);
 
   // Farcaster Spotify Connect state (local to this component instance)
   const [waitingForDevice, setWaitingForDevice] = createSignal(false);
@@ -106,7 +108,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
           setDeviceName(activeDevice.name);
-          setIsPlaying(true);
+          // Note: isPlaying will be set by polling (startPlaybackPolling)
           props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           startPlaybackPolling();
@@ -145,7 +147,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
 
         if (result.success) {
           setDeviceName(result.deviceName || 'Spotify');
-          setIsPlaying(true);
+          // Note: isPlaying will be set by polling (startPlaybackPolling)
           props.onPlaybackStarted?.(true); // Notify parent that playback has started
           setConnectReady(true);
           setWaitingForDevice(false);
@@ -192,7 +194,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       const success = await playTrackOnConnect(track.sourceId, track.contentType);
       if (success) {
         setDeviceName(activeDevice.name);
-        setIsPlaying(true);
+        // Note: isPlaying will be set by polling (startPlaybackPolling)
         props.onPlaybackStarted?.(true); // Notify parent that playback has started
         setConnectReady(true);
         setWaitingForDevice(false);
@@ -322,7 +324,14 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
   };
 
   const togglePlaySDK = async () => {
+    // Prevent rapid successive calls
+    if (isTogglingSDK()) {
+      console.log('Toggle SDK already in progress, ignoring');
+      return;
+    }
     if (!playerReady()) return;
+
+    setIsTogglingSDK(true);
     try {
       if (isPlaying()) {
         await player.pause();
@@ -331,6 +340,9 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       }
     } catch (error) {
       console.error('Error toggling Spotify playback:', error);
+    } finally {
+      // Reset toggle lock after a short delay
+      setTimeout(() => setIsTogglingSDK(false), 300);
     }
   };
 
@@ -486,7 +498,7 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
           playNextTrack();
         }
       }
-    }, 2000); // Poll every 2 seconds
+    }, 500); // Poll every 500ms for responsive UI
   };
 
   const stopPlaybackPolling = () => {
@@ -522,10 +534,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
     const track = currentTrack();
     const hasDevice = deviceName(); // Device already connected from previous track
     const connecting = isConnecting(); // Skip during initial connection
+    // Read isPlaying without tracking it - we only want this effect to run when track/device changes, not on play/pause
+    const playing = untrack(() => isPlaying());
 
     console.log('[Auto-play Effect] Triggered with:', {
       trackId: track?.sourceId,
       trackSource: track?.source,
+      isPlaying: playing,
       hasDevice: !!hasDevice,
       deviceName: hasDevice,
       connecting,
@@ -544,12 +559,13 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
       return;
     }
 
-    // Only auto-play if we have a connected device AND not currently connecting
+    // Only auto-play if we have a connected device AND not currently connecting AND isPlaying is true
     // This prevents double-play on first track while enabling auto-play for subsequent tracks
-    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting) {
+    // Also respects the play/pause state - won't auto-play if user hasn't clicked play
+    if (track && track.source === 'spotify' && track.sourceId && hasDevice && !connecting && playing) {
       console.log('[Auto-play Effect] ✅ All conditions met - auto-playing:', track.sourceId);
 
-      // Use untrack to avoid re-triggering on isPlaying changes
+      // Use untrack to avoid re-triggering the effect during async operations
       untrack(async () => {
         const success = await playTrackOnConnect(track.sourceId, track.contentType);
         if (success) {
@@ -563,32 +579,53 @@ const SpotifyMedia: Component<SpotifyMediaProps> = (props) => {
         }
       });
     } else {
-      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play');
+      console.log('[Auto-play Effect] ❌ Conditions not met, skipping auto-play', {
+        hasTrack: !!track,
+        isSpotify: track?.source === 'spotify',
+        hasSourceId: !!track?.sourceId,
+        hasDevice: !!hasDevice,
+        notConnecting: !connecting,
+        shouldPlay: playing
+      });
     }
   });
 
   // Toggle play/pause using Spotify Connect (Farcaster only)
   const togglePlayConnect = async () => {
+    // Prevent rapid successive calls
+    if (isTogglingConnect()) {
+      console.log('Toggle Connect already in progress, ignoring');
+      return;
+    }
     if (!connectReady()) {
       console.warn('Connect API not ready yet');
       return;
     }
 
+    setIsTogglingConnect(true);
     const playing = isPlaying();
     console.log('Toggling Spotify Connect playback:', playing ? 'pause' : 'play');
 
     const newState = !playing;
-    const success = await togglePlaybackOnConnect(newState);
 
-    if (success) {
-      setIsPlaying(newState);
-      // Only notify when STARTING playback, not when pausing
-      // Pausing should keep hasStartedPlayback=true so embed hides correctly
-      if (newState === true) {
-        props.onPlaybackStarted?.(true);
+    // Optimistic UI update - immediately update state for instant feedback
+    setIsPlaying(newState);
+    if (newState === true) {
+      props.onPlaybackStarted?.(true);
+    }
+
+    try {
+      // Then call API - polling will correct if needed
+      const success = await togglePlaybackOnConnect(newState);
+
+      if (!success) {
+        // Revert on failure
+        console.error('Failed to toggle Spotify Connect playback - reverting state');
+        setIsPlaying(playing);
       }
-    } else {
-      console.error('Failed to toggle Spotify Connect playback');
+    } finally {
+      // Reset toggle lock after a short delay
+      setTimeout(() => setIsTogglingConnect(false), 300);
     }
   };
 

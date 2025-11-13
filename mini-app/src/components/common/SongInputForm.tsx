@@ -43,7 +43,7 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
 
       <div class="space-y-4">
         <TextInput
-          label="Song URL (YouTube, Spotify, SoundCloud, etc.)"
+          label="Song URL (YouTube, Spotify, etc.)"
           value={songUrl()}
           onInput={setSongUrl}
           placeholder="https://youtu.be/dQw4w9WgXcQ or https://open.spotify.com/track/..."
@@ -54,7 +54,7 @@ const SongInputForm: Component<SongInputFormProps> = (props) => {
           label="Your take (optional)"
           value={comment()}
           onInput={setComment}
-          placeholder="This song hits different... 🔥"
+          placeholder="This is my jam..."
           multiline={true}
           rows={3}
           disabled={props.disabled}
