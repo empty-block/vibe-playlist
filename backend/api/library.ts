@@ -299,6 +299,16 @@ export class LibraryAPI {
       } else if (record.platform_name === 'spotify' && embedUrl) {
         const trackIdMatch = embedUrl.match(/spotify\.com\/track\/([^?]+)/)
         if (trackIdMatch) sourceId = trackIdMatch[1]
+      } else if (record.platform_name === 'soundcloud' && embedUrl) {
+        // For shortened URLs (on.soundcloud.com), use the short code
+        if (embedUrl.includes('on.soundcloud.com/')) {
+          const shortCodeMatch = embedUrl.match(/on\.soundcloud\.com\/([^/?]+)/)
+          if (shortCodeMatch) sourceId = shortCodeMatch[1]
+        } else {
+          // For regular URLs, extract artist/track path
+          const pathMatch = embedUrl.match(/soundcloud\.com\/([^?]+)/)
+          if (pathMatch) sourceId = pathMatch[1]
+        }
       }
 
       return {
