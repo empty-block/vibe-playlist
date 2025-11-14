@@ -537,14 +537,31 @@ const ProfilePage: Component = () => {
                             stats={activityItem.cast.stats}
                             castHash={activityItem.cast.castHash}
                             onPlay={(trackData) => {
-                              setCurrentTrack(trackData);
+                              // Build complete Track object with all fields
+                              const fullTrack: Track = {
+                                id: trackData.id || activityItem.cast.castHash,
+                                title: trackData.title,
+                                artist: trackData.artist,
+                                thumbnail: trackData.thumbnail,
+                                source: trackData.source,
+                                sourceId: trackData.sourceId,
+                                url: trackData.url,
+                                // User info from TrackCard (now properly passed)
+                                addedBy: trackData.addedBy || activityItem.cast.author.username,
+                                userFid: trackData.userFid || activityItem.cast.author.fid,
+                                userAvatar: trackData.userAvatar || activityItem.cast.author.pfpUrl,
+                                // Activity metadata
+                                timestamp: activityItem.cast.timestamp,
+                                comment: activityItem.cast.text,
+                                likes: activityItem.cast.stats.likes,
+                                replies: activityItem.cast.stats.replies,
+                                recasts: activityItem.cast.stats.recasts,
+                                duration: '',
+                                castHash: activityItem.cast.castHash
+                              };
 
-                              // For YouTube tracks in WebView, don't autoplay
-                              if (trackData.source !== 'youtube') {
-                                setIsPlaying(true);
-                              } else {
-                                setIsPlaying(false);
-                              }
+                              // Use proper playback flow with auth check
+                              playTrack(fullTrack);
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();

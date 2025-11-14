@@ -281,16 +281,17 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // For YouTube: require manual play button click (two-click pattern)
-  // For other sources: autoplay works fine
-  if (track.source === 'youtube') {
+  // For YouTube and Spotify: require manual play button click (two-click pattern)
+  // Spotify in Farcaster requires user to click "Play on Spotify" button
+  // For other sources (SoundCloud): autoplay works fine
+  if (track.source === 'youtube' || track.source === 'spotify') {
     setIsPlaying(false);
-    console.log('YouTube track loaded from feed - user must click play button');
+    console.log(`${track.source} track loaded from feed - user must click play button`);
   } else {
     setIsPlaying(true);
-    console.log('Non-YouTube track loaded from feed - autoplaying');
+    console.log('Non-YouTube/Spotify track loaded from feed - autoplaying');
 
-    // Track playback for non-YouTube tracks (YouTube tracked on manual play)
+    // Track playback for autoplaying tracks (YouTube/Spotify tracked on manual play)
     trackTrackPlayed(track.source, track.id, feedId);
   }
 };
@@ -310,13 +311,18 @@ export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: str
     platformId,
     feedId,
     castHash: track.castHash, // Optional - for specific cast context
+    // Preserve user info for display after OAuth redirect
+    addedBy: track.addedBy,
+    userAvatar: track.userAvatar,
+    userFid: track.userFid,
     timestamp: Date.now()
   };
 
   console.log('✅ Prepared pending track data for OAuth state:', {
     platform: platformName,
     id: platformId,
-    feedId
+    feedId,
+    user: track.addedBy
   });
 
   // Return data to be passed via OAuth state parameter
@@ -335,7 +341,7 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
   }
 
   try {
-    const { platformName, platformId, feedId, castHash, timestamp } = pendingData;
+    const { platformName, platformId, feedId, castHash, timestamp, addedBy, userAvatar, userFid } = pendingData;
 
     // Check if data is stale (more than 5 minutes old)
     if (Date.now() - timestamp > 5 * 60 * 1000) {
@@ -375,9 +381,10 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       thumbnail: apiTrack.thumbnail || '', // Album art image URL
       url: apiTrack.url || '', // Platform URL (spotify:track:xxx or youtube.com/watch?v=xxx)
       source: (apiTrack.platform || platformName) as TrackSource,
-      addedBy: '', // Will be populated if needed
-      userAvatar: '',
-      userFid: '',
+      // Restore user info from pending track data
+      addedBy: addedBy || '',
+      userAvatar: userAvatar || '',
+      userFid: userFid || '',
       timestamp: apiTrack.timestamp || new Date().toISOString(),
       comment: '',
       likes: 0,
