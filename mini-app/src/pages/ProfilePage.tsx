@@ -525,43 +525,41 @@ const ProfilePage: Component = () => {
                 <Show when={filteredContent().length > 0}>
                   <For each={filteredContent()}>
                     {(activityItem, index) => {
-                      const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
+                      const music = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
+
+                      // Build complete Track object from activity data
+                      const fullTrack = music ? {
+                        id: music.id,
+                        title: music.title,
+                        artist: music.artist,
+                        thumbnail: music.thumbnail,
+                        source: music.platform as TrackSource,
+                        sourceId: music.platformId,
+                        url: music.url,
+                        addedBy: activityItem.cast.author.username,
+                        userFid: activityItem.cast.author.fid,
+                        userAvatar: activityItem.cast.author.pfpUrl,
+                        timestamp: activityItem.cast.timestamp,
+                        comment: activityItem.cast.text,
+                        likes: activityItem.cast.stats.likes,
+                        replies: activityItem.cast.stats.replies,
+                        recasts: activityItem.cast.stats.recasts,
+                        duration: '',
+                        castHash: activityItem.cast.castHash
+                      } as Track : null;
 
                       return (
-                        <Show when={track}>
+                        <Show when={music && fullTrack}>
                           <TrackCard
                             author={activityItem.cast.author}
-                            track={track!}
+                            track={music!}
                             text={activityItem.cast.text}
                             timestamp={activityItem.cast.timestamp}
                             stats={activityItem.cast.stats}
                             castHash={activityItem.cast.castHash}
-                            onPlay={(trackData) => {
-                              // Build complete Track object with all fields
-                              const fullTrack: Track = {
-                                id: trackData.id || activityItem.cast.castHash,
-                                title: trackData.title,
-                                artist: trackData.artist,
-                                thumbnail: trackData.thumbnail,
-                                source: trackData.source,
-                                sourceId: trackData.sourceId,
-                                url: trackData.url,
-                                // User info from TrackCard (now properly passed)
-                                addedBy: trackData.addedBy || activityItem.cast.author.username,
-                                userFid: trackData.userFid || activityItem.cast.author.fid,
-                                userAvatar: trackData.userAvatar || activityItem.cast.author.pfpUrl,
-                                // Activity metadata
-                                timestamp: activityItem.cast.timestamp,
-                                comment: activityItem.cast.text,
-                                likes: activityItem.cast.stats.likes,
-                                replies: activityItem.cast.stats.replies,
-                                recasts: activityItem.cast.stats.recasts,
-                                duration: '',
-                                castHash: activityItem.cast.castHash
-                              };
-
-                              // Use proper playback flow with auth check
-                              playTrack(fullTrack);
+                            onPlay={() => {
+                              // Use pre-built complete Track object
+                              playTrack(fullTrack!);
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();
