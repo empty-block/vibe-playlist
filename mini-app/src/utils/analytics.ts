@@ -85,6 +85,7 @@ export const identifyUser = (
   }
 ) => {
   if (!isInitialized) return;
+  console.log('PostHog: Identifying user', { fid, ...properties });
   posthog.identify(fid, properties);
 };
 
@@ -96,7 +97,11 @@ export const trackAppOpened = (properties?: {
   dev_mode?: boolean;
   has_spotify_auth?: boolean;
 }) => {
-  if (!isInitialized) return;
+  if (!isInitialized) {
+    console.warn('PostHog: trackAppOpened called before initialization');
+    return;
+  }
+  console.log('PostHog: Capturing app_opened event', properties);
   posthog.capture('app_opened', properties);
 };
 
@@ -138,6 +143,7 @@ export const trackTrackPlayed = (
   source?: string
 ) => {
   if (!isInitialized) return;
+  console.log('PostHog: Capturing track_played event', { platform, track_id: trackId, source });
   posthog.capture('track_played', {
     platform,
     track_id: trackId,
