@@ -53,6 +53,7 @@ const Player: Component<PlayerProps> = (props) => {
   });
 
   // Track when current track starts playing
+  // Once a track has played, keep it visible (don't hide on pause for YouTube)
   createEffect(() => {
     if (isPlaying()) {
       setCurrentTrackHasPlayed(true);

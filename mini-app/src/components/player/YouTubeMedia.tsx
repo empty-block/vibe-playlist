@@ -22,9 +22,15 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
   let player: any;
   let playerContainer: HTMLDivElement | undefined;
   let progressInterval: number | undefined;
+  let timeCheckInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [userHasInteracted, setUserHasInteracted] = createSignal(false);
   const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
+
+  // Time-jump detection for seeking
+  let lastKnownTime = -1;
+  let lastCheckTimestamp = Date.now();
+  let isSeeking = false;
 
   // Always use compact size for bottom bar
 
@@ -130,6 +136,9 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     // Start progress tracking
     startProgressTracking();
 
+    // Start time-jump detection for seeking (check every 250ms)
+    timeCheckInterval = setInterval(detectSeekingViaTimeJump, 250) as unknown as number;
+
     console.log('YouTube player ready');
   };
 
@@ -170,19 +179,59 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       }
     }, 500) as unknown as number;
   };
-  
-  // Track if we're currently seeking to prevent hiding player during scrubbing
-  let pauseTimeout: number | undefined;
 
-  const onPlayerStateChange = (event: any) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
-      // Clear any pending pause actions (in case we were seeking)
-      if (pauseTimeout) {
-        clearTimeout(pauseTimeout);
-        pauseTimeout = undefined;
+  const detectSeekingViaTimeJump = () => {
+    if (!player || !playerReady()) return;
+
+    try {
+      const currentTime = player.getCurrentTime();
+      const now = Date.now();
+      const elapsedSeconds = (now - lastCheckTimestamp) / 1000;
+
+      if (lastKnownTime !== -1) {
+        const expectedTime = lastKnownTime + elapsedSeconds;
+        const timeDifference = Math.abs(currentTime - expectedTime);
+
+        // Seeking detected if time jumped > 0.5 seconds
+        if (timeDifference > 0.5) {
+          console.log('[YouTubeMedia] SEEKING detected via time jump:', {
+            expected: expectedTime.toFixed(2),
+            actual: currentTime.toFixed(2),
+            difference: timeDifference.toFixed(2)
+          });
+          isSeeking = true;
+          // Keep player visible during seek
+          if (!isPlaying()) {
+            setIsPlaying(true);
+          }
+        } else {
+          // No time jump - clear seeking flag
+          isSeeking = false;
+        }
       }
 
+      lastKnownTime = currentTime;
+      lastCheckTimestamp = now;
+    } catch (error) {
+      // Player might not be ready yet
+    }
+  };
+
+
+  const onPlayerStateChange = (event: any) => {
+    console.log('[YouTubeMedia] State change:', event.data, {
+      PLAYING: window.YT.PlayerState.PLAYING,
+      PAUSED: window.YT.PlayerState.PAUSED,
+      BUFFERING: window.YT.PlayerState.BUFFERING,
+      ENDED: window.YT.PlayerState.ENDED,
+      isSeeking
+    });
+
+    if (event.data === window.YT.PlayerState.PLAYING) {
+      // Clear seeking state when playback resumes
+      isSeeking = false;
       setIsPlaying(true);
+
       // Mark that user has interacted (either via YouTube controls or app controls)
       setUserHasInteracted(true);
       // Mark that playback has started at least once
@@ -201,21 +250,16 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       }
 
       startProgressTracking();
-    } else if (event.data === window.YT.PlayerState.BUFFERING) {
-      // Clear any pending pause actions - we're buffering/seeking
-      if (pauseTimeout) {
-        clearTimeout(pauseTimeout);
-        pauseTimeout = undefined;
-      }
-      console.log('YouTube buffering (seeking or loading)');
     } else if (event.data === window.YT.PlayerState.PAUSED) {
-      // Delay hiding the player to give YouTube time to enter BUFFERING state if seeking
-      // If we get BUFFERING or PLAYING within 100ms, the pause was due to seeking
-      pauseTimeout = setTimeout(() => {
+      // Only hide if NOT seeking (checked by time-jump detection)
+      if (!isSeeking) {
+        console.log('[YouTubeMedia] Real pause detected, hiding player');
         setIsPlaying(false);
-        pauseTimeout = undefined;
-      }, 100) as unknown as number;
+      } else {
+        console.log('[YouTubeMedia] Pause during seeking, keeping visible');
+      }
     } else if (event.data === window.YT.PlayerState.ENDED) {
+      isSeeking = false;
       setIsPlaying(false);
       console.log('YouTube track finished, playing next track');
       playNextTrack();
@@ -229,6 +273,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
+    }
+
+    // Clear time-check interval
+    if (timeCheckInterval) {
+      clearInterval(timeCheckInterval);
     }
 
     // Destroy YouTube player to prevent memory leaks and API errors
