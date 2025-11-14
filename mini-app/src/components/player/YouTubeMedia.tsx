@@ -171,8 +171,17 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     }, 500) as unknown as number;
   };
   
+  // Track if we're currently seeking to prevent hiding player during scrubbing
+  let pauseTimeout: number | undefined;
+
   const onPlayerStateChange = (event: any) => {
     if (event.data === window.YT.PlayerState.PLAYING) {
+      // Clear any pending pause actions (in case we were seeking)
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+        pauseTimeout = undefined;
+      }
+
       setIsPlaying(true);
       // Mark that user has interacted (either via YouTube controls or app controls)
       setUserHasInteracted(true);
@@ -193,11 +202,19 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
 
       startProgressTracking();
     } else if (event.data === window.YT.PlayerState.BUFFERING) {
-      // Don't change isPlaying state during buffering/seeking
-      // This keeps the embed visible when user seeks on YouTube's native controls
+      // Clear any pending pause actions - we're buffering/seeking
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+        pauseTimeout = undefined;
+      }
       console.log('YouTube buffering (seeking or loading)');
     } else if (event.data === window.YT.PlayerState.PAUSED) {
-      setIsPlaying(false);
+      // Delay hiding the player to give YouTube time to enter BUFFERING state if seeking
+      // If we get BUFFERING or PLAYING within 100ms, the pause was due to seeking
+      pauseTimeout = setTimeout(() => {
+        setIsPlaying(false);
+        pauseTimeout = undefined;
+      }, 100) as unknown as number;
     } else if (event.data === window.YT.PlayerState.ENDED) {
       setIsPlaying(false);
       console.log('YouTube track finished, playing next track');
