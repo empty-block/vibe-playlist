@@ -527,10 +527,19 @@ const ProfilePage: Component = () => {
                     {(activityItem, index) => {
                       const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
 
+                      // For liked tracks, use current user's info; for shared tracks, use cast author
+                      const author = activityItem.type === 'LIKED'
+                        ? {
+                            fid: profileData()?.fid || '',
+                            username: profileData()?.username || '',
+                            pfpUrl: profileData()?.pfpUrl
+                          }
+                        : activityItem.cast.author;
+
                       return (
                         <Show when={track}>
                           <TrackCard
-                            author={activityItem.cast.author}
+                            author={author}
                             track={track!}
                             text={activityItem.cast.text}
                             timestamp={activityItem.cast.timestamp}
