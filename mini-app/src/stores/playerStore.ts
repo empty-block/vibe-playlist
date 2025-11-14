@@ -214,14 +214,9 @@ export const playNextTrack = () => {
     console.log('Playing next track:', nextTrack.title);
     setCurrentTrack(nextTrack);
 
-    // For YouTube: require manual play button click (two-click pattern)
-    // For other sources: autoplay works fine
-    if (nextTrack.source === 'youtube') {
-      setIsPlaying(false);
-      console.log('YouTube track loaded - user must click play button');
-    } else {
-      setIsPlaying(true);
-    }
+    // Auto-play for all sources (including YouTube with preloaded player)
+    setIsPlaying(true);
+    console.log('Auto-playing next track:', nextTrack.source);
   }
 };
 
@@ -253,14 +248,9 @@ export const playPreviousTrack = () => {
     console.log('Playing previous track:', previousTrack.title);
     setCurrentTrack(previousTrack);
 
-    // For YouTube: require manual play button click (two-click pattern)
-    // For other sources: autoplay works fine
-    if (previousTrack.source === 'youtube') {
-      setIsPlaying(false);
-      console.log('YouTube track loaded - user must click play button');
-    } else {
-      setIsPlaying(true);
-    }
+    // Auto-play for all sources (including YouTube with preloaded player)
+    setIsPlaying(true);
+    console.log('Auto-playing previous track:', previousTrack.source);
   }
 };
 
@@ -281,16 +271,12 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // For YouTube: require manual play button click (two-click pattern)
-  // For other sources: autoplay works fine
-  if (track.source === 'youtube') {
-    setIsPlaying(false);
-    console.log('YouTube track loaded from feed - user must click play button');
-  } else {
-    setIsPlaying(true);
-    console.log('Non-YouTube track loaded from feed - autoplaying');
+  // Auto-play for all sources (YouTube now uses preloaded player for instant playback)
+  setIsPlaying(true);
+  console.log('Track loaded from feed - autoplaying with preloaded player');
 
-    // Track playback for non-YouTube tracks (YouTube tracked on manual play)
+  // Track playback for non-YouTube tracks (YouTube tracked on actual play via YouTubeMedia)
+  if (track.source !== 'youtube') {
     trackTrackPlayed(track.source, track.id, feedId);
   }
 };

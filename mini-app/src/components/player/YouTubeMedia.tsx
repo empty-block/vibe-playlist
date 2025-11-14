@@ -19,44 +19,52 @@ declare global {
 }
 
 const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
-  let player: any;
+  let player: any = null; // Will reference the global player or fallback player
   let playerContainer: HTMLDivElement | undefined;
   let progressInterval: number | undefined;
   const [playerReady, setPlayerReady] = createSignal(false);
   const [userHasInteracted, setUserHasInteracted] = createSignal(false);
   const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
-  // Always use compact size for bottom bar
-
   onMount(() => {
-    console.log('YouTubeMedia onMount called');
-    
+    console.log('[YouTubeMedia] onMount called');
+
     const checkAndInit = () => {
-      console.log('Checking for container and YouTube API...', { 
+      console.log('[YouTubeMedia] Checking for container and YouTube API...', {
         hasContainer: !!playerContainer,
         containerInDOM: playerContainer ? document.contains(playerContainer) : false,
         hasYT: !!window.YT,
         hasYTPlayer: !!(window.YT && window.YT.Player)
       });
-      
+
       if (playerContainer && window.YT && window.YT.Player) {
-        console.log('Both container and YouTube API ready, initializing player');
+        console.log('[YouTubeMedia] Both container and YouTube API ready, initializing player');
         initPlayer();
       } else {
-        console.log('Still waiting for container or YouTube API...');
+        console.log('[YouTubeMedia] Still waiting for container or YouTube API...');
         setTimeout(checkAndInit, 500);
       }
     };
-    
+
     if (!window.onYouTubeIframeAPIReady) {
       window.onYouTubeIframeAPIReady = () => {
-        console.log('YouTube API ready callback fired');
+        console.log('[YouTubeMedia] YouTube API ready callback fired');
         setTimeout(checkAndInit, 100);
       };
     }
-    
+
     setTimeout(checkAndInit, 1000);
   });
+
+  const setupControlFunctions = () => {
+    props.onTogglePlay(() => togglePlay());
+    if (props.onSeek) {
+      props.onSeek((time: number) => seekToPosition(time));
+    }
+    if (props.onPause) {
+      props.onPause(() => pauseYouTube());
+    }
+  };
   
   const initPlayer = () => {
     console.log('initPlayer called');
@@ -112,17 +120,11 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
         'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; ' +
         'geolocation \'none\'; microphone \'none\'; camera \'none\''
       );
-      console.log('Set Permissions-Policy on YouTube iframe');
+      console.log('[YouTubeMedia] Set Permissions-Policy on YouTube iframe');
     }
 
-    // Provide toggle and seek functions to parent
-    props.onTogglePlay(() => togglePlay());
-    if (props.onSeek) {
-      props.onSeek((time: number) => seekToPosition(time));
-    }
-    if (props.onPause) {
-      props.onPause(() => pauseYouTube());
-    }
+    // Set up control functions for parent
+    setupControlFunctions();
 
     // Enable seeking for YouTube
     setIsSeekable(true);
@@ -130,7 +132,7 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     // Start progress tracking
     startProgressTracking();
 
-    console.log('YouTube player ready');
+    console.log('[YouTubeMedia] YouTube player ready (fallback mode)');
   };
 
   const seekToPosition = (timeInSeconds: number) => {
@@ -203,20 +205,20 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
 
   // Cleanup interval and player on unmount
   onCleanup(() => {
-    console.log('YouTubeMedia cleanup - destroying player');
+    console.log('[YouTubeMedia] cleanup');
 
     // Clear progress interval
     if (progressInterval) {
       clearInterval(progressInterval);
     }
 
-    // Destroy YouTube player to prevent memory leaks and API errors
+    // Destroy the player instance
     if (player) {
       try {
         player.destroy();
-        console.log('YouTube player destroyed successfully');
+        console.log('[YouTubeMedia] Player destroyed');
       } catch (error) {
-        console.warn('Error destroying YouTube player:', error);
+        console.warn('[YouTubeMedia] Error destroying player:', error);
       }
       player = null;
     }
@@ -311,15 +313,14 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
           props.onPlaybackStarted(false);
         }
 
-        // Always cue video without autoplay - user must click play button
-        console.log('[YouTubeMedia] Cuing video (two-click pattern):', videoId);
-        player.cueVideoById({
+        // Use loadVideoById for instant auto-play
+        console.log('[YouTubeMedia] Loading video with auto-play:', videoId);
+        player.loadVideoById({
           videoId: videoId,
           startSeconds: 0
         });
-
-        // Set playing to false so play button is shown
-        setIsPlaying(false);
+        // Player will auto-play, so update state
+        setIsPlaying(true);
       } catch (error) {
         console.error('[YouTubeMedia] Error loading video:', error);
       }
