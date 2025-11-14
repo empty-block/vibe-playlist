@@ -530,9 +530,9 @@ const ProfilePage: Component = () => {
                       // For liked tracks, use current user's info; for shared tracks, use cast author
                       const author = activityItem.type === 'LIKED'
                         ? {
-                            fid: profileData()?.fid || '',
-                            username: profileData()?.username || '',
-                            pfpUrl: profileData()?.pfpUrl
+                            fid: user()?.fid || '',
+                            username: user()?.username || '',
+                            pfpUrl: user()?.avatar
                           }
                         : activityItem.cast.author;
 
