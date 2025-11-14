@@ -192,6 +192,10 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
       }
 
       startProgressTracking();
+    } else if (event.data === window.YT.PlayerState.BUFFERING) {
+      // Don't change isPlaying state during buffering/seeking
+      // This keeps the embed visible when user seeks on YouTube's native controls
+      console.log('YouTube buffering (seeking or loading)');
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       setIsPlaying(false);
     } else if (event.data === window.YT.PlayerState.ENDED) {
