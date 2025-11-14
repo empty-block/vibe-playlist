@@ -135,11 +135,12 @@ window.addEventListener('message', (event) => {
 });
 
 if (root) {
-  // Initialize PostHog analytics
-  initAnalytics();
+  // Initialize PostHog analytics and wait for it to complete before tracking events
+  initAnalytics().then(() => {
+    console.log('PostHog analytics initialization complete');
 
-  // Initialize auth state from localStorage and wait for it to complete
-  initializeAuth().then(() => {
+    // Initialize auth state from localStorage and wait for it to complete
+    initializeAuth().then(() => {
     console.log('Auth initialization complete');
 
     // Call ready() and then render
@@ -209,5 +210,6 @@ if (root) {
 
         render(() => <App />, root);
       });
+    });
   });
 }

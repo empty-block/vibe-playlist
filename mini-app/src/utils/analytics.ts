@@ -14,45 +14,62 @@ import posthog from 'posthog-js';
  */
 
 let isInitialized = false;
+let initPromise: Promise<void> | null = null;
 
-export const initAnalytics = () => {
-  if (isInitialized) return;
+export const initAnalytics = (): Promise<void> => {
+  // Return existing promise if already initializing/initialized
+  if (initPromise) return initPromise;
 
-  const apiKey = import.meta.env.VITE_POSTHOG_API_KEY;
-  const host = import.meta.env.VITE_POSTHOG_HOST;
+  initPromise = new Promise<void>((resolve) => {
+    const apiKey = import.meta.env.VITE_POSTHOG_API_KEY;
+    const host = import.meta.env.VITE_POSTHOG_HOST;
 
-  if (!apiKey) {
-    console.warn('PostHog: API key not found. Analytics disabled.');
-    return;
-  }
+    // Debug logging to verify environment variables
+    console.log('PostHog: API key exists:', !!apiKey);
+    if (apiKey) {
+      console.log('PostHog: API key (first 10 chars):', apiKey.substring(0, 10));
+    }
+    console.log('PostHog: Host:', host);
 
-  posthog.init(apiKey, {
-    api_host: host,
-    person_profiles: 'identified_only', // Only create profiles for logged-in users
-    autocapture: false, // Disable automatic tracking (we'll be explicit)
-    capture_pageview: false, // We'll track manually
+    if (!apiKey) {
+      console.warn('PostHog: API key not found. Analytics disabled.');
+      resolve();
+      return;
+    }
 
-    // Session recording - enabled for beta with privacy protections
-    // TODO: Disable before public launch
-    disable_session_recording: false,
-    session_recording: {
-      maskAllInputs: true, // Mask all text inputs
-      maskTextSelector: '[data-private]', // Custom masking for specific elements
-      recordCrossOriginIframes: false, // Don't record embedded content
-    },
+    posthog.init(apiKey, {
+      api_host: host,
+      defaults: '2025-05-24', // Modern SPA configuration (required for proper event capture)
+      person_profiles: 'identified_only', // Only create profiles for logged-in users
+      autocapture: false, // Disable automatic tracking (we'll be explicit)
+      capture_pageview: false, // We'll track manually
+      debug: true, // Enable debug logging (TODO: disable after confirming analytics work)
 
-    // Only track in production
-    loaded: (posthog) => {
-      if (import.meta.env.DEV) {
-        posthog.opt_out_capturing();
-        console.log('PostHog: Analytics disabled in development mode');
-      } else {
-        console.log('PostHog: Analytics initialized');
-      }
-    },
+      // Session recording - enabled for beta with privacy protections
+      // TODO: Disable before public launch
+      disable_session_recording: false,
+      session_recording: {
+        maskAllInputs: true, // Mask all text inputs
+        maskTextSelector: '[data-private]', // Custom masking for specific elements
+        recordCrossOriginIframes: false, // Don't record embedded content
+      },
+
+      // Only track in production
+      loaded: (posthog) => {
+        if (import.meta.env.DEV) {
+          posthog.opt_out_capturing();
+          console.log('PostHog: Analytics disabled in development mode');
+        } else {
+          console.log('PostHog: Analytics initialized successfully');
+          console.log('PostHog: Ready to capture events');
+        }
+        isInitialized = true;
+        resolve();
+      },
+    });
   });
 
-  isInitialized = true;
+  return initPromise;
 };
 
 /**
