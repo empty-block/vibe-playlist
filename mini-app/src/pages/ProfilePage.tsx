@@ -317,14 +317,8 @@ const ProfilePage: Component = () => {
     }
   };
 
-  // Reactive title for the window
-  const windowTitle = () => {
-    const u = user();
-    if (u.username === 'loading') {
-      return 'Loading Profile...';
-    }
-    return u.displayName || u.username || 'Profile';
-  };
+  // Static title for the window
+  const windowTitle = 'Profile';
 
   // Menu items for hamburger dropdown
   const menuItems = [
@@ -365,7 +359,7 @@ const ProfilePage: Component = () => {
     <div class="profile-page">
       <div class="page-window-container">
         <RetroWindow
-          title={windowTitle()}
+          title={windowTitle}
           icon={
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
               <circle cx="12" cy="8" r="4" />
