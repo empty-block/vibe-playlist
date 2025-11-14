@@ -10,6 +10,7 @@
         "solid-js": "^1.9.7",
       },
       "devDependencies": {
+        "@rollup/rollup-darwin-x64": "^4.53.2",
         "@types/bun": "^1.3.0",
         "babel-preset-solid": "^1.9.6",
         "typescript": "^5.3.3",
@@ -123,7 +124,7 @@
 
     "@rollup/rollup-darwin-arm64": ["@rollup/rollup-darwin-arm64@4.52.5", "", { "os": "darwin", "cpu": "arm64" }, "sha512-takF3CR71mCAGA+v794QUZ0b6ZSrgJkArC+gUiG6LB6TQty9T0Mqh3m2ImRBOxS2IeYBo4lKWIieSvnEk2OQWA=="],
 
-    "@rollup/rollup-darwin-x64": ["@rollup/rollup-darwin-x64@4.52.5", "", { "os": "darwin", "cpu": "x64" }, "sha512-W901Pla8Ya95WpxDn//VF9K9u2JbocwV/v75TE0YIHNTbhqUTv9w4VuQ9MaWlNOkkEfFwkdNhXgcLqPSmHy0fA=="],
+    "@rollup/rollup-darwin-x64": ["@rollup/rollup-darwin-x64@4.53.2", "", { "os": "darwin", "cpu": "x64" }, "sha512-e6XqVmXlHrBlG56obu9gDRPW3O3hLxpwHpLsBJvuI8qqnsrtSZ9ERoWUXtPOkY8c78WghyPHZdmPhHLWNdAGEw=="],
 
     "@rollup/rollup-freebsd-arm64": ["@rollup/rollup-freebsd-arm64@4.52.5", "", { "os": "freebsd", "cpu": "arm64" }, "sha512-QofO7i7JycsYOWxe0GFqhLmF6l1TqBswJMvICnRUjqCx8b47MTo46W8AoeQwiokAx3zVryVnxtBMcGcnX12LvA=="],
 
@@ -300,6 +301,8 @@
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
 
     "@babel/helper-module-transforms/@babel/helper-module-imports": ["@babel/helper-module-imports@7.27.1", "", { "dependencies": { "@babel/traverse": "^7.27.1", "@babel/types": "^7.27.1" } }, "sha512-0gSFWUPNXNopqtIPQvlD5WgXYI5GY2kP2cCvoT8kczjbfcfuIljTbcWrulD1CIPIX2gt1wghbDy08yE1p+/r3w=="],
+
+    "rollup/@rollup/rollup-darwin-x64": ["@rollup/rollup-darwin-x64@4.52.5", "", { "os": "darwin", "cpu": "x64" }, "sha512-W901Pla8Ya95WpxDn//VF9K9u2JbocwV/v75TE0YIHNTbhqUTv9w4VuQ9MaWlNOkkEfFwkdNhXgcLqPSmHy0fA=="],
 
     "solid-refresh/@babel/helper-module-imports": ["@babel/helper-module-imports@7.27.1", "", { "dependencies": { "@babel/traverse": "^7.27.1", "@babel/types": "^7.27.1" } }, "sha512-0gSFWUPNXNopqtIPQvlD5WgXYI5GY2kP2cCvoT8kczjbfcfuIljTbcWrulD1CIPIX2gt1wghbDy08yE1p+/r3w=="],
   }

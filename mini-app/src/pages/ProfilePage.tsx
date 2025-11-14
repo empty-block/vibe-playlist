@@ -317,14 +317,8 @@ const ProfilePage: Component = () => {
     }
   };
 
-  // Reactive title for the window
-  const windowTitle = () => {
-    const u = user();
-    if (u.username === 'loading') {
-      return 'Loading Profile...';
-    }
-    return u.displayName || u.username || 'Profile';
-  };
+  // Static title for the window
+  const windowTitle = 'Profile';
 
   // Menu items for hamburger dropdown
   const menuItems = [
@@ -365,7 +359,7 @@ const ProfilePage: Component = () => {
     <div class="profile-page">
       <div class="page-window-container">
         <RetroWindow
-          title={windowTitle()}
+          title={windowTitle}
           icon={
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="image-rendering: pixelated;">
               <circle cx="12" cy="8" r="4" />
@@ -543,14 +537,31 @@ const ProfilePage: Component = () => {
                             stats={activityItem.cast.stats}
                             castHash={activityItem.cast.castHash}
                             onPlay={(trackData) => {
-                              setCurrentTrack(trackData);
+                              // Build complete Track object with all fields
+                              const fullTrack: Track = {
+                                id: trackData.id || activityItem.cast.castHash,
+                                title: trackData.title,
+                                artist: trackData.artist,
+                                thumbnail: trackData.thumbnail,
+                                source: trackData.source,
+                                sourceId: trackData.sourceId,
+                                url: trackData.url,
+                                // User info from TrackCard (now properly passed)
+                                addedBy: trackData.addedBy || activityItem.cast.author.username,
+                                userFid: trackData.userFid || activityItem.cast.author.fid,
+                                userAvatar: trackData.userAvatar || activityItem.cast.author.pfpUrl,
+                                // Activity metadata
+                                timestamp: activityItem.cast.timestamp,
+                                comment: activityItem.cast.text,
+                                likes: activityItem.cast.stats.likes,
+                                replies: activityItem.cast.stats.replies,
+                                recasts: activityItem.cast.stats.recasts,
+                                duration: '',
+                                castHash: activityItem.cast.castHash
+                              };
 
-                              // For YouTube tracks in WebView, don't autoplay
-                              if (trackData.source !== 'youtube') {
-                                setIsPlaying(true);
-                              } else {
-                                setIsPlaying(false);
-                              }
+                              // Use proper playback flow with auth check
+                              playTrack(fullTrack);
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();

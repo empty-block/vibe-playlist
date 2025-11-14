@@ -132,7 +132,11 @@ const TrackCard: Component<TrackCardProps> = (props) => {
       thumbnail: props.track.thumbnail,
       source: props.track.platform,
       url: props.track.url,
-      sourceId: props.track.platformId
+      sourceId: props.track.platformId,
+      // Include user info for player bar display
+      addedBy: props.author.username,
+      userAvatar: props.author.pfpUrl,
+      userFid: props.author.fid
     });
   };
 

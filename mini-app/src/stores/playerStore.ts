@@ -214,7 +214,7 @@ export const playNextTrack = () => {
     console.log('Playing next track:', nextTrack.title);
     setCurrentTrack(nextTrack);
 
-    // Auto-play for all sources (including YouTube with preloaded player)
+    // Auto-play for all sources (including YouTube with loadVideoById)
     setIsPlaying(true);
     console.log('Auto-playing next track:', nextTrack.source);
   }
@@ -248,7 +248,7 @@ export const playPreviousTrack = () => {
     console.log('Playing previous track:', previousTrack.title);
     setCurrentTrack(previousTrack);
 
-    // Auto-play for all sources (including YouTube with preloaded player)
+    // Auto-play for all sources (including YouTube with loadVideoById)
     setIsPlaying(true);
     console.log('Auto-playing previous track:', previousTrack.source);
   }
@@ -271,9 +271,9 @@ export const playTrackFromFeed = (track: Track, feedTracks: Track[], feedId: str
   // Play the track
   setCurrentTrack(track);
 
-  // Auto-play for all sources (YouTube now uses preloaded player for instant playback)
+  // Auto-play for all sources (YouTube now uses loadVideoById for instant playback)
   setIsPlaying(true);
-  console.log('Track loaded from feed - autoplaying with preloaded player');
+  console.log('Track loaded from feed - autoplaying');
 
   // Track playback for non-YouTube tracks (YouTube tracked on actual play via YouTubeMedia)
   if (track.source !== 'youtube') {
@@ -296,13 +296,18 @@ export const storePendingTrack = (track: Track, feedTracks: Track[], feedId: str
     platformId,
     feedId,
     castHash: track.castHash, // Optional - for specific cast context
+    // Preserve user info for display after OAuth redirect
+    addedBy: track.addedBy,
+    userAvatar: track.userAvatar,
+    userFid: track.userFid,
     timestamp: Date.now()
   };
 
   console.log('✅ Prepared pending track data for OAuth state:', {
     platform: platformName,
     id: platformId,
-    feedId
+    feedId,
+    user: track.addedBy
   });
 
   // Return data to be passed via OAuth state parameter
@@ -321,7 +326,7 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
   }
 
   try {
-    const { platformName, platformId, feedId, castHash, timestamp } = pendingData;
+    const { platformName, platformId, feedId, castHash, timestamp, addedBy, userAvatar, userFid } = pendingData;
 
     // Check if data is stale (more than 5 minutes old)
     if (Date.now() - timestamp > 5 * 60 * 1000) {
@@ -361,9 +366,10 @@ export const restorePendingTrack = async (pendingData?: any): Promise<boolean> =
       thumbnail: apiTrack.thumbnail || '', // Album art image URL
       url: apiTrack.url || '', // Platform URL (spotify:track:xxx or youtube.com/watch?v=xxx)
       source: (apiTrack.platform || platformName) as TrackSource,
-      addedBy: '', // Will be populated if needed
-      userAvatar: '',
-      userFid: '',
+      // Restore user info from pending track data
+      addedBy: addedBy || '',
+      userAvatar: userAvatar || '',
+      userFid: userFid || '',
       timestamp: apiTrack.timestamp || new Date().toISOString(),
       comment: '',
       likes: 0,

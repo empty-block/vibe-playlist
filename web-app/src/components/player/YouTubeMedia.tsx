@@ -101,11 +101,57 @@ const YouTubeMedia: Component<YouTubeMediaProps> = (props) => {
     console.log('YouTube player ready');
   };
   
+  // Track seeking state separately from play/pause
+  let isSeeking = false;
+  let seekingTimeout: number | undefined;
+
   const onPlayerStateChange = (event: any) => {
+    console.log('[YouTubeMedia] State change:', event.data, {
+      PLAYING: window.YT.PlayerState.PLAYING,
+      PAUSED: window.YT.PlayerState.PAUSED,
+      BUFFERING: window.YT.PlayerState.BUFFERING,
+      ENDED: window.YT.PlayerState.ENDED,
+      isSeeking
+    });
+
     if (event.data === window.YT.PlayerState.PLAYING) {
+      // Clear seeking state
+      isSeeking = false;
+      if (seekingTimeout) {
+        clearTimeout(seekingTimeout);
+        seekingTimeout = undefined;
+      }
       setIsPlaying(true);
-    } else if (event.data === window.YT.PlayerState.PAUSED || 
-               event.data === window.YT.PlayerState.ENDED) {
+    } else if (event.data === window.YT.PlayerState.BUFFERING) {
+      // Buffering means we're seeking or loading - stay visible
+      console.log('[YouTubeMedia] Buffering - marking as seeking');
+      isSeeking = true;
+      // Keep player visible during seeking/buffering
+      if (!isPlaying()) {
+        setIsPlaying(true);
+      }
+    } else if (event.data === window.YT.PlayerState.PAUSED) {
+      // Don't immediately hide - might be seeking
+      // Give buffering state 50ms to fire
+      if (seekingTimeout) {
+        clearTimeout(seekingTimeout);
+      }
+      seekingTimeout = setTimeout(() => {
+        // If we didn't enter buffering/seeking state, this is a real pause
+        if (!isSeeking) {
+          console.log('[YouTubeMedia] Real pause detected, hiding player');
+          setIsPlaying(false);
+        } else {
+          console.log('[YouTubeMedia] Pause during seeking, keeping visible');
+        }
+        seekingTimeout = undefined;
+      }, 50) as unknown as number;
+    } else if (event.data === window.YT.PlayerState.ENDED) {
+      isSeeking = false;
+      if (seekingTimeout) {
+        clearTimeout(seekingTimeout);
+        seekingTimeout = undefined;
+      }
       setIsPlaying(false);
     }
   };

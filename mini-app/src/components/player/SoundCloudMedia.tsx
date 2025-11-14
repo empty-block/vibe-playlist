@@ -5,6 +5,7 @@ interface SoundCloudMediaProps {
   onPlayerReady: (ready: boolean) => void;
   onTogglePlay: (toggleFn: () => void) => void;
   onSeek?: (seekFn: (time: number) => void) => void;
+  onPlaybackStarted?: (hasStarted: boolean) => void;
   onPause?: (pauseFn: () => void) => void;
 }
 
@@ -21,6 +22,7 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
   const [playerReady, setPlayerReady] = createSignal(false);
   const [currentTrackId, setCurrentTrackId] = createSignal<string>('');
   const [isLoadingTrack, setIsLoadingTrack] = createSignal(false);
+  const [hasStartedPlayback, setHasStartedPlayback] = createSignal(false);
 
   // Load SoundCloud Widget API
   onMount(() => {
@@ -76,6 +78,12 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
     widget.bind(window.SC.Widget.Events.PLAY, () => {
       console.log('SoundCloud track playing');
       setIsPlaying(true);
+      // Mark that playback has started at least once
+      const wasFirstPlay = !hasStartedPlayback();
+      setHasStartedPlayback(true);
+      if (props.onPlaybackStarted && wasFirstPlay) {
+        props.onPlaybackStarted(true);
+      }
     });
 
     widget.bind(window.SC.Widget.Events.PAUSE, () => {
@@ -305,6 +313,11 @@ const SoundCloudMedia: Component<SoundCloudMediaProps> = (props) => {
       if (currentTrackId() !== trackIdentifier) {
         console.log('Loading new SoundCloud track:', track.title, 'using:', trackIdentifier);
         setCurrentTrackId(trackIdentifier);
+        // Reset playback started for new track
+        setHasStartedPlayback(false);
+        if (props.onPlaybackStarted) {
+          props.onPlaybackStarted(false);
+        }
         loadTrack(trackIdentifier);
       }
     }
