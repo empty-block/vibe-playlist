@@ -525,53 +525,27 @@ const ProfilePage: Component = () => {
                 <Show when={filteredContent().length > 0}>
                   <For each={filteredContent()}>
                     {(activityItem, index) => {
-                      const music = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
-
-                      // Build complete Track object from activity data
-                      const fullTrack = music ? {
-                        id: music.id,
-                        title: music.title,
-                        artist: music.artist,
-                        thumbnail: music.thumbnail,
-                        source: music.platform as TrackSource,
-                        sourceId: music.platformId,
-                        url: music.url,
-                        addedBy: activityItem.cast.author.username,
-                        userFid: activityItem.cast.author.fid,
-                        userAvatar: activityItem.cast.author.pfpUrl,
-                        timestamp: activityItem.cast.timestamp,
-                        comment: activityItem.cast.text,
-                        likes: activityItem.cast.stats.likes,
-                        replies: activityItem.cast.stats.replies,
-                        recasts: activityItem.cast.stats.recasts,
-                        duration: '',
-                        castHash: activityItem.cast.castHash
-                      } as Track : null;
-
-                      // Debug logging
-                      if (music && index() < 2) {
-                        console.log('[ProfilePage] Track data:', {
-                          title: music.title,
-                          thumbnail: music.thumbnail,
-                          platform: music.platform,
-                          platformId: music.platformId,
-                          url: music.url,
-                          fullTrack
-                        });
-                      }
+                      const track = activityItem.cast.music && activityItem.cast.music[0] ? activityItem.cast.music[0] : null;
 
                       return (
-                        <Show when={music && fullTrack}>
+                        <Show when={track}>
                           <TrackCard
                             author={activityItem.cast.author}
-                            track={music!}
+                            track={track!}
                             text={activityItem.cast.text}
                             timestamp={activityItem.cast.timestamp}
                             stats={activityItem.cast.stats}
                             castHash={activityItem.cast.castHash}
-                            onPlay={() => {
-                              // Use pre-built complete Track object
-                              playTrack(fullTrack!);
+                            onPlay={(trackData) => {
+                              // TrackCard now passes user info in trackData
+                              setCurrentTrack(trackData);
+
+                              // For YouTube tracks in WebView, don't autoplay
+                              if (trackData.source !== 'youtube') {
+                                setIsPlaying(true);
+                              } else {
+                                setIsPlaying(false);
+                              }
                             }}
                             onUsernameClick={(fid, e) => {
                               e.preventDefault();
