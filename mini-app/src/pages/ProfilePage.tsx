@@ -548,6 +548,18 @@ const ProfilePage: Component = () => {
                         castHash: activityItem.cast.castHash
                       } as Track : null;
 
+                      // Debug logging
+                      if (music && index() < 2) {
+                        console.log('[ProfilePage] Track data:', {
+                          title: music.title,
+                          thumbnail: music.thumbnail,
+                          platform: music.platform,
+                          platformId: music.platformId,
+                          url: music.url,
+                          fullTrack
+                        });
+                      }
+
                       return (
                         <Show when={music && fullTrack}>
                           <TrackCard
